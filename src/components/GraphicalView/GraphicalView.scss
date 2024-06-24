@@ -1,0 +1,9 @@
+@import "../../assets/mixins/mixins.scss";
+
+.chart-box {
+  @include boxWithShadow();
+  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  overflow: hidden;
+}

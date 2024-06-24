@@ -1,0 +1,16 @@
+@import 'variables', 'colors', 'fonts'; 
+
+
+@mixin boxWithShadow() {
+    background-color: $white;
+    border-radius: .5rem;
+    box-shadow: 0 0 20px rgba(0,0,0, 13%);
+}
+
+@mixin pageTitle() {
+    @include primeFont();
+    font-size: 2rem;
+    color: $primary-color;
+    line-height: 2.5rem;
+    margin-bottom: 1.25rem;
+}

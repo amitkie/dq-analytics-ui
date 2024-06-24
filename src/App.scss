@@ -1,0 +1,89 @@
+@import "./assets/mixins/mixins.scss";
+
+body {
+  @include secondaryFont();
+  padding: 0;
+  margin: 0;
+  background-color: $background-color;
+  color: $text-color;
+  font-size: 0.875rem;
+  line-height: 22px;
+}
+p {
+  @include secondaryFont();
+  line-height: 1.25;
+  color: $text-color;
+  margin-bottom: 1rem;
+}
+.table-responsive {
+  border-color: rgba(0, 0, 0, 30%);
+  border-radius: 8px;
+}
+table {
+  border: 1px solid #949494;
+}
+table thead {
+  @include secondaryFontBold();
+  border-radius: 8px 8px 0 0;
+}
+// Bootstrap reset styles
+.form-control:focus {
+  border-color: #9fa7b7;
+  box-shadow: none;
+}
+.btn:active.btn-primary,
+.btn.active.btn-primary {
+  background-color: $primary-color;
+}
+.form-label {
+  margin-bottom: 0.325rem;
+  font-size: 14px;
+  line-height: 18px;
+}
+.form-control {
+  width: 358px;
+  border: 1px solid #9fa7b7;
+  height: 42px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 22px;
+  padding: 10px 12px;
+}
+.btn-primary {
+  background-color: $primary-color;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  &:hover {
+    background-color: $primary-color-hover;
+  }
+}
+.page-title {
+  @include pageTitle();
+}
+.Select-input {
+  width: 330px;
+  height: 46px;
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  border: 1px solid #d3d3d3;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%),
+    linear-gradient(135deg, gray 50%, transparent 50%),
+    linear-gradient(to right, #ccc, #ccc);
+  background-position: calc(100% - 20px) calc(1em + 6px),
+    calc(100% - 15px) calc(1em + 6px), calc(100% - 2.5em) 0.9em;
+  background-size: 5px 5px, 5px 5px, 1px 1.5em;
+  background-repeat: no-repeat;
+}
+
+.footer-button {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  margin-top: 24px;
+  gap: 1rem;
+}

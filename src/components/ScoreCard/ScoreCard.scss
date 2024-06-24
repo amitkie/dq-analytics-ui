@@ -1,0 +1,16 @@
+@import "../../assets/mixins/mixins.scss";
+.chart-group {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1rem;
+}
+.chart-list {
+  @include boxWithShadow();
+  width: calc(50% - 1rem);
+  overflow: hidden;
+}
+.dq-score-bubble {
+  @include boxWithShadow();
+  width: 100%;
+  overflow: hidden;
+}

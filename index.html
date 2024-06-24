@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Table with Parent and Child Headers</title>
+    <style>
+        /* Basic CSS for table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .parent-header {
+            text-align: center;
+            font-weight: bold;
+        }
+        .child-header {
+            text-align: center;
+            font-size: smaller;
+        }
+    </style>
+</head>
+<body>
+
+<table id="dynamic-table">
+    <thead>
+        <tr>
+            <th>Main Column 1</th>
+            <th>Main Column 2</th>
+            <th>Main Column 3</th>
+            <th colspan="3" class="benchmark-header">
+                <span class="parent-header">Benchmark</span><br>
+                <span class="child-header">Food</span><br>
+                <span class="child-header">Beauty</span><br>
+                <span class="child-header">Safety</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+        <!-- Table body will be populated dynamically -->
+    </tbody>
+</table>
+
+<script>
+    // Example data
+    const tableData = [
+        { main1: "Data 1", main2: "Data 4", main3: "Data 7", food: "Value 1A", beauty: "Value 1B", safety: "Value 1C" },
+        { main1: "Data 2", main2: "Data 5", main3: "Data 8", food: "Value 2A", beauty: "Value 2B", safety: "Value 2C" },
+        { main1: "Data 3", main2: "Data 6", main3: "Data 9", food: "Value 3A", beauty: "Value 3B", safety: "Value 3C" }
+    ];
+
+    // Function to populate the table dynamically
+    function populateTable(data) {
+        const tbody = document.getElementById("table-body");
+
+        data.forEach(item => {
+            const row = document.createElement("tr");
+
+            // Main columns
+            const main1Cell = document.createElement("td");
+            main1Cell.textContent = item.main1;
+            row.appendChild(main1Cell);
+
+            const main2Cell = document.createElement("td");
+            main2Cell.textContent = item.main2;
+            row.appendChild(main2Cell);
+
+            const main3Cell = document.createElement("td");
+            main3Cell.textContent = item.main3;
+            row.appendChild(main3Cell);
+
+            // Benchmark columns
+            const foodCell = document.createElement("td");
+            foodCell.textContent = item.food;
+            row.appendChild(foodCell);
+
+            const beautyCell = document.createElement("td");
+            beautyCell.textContent = item.beauty;
+            row.appendChild(beautyCell);
+
+            const safetyCell = document.createElement("td");
+            safetyCell.textContent = item.safety;
+            row.appendChild(safetyCell);
+
+            tbody.appendChild(row);
+        });
+    }
+
+    // Populate the table with example data
+    populateTable(tableData);
+</script>
+
+</body>
+</html>

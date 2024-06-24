@@ -1,0 +1,53 @@
+@import "../../assets/mixins/mixins.scss";
+
+.home-desc {
+  @include boxWithShadow();
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 30px;
+}
+.recent-activity {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.main-nav {
+  position: absolute;
+  top: 50%;
+  transform: translate(100%, 0%);
+}
+.Main-menu button {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  & div {
+    background-color: $white;
+  }
+  &:active {
+    background-color: $primary-color-hover;
+  }
+  &:hover {
+    background-color: $primary-color-hover;
+  }
+  &:is(:hover, :focus, :active) {
+    background-color: $primary-color-hover;
+  }
+  &.menu-list-nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 110px;
+    height: 110px;
+    & img {
+      width: 64px;
+      height: 64px;
+    }
+  }
+  .menu-text {
+    @include secondaryFontBold();
+    font-size: 1rem;
+    color: $white;
+  }
+}

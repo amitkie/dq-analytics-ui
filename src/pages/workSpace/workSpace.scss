@@ -1,0 +1,42 @@
+@import "../../assets/mixins/mixins.scss";
+.layout {
+  display: flex;
+}
+.create-workspace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 150px;
+  height: 138px;
+  padding-bottom: 22px !important;
+}
+.create-workspace-icon {
+  font-size: 24px;
+  color: $white;
+  padding-bottom: 12px;
+}
+.modal-body {
+  height: 100%;
+}
+
+// .Select-input:focus {
+//     background-image:
+//       linear-gradient(45deg, #0D47A0 50%, transparent 50%),
+//       linear-gradient(135deg, transparent 50%, #0D47A0 50%),
+//       linear-gradient(to right, #ccc, #ccc);
+//     background-position:
+//     calc(100% - 15px) 1.35em,
+//     calc(100% - 20px) 1.35em,
+//     calc(100% - 2.5em) 0.9em;
+//     background-size:
+//       5px 5px,
+//       5px 5px,
+//       1px 1.5em;
+//     background-repeat: no-repeat;
+//     border-color: #0D47A0;
+//     outline: 0;
+//   }
+.project-table-data {
+  @include boxWithShadow();
+}

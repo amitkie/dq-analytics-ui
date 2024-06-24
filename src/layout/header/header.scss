@@ -1,0 +1,34 @@
+@import "../../assets/mixins/mixins.scss";
+.header-logo {
+  width: 280px;
+  display: block;
+}
+.header-container {
+  background-color: #fff;
+  padding: 6px 30px;
+  border-bottom: 1px solid #242625;
+  // margin-bottom: 24px;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.875rem;
+  padding: 12px 0;
+}
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+.user-icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 28px;
+  height: 28px;
+  font-size: 28px;
+}
+.user-name {
+  @include secondaryFontBold();
+  font-size: 0.875rem;
+}

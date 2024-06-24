@@ -1,0 +1,69 @@
+@import "../../assets/mixins/mixins.scss";
+// .tab-container {
+//     @include secondaryFont();
+//     background-color: $white;
+//     border-radius: .5rem;
+//     box-shadow: 2px 3px 8px rgba(0,0,0, 13%);
+//     min-height: 160px;
+//     padding: 1rem;
+// }
+// .nav-tabs {
+//     border-bottom-color: transparent !important;
+// }
+// .nav-tabs .nav-item .nav-link.active {
+//     @include secondaryFontBold();
+//     background-color: $primary-color;
+//     color: $white;
+//     padding: 1rem 1.25rem;
+// }
+// .nav-tabs .nav-item .nav-link {
+//     @include secondaryFontBold();
+//     background-color: $white;
+//     border: 1px solid #D8DBDA;
+//     border-bottom: 0;
+//     color: $text-color;
+//     padding: 1rem 1.25rem;
+//     margin: 0 2px;
+// }
+.tab-component {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.tab-list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tab-list li {
+  margin-right: 10px;
+}
+
+.tab-list button {
+  @include secondaryFontBold();
+  background-color: $white;
+  border: 1px solid #d8dbda;
+  border-bottom: 0;
+  color: $text-color;
+  padding: 1rem 1.25rem;
+  margin: 0 2px;
+  border-radius: 8px 8px 0 0;
+}
+
+.tab-list .active button {
+  @include secondaryFontBold();
+  background-color: $primary-color;
+  color: $white;
+  padding: 1rem 1.25rem;
+  border: 1px solid $primary-color;
+}
+
+.tab-content {
+  @include boxWithShadow();
+  padding: 20px;
+  border: 1px solid #f1f1f1;
+  border-top: none;
+}

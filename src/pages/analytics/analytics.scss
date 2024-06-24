@@ -1,0 +1,24 @@
+@import "../../assets/mixins/mixins.scss";
+
+.analytics-filter {
+  @include boxWithShadow();
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+.project-filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  .range-filter {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    .form-label {
+      white-space: nowrap;
+    }
+  }
+}
