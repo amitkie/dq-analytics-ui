@@ -1,0 +1,51 @@
+@import "../../../assets/mixins/mixins.scss";
+.health-container {
+  display: block;
+}
+.title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.btn-group {
+  height: 48px;
+}
+.filter-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+.filter-input {
+  width: 150px;
+  height: 46px;
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  border: 1px solid #d3d3d3;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%),
+    linear-gradient(135deg, gray 50%, transparent 50%),
+    linear-gradient(to right, #ccc, #ccc);
+  background-position: calc(100% - 20px) calc(1em + 6px),
+    calc(100% - 15px) calc(1em + 6px), calc(100% - 2.5em) 0.9em;
+  background-size: 5px 5px, 5px 5px, 1px 1.5em;
+  background-repeat: no-repeat;
+}
+.brand-overview {
+  @include boxWithShadow();
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.section-title {
+  @include secondaryFontBold();
+  font-size: 1.5rem;
+  color: $text-color;
+  display: flex;
+}
+.brand-dqscores {
+  display: flex;
+}

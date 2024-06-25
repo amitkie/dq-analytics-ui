@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TabComponent from "../../components/tabs/TabComponent";
 import {
   CircleMenu,
   CircleMenuItem,
   TooltipPlacement,
 } from "react-circular-menu";
-import { FaHome } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { IoIosHome } from "react-icons/io";
 import WorkSpaceIcon from "../../assets/images/workspace-nav.png";
 import AnalyticsIcon from "../../assets/images/analytics-nav.png";
 import HealthCardIcon from "../../assets/images/health-card-nav.png";
@@ -14,8 +16,24 @@ import SettingsIcon from "../../assets/images/settings-nav.png";
 import AboutIcon from "../../assets/images/aboutTool-nav.png";
 
 import "./home.scss";
+import WorkSpace from "../workSpace/workSpace";
 
 const Home = () => {
+  useEffect(() => {
+    const items = document.querySelectorAll(".circle-menu");
+
+    const halfCircleDegrees = 210; // Adjust the degrees for half-circle
+
+    for (let i = 0, l = items.length; i < l; i++) {
+      const angle =
+        -0.5 * Math.PI - ((halfCircleDegrees / 180) * i * Math.PI) / l;
+      const leftValue = (15 - 35 * Math.cos(angle)).toFixed(4) + "%";
+      const topValue = (35 + 35 * Math.sin(angle)).toFixed(4) + "%";
+
+      items[i].style.left = leftValue;
+      items[i].style.top = topValue;
+    }
+  }, []);
   const tabs = [
     {
       label: "Recent Activity",
@@ -28,28 +46,9 @@ const Home = () => {
     },
     {
       label: "Recommended",
-      content: <div>Add Insights </div>,
+      content: <div>Recommended content shown here</div>,
     },
   ];
-  // const tabs = [
-  //   {
-  //     label: "Recent Activity",
-  //     content: (
-  //       <div>
-  //         <p>Last activity on May 22, 2024</p>
-  //         <p>Project Name: DQ Files_May_24-Q1</p>
-  //       </div>
-  //     ),
-  //   },
-  //   {
-  //     label: "Recommended",
-  //     content: (
-  //       <div>
-  //         <p>Recommended content shown here</p>
-  //       </div>
-  //     ),
-  //   },
-  // ];
 
   return (
     <>
@@ -91,68 +90,70 @@ const Home = () => {
           </div>
           <div className="col-md-6 col-sm-12">
             <div className="main-nav">
-              <CircleMenu
-                startAngle={-86}
-                rotationAngle={210}
-                itemSize={6}
-                radius={16}
-                rotationAngleInclusive={false}
-                className="Main-menu"
-                menuText="Menu"
-              >
-                <CircleMenuItem
-                  className="menu-list-nav"
-                  tooltip="Workspace"
-                  menuText="MenuAdded"
-                >
+              <div className="menu-home">
+                <IoIosHome className="menu-icon" />
+                <span className="menu-text">Home</span>
+              </div>
+              <div className="circle-menu " tooltip="Workspace">
+                <Link to={"/workspace"} className="menu-list-nav">
                   <img
                     src={WorkSpaceIcon}
                     className="sidenav-icon-img"
                     alt="workspace"
                   />
                   <span className="menu-text">Workspace</span>
-                </CircleMenuItem>
-                <CircleMenuItem className="menu-list-nav" tooltip="Analytics">
+                </Link>
+              </div>
+              <div className="circle-menu" tooltip="Analytics">
+                <Link to={"/analytics"} className="menu-list-nav">
                   <img
                     src={AnalyticsIcon}
                     className="sidenav-icon-img"
                     alt="Analytics"
                   />
                   <span className="menu-text">Analytics</span>
-                </CircleMenuItem>
-                <CircleMenuItem className="menu-list-nav" tooltip="Health card">
+                </Link>
+              </div>
+              <div className="circle-menu" tooltip="Health Card">
+                <Link to={"/healthcard"} className="menu-list-nav">
                   <img
                     src={HealthCardIcon}
                     className="sidenav-icon-img"
                     alt="Health Card"
                   />
                   <span className="menu-text">Health Card</span>
-                </CircleMenuItem>
-                <CircleMenuItem className="menu-list-nav" tooltip="Insights">
+                </Link>
+              </div>
+              <div className="circle-menu" tooltip="Insights">
+                <Link to={"/insights"} className="menu-list-nav">
                   <img
                     src={InsightIcon}
                     className="sidenav-icon-img"
                     alt="Insights"
                   />
                   <span className="menu-text">Insights</span>
-                </CircleMenuItem>
-                <CircleMenuItem className="menu-list-nav" tooltip="Settings">
+                </Link>
+              </div>
+              <div className="circle-menu" tooltip="Settings">
+                <Link to={"/settings"} className="menu-list-nav">
                   <img
                     src={SettingsIcon}
                     className="sidenav-icon-img"
                     alt="Settings"
                   />
                   <span className="menu-text">Settings</span>
-                </CircleMenuItem>
-                <CircleMenuItem className="menu-list-nav" tooltip="About Tool">
+                </Link>
+              </div>
+              <div className="circle-menu" tooltip="About Tool">
+                <Link to={"/about"} className="menu-list-nav">
                   <img
                     src={AboutIcon}
                     className="sidenav-icon-img"
                     alt="About Tool"
                   />
                   <span className="menu-text">About Tool</span>
-                </CircleMenuItem>
-              </CircleMenu>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,18 @@
 import React from "react";
+import SideBar from "../../components/sidebar/sideBar";
+import TableComponent from "../../components/tableComponent/TableComponent";
+import { getData } from "../../services/q3";
 
 export default function HealthCard() {
+  const data = getData();
+  const columns = [
+    {
+      header: "S.no",
+      accessor: "1",
+    },
+    { header: "Brands", accessor: "Brands" },
+    { header: "Category", accessor: "Category" },
+  ];
   return (
     <div className="row g-0">
       <div className="col-1">
@@ -9,7 +21,8 @@ export default function HealthCard() {
       <div className="col-11">
         <div className="workspace-container">
           <h2 className="page-title mt-4 ml-3">Health Card</h2>
-          <Table responsive striped bordered>
+          <TableComponent data={data} columns={columns} />
+          {/* <Table responsive striped bordered>
             <thead>
               <tr>
                 <th>S.No</th>
@@ -34,7 +47,7 @@ export default function HealthCard() {
                 <td>Beauty</td>
               </tr>
             </tbody>
-          </Table>
+          </Table> */}
         </div>
       </div>
     </div>

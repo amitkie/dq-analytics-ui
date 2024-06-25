@@ -24,11 +24,7 @@ export default function WorkSpace() {
         <div className="col-11">
           <div className="workspace-container">
             <h2 className="page-title mt-4 ml-3">Workspace</h2>
-            <button
-              type="button"
-              class="btn btn-primary create-workspace"
-              onClick={handleShow}
-            >
+            <button type="button" class="create-workspace" onClick={handleShow}>
               <AiOutlinePlus className="create-workspace-icon" /> Create Project
             </button>
             <Modal

@@ -7,6 +7,8 @@ import Layout from "../layout/Layout";
 import WorkSpace from "../pages/workSpace/workSpace";
 import Analytics from "../pages/analytics/Analytics";
 import Insights from "../pages/insights/Insights";
+import HealthCard from "../pages/healthcard/HealthCard";
+import HealthCardOverview from "../pages/healthcard/overview/HealthCardOverview";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,38 @@ const router = createBrowserRouter([
   },
   {
     path: "/insights",
+    element: (
+      <Layout>
+        <Insights />
+      </Layout>
+    ),
+  },
+  {
+    path: "/healthcard",
+    element: (
+      <Layout>
+        <HealthCard />
+      </Layout>
+    ),
+  },
+  {
+    path: "/healthcardoverview",
+    element: (
+      <Layout>
+        <HealthCardOverview />
+      </Layout>
+    ),
+  },
+  {
+    path: "/settings",
+    element: (
+      <Layout>
+        <Insights />
+      </Layout>
+    ),
+  },
+  {
+    path: "/about",
     element: (
       <Layout>
         <Insights />

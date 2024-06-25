@@ -13,13 +13,31 @@
   width: 100%;
 }
 .main-nav {
-  position: absolute;
-  top: 50%;
-  transform: translate(100%, 0%);
+  position: relative;
+  display: flex;
+  height: calc(100vh - 100px);
+  padding: 1rem 0;
 }
-.Main-menu button {
+.menu-home {
   background-color: $primary-color;
   border-color: $primary-color;
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: calc(50% - 120px);
+  transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  .menu-icon {
+    font-size: 36px;
+    color: $white;
+  }
   & div {
     background-color: $white;
   }
@@ -28,26 +46,53 @@
   }
   &:hover {
     background-color: $primary-color-hover;
+    transform: scale(1.1);
   }
   &:is(:hover, :focus, :active) {
     background-color: $primary-color-hover;
-  }
-  &.menu-list-nav {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    width: 110px;
-    height: 110px;
-    & img {
-      width: 64px;
-      height: 64px;
-    }
   }
   .menu-text {
     @include secondaryFontBold();
     font-size: 1rem;
     color: $white;
   }
+}
+.menu-list-nav {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 135px;
+  height: 135px;
+  text-decoration: none;
+  transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  & img {
+    width: 64px;
+    height: 64px;
+  }
+  &:active {
+    background-color: $primary-color-hover;
+  }
+  &:hover {
+    background-color: $primary-color-hover;
+    transform: scale(1.075);
+  }
+  &:is(:hover, :focus, :active) {
+    background-color: $primary-color-hover;
+  }
+  .menu-text {
+    @include secondaryFontBold();
+    font-size: 1rem;
+    color: $white;
+  }
+}
+.circle-menu {
+  position: absolute;
 }

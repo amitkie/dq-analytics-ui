@@ -5,11 +5,30 @@ import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
+import BubbleChart from "../../common/bubbleCharts/BubbleChart";
+import { getData } from "../../services/q3";
 
 import "./Insights.scss";
-import BubbleChart from "../../common/bubbleCharts/BubbleChart";
 
 export default function Analytics() {
+  const data = getData();
+  const columns = [
+    {
+      header: "Quarter",
+      accessor: "Quarter",
+    },
+    { header: "Category", accessor: "Category" },
+    { header: "Brands", accessor: "Brands" },
+    {
+      header: "Digital quotient for brand (DQ)",
+      accessor: "Digital quotient for brand (DQ)",
+    },
+    { header: "Ecom DQ Score", accessor: "Ecom DQ Score" },
+    { header: "Social DQ Score", accessor: "Social DQ Score" },
+    { header: "Paid Marketing DQ Score", accessor: "Paid Marketing DQ Score" },
+    { header: "Organic DQ", accessor: "Organic DQ" },
+  ];
+  // console.log("tableData", data);
   const tabs = [
     {
       label: "Score Comparison",
@@ -52,7 +71,7 @@ export default function Analytics() {
       label: "Tabular Summary",
       content: (
         <div>
-          <TableComponent />
+          <TableComponent data={data} columns={columns} />
         </div>
       ),
     },

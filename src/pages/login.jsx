@@ -1,10 +1,17 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { ReactComponent as MyLogo } from "../assets/images/dq-logo.svg";
 import InputComponent from "../common/input/input";
 import ButtonComponent from "../common/button/button";
 import "./login.scss";
 
-export default function login() {
+export default function Login() {
+  let navigate = useNavigate();
+
+  const routeChange = () => {
+    let path = "/home";
+    navigate(path);
+  };
   return (
     <div className="container-fluid">
       <div className="row">
@@ -55,6 +62,7 @@ export default function login() {
               <ButtonComponent
                 btnClass={"btn-primary w-100"}
                 btnName={"Login"}
+                onClick={routeChange}
               />
               <div className="d-flex">
                 <span className="orOption">Or</span>
