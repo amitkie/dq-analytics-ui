@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import Chart from "react-apexcharts";
+import "../../assets/mixins/mixins.scss";
+import "./BubbleChart.scss";
 
 class BubbleChart extends Component {
   constructor(props) {
@@ -8,7 +10,7 @@ class BubbleChart extends Component {
   render() {
     const options = {
       chart: {
-        height: 350,
+        height: 450,
         type: "bubble",
       },
       dataLabels: {
@@ -20,60 +22,93 @@ class BubbleChart extends Component {
       title: {
         text: "",
       },
+      grid: {
+        show: false,
+      },
+      legend: {
+        show: false,
+      },
       xaxis: {
-        tickAmount: 12,
-        type: "category",
-        min: 20,
-        max: 90,
+        show: false,
+        labels: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        min: 0,
+        max: 100,
       },
       yaxis: {
-        max: 80,
+        show: false,
+        labels: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+        crosshairs: {
+          show: false,
+        },
+        tooltip: {
+          enabled: false,
+        },
+        min: 0,
+        max: 100,
+      },
+      tooltip: {
+        followCursor: false,
+        style: {
+          fontSize: "14px",
+        },
+        fixed: {
+          enabled: true,
+          position: "topRight",
+          offsetX: 0,
+          offsetY: 0,
+        },
       },
     };
 
-    function calculateTheDiameter(data){
-      console.log(data/100);
-      return (data/100);
+    function calculateTheDiameter(data) {
+      console.log(data / 100);
+      return data / 100;
     }
-
     const series = [
-      // {
-      //   name: "A",
-      //   data: [[30, 10, 0.2]],
-      // },
-      // { name: "B", data: [[30, 15, 0.29]] },
-      // { name: "C", data: [[30, 20, 0.29]] },
-      // { name: "E", data: [[40, 50, 0.45]] },
-      // { name: "F", data: [[30, 20, 0.67]] },
-      // { name: "D", data: [[30, 30, 0.29]] },
-      // { name: "G", data: [[80, 10, 0.83]] },
-
       {
-  
         name: "Himalaya",
-        data: [[69.61166879, 15, calculateTheDiameter(69.61166879)]]
-        // "Ecom DQ Score": 69.28028546,
-        // "Social DQ Score": 69.66248012,
-        // "Paid Marketing DQ Score": 75.05304132,
-        // "Organic DQ": 44,
+        data: [[69.61166879, 69, calculateTheDiameter(69.61166879)]],
       },
       {
-      
         name: "Lux",
-        data: [[58.72804392, 25, calculateTheDiameter(58.72804392)]],
-        // "Ecom DQ Score": 62.00079101,
-        // "Social DQ Score": 32.02953563,
-        // "Paid Marketing DQ Score": 62.86860453,
-        // "Organic DQ": 71,
+        data: [[58.72804392, 58, calculateTheDiameter(58.72804392)]],
       },
       {
-      
         name: "Palmolive",
-        data: [[49.34048354, 35, calculateTheDiameter(49.34048354)]],
-        // "Ecom DQ Score": 53.63701638,
-        // "Social DQ Score": 32.6341108,
-        // "Paid Marketing DQ Score": 51.62416223,
-        // "Organic DQ": 45,
+        data: [[49.34048354, 49, calculateTheDiameter(49.34048354)]],
+      },
+      {
+        name: "Parachute",
+        data: [[50.23659889, 50, calculateTheDiameter(69.61166879)]],
+      },
+      {
+        name: "Pears",
+        data: [[64.6882469, 64, calculateTheDiameter(58.72804392)]],
+      },
+      {
+        name: "Vaseline",
+        data: [[61.17377378, 61, calculateTheDiameter(49.34048354)]],
+      },
+      {
+        name: "69.84681446",
+        data: [[69.61166879, 69, calculateTheDiameter(69.61166879)]],
+      },
+      {
+        name: "Dabur",
+        data: [[69.36505259, 30, calculateTheDiameter(58.72804392)]],
       },
     ];
     return (

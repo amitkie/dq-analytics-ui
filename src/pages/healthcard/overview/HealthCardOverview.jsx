@@ -2,6 +2,12 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import SideBar from "../../../components/sidebar/sideBar";
+import BrandParachute from "../../../assets/images/brand-parachute.png";
+import { MdBubbleChart } from "react-icons/md";
+import { MdOutlineStackedLineChart } from "react-icons/md";
+import { MdOutlineShowChart } from "react-icons/md";
+import { MdOutlineMultilineChart } from "react-icons/md";
+import { GiMultipleTargets } from "react-icons/gi";
 
 import "./HealthCardOverview.scss";
 
@@ -39,7 +45,62 @@ export default function HealthCardOverview() {
             <div className="brand-overview">
               <span className="section-title">Brand Overview</span>
               <div className="brand-dqscores">
-                <div className="score-list"></div>
+                <div className="score-list">
+                  <img
+                    src={BrandParachute}
+                    className="metric-icon"
+                    alt="Brand Logo"
+                  />
+                  <div className="score-details">
+                    <div className="brand-title">Parachute</div>
+                    <span className="brand-subtitle">Advanced body lotion</span>
+                  </div>
+                </div>
+                <div className="score-list">
+                  <div className="metric-icon">
+                    <MdBubbleChart />
+                  </div>
+                  <div className="score-details">
+                    <div className="brand-title">59.2</div>
+                    <span className="brand-subtitle">DQ Score</span>
+                  </div>
+                </div>
+                <div className="score-list">
+                  <div className="metric-icon">
+                    <MdOutlineStackedLineChart />
+                  </div>
+                  <div className="score-details">
+                    <div className="brand-title">50.2</div>
+                    <span className="brand-subtitle">Ecom DQ Score</span>
+                  </div>
+                </div>
+                <div className="score-list">
+                  <div className="metric-icon">
+                    <MdOutlineShowChart />
+                  </div>
+                  <div className="score-details">
+                    <div className="brand-title">50.7</div>
+                    <span className="brand-subtitle">Social DQ Score</span>
+                  </div>
+                </div>
+                <div className="score-list">
+                  <div className="metric-icon">
+                    <MdOutlineMultilineChart />
+                  </div>
+                  <div className="score-details">
+                    <div className="brand-title">55.4</div>
+                    <span className="brand-subtitle">Paid DQ Score</span>
+                  </div>
+                </div>
+                <div className="score-list">
+                  <div className="metric-icon">
+                    <GiMultipleTargets />
+                  </div>
+                  <div className="score-details">
+                    <div className="brand-title">55.4</div>
+                    <span className="brand-subtitle">Brand Perf DQ Score</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -10,14 +10,46 @@ class BarChart extends Component {
           id: "bar",
           redrawOnWindowResize: true,
         },
+        plotOptions: {
+          bar: {
+            borderRadius: 1,
+            borderRadiusApplication: "end",
+            horizontal: true,
+          },
+        },
+        grid: {
+          show: false,
+        },
+        legend: {
+          show: false,
+        },
         xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+          categories: [
+            "Himalaya",
+            "Lux",
+            "Palmolive",
+            "Parachute",
+            "Pears",
+            "Vaseline",
+            "Bajaj",
+            "Dabur",
+          ],
+        },
+        yaxis: {
+          title: {
+            text: undefined,
+          },
+          min: 0,
+          max: 100,
         },
       },
       series: [
         {
-          name: "series-1",
-          data: [30, 40, 45, 50, 49, 60, 70, 91],
+          name: "DQ Scores",
+          data: [
+            69.61166879, 58.72804392, 49.34048354, 50.23659889, 64.6882469,
+            61.17377378, 69.84681446, 69.36505259,
+          ],
         },
       ],
     };

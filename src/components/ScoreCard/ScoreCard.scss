@@ -7,10 +7,8 @@
 .chart-list {
   @include boxWithShadow();
   width: calc(50% - 1rem);
-  overflow: hidden;
 }
 .dq-score-bubble {
   @include boxWithShadow();
   width: 100%;
-  overflow: hidden;
 }

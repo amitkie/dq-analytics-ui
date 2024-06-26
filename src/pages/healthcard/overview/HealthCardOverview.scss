@@ -48,4 +48,36 @@
 }
 .brand-dqscores {
   display: flex;
+  gap: 1rem;
+}
+.score-list {
+  @include brandScores();
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-start;
+}
+.metric-icon {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  box-shadow: 2px 0 4px rgba($color: #000000, $alpha: 0.1);
+}
+.score-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.brand-title {
+  @include secondaryFontBold();
+  font-size: 1.5rem;
+  color: $primary-color;
+  line-height: 1;
+}
+.brand-subtitle {
+  @include secondaryFont();
+  font-size: 0.875rem;
+  color: rgba($color: #333333, $alpha: 0.6);
+  line-height: 1;
 }

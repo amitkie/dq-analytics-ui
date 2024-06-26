@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SideBar from "../../components/sidebar/sideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
+import TableComponentHorizontal from "../../common/TableComponentHorizontal/TableComponentHorizontal";
 import ButtonComponent from "../../common/button/button";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
@@ -8,11 +9,13 @@ import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import { getData } from "../../services/q3";
+import { getAMData } from "../../services/Quarter-actual-metric-data";
 
 import "./analytics.scss";
 
 export default function Analytics() {
   const data = getData();
+  const AMData = getAMData();
 
   const columns = [
     {
@@ -30,13 +33,19 @@ export default function Analytics() {
     { header: "Paid Marketing DQ Score", accessor: "Paid Marketing DQ Score" },
     { header: "Organic DQ", accessor: "Organic DQ" },
   ];
-  // console.log("tableData", data);
+
+  const columnsMetrics = Object.keys(AMData[0] || []).map((key) => ({
+    Header: key,
+    accessor: key,
+  }));
+  console.log("tableData", AMData);
 
   const tabs = [
     {
       label: "weights and benchmark",
       content: (
         <div>
+          {/* <TableComponentHorizontal data={AMData} columns={columnsMetrics} /> */}
           <Table responsive striped bordered>
             <thead>
               <tr>
@@ -46,7 +55,7 @@ export default function Analytics() {
                 <th>
                   Benchmark <small>(Non-category based)</small>
                 </th>
-                <th colSpan={3}>
+                <th>
                   Benchmark <small>(category based)</small>
                 </th>
               </tr>
@@ -54,7 +63,7 @@ export default function Analytics() {
             <tbody>
               <tr>
                 <td>Ecom</td>
-                <td>Content Score (Visual+ Written + Brand Store)</td>
+                <td>Bain Media Input Score</td>
                 <td> </td>
                 <td> </td>
                 <td> </td>
@@ -90,6 +99,7 @@ export default function Analytics() {
       label: "Graphical view",
       content: (
         <div>
+          <span className="graph-title">DQ Scores</span>
           <GraphicalView />
         </div>
       ),
@@ -98,6 +108,20 @@ export default function Analytics() {
       label: "Comparison View",
       content: (
         <div>
+          <div className="filter-options">
+            <select name="Brands" className="Select-input">
+              <option value="beauty">Himalaya</option>
+              <option value="haircare">Lux</option>
+              <option value="baby">Palmolive</option>
+              <option value="mansGrooming">Parachute</option>
+            </select>
+            <select name="category" className="Select-input">
+              <option value="beauty">Beauty</option>
+              <option value="haircare">Hair care</option>
+              <option value="baby">Baby</option>
+              <option value="mansGrooming">Men's Grooming</option>
+            </select>
+          </div>
           <TableComponent data={data} columns={columns} />
         </div>
       ),

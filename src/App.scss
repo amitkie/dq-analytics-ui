@@ -87,3 +87,10 @@ table thead {
   margin-top: 24px;
   gap: 1rem;
 }
+.graph-title {
+  @include secondaryFontBold();
+  font-size: 0.875rem;
+  color: $text-color;
+  padding: 0 1rem 1rem;
+  display: flex;
+}

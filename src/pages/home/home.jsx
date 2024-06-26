@@ -22,12 +22,12 @@ const Home = () => {
   useEffect(() => {
     const items = document.querySelectorAll(".circle-menu");
 
-    const halfCircleDegrees = 210; // Adjust the degrees for half-circle
+    const halfCircleDegrees = 220; // Adjust the degrees for half-circle
 
     for (let i = 0, l = items.length; i < l; i++) {
       const angle =
         -0.5 * Math.PI - ((halfCircleDegrees / 180) * i * Math.PI) / l;
-      const leftValue = (15 - 35 * Math.cos(angle)).toFixed(4) + "%";
+      const leftValue = (17 - 40 * Math.cos(angle)).toFixed(4) + "%";
       const topValue = (35 + 35 * Math.sin(angle)).toFixed(4) + "%";
 
       items[i].style.left = leftValue;
