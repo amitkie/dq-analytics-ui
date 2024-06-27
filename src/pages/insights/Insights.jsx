@@ -34,6 +34,12 @@ export default function Analytics() {
       label: "Score Comparison",
       content: (
         <div className="row">
+          <div className="col-12">
+            <div className="scores-charts">
+              <span className="chart-title">DQ Score</span>
+              <BubbleChart />
+            </div>
+          </div>
           <div className="col-6">
             <div className="scores-charts">
               <span className="chart-title">Ecom DQ Score</span>
@@ -55,12 +61,6 @@ export default function Analytics() {
           <div className="col-6">
             <div className="scores-charts">
               <span className="chart-title">Paid DQ Score</span>
-              <BubbleChart />
-            </div>
-          </div>
-          <div className="col-6">
-            <div className="scores-charts">
-              <span className="chart-title">DQ Score</span>
               <BubbleChart />
             </div>
           </div>
