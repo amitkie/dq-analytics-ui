@@ -1,4 +1,4 @@
-const NormalisedData = [
+const normalisedData = [
   {
     Quarter: "AMJ'23",
     Category: "Beauty",
@@ -130873,6 +130873,6 @@ const NormalisedData = [
     "Social (SEO optimer)": 20,
   },
 ];
-export function NormalisedData() {
-  return normalizedData;
+export function getNormalizedData() {
+  return normalisedData;
 }

@@ -41,10 +41,7 @@ export default function Analytics() {
   }));
   const keys = Array.from(new Set(AMData.flatMap(Object.keys)));
   const keysToDisplay = keys.slice(2);
-  // const showMetrics = Object.keys(getMetricData[0] || []).map((key) => ({
-  //   Header: key,
-  //   accessor: key,
-  // }));
+
   console.log("tableData", AMData);
   console.log("tableMetricData", getMetricData);
 
@@ -134,20 +131,11 @@ export default function Analytics() {
               <option value="mansGrooming">Men's Grooming</option>
             </select>
           </div>
-          {/* <TableComponent data={AMData} columns={columnsMetrics} /> */}
           <Table responsive striped bordered>
-            {/* <thead>
-              <tr>
-                <th>Metric</th>
-                {AMData.map((data, index) => (
-                  <th key={index}>{data["Brand"]}</th>
-                ))}
-              </tr>
-            </thead> */}
             <tbody>
               {keysToDisplay.map((key, index) => (
                 <tr key={index}>
-                  <td width="25%">{key}</td>
+                  <td className="col-3">{key}</td>
                   {AMData.map((data, i) => (
                     <td key={i}>{data[key]}</td>
                   ))}

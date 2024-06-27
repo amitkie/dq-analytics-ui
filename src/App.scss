@@ -94,3 +94,11 @@ table thead {
   padding: 0 1rem 1rem;
   display: flex;
 }
+.table-responsive {
+  height: 100vh;
+  overflow: auto;
+  & tr:first-child {
+    @include secondaryFontBold();
+    background-color: $white;
+  }
+}

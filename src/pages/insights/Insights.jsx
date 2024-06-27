@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import SideBar from "../../components/sidebar/sideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
+import Table from "react-bootstrap/Table";
 import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import BubbleChart from "../../common/bubbleCharts/BubbleChart";
 import { getData } from "../../services/q3";
+import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 
 import "./Insights.scss";
 
 export default function Analytics() {
   const data = getData();
+  const normalizedData = getNormalizedData();
   const columns = [
     {
       header: "Quarter",
@@ -28,6 +31,8 @@ export default function Analytics() {
     { header: "Paid Marketing DQ Score", accessor: "Paid Marketing DQ Score" },
     { header: "Organic DQ", accessor: "Organic DQ" },
   ];
+  const keys = Array.from(new Set(normalizedData.flatMap(Object.keys)));
+  const keysToDisplay = keys.slice(2);
   // console.log("tableData", data);
   const tabs = [
     {
@@ -71,7 +76,18 @@ export default function Analytics() {
       label: "Tabular Summary",
       content: (
         <div>
-          <TableComponent data={data} columns={columns} />
+          <Table responsive striped bordered>
+            <tbody>
+              {keysToDisplay.map((key, index) => (
+                <tr key={index}>
+                  <td width="25%">{key}</td>
+                  {normalizedData.map((data, i) => (
+                    <td key={i}>{data[key]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </div>
       ),
     },

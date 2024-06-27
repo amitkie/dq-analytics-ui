@@ -2,6 +2,7 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import SideBar from "../../../components/sidebar/sideBar";
+import ButtonComponent from "../../../common/button/button";
 import BrandParachute from "../../../assets/images/brand-parachute.png";
 import { MdBubbleChart } from "react-icons/md";
 import { MdOutlineStackedLineChart } from "react-icons/md";
@@ -23,6 +24,11 @@ export default function HealthCardOverview() {
             <div className="title-section">
               <h2 className="page-title mt-4 ml-3">Health Card</h2>
               <div className="filter-section">
+                <ButtonComponent
+                  disabled
+                  btnClass={"btn-primary"}
+                  btnName={"Export as Excel"}
+                />
                 <ButtonGroup aria-label="Basic example">
                   <Button className="group-btn" variant="outline-secondary">
                     Monthly
