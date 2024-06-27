@@ -7,7 +7,7 @@ const AppLayout = ({ children }) => {
 
   return (
     <>
-      <div className="container-fluid">
+      <div className="container-fluid pb-4">
         <div className="row">
           <HeaderComponent />
         </div>

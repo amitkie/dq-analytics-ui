@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as MyLogo } from "../assets/images/dq-logo.svg";
-import KieLogo from "../assets/images/header-logo.png";
+import KieLogo from "../assets/images/kie-logo.png";
 import InputComponent from "../common/input/input";
 import ButtonComponent from "../common/button/button";
 import "./login.scss";

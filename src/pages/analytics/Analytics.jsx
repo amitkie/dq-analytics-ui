@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import SideBar from "../../components/sidebar/sideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
-import TableComponentHorizontal from "../../common/TableComponentHorizontal/TableComponentHorizontal";
 import ButtonComponent from "../../common/button/button";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
@@ -10,12 +9,14 @@ import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import { getData } from "../../services/q3";
 import { getAMData } from "../../services/Quarter-actual-metric-data";
+import { getMetricData } from "../../services/metrics";
 
 import "./analytics.scss";
 
 export default function Analytics() {
   const data = getData();
   const AMData = getAMData();
+  const metricData = getMetricData();
 
   const columns = [
     {
@@ -38,52 +39,63 @@ export default function Analytics() {
     Header: key,
     accessor: key,
   }));
+  const keys = Array.from(new Set(AMData.flatMap(Object.keys)));
+  const keysToDisplay = keys.slice(2);
+  // const showMetrics = Object.keys(getMetricData[0] || []).map((key) => ({
+  //   Header: key,
+  //   accessor: key,
+  // }));
   console.log("tableData", AMData);
+  console.log("tableMetricData", getMetricData);
 
   const tabs = [
     {
       label: "weights and benchmark",
       content: (
         <div>
-          {/* <TableComponentHorizontal data={AMData} columns={columnsMetrics} /> */}
+          {/* <TableComponent data={AMData} columns={columnsMetrics} /> */}
           <Table responsive striped bordered>
             <thead>
               <tr>
-                <th>Platform/Section Wise</th>
-                <th>Metrics List</th>
-                <th>Weights</th>
-                <th>
-                  Benchmark <small>(Non-category based)</small>
-                </th>
-                <th>
-                  Benchmark <small>(category based)</small>
-                </th>
+                <th width="8%">Platform/Section Wise</th>
+                <th width="52%">Metric list</th>
+                <th width="10%">Weights</th>
+                <th width="30%">Benchmarks</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Ecom</td>
-                <td>Bain Media Input Score</td>
-                <td> </td>
-                <td> </td>
-                <td> </td>
-              </tr>
-              <tr>
-                <td>Ecom</td>
-                <td>Average rating (All SKU - Ever Rated)</td>
-                <td> </td>
-                <td> </td>
-                <td> </td>
-              </tr>
-              <tr>
-                <td>Ecom</td>
-                <td>Average rating (All SKU - Ever Rated)</td>
-                <td> </td>
-                <td> </td>
-                <td> </td>
-              </tr>
+              {Object.keys(metricData[0]).map((key, i) => (
+                <tr key={i}>
+                  <td>Ecom</td>
+                  <td>{key}</td>
+                  <td>
+                    <input
+                      type="text"
+                      className="form-control"
+                      alt="add Weights"
+                      placeholder="Add Weights"
+                    />
+                  </td>
+                  <td>{metricData[0][key]}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
+          <div className="row">
+            <div className="col12">
+              <div className="save-table-btn">
+                <ButtonComponent
+                  disabled
+                  btnClass={"btn-primary"}
+                  btnName={"Export as Excel"}
+                />
+                <ButtonComponent
+                  btnClass={"btn-primary"}
+                  btnName={"Save Weights"}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       ),
     },
@@ -122,7 +134,27 @@ export default function Analytics() {
               <option value="mansGrooming">Men's Grooming</option>
             </select>
           </div>
-          <TableComponent data={data} columns={columns} />
+          {/* <TableComponent data={AMData} columns={columnsMetrics} /> */}
+          <Table responsive striped bordered>
+            {/* <thead>
+              <tr>
+                <th>Metric</th>
+                {AMData.map((data, index) => (
+                  <th key={index}>{data["Brand"]}</th>
+                ))}
+              </tr>
+            </thead> */}
+            <tbody>
+              {keysToDisplay.map((key, index) => (
+                <tr key={index}>
+                  <td width="25%">{key}</td>
+                  {AMData.map((data, i) => (
+                    <td key={i}>{data[key]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </div>
       ),
     },

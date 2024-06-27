@@ -131130,4 +131130,3 @@ const allData = [
 export function getAMData() {
   return allData;
 }
-
