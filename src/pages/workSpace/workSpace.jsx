@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SideBar from "../../components/sidebar/sideBar";
+import SideBar from "../../components/sidebar/SideBar";
 import Modal from "react-bootstrap/Modal";
 import ButtonComponent from "../../common/button/button";
 import { AiOutlinePlus } from "react-icons/ai";

@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import SideBar from "../../../components/sidebar/sideBar";
+import SideBar from "../../../components/sidebar/SideBar";
 import ButtonComponent from "../../../common/button/button";
 import BrandParachute from "../../../assets/images/brand-parachute.png";
 import { MdBubbleChart } from "react-icons/md";

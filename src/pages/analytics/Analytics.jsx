@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SideBar from "../../components/sidebar/sideBar";
+import SideBar from "../../components/sidebar/SideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import ButtonComponent from "../../common/button/button";
 import Form from "react-bootstrap/Form";

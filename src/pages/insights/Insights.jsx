@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SideBar from "../../components/sidebar/sideBar";
+import SideBar from "../../components/sidebar/SideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import Table from "react-bootstrap/Table";
 import ButtonComponent from "../../common/button/button";
@@ -76,7 +76,7 @@ export default function Analytics() {
       label: "Tabular Summary",
       content: (
         <div>
-          <Table responsive striped bordered>
+          <Table responsive striped bordered className="insights-table">
             <tbody>
               {keysToDisplay.map((key, index) => (
                 <tr key={index}>

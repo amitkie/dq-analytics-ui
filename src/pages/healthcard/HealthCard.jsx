@@ -1,5 +1,5 @@
 import React from "react";
-import SideBar from "../../components/sidebar/sideBar";
+import SideBar from "../../components/sidebar/SideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import { getData } from "../../services/q3";
 
