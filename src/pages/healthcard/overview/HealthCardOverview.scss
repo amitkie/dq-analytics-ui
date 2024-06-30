@@ -56,9 +56,13 @@
   gap: 0.5rem;
   align-items: center;
   justify-content: flex-start;
+  flex: 1;
 }
 .metric-icon {
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -80,4 +84,74 @@
   font-size: 0.875rem;
   color: rgba($color: #333333, $alpha: 0.6);
   line-height: 1;
+}
+.tab-container {
+  @include boxWithShadow();
+  padding: 1rem;
+  margin-top: 1.5rem;
+  background-color: $white;
+}
+
+// Tab content styles
+
+.overview-box {
+  border: 1px solid #e0e3e8;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.basemedia {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  .score-title {
+    @include secondaryFontBold();
+    font-size: 0.875rem;
+    color: $text-color;
+    &small {
+      display: flex;
+      flex: 1;
+    }
+  }
+  .brand-title {
+    color: $text-color;
+    font-size: 1.5rem;
+  }
+}
+.score-details {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  padding: 1rem;
+}
+.score-name {
+  display: flex;
+  flex-direction: column;
+}
+.box-title {
+  @include secondaryFontBold();
+  font-size: 0.875rem;
+  color: $text-color;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 1rem;
+  & small {
+    @include secondaryFont();
+    display: flex;
+    flex: 1;
+  }
+}
+.score-table {
+  border: none;
+  p {
+    margin-bottom: 0.5rem;
+  }
+  .score-subscores {
+    @include secondaryFontBold;
+    font-size: 0.875rem;
+    color: $text-color;
+    margin-bottom: 0.5rem;
+  }
 }

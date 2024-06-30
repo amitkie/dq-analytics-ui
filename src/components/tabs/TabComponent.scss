@@ -1,30 +1,4 @@
 @import "../../assets/mixins/mixins.scss";
-// .tab-container {
-//     @include secondaryFont();
-//     background-color: $white;
-//     border-radius: .5rem;
-//     box-shadow: 2px 3px 8px rgba(0,0,0, 13%);
-//     min-height: 160px;
-//     padding: 1rem;
-// }
-// .nav-tabs {
-//     border-bottom-color: transparent !important;
-// }
-// .nav-tabs .nav-item .nav-link.active {
-//     @include secondaryFontBold();
-//     background-color: $primary-color;
-//     color: $white;
-//     padding: 1rem 1.25rem;
-// }
-// .nav-tabs .nav-item .nav-link {
-//     @include secondaryFontBold();
-//     background-color: $white;
-//     border: 1px solid #D8DBDA;
-//     border-bottom: 0;
-//     color: $text-color;
-//     padding: 1rem 1.25rem;
-//     margin: 0 2px;
-// }
 .tab-component {
   display: flex;
   flex-direction: column;
@@ -41,9 +15,12 @@
 .tab-list li {
   margin-right: 10px;
 }
+.healthcard-tab .tab-list li {
+  // flex: 1;
+}
 
 .tab-list button {
-  @include secondaryFontBold();
+  @include secondaryFont();
   background-color: $white;
   border: 1px solid #d8dbda;
   border-bottom: 0;
@@ -61,9 +38,40 @@
   border: 1px solid $primary-color;
 }
 
+.custom-tabs {
+  background-color: $white !important;
+}
+.custom-tabs .tab-list {
+  background-color: $white !important;
+  border-bottom: 1px solid #d8dbda;
+}
+
+.custom-tabs .tab-list button {
+  @include secondaryFont();
+  background-color: white;
+  border: 0;
+  color: #242526;
+  padding: 0 1.25rem 0.875rem;
+  margin: 0 2px;
+  border-radius: 0;
+}
+
+.custom-tabs .tab-list .active button {
+  @include secondaryFontBold();
+  border-bottom: 3px solid $primary-color;
+  color: $primary-color;
+  padding: 0 1.25rem 0.875rem;
+}
+
 .tab-content {
   @include boxWithShadow();
   padding: 20px;
   border: 1px solid #f1f1f1;
   border-top: none;
+}
+
+.custom-tabs .tab-content {
+  padding: 20px 0;
+  border: none;
+  box-shadow: none;
 }
