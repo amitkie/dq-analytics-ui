@@ -9,6 +9,8 @@ import Analytics from "../pages/analytics/Analytics";
 import Insights from "../pages/insights/Insights";
 import HealthCard from "../pages/healthcard/HealthCard";
 import HealthCardOverview from "../pages/healthcard/overview/HealthCardOverview";
+import Settings from "../pages/Settings/Settings";
+import About from "../pages/About/About";
 
 const router = createBrowserRouter([
   {
@@ -67,7 +69,7 @@ const router = createBrowserRouter([
     path: "/settings",
     element: (
       <Layout>
-        <Insights />
+        <Settings />
       </Layout>
     ),
   },
@@ -75,7 +77,7 @@ const router = createBrowserRouter([
     path: "/about",
     element: (
       <Layout>
-        <Insights />
+        <About />
       </Layout>
     ),
   },

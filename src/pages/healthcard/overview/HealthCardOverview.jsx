@@ -4,6 +4,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import SideBar from "../../../components/sidebar/SideBar";
 import TabComponent from "../../../components/tabs/TabComponent";
 import ButtonComponent from "../../../common/button/button";
+import Media from "../../../components/Media/Media";
 import BrandParachute from "../../../assets/images/brand-parachute.png";
 import { MdBubbleChart } from "react-icons/md";
 import { MdOutlineStackedLineChart } from "react-icons/md";
@@ -12,29 +13,70 @@ import { MdOutlineMultilineChart } from "react-icons/md";
 import { GiMultipleTargets } from "react-icons/gi";
 
 import "./HealthCardOverview.scss";
+import PaidMedia from "../../../components/paidMedia/PaidMedia";
 
 export default function HealthCardOverview() {
   const tabs = [
     {
       label: "Media",
+      content: <Media />,
+    },
+    {
+      label: "Pricing",
       content: (
-        <div className="row">
-          <div className="col-2">
+        <div className="row justify-content-center">
+          <div className="col-3">
             <div className="overview-box">
               <div className="basemedia">
                 <div className="brand-title">5.0</div>
-                <div className="score-title">Bain Media Input Score</div>
+                <div className="score-title">Relative pricing adherance</div>
               </div>
             </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      label: "Search",
+      content: (
+        <div className="row justify-content-center g-3">
+          <div className="col-3">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">4.97%</div>
+                <div className="score-title">
+                  Search visibility share <small>(Organic)</small>{" "}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-3">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">1.40%</div>
+                <div className="score-title">
+                  Search visibility share <small>(Paid)</small>{" "}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      label: "Output",
+      content: (
+        <div className="row justify-content-center g-3">
+          <div className="col-3">
             <div className="overview-box">
               <div className="box-title">
-                Ecommerce <small>Part 1 Organic metrics</small>
+                Output <small>(MS, Best seller rank)</small>
               </div>
               <div className="score-details">
                 <table className="score-table">
                   <tr>
                     <td>
-                      <p>Content Score:</p>
+                      <p>Market Share - Amazon :</p>
                     </td>
                     <td>
                       <span className="score-subscores">95.67%</span>
@@ -42,7 +84,7 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Average rating:</p>
+                      <p>Market share - FK:</p>
                     </td>
                     <td>
                       <span className="score-subscores">4.31 </span>
@@ -50,7 +92,7 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Reviews: </p>
+                      <p>Market share - BB: </p>
                     </td>
                     <td>
                       <span className="score-subscores">785</span>
@@ -58,187 +100,240 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Net sentiment of reviews: </p>
+                      <p>Market share - Grofers / Blinkit: </p>
                     </td>
                     <td>
-                      <span className="score-subscores">61.44074%</span>
-                    </td>
-                  </tr>
-                </table>
-                {/* <div className="score-name">
-                  <p>Reviews: </p>
-                  <p>Net sentiment of reviews: </p>
-                </div>
-                <div className="score-value">
-                  <span className="score-subscores">95.67%</span>
-                  <span className="score-subscores">4.31 </span>
-                  <span className="score-subscores">785</span>
-                  <span className="score-subscores">61.44074%</span>
-                </div> */}
-              </div>
-            </div>
-          </div>
-          <div className="col-2 g-0">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">86%</div>
-                <div className="score-title">Availability</div>
-              </div>
-            </div>
-            <div className="overview-box">
-              <div className="score-details">
-                <table className="score-table">
-                  <tr>
-                    <td>
-                      <p>Blended ROAS: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">-0.70%</span>
+                      <span className="score-subscores">61.44%</span>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <p>On platform Green spends %: </p>
+                      <p>Market share - Nykaa: </p>
                     </td>
                     <td>
-                      <span className="score-subscores">10.80% </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Cust ac rate %: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">77.57%</span>
+                      <span className="score-subscores">61.44%</span>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <p>New Customers : </p>
+                      <p>Market share - Myntra: </p>
                     </td>
                     <td>
-                      <span className="score-subscores"> </span>
+                      <span className="score-subscores">61.44%</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Amazon Best seller rank: </p>
+                    </td>
+                    <td>
+                      <span className="score-subscores">61.44%</span>
                     </td>
                   </tr>
                 </table>
               </div>
             </div>
           </div>
-          <div className="col-3">
-            <div className="overview-box">
-              <div className="score-details">
-                <table className="score-table">
-                  <tr>
-                    <td>
-                      <p>Blended ROAS: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">-0.70%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>On platform Green spends %: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">10.80% </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Cust ac rate %: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">77.57%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>New Customers : </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores"> </span>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div className="col-4"></div>
-        </div>
-      ),
-    },
-    {
-      label: "Pricing",
-      content: (
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-2"></div>Pricing
-        </div>
-      ),
-    },
-    {
-      label: "Search",
-      content: (
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-2"></div>Search
-        </div>
-      ),
-    },
-    {
-      label: "Output",
-      content: (
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-2"></div>Output
         </div>
       ),
     },
     {
       label: "SEO",
       content: (
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-2"></div>SEO
+        <div className="row justify-content-center g-3">
+          <div className="col-3">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">5.21</div>
+                <div className="score-title">Organic rank on top keywords</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-3">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">8</div>
+                <div className="score-title">
+                  SEO <small>(SEO optimer)</small>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       ),
     },
     {
       label: "Social Media",
       content: (
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-2"></div>Social Media
+        <div className="row justify-content-center g-3">
+          <div className="col-2">
+            <div className="box-title">All Platform Social Media</div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">47.30%</div>
+                <div className="score-title">Net sentiment</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">1192</div>
+                <div className="score-title">Mentions</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">31804</div>
+                <div className="score-title">Engagement</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">6.45%</div>
+                <div className="score-title">Engagement %</div>
+              </div>
+            </div>
+          </div>
         </div>
       ),
     },
     {
       label: "ORM",
       content: (
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-2"></div>ORM
+        <div className="row justify-content-center g-3">
+          <div className="col-2">
+            <div className="box-title">ORM</div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">47.30%</div>
+                <div className="score-title">Number of queries</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-4">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">12</div>
+                <div className="score-title">
+                  % of queries & negative mentions responded to
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">5</div>
+                <div className="score-title">SLA of response time</div>
+              </div>
+            </div>
+          </div>
         </div>
       ),
     },
     {
       label: "Influencers",
       content: (
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-2"></div>Influencers
+        <div className="row justify-content-center g-3">
+          <div className="col-2">
+            <div className="box-title">Influencers</div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">47.30%</div>
+                <div className="score-title">ROI %</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">1192</div>
+                <div className="score-title">Conversion</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">31804</div>
+                <div className="score-title">Engagement</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">6.45%</div>
+                <div className="score-title">CPV </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-2">
+            <div className="overview-box">
+              <div className="basemedia">
+                <div className="brand-title">45</div>
+                <div className="score-title">Views </div>
+              </div>
+            </div>
+          </div>
         </div>
       ),
     },
     {
-      label: "Paid Media",
+      label: "Output & Outcome",
       content: (
-        <div className="row">
-          <div className="col-2"></div>
-          <div className="col-2"></div>Paid Media
-        </div>
+        <>
+          <div className="row justify-content-center g-3 mb-6">
+            <div className="col-2">
+              <div className="box-title">Cohorts & look alike</div>
+            </div>
+            <div className="col-2">
+              <div className="overview-box">
+                <div className="basemedia">
+                  <div className="brand-title">47.30%</div>
+                  <div className="score-title">50% of budgets to cohorts</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row justify-content-center g-3">
+            <div className="col-2">
+              <div className="box-title">BLS</div>
+            </div>
+            <div className="col-2">
+              <div className="overview-box">
+                <div className="basemedia">
+                  <div className="brand-title">47.30%</div>
+                  <div className="score-title">BLS FB</div>
+                </div>
+              </div>
+            </div>
+            <div className="col-2">
+              <div className="overview-box">
+                <div className="basemedia">
+                  <div className="brand-title">47.30%</div>
+                  <div className="score-title">BLS YT/JIO/Hotstar/Airtel</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       ),
+    },
+    {
+      label: "Paid Media",
+      content: <PaidMedia />,
     },
   ];
 

@@ -15,9 +15,6 @@
 .tab-list li {
   margin-right: 10px;
 }
-.healthcard-tab .tab-list li {
-  // flex: 1;
-}
 
 .tab-list button {
   @include secondaryFont();
@@ -37,6 +34,14 @@
   padding: 1rem 1.25rem;
   border: 1px solid $primary-color;
 }
+.tab-content {
+  @include boxWithShadow();
+  padding: 20px;
+  border: 1px solid #f1f1f1;
+  border-top: none;
+}
+
+//custom tab styles
 
 .custom-tabs {
   background-color: $white !important;
@@ -45,7 +50,6 @@
   background-color: $white !important;
   border-bottom: 1px solid #d8dbda;
 }
-
 .custom-tabs .tab-list button {
   @include secondaryFont();
   background-color: white;
@@ -55,23 +59,49 @@
   margin: 0 2px;
   border-radius: 0;
 }
-
 .custom-tabs .tab-list .active button {
   @include secondaryFontBold();
   border-bottom: 3px solid $primary-color;
   color: $primary-color;
   padding: 0 1.25rem 0.875rem;
 }
-
-.tab-content {
-  @include boxWithShadow();
-  padding: 20px;
-  border: 1px solid #f1f1f1;
-  border-top: none;
-}
-
 .custom-tabs .tab-content {
   padding: 20px 0;
   border: none;
   box-shadow: none;
+}
+
+//settings tab styles
+
+.Settings-tab {
+  background-color: transparent;
+}
+.Settings-tab .tab-list {
+  background-color: transparent;
+  margin-bottom: 2rem;
+}
+.Settings-tab .tab-list button {
+  @include secondaryFont();
+  background-color: transparent;
+  border: 0;
+  color: #242526;
+  padding: 0.875rem 1.25rem;
+  margin: 0 2px;
+  border-radius: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.Settings-tab .tab-list .active button {
+  @include secondaryFontBold();
+  background-color: $white;
+  border-radius: 0.5rem;
+  color: $primary-color;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 15%);
+}
+.Settings-tab .tab-content {
+  padding: 20px 0;
+  border-bottom: 1px solid #d9dbdf;
+  box-shadow: none;
+  background-color: transparent;
 }

@@ -1,9 +1,9 @@
 import React from "react";
 
 export default function input(props) {
-  const { id, inputLabel, inputType, placeholder } = props;
+  const { id, inputLabel, inputType, placeholder, containerClass } = props;
   return (
-    <div>
+    <div className={containerClass}>
       <label htmlFor={id} className="form-label">
         {inputLabel}
       </label>

@@ -147,11 +147,15 @@
   border: none;
   p {
     margin-bottom: 0.5rem;
+    font-size: 0.815rem;
   }
   .score-subscores {
     @include secondaryFontBold;
-    font-size: 0.875rem;
+    display: flex;
+    font-size: 0.815rem;
     color: $text-color;
     margin-bottom: 0.5rem;
+    line-height: 1.25;
+    padding-left: 0.25rem;
   }
 }
