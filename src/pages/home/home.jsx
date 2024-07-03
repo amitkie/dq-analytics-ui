@@ -85,7 +85,7 @@ const Home = () => {
               </p>
             </div>
             <div className="recent-activity">
-              <TabComponent tabs={tabs} className="custom-tabs" />
+              <TabComponent tabs={tabs} className="home-tabs" />
             </div>
           </div>
           <div className="col-md-6 col-sm-12">

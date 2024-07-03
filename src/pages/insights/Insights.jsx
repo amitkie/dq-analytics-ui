@@ -38,38 +38,51 @@ export default function Analytics() {
     {
       label: "Score Comparison",
       content: (
-        <div className="row">
-          <div className="col-12">
-            <div className="scores-charts">
-              <span className="chart-title">DQ Score</span>
-              <BubbleChart />
+        <>
+          <div className="row">
+            <div className="col-12">
+              <div className="scores-charts">
+                <span className="chart-title">DQ Score</span>
+                <BubbleChart />
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="scores-charts">
+                <span className="chart-title">Ecom DQ Score</span>
+                <BubbleChart />
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="scores-charts">
+                <span className="chart-title">Social DQ Score</span>
+                <BubbleChart />
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="scores-charts">
+                <span className="chart-title">Organic DQ Score</span>
+                <BubbleChart />
+              </div>
+            </div>
+            <div className="col-6">
+              <div className="scores-charts">
+                <span className="chart-title">Paid DQ Score</span>
+                <BubbleChart />
+              </div>
             </div>
           </div>
-          <div className="col-6">
-            <div className="scores-charts">
-              <span className="chart-title">Ecom DQ Score</span>
-              <BubbleChart />
+          <div className="row">
+            <div className="col12">
+              <div className="save-table-btn pt-0 pb-3">
+                <ButtonComponent
+                  disabled
+                  btnClass={"btn-primary"}
+                  btnName={"Export as Excel"}
+                />
+              </div>
             </div>
           </div>
-          <div className="col-6">
-            <div className="scores-charts">
-              <span className="chart-title">Social DQ Score</span>
-              <BubbleChart />
-            </div>
-          </div>
-          <div className="col-6">
-            <div className="scores-charts">
-              <span className="chart-title">Organic DQ Score</span>
-              <BubbleChart />
-            </div>
-          </div>
-          <div className="col-6">
-            <div className="scores-charts">
-              <span className="chart-title">Paid DQ Score</span>
-              <BubbleChart />
-            </div>
-          </div>
-        </div>
+        </>
       ),
     },
     {
@@ -96,6 +109,17 @@ export default function Analytics() {
       content: (
         <div>
           <GraphicalView />
+          <div className="row">
+            <div className="col12">
+              <div className="save-table-btn pt-0">
+                <ButtonComponent
+                  disabled
+                  btnClass={"btn-primary"}
+                  btnName={"Export as Excel"}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       ),
     },
@@ -152,7 +176,7 @@ export default function Analytics() {
             </div>
             <div className="row">
               <div className="col-12">
-                <TabComponent tabs={tabs} className="custom-tabs" />
+                <TabComponent tabs={tabs} className="insights-tabs" />
               </div>
             </div>
 

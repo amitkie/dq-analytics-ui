@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import "./TabComponent.scss";
 
-const TabComponent = ({ tabs, className }) => {
+const TabComponent = ({ tabs, className, disabled }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (index) => {
@@ -15,7 +15,9 @@ const TabComponent = ({ tabs, className }) => {
       <ul className="tab-list">
         {tabs.map((tab, index) => (
           <li key={index} className={activeTab === index ? "active" : ""}>
-            <button onClick={() => handleTabChange(index)}>{tab.label}</button>
+            <button onClick={() => handleTabChange(index)} disabled={disabled}>
+              {tab.label}
+            </button>
           </li>
         ))}
       </ul>

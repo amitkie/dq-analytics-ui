@@ -14,6 +14,9 @@ import { GiMultipleTargets } from "react-icons/gi";
 
 import "./HealthCardOverview.scss";
 import PaidMedia from "../../../components/paidMedia/PaidMedia";
+import MediaEcom from "../../../components/MediaEcom/MediaEcom";
+import MediaOffPlatform from "../../../components/MediaOffPlatform/MediaOffPlatform";
+import SocialMedia from "../../../components/SocialMedia/SocialMedia";
 
 export default function HealthCardOverview() {
   const tabs = [
@@ -22,61 +25,29 @@ export default function HealthCardOverview() {
       content: <Media />,
     },
     {
-      label: "Pricing",
-      content: (
-        <div className="row justify-content-center">
-          <div className="col-3">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">5.0</div>
-                <div className="score-title">Relative pricing adherance</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
+      label: "Media - Ecom",
+      content: <MediaEcom />,
     },
     {
-      label: "Search",
+      label: "Media - Off Platform",
+      content: <MediaOffPlatform />,
+    },
+    {
+      label: "Social Media",
+      content: <SocialMedia />,
+    },
+    {
+      label: "Brand Performance",
       content: (
         <div className="row justify-content-center g-3">
           <div className="col-3">
             <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">4.97%</div>
-                <div className="score-title">
-                  Search visibility share <small>(Organic)</small>{" "}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-3">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">1.40%</div>
-                <div className="score-title">
-                  Search visibility share <small>(Paid)</small>{" "}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      label: "Output",
-      content: (
-        <div className="row justify-content-center g-3">
-          <div className="col-3">
-            <div className="overview-box">
-              <div className="box-title">
-                Output <small>(MS, Best seller rank)</small>
-              </div>
+              <div className="box-title">Website Performance</div>
               <div className="score-details">
                 <table className="score-table">
                   <tr>
                     <td>
-                      <p>Market Share - Amazon :</p>
+                      <p>Performance Score - Mobile:</p>
                     </td>
                     <td>
                       <span className="score-subscores">95.67%</span>
@@ -84,7 +55,7 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Market share - FK:</p>
+                      <p>Largest Contentful Paint (LCP):</p>
                     </td>
                     <td>
                       <span className="score-subscores">4.31 </span>
@@ -92,7 +63,7 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Market share - BB: </p>
+                      <p>First Input Display (FID): </p>
                     </td>
                     <td>
                       <span className="score-subscores">785</span>
@@ -100,7 +71,7 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Market share - Grofers / Blinkit: </p>
+                      <p>Cummulative Layout Shift (CLS): </p>
                     </td>
                     <td>
                       <span className="score-subscores">61.44%</span>
@@ -108,7 +79,7 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Market share - Nykaa: </p>
+                      <p>First Contentful Paint (FCP): </p>
                     </td>
                     <td>
                       <span className="score-subscores">61.44%</span>
@@ -116,7 +87,7 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Market share - Myntra: </p>
+                      <p>Time to Interact (TTI): </p>
                     </td>
                     <td>
                       <span className="score-subscores">61.44%</span>
@@ -124,7 +95,64 @@ export default function HealthCardOverview() {
                   </tr>
                   <tr>
                     <td>
-                      <p>Amazon Best seller rank: </p>
+                      <p>Total Blocking Time (TBT): </p>
+                    </td>
+                    <td>
+                      <span className="score-subscores">61.44%</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Speed Index: </p>
+                    </td>
+                    <td>
+                      <span className="score-subscores">61.44%</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Organic Rank: </p>
+                    </td>
+                    <td>
+                      <span className="score-subscores">61.44%</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div className="col-3">
+            <div className="overview-box">
+              <div className="box-title">SEOptimer Tool Inputs</div>
+              <div className="score-details">
+                <table className="score-table">
+                  <tr>
+                    <td>
+                      <p>SEOptimer Grade:</p>
+                    </td>
+                    <td>
+                      <span className="score-subscores">95.67%</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Usability Grade:</p>
+                    </td>
+                    <td>
+                      <span className="score-subscores">4.31 </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Performance Grade: </p>
+                    </td>
+                    <td>
+                      <span className="score-subscores">785</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Social Grade: </p>
                     </td>
                     <td>
                       <span className="score-subscores">61.44%</span>
@@ -137,200 +165,7 @@ export default function HealthCardOverview() {
         </div>
       ),
     },
-    {
-      label: "SEO",
-      content: (
-        <div className="row justify-content-center g-3">
-          <div className="col-3">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">5.21</div>
-                <div className="score-title">Organic rank on top keywords</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-3">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">8</div>
-                <div className="score-title">
-                  SEO <small>(SEO optimer)</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      label: "Social Media",
-      content: (
-        <div className="row justify-content-center g-3">
-          <div className="col-2">
-            <div className="box-title">All Platform Social Media</div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">47.30%</div>
-                <div className="score-title">Net sentiment</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">1192</div>
-                <div className="score-title">Mentions</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">31804</div>
-                <div className="score-title">Engagement</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">6.45%</div>
-                <div className="score-title">Engagement %</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      label: "ORM",
-      content: (
-        <div className="row justify-content-center g-3">
-          <div className="col-2">
-            <div className="box-title">ORM</div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">47.30%</div>
-                <div className="score-title">Number of queries</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-4">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">12</div>
-                <div className="score-title">
-                  % of queries & negative mentions responded to
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">5</div>
-                <div className="score-title">SLA of response time</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      label: "Influencers",
-      content: (
-        <div className="row justify-content-center g-3">
-          <div className="col-2">
-            <div className="box-title">Influencers</div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">47.30%</div>
-                <div className="score-title">ROI %</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">1192</div>
-                <div className="score-title">Conversion</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">31804</div>
-                <div className="score-title">Engagement</div>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">6.45%</div>
-                <div className="score-title">CPV </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="overview-box">
-              <div className="basemedia">
-                <div className="brand-title">45</div>
-                <div className="score-title">Views </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      label: "Output & Outcome",
-      content: (
-        <>
-          <div className="row justify-content-center g-3 mb-6">
-            <div className="col-2">
-              <div className="box-title">Cohorts & look alike</div>
-            </div>
-            <div className="col-2">
-              <div className="overview-box">
-                <div className="basemedia">
-                  <div className="brand-title">47.30%</div>
-                  <div className="score-title">50% of budgets to cohorts</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="row justify-content-center g-3">
-            <div className="col-2">
-              <div className="box-title">BLS</div>
-            </div>
-            <div className="col-2">
-              <div className="overview-box">
-                <div className="basemedia">
-                  <div className="brand-title">47.30%</div>
-                  <div className="score-title">BLS FB</div>
-                </div>
-              </div>
-            </div>
-            <div className="col-2">
-              <div className="overview-box">
-                <div className="basemedia">
-                  <div className="brand-title">47.30%</div>
-                  <div className="score-title">BLS YT/JIO/Hotstar/Airtel</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      ),
-    },
+
     {
       label: "Paid Media",
       content: <PaidMedia />,
@@ -369,6 +204,12 @@ export default function HealthCardOverview() {
                   <option value="Alphabet">Alphabet</option>
                   <option value="Number">Number</option>
                   <option value="Percentage">Percentage</option>
+                </select>
+                <select name="fileName" className="filter-input">
+                  <option value="Select File">Select File</option>
+                  <option value="Alphabet">DA-2</option>
+                  <option value="Number">DA-3</option>
+                  <option value="Percentage">DA-4</option>
                 </select>
               </div>
             </div>

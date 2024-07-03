@@ -93,6 +93,7 @@ table thead {
   color: $text-color;
   padding: 0 1rem 1rem;
   display: flex;
+  justify-content: center;
 }
 .table-responsive {
   height: 100vh;

@@ -47,33 +47,34 @@ export default function Analytics() {
 
   const tabs = [
     {
-      label: "weights and benchmark",
+      label: "Weights and Benchmark",
       content: (
         <div>
           {/* <TableComponent data={AMData} columns={columnsMetrics} /> */}
           <Table responsive striped bordered>
             <thead>
               <tr>
-                <th width="8%">Platform/Section Wise</th>
-                <th width="52%">Metric list</th>
-                <th width="10%">Weights</th>
-                <th width="30%">Benchmarks</th>
+                <th className="col-1">Platform/Section Wise</th>
+                <th className="col-6">Metric list</th>
+                <th className="col-1">Weights</th>
+                <th className="col-1">Benchmarks</th>
               </tr>
             </thead>
             <tbody>
               {Object.keys(metricData[0]).map((key, i) => (
                 <tr key={i}>
-                  <td>Ecom</td>
-                  <td>{key}</td>
-                  <td>
+                  <td className="col-1">Ecom</td>
+                  <td className="col-6">{key}</td>
+                  <td className="col-1">
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control weights-input col-1"
                       alt="add Weights"
+                      value="5"
                       placeholder="Add Weights"
                     />
                   </td>
-                  <td>{metricData[0][key]}</td>
+                  <td className="col-1">{metricData[0][key]}</td>
                 </tr>
               ))}
             </tbody>
@@ -97,10 +98,22 @@ export default function Analytics() {
       ),
     },
     {
-      label: "Scorecard Summary View",
+      label: "DQ Score View",
+      disabled: "disabled",
       content: (
         <div>
           <ScoreCard />
+          <div className="row">
+            <div className="col12">
+              <div className="save-table-btn">
+                <ButtonComponent
+                  disabled
+                  btnClass={"btn-primary"}
+                  btnName={"Export as Excel"}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       ),
     },
@@ -108,7 +121,18 @@ export default function Analytics() {
       label: "Graphical view",
       content: (
         <div>
-          <span className="graph-title">DQ Scores</span>
+          <div className="row">
+            <div className="col12">
+              <div className="save-table-btn justify-content-between align-items-baseline pt-0 pb-3">
+                <span className="graph-title">DQ Scores</span>
+                <ButtonComponent
+                  disabled
+                  btnClass={"btn-primary"}
+                  btnName={"Export as Excel"}
+                />
+              </div>
+            </div>
+          </div>
           <GraphicalView />
         </div>
       ),
@@ -184,7 +208,7 @@ export default function Analytics() {
             </div>
             <div className="row">
               <div className="col-12">
-                <TabComponent tabs={tabs} className="custom-tabs" />
+                <TabComponent tabs={tabs} className="analytics-tabs" />
               </div>
             </div>
 
