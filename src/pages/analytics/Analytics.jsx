@@ -4,12 +4,14 @@ import TableComponent from "../../components/tableComponent/TableComponent";
 import ButtonComponent from "../../common/button/button";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
+import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import { getData } from "../../services/q3";
 import { getAMData } from "../../services/Quarter-actual-metric-data";
 import { getMetricData } from "../../services/metrics";
+import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 
 import "./analytics.scss";
 
@@ -17,6 +19,7 @@ export default function Analytics() {
   const data = getData();
   const AMData = getAMData();
   const metricData = getMetricData();
+  const normalizedData = getNormalizedData();
 
   const columns = [
     {
@@ -44,6 +47,17 @@ export default function Analytics() {
 
   console.log("tableData", AMData);
   console.log("tableMetricData", getMetricData);
+
+  function getColor(value, thresholds) {
+    // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
+    if (value > thresholds[2]) {
+      return "green";
+    } else if (value > thresholds[1]) {
+      return "yellow";
+    } else {
+      return "red";
+    }
+  }
 
   const tabs = [
     {
@@ -134,6 +148,26 @@ export default function Analytics() {
             </div>
           </div>
           <GraphicalView />
+        </div>
+      ),
+    },
+    {
+      label: "Score Card Summary",
+      content: (
+        <div>
+          <Table responsive striped bordered className="insights-table">
+            <tbody>
+              {keysToDisplay.map((key, index) => (
+                <tr key={index}>
+                  <td className="col-3">{key}</td>
+                  {normalizedData.map((data, i) => (
+                    <td key={i}>{data[key]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <PaginationComponent />
         </div>
       ),
     },

@@ -21,10 +21,6 @@ import SocialMedia from "../../../components/SocialMedia/SocialMedia";
 export default function HealthCardOverview() {
   const tabs = [
     {
-      label: "Media",
-      content: <Media />,
-    },
-    {
       label: "Media - Ecom",
       content: <MediaEcom />,
     },
@@ -164,11 +160,6 @@ export default function HealthCardOverview() {
           </div>
         </div>
       ),
-    },
-
-    {
-      label: "Paid Media",
-      content: <PaidMedia />,
     },
   ];
 

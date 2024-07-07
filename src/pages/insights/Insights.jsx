@@ -15,6 +15,7 @@ import "./Insights.scss";
 export default function Analytics() {
   const data = getData();
   const normalizedData = getNormalizedData();
+
   const columns = [
     {
       header: "Quarter",
@@ -89,7 +90,8 @@ export default function Analytics() {
       label: "Tabular Summary",
       content: (
         <div>
-          <Table responsive striped bordered className="insights-table">
+          <TableComponent data={data} columns={columns} />
+          {/* <Table responsive striped bordered className="insights-table">
             <tbody>
               {keysToDisplay.map((key, index) => (
                 <tr key={index}>
@@ -100,7 +102,7 @@ export default function Analytics() {
                 </tr>
               ))}
             </tbody>
-          </Table>
+          </Table> */}
         </div>
       ),
     },
