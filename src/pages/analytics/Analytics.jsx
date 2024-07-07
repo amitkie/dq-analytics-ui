@@ -51,11 +51,11 @@ export default function Analytics() {
   function getColor(value, thresholds) {
     // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
     if (value > thresholds[2]) {
-      return "green";
-    } else if (value > thresholds[1]) {
-      return "yellow";
+      return <span style={{color: "green"}}>{value}</span>
+    } else if (value > thresholds[1] && value < thresholds[2]) {
+      return <span style={{color: "yello"}}>{value}</span>
     } else {
-      return "red";
+      return <span style={{color: "red"}}>{value}</span>
     }
   }
 
@@ -161,7 +161,11 @@ export default function Analytics() {
                 <tr key={index}>
                   <td className="col-3">{key}</td>
                   {normalizedData.map((data, i) => (
-                    <td key={i}>{data[key]}</td>
+                    <td key={i}>
+                   
+                    {getColor(data[key],[60,70,80])}
+                    
+                    </td>
                   ))}
                 </tr>
               ))}
