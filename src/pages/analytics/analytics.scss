@@ -38,3 +38,12 @@
 .form-control.weights-input {
   width: 120px;
 }
+.analytics-table {
+  & tr:first-child {
+    @include secondaryFontBold();
+    background-color: $white;
+    & span {
+      color: $text-color !important;
+    }
+  }
+}

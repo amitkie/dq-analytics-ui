@@ -50,12 +50,14 @@ export default function Analytics() {
 
   function getColor(value, thresholds) {
     // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
-    if (value > thresholds[2]) {
-      return <span style={{color: "green"}}>{value}</span>
+    if (typeof value === "string") {
+      return <span style={{ color: "#252627" }}>{value}</span>;
+    } else if (value > thresholds[2]) {
+      return <span style={{ color: "#339900" }}>{value}</span>;
     } else if (value > thresholds[1] && value < thresholds[2]) {
-      return <span style={{color: "yello"}}>{value}</span>
+      return <span style={{ color: "#ed8b00" }}>{value}</span>;
     } else {
-      return <span style={{color: "red"}}>{value}</span>
+      return <span style={{ color: "#cc3201" }}>{value}</span>;
     }
   }
 
@@ -161,11 +163,7 @@ export default function Analytics() {
                 <tr key={index}>
                   <td className="col-3">{key}</td>
                   {normalizedData.map((data, i) => (
-                    <td key={i}>
-                   
-                    {getColor(data[key],[60,70,80])}
-                    
-                    </td>
+                    <td key={i}>{getColor(data[key], [60, 70, 80])}</td>
                   ))}
                 </tr>
               ))}
@@ -193,7 +191,7 @@ export default function Analytics() {
               <option value="mansGrooming">Men's Grooming</option>
             </select>
           </div>
-          <Table responsive striped bordered>
+          <Table responsive striped bordered className="insights-table">
             <tbody>
               {keysToDisplay.map((key, index) => (
                 <tr key={index}>

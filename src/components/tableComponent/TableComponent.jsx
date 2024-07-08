@@ -21,10 +21,11 @@ const TableComponent = ({ data, columns }) => {
         {data.map((row, rowIndex) => (
           <tr key={rowIndex} onClick={() => handleRowClick(row)}>
             {columns.map((column, colIndex) => (
-              <td key={`${rowIndex}-${colIndex}`}>{
-                ((typeof row[column.accessor]) === 'number') ?  (row[column.accessor]).toFixed(2): row[column.accessor]
-                
-              }</td>
+              <td key={`${rowIndex}-${colIndex}`}>
+                {typeof row[column.accessor] === "number"
+                  ? row[column.accessor].toFixed(2)
+                  : row[column.accessor]}
+              </td>
             ))}
           </tr>
         ))}
