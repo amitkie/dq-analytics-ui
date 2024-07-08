@@ -72,17 +72,6 @@ export default function Analytics() {
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="col12">
-              <div className="save-table-btn pt-0 pb-3">
-                <ButtonComponent
-                  disabled
-                  btnClass={"btn-primary"}
-                  btnName={"Export as Excel"}
-                />
-              </div>
-            </div>
-          </div>
         </>
       ),
     },
@@ -111,17 +100,6 @@ export default function Analytics() {
       content: (
         <div>
           <GraphicalView />
-          <div className="row">
-            <div className="col12">
-              <div className="save-table-btn pt-0">
-                <ButtonComponent
-                  disabled
-                  btnClass={"btn-primary"}
-                  btnName={"Export as Excel"}
-                />
-              </div>
-            </div>
-          </div>
         </div>
       ),
     },
@@ -178,6 +156,13 @@ export default function Analytics() {
             </div>
             <div className="row">
               <div className="col-12">
+                <div className="export-btn">
+                  <ButtonComponent
+                    disabled
+                    btnClass={"btn-primary export-excel-btn"}
+                    btnName={"Export as Excel"}
+                  />
+                </div>
                 <TabComponent tabs={tabs} className="insights-tabs" />
               </div>
             </div>

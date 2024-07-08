@@ -90,7 +90,11 @@ export default function Analytics() {
                       placeholder="Add Weights"
                     />
                   </td>
-                  <td className="col-1">{metricData[0][key]}</td>
+                  <td className="col-1">
+                    {typeof metricData[0][key] === "number"
+                      ? metricData[0][key].toFixed(2)
+                      : metricData[0][key]}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -119,17 +123,6 @@ export default function Analytics() {
       content: (
         <div>
           <ScoreCard />
-          <div className="row">
-            <div className="col12">
-              <div className="save-table-btn">
-                <ButtonComponent
-                  disabled
-                  btnClass={"btn-primary"}
-                  btnName={"Export as Excel"}
-                />
-              </div>
-            </div>
-          </div>
         </div>
       ),
     },
@@ -137,18 +130,6 @@ export default function Analytics() {
       label: "Graphical view",
       content: (
         <div>
-          <div className="row">
-            <div className="col12">
-              <div className="save-table-btn justify-content-between align-items-baseline pt-0 pb-3">
-                <span className="graph-title">DQ Scores</span>
-                <ButtonComponent
-                  disabled
-                  btnClass={"btn-primary"}
-                  btnName={"Export as Excel"}
-                />
-              </div>
-            </div>
-          </div>
           <GraphicalView />
         </div>
       ),
@@ -236,7 +217,7 @@ export default function Analytics() {
                       <option value="beauty">Beauty</option>
                       <option value="haircare">Hair care</option>
                       <option value="baby">Baby</option>
-                      <option value="mansGrooming">Men's Grooming</option>
+                      <option value="mansGrooming">Male Grooming</option>
                     </select>
                   </div>
                 </div>
@@ -244,6 +225,13 @@ export default function Analytics() {
             </div>
             <div className="row">
               <div className="col-12">
+                <div className="export-btn">
+                  <ButtonComponent
+                    disabled
+                    btnClass={"btn-primary export-excel-btn"}
+                    btnName={"Export as Excel"}
+                  />
+                </div>
                 <TabComponent tabs={tabs} className="analytics-tabs" />
               </div>
             </div>

@@ -112,3 +112,11 @@ table thead {
     background-color: $white;
   }
 }
+.export-btn {
+  position: relative;
+  & .export-excel-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
