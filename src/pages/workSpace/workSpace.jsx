@@ -126,7 +126,7 @@ export default function WorkSpace() {
                 />
                 <ButtonComponent
                   btnClass={"btn-primary px-4"}
-                  btnName={"Save Project"}
+                  btnName={"Save Theme"}
                   onClick={handleClose}
                 />
               </Modal.Footer>

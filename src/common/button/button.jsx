@@ -1,6 +1,13 @@
 import React from "react";
 
-export default function button({ btnClass, btnName, onClick, disabled }) {
+export default function button({
+  btnClass,
+  btnIconAfter,
+  btnIconBefore,
+  btnName,
+  onClick,
+  disabled,
+}) {
   return (
     <>
       <button
@@ -9,7 +16,9 @@ export default function button({ btnClass, btnName, onClick, disabled }) {
         onClick={onClick}
         disabled={disabled}
       >
+        {btnIconBefore}
         {btnName}
+        {btnIconAfter}
       </button>
     </>
   );

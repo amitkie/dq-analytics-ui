@@ -11,6 +11,7 @@ import HealthCard from "../pages/healthcard/HealthCard";
 import HealthCardOverview from "../pages/healthcard/overview/HealthCardOverview";
 import Settings from "../pages/Settings/Settings";
 import About from "../pages/About/About";
+import SuperThemes from "../components/SuperThemes/SuperThemes";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,14 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <Analytics />
+      </Layout>
+    ),
+  },
+  {
+    path: "/superthemes",
+    element: (
+      <Layout>
+        <SuperThemes />
       </Layout>
     ),
   },

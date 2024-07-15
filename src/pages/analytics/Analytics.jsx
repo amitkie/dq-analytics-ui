@@ -1,25 +1,32 @@
 import React, { useState } from "react";
-import SideBar from "../../components/sidebar/SideBar";
-import TableComponent from "../../components/tableComponent/TableComponent";
-import ButtonComponent from "../../common/button/button";
+import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
-import PaginationComponent from "../../common/Pagination/PaginationComponent";
+import SideBar from "../../components/sidebar/SideBar";
+import TableComponent from "../../components/tableComponent/TableComponent";
 import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
+import ButtonComponent from "../../common/button/button";
+import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import { getData } from "../../services/q3";
 import { getAMData } from "../../services/Quarter-actual-metric-data";
 import { getMetricData } from "../../services/metrics";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 
 import "./analytics.scss";
+import SuperThemes from "../../components/SuperThemes/SuperThemes";
 
 export default function Analytics() {
   const data = getData();
   const AMData = getAMData();
   const metricData = getMetricData();
   const normalizedData = getNormalizedData();
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const columns = [
     {
@@ -108,6 +115,7 @@ export default function Analytics() {
                   btnName={"Export as Excel"}
                 />
                 <ButtonComponent
+                  onClick={handleShow}
                   btnClass={"btn-primary"}
                   btnName={"Save Weights"}
                 />
@@ -135,7 +143,7 @@ export default function Analytics() {
       ),
     },
     {
-      label: "Score Card Summary",
+      label: "DQ Brand Values",
       content: (
         <div>
           <Table responsive striped bordered className="insights-table">
@@ -143,7 +151,7 @@ export default function Analytics() {
               {keysToDisplay.map((key, index) => (
                 <tr key={index}>
                   <td className="col-3">{key}</td>
-                  {normalizedData.map((data, i) => (
+                  {AMData.map((data, i) => (
                     <td key={i}>{getColor(data[key], [60, 70, 80])}</td>
                   ))}
                 </tr>
@@ -177,7 +185,7 @@ export default function Analytics() {
               {keysToDisplay.map((key, index) => (
                 <tr key={index}>
                   <td className="col-3">{key}</td>
-                  {AMData.map((data, i) => (
+                  {normalizedData.map((data, i) => (
                     <td key={i}>{data[key]}</td>
                   ))}
                 </tr>
@@ -252,6 +260,33 @@ export default function Analytics() {
           </div>
         </div>
       </div>
+      <Modal
+        size="xl"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={show}
+        onHide={handleClose}
+        className="modal-height"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Create Super Themes</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="pb-5">
+          <SuperThemes />
+        </Modal.Body>
+        <Modal.Footer>
+          <ButtonComponent
+            btnClass={"btn-outline-secondary"}
+            btnName={"Cancel"}
+            onClick={handleClose}
+          />
+          <ButtonComponent
+            btnClass={"btn-primary px-4"}
+            btnName={"Save Project"}
+            onClick={handleClose}
+          />
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

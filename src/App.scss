@@ -26,6 +26,23 @@ table thead {
   @include secondaryFontBold();
   border-radius: 8px 8px 0 0;
 }
+fieldset,
+legend {
+  all: revert;
+  border-radius: 6px;
+  border-color: #bfbfbf;
+  background-color: #f5f7fb;
+  border-width: 1px;
+  padding: 0;
+}
+legend {
+  @include secondaryFontBold();
+  background-color: transparent;
+  color: $primary-color;
+  font-size: 1rem;
+  margin-left: 10px;
+  padding: 0 3px;
+}
 // Bootstrap reset styles
 .form-control:focus {
   border-color: #9fa7b7;
@@ -41,13 +58,18 @@ table thead {
   line-height: 18px;
 }
 .form-control {
-  width: 358px;
   border: 1px solid #9fa7b7;
+  width: 100%;
+  max-width: 358px;
   height: 42px;
   border-radius: 6px;
   font-size: 14px;
   line-height: 22px;
   padding: 10px 12px;
+}
+.form-select {
+  width: 100%;
+  max-width: 358px;
 }
 .btn-primary {
   background-color: $primary-color;
@@ -119,4 +141,7 @@ table thead {
     top: 0;
     right: 0;
   }
+}
+.apexcharts-tooltip-title {
+  @include secondaryFontBold;
 }
