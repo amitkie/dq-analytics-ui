@@ -2,6 +2,10 @@
 .layout {
   display: flex;
 }
+.workspace-container {
+  display: block;
+  padding-right: 1rem;
+}
 .create-workspace {
   @include secondaryFontBold();
   border-radius: 8px;
@@ -45,4 +49,5 @@
 //   }
 .project-table-data {
   @include boxWithShadow();
+  border: 1px solid rgba(0, 0, 0, 30%);
 }

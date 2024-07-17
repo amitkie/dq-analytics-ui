@@ -42,6 +42,8 @@
   padding: 90px 112px;
   display: flex;
   align-items: center;
+  width: 100%;
+  max-width: 580px;
 }
 .login-title {
   @include secondaryFont();

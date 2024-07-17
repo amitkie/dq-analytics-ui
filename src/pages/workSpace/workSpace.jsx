@@ -82,7 +82,7 @@ export default function WorkSpace() {
                       </select>
                     </div>
                   </div>
-                  <div className="row">
+                  <div className="row mb-4">
                     <div className="col">
                       <select className="Select-input" name="metrics">
                         <option value="Select metrics">Select Metrics</option>
@@ -116,9 +116,23 @@ export default function WorkSpace() {
                       </select>
                     </div>
                   </div>
+                  <div className="row mb-4">
+                    <div className="col">
+                      <select className="Select-input" name="benchmarks">
+                        <option value="Select benchmarks">
+                          Select Date Range
+                        </option>
+                        <option value="50">Q1 2023</option>
+                        <option value="60">Q2 2023</option>
+                        <option value="70">Q3 2023</option>
+                        <option value="80">Q4 2023</option>
+                        <option value="90above">Q1 2024</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </Modal.Body>
-              <Modal.Footer>
+              <Modal.Footer className="d-flex justify-content-between">
                 <ButtonComponent
                   btnClass={"btn-outline-secondary"}
                   btnName={"Cancel"}
@@ -126,7 +140,7 @@ export default function WorkSpace() {
                 />
                 <ButtonComponent
                   btnClass={"btn-primary px-4"}
-                  btnName={"Save Theme"}
+                  btnName={"Save"}
                   onClick={handleClose}
                 />
               </Modal.Footer>
@@ -138,6 +152,7 @@ export default function WorkSpace() {
                     <th>#</th>
                     <th>Project Name</th>
                     <th>Category</th>
+                    <th>Date Range</th>
                     <th>Frequency</th>
                     <th>Last modified on</th>
                   </tr>
@@ -148,6 +163,7 @@ export default function WorkSpace() {
                     <td>Digital Assessment - 1</td>
                     <td>Beauty</td>
                     <td>Monthly</td>
+                    <td></td>
                     <td>22 May, 2024</td>
                   </tr>
                   <tr>
@@ -155,6 +171,7 @@ export default function WorkSpace() {
                     <td>Digital Assessment - 1</td>
                     <td>Beauty</td>
                     <td>Monthly</td>
+                    <td></td>
                     <td>22 May, 2024</td>
                   </tr>
                   <tr>
@@ -162,12 +179,13 @@ export default function WorkSpace() {
                     <td>Digital Assessment - 1</td>
                     <td>Beauty</td>
                     <td>Monthly</td>
+                    <td></td>
                     <td>22 May, 2024</td>
                   </tr>
                 </tbody>
               </Table>
             </div>
-            <div className="footer-button">
+            {/* <div className="footer-button">
               <ButtonComponent
                 btnClass={"btn-outline-secondary"}
                 btnName={"Back"}
@@ -176,7 +194,7 @@ export default function WorkSpace() {
                 btnClass={"btn-primary"}
                 btnName={"Go to Analytics"}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

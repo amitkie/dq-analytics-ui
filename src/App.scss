@@ -15,12 +15,9 @@ p {
   color: $text-color;
   margin-bottom: 1rem;
 }
-.table-responsive {
-  border-color: rgba(0, 0, 0, 30%);
-  border-radius: 8px;
-}
 table {
   border: 1px solid #949494;
+  border-radius: 0.5rem;
 }
 table thead {
   @include secondaryFontBold();
@@ -105,7 +102,7 @@ legend {
 .footer-button {
   display: flex;
   align-items: baseline;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: 24px;
   gap: 1rem;
 }
@@ -118,14 +115,25 @@ legend {
   justify-content: center;
 }
 .table-responsive {
-  height: 100vh;
+  border-color: rgba(0, 0, 0, 30%);
   overflow: auto;
-  border-radius: 8px 8px 0 0;
+  border-radius: 0.5rem;
   thead {
     position: sticky;
     top: 0px;
     margin: 0 0 0 0;
-    border-radius: 8px 8px 0 0;
+    // border-radius: 8px 8px 0 0;
+    border-color: rgba(0, 0, 0, 30%);
+    // tr {
+    //   th {
+    //     &:first-child {
+    //       border-radius: 8px 0 0 0;
+    //     }
+    //     &:last-child {
+    //       border-radius: 0 8px 0 0;
+    //     }
+    //   }
+    // }
   }
 }
 .insights-table {
@@ -144,4 +152,26 @@ legend {
 }
 .apexcharts-tooltip-title {
   @include secondaryFontBold;
+}
+.childrenContainer {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+#tooltip-top > .tooltip-inner {
+  @include secondaryFontBold();
+  font-size: 0.875rem;
+  background: rgba(9, 51, 115, 100%);
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 30%);
+}
+
+.tooltip-container {
+  --bs-tooltip-bg: $primary-color;
+  --bs-emphasis-color: $primary-color;
+  --bs-tooltip-opacity: 1;
+}
+
+#tooltip-top > .tooltip-arrow {
 }

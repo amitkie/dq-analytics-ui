@@ -7,11 +7,13 @@ const AppLayout = ({ children }) => {
 
   return (
     <>
-      <div className="container-fluid pb-4">
-        <div className="row">
-          <HeaderComponent />
+      <div className="container-fluid g-0 pb-4">
+        <div className="row g-0">
+          <div className="col-12">
+            <HeaderComponent />
+          </div>
         </div>
-        <div className="row">
+        <div className="row g-0">
           <div className="childrenContainer">{children}</div>
         </div>
       </div>

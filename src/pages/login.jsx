@@ -17,12 +17,14 @@ export default function Login() {
     <div className="container-fluid">
       <div className="row">
         <div className="col-md-6 col-sm-12">
-          <div className="top-triangle"></div>
-          <div className="logo">
-            <MyLogo className="logo-component" />
+          <div className="login-left">
+            <div className="top-triangle"></div>
+            <div className="logo">
+              <MyLogo className="logo-component" />
+            </div>
+            <div className="bottom-triangle"></div>
+            <img src={KieLogo} className="kie-logo" alt="KieSquare" />
           </div>
-          <div className="bottom-triangle"></div>
-          <img src={KieLogo} className="kie-logo" alt="KieSquare" />
         </div>
         <div className="col-md-6 col-sm-12">
           <div className="login-form-container">

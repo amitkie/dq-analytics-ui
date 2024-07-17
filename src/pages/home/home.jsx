@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import TabComponent from "../../components/tabs/TabComponent";
-import {
-  CircleMenu,
-  CircleMenuItem,
-  TooltipPlacement,
-} from "react-circular-menu";
+// import {
+//   CircleMenu,
+//   CircleMenuItem,
+//   TooltipPlacement,
+// } from "react-circular-menu";
 import { useNavigate } from "react-router-dom";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import { Link } from "react-router-dom";
 import { IoIosHome } from "react-icons/io";
 import WorkSpaceIcon from "../../assets/images/workspace-nav.png";
@@ -49,6 +51,21 @@ const Home = () => {
       content: <div>Recommended content shown here</div>,
     },
   ];
+  const Link = ({ id, children, className, title, to }) => (
+    <OverlayTrigger
+      placement={"right"}
+      className="tooltip-overlay"
+      overlay={
+        <Tooltip to={to} id="tooltip-top" className="tooltip-container">
+          {title}
+        </Tooltip>
+      }
+    >
+      <a href={to} className={className}>
+        {children}
+      </a>
+    </OverlayTrigger>
+  );
 
   return (
     <>
@@ -57,9 +74,8 @@ const Home = () => {
           <div className="col-md-6 col-sm-12">
             <div className="home-desc mb-4">
               <h2 className="page-title">DQ Analytics</h2>
-              <p>Hello User</p>
-              <p className="mb-4">Good Morning</p>
-              <p>
+              <p className="mb-4">Good Morning, User</p>
+              {/* <p>
                 <strong>Workspace: </strong>Create new DQ Sheet , access older
                 DQ Sheet
               </p>
@@ -80,9 +96,9 @@ const Home = () => {
                 light mode/dark mode
               </p>
               <p>
-                <strong>About Tool:</strong> description about the tool, user
+                <strong>About Tool:</strong> Description about the tool, user
                 manual
-              </p>
+              </p> */}
             </div>
             <div className="recent-activity">
               <TabComponent tabs={tabs} className="home-tabs" />
@@ -94,8 +110,13 @@ const Home = () => {
                 <IoIosHome className="menu-icon" />
                 <span className="menu-text">Home</span>
               </div>
-              <div className="circle-menu " tooltip="Workspace">
-                <Link to={"/workspace"} className="menu-list-nav">
+
+              <div className="circle-menu">
+                <Link
+                  to={"/workspace"}
+                  className="menu-list-nav"
+                  title="Create new DQ Sheet, access older DQ Sheet"
+                >
                   <img
                     src={WorkSpaceIcon}
                     className="sidenav-icon-img"
@@ -104,8 +125,12 @@ const Home = () => {
                   <span className="menu-text">Workspace</span>
                 </Link>
               </div>
-              <div className="circle-menu" tooltip="Analytics">
-                <Link to={"/analytics"} className="menu-list-nav">
+              <div className="circle-menu">
+                <Link
+                  to={"/analytics"}
+                  className="menu-list-nav"
+                  title="View the last opened or new created DQ Sheet"
+                >
                   <img
                     src={AnalyticsIcon}
                     className="sidenav-icon-img"
@@ -114,8 +139,12 @@ const Home = () => {
                   <span className="menu-text">Analytics</span>
                 </Link>
               </div>
-              <div className="circle-menu" tooltip="Health Card">
-                <Link to={"/healthcard"} className="menu-list-nav">
+              <div className="circle-menu">
+                <Link
+                  to={"/healthcard"}
+                  className="menu-list-nav"
+                  title="Brand Portfolio with metrics Information"
+                >
                   <img
                     src={HealthCardIcon}
                     className="sidenav-icon-img"
@@ -124,8 +153,12 @@ const Home = () => {
                   <span className="menu-text">Health Card</span>
                 </Link>
               </div>
-              <div className="circle-menu" tooltip="Insights">
-                <Link to={"/insights"} className="menu-list-nav">
+              <div className="circle-menu">
+                <Link
+                  to={"/insights"}
+                  className="menu-list-nav"
+                  title="Select multiple already generated DQ Sheets for insights"
+                >
                   <img
                     src={InsightIcon}
                     className="sidenav-icon-img"
@@ -134,8 +167,12 @@ const Home = () => {
                   <span className="menu-text">Insights</span>
                 </Link>
               </div>
-              <div className="circle-menu" tooltip="Settings">
-                <Link to={"/settings"} className="menu-list-nav">
+              <div className="circle-menu">
+                <Link
+                  to={"/settings"}
+                  className="menu-list-nav"
+                  title="update te general user settings, light mode/dark mode"
+                >
                   <img
                     src={SettingsIcon}
                     className="sidenav-icon-img"
@@ -144,8 +181,12 @@ const Home = () => {
                   <span className="menu-text">Settings</span>
                 </Link>
               </div>
-              <div className="circle-menu" tooltip="About Tool">
-                <Link to={"/about"} className="menu-list-nav">
+              <div className="circle-menu">
+                <Link
+                  to={"/about"}
+                  className="menu-list-nav"
+                  title="Description about the tool, user manual"
+                >
                   <img
                     src={AboutIcon}
                     className="sidenav-icon-img"
