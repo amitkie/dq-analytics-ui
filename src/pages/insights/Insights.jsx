@@ -120,7 +120,7 @@ export default function Analytics() {
                   <span className="subtitle">
                     Select files from saved Projects
                   </span>
-                  <div className="project-filter">
+                  <div className="insights-project-filter">
                     <select name="frequency" className="Select-input">
                       <option value="beauty">Monthly</option>
                       <option value="haircare">Quarterly</option>

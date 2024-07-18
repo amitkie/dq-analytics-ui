@@ -9,13 +9,13 @@ import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import ButtonComponent from "../../common/button/button";
 import PaginationComponent from "../../common/Pagination/PaginationComponent";
+import SuperThemes from "../../components/SuperThemes/SuperThemes";
 import { getData } from "../../services/q3";
 import { getAMData } from "../../services/Quarter-actual-metric-data";
 import { getMetricData } from "../../services/metrics";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 
 import "./analytics.scss";
-import SuperThemes from "../../components/SuperThemes/SuperThemes";
 
 export default function Analytics() {
   const data = getData();
@@ -52,8 +52,8 @@ export default function Analytics() {
   const keys = Array.from(new Set(AMData.flatMap(Object.keys)));
   const keysToDisplay = keys.slice(2);
 
-  console.log("tableData", AMData);
-  console.log("tableMetricData", getMetricData);
+  // console.log("tableData", AMData);
+  console.log("tableMetricData", metricData);
 
   function getColor(value, thresholds) {
     // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
@@ -77,8 +77,10 @@ export default function Analytics() {
           <Table responsive striped bordered>
             <thead>
               <tr>
-                <th className="col-1">Platform/Section Wise</th>
+                <th className="col-1">Section</th>
+                <th className="col-1">Platform</th>
                 <th className="col-6">Metric list</th>
+                <th className="col-1">Category</th>
                 <th className="col-1">Weights</th>
                 <th className="col-1">Benchmarks</th>
               </tr>
@@ -87,7 +89,10 @@ export default function Analytics() {
               {Object.keys(metricData[0]).map((key, i) => (
                 <tr key={i}>
                   <td className="col-1">Ecom</td>
+                  <td className="col-1">Ecom</td>
                   <td className="col-6">{key}</td>
+                  <td className="col-2">{metricData[0].Category}</td>
+                  {console.log("category", metricData[0][key].Category)}
                   <td className="col-1">
                     <input
                       type="text"
@@ -110,12 +115,6 @@ export default function Analytics() {
             <div className="col12">
               <div className="save-table-btn">
                 <ButtonComponent
-                  disabled
-                  btnClass={"btn-primary"}
-                  btnName={"Export as Excel"}
-                />
-                <ButtonComponent
-                  onClick={handleShow}
                   btnClass={"btn-primary"}
                   btnName={"Save Weights"}
                 />
@@ -126,7 +125,16 @@ export default function Analytics() {
       ),
     },
     {
-      label: "DQ Score View",
+      label: "Super Themes",
+      disabled: "disabled",
+      content: (
+        <div>
+          <SuperThemes />
+        </div>
+      ),
+    },
+    {
+      label: "Actual Values",
       disabled: "disabled",
       content: (
         <div>
@@ -158,7 +166,9 @@ export default function Analytics() {
               ))}
             </tbody>
           </Table>
-          <PaginationComponent />
+          <div className="pagination-container">
+            <PaginationComponent />
+          </div>
         </div>
       ),
     },
@@ -205,9 +215,9 @@ export default function Analytics() {
         </div>
         <div className="col-11">
           <div className="workspace-container">
-            <h2 className="page-title mt-4 ml-3">Analytics</h2>
+            <h2 className="page-title">Analytics</h2>
 
-            <div className="row mb-4">
+            <div className="row mb-3">
               <div className="col-12">
                 <div className="analytics-filter">
                   <div className="project-details">
@@ -216,29 +226,36 @@ export default function Analytics() {
                       <strong>Digital Assessment-1</strong>
                     </p>
                   </div>
-                  <div className="project-filter">
-                    <div className="range-filter">
-                      <span>DQ score Range:</span>
-                      <Form.Range />
+
+                  <div className="export-btn-container">
+                    <div className="export-btn">
+                      <ButtonComponent
+                        disabled
+                        btnClass={"btn-primary export-excel-btn"}
+                        btnName={"Export as Excel"}
+                      />
                     </div>
-                    <select name="category" className="Select-input">
-                      <option value="beauty">Beauty</option>
-                      <option value="haircare">Hair care</option>
-                      <option value="baby">Baby</option>
-                      <option value="mansGrooming">Male Grooming</option>
-                    </select>
                   </div>
                 </div>
               </div>
             </div>
             <div className="row">
               <div className="col-12">
-                <div className="export-btn">
-                  <ButtonComponent
-                    disabled
-                    btnClass={"btn-primary export-excel-btn"}
-                    btnName={"Export as Excel"}
-                  />
+                <div className="filter-btn">
+                  <div className="filter-table-btn">
+                    <ButtonComponent
+                      btnClass={"btn-primary"}
+                      btnName={"Platform"}
+                    />
+                    <ButtonComponent
+                      btnClass={"btn-primary"}
+                      btnName={"Metrics"}
+                    />
+                    <ButtonComponent
+                      btnClass={"btn-primary"}
+                      btnName={"section"}
+                    />
+                  </div>
                 </div>
                 <TabComponent tabs={tabs} className="analytics-tabs" />
               </div>
@@ -247,7 +264,7 @@ export default function Analytics() {
             {/* <div className="project-table-data mt-5">
               <TableComponent />
             </div> */}
-            <div className="footer-button">
+            {/* <div className="footer-button">
               <ButtonComponent
                 btnClass={"btn-outline-secondary"}
                 btnName={"Back"}
@@ -256,11 +273,11 @@ export default function Analytics() {
                 btnClass={"btn-primary"}
                 btnName={"Go to Analytics"}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
-      <Modal
+      {/* <Modal
         size="xl"
         aria-labelledby="contained-modal-title-vcenter"
         centered
@@ -286,7 +303,7 @@ export default function Analytics() {
             onClick={handleClose}
           />
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </>
   );
 }

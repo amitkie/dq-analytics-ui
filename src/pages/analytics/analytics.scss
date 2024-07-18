@@ -7,20 +7,9 @@
   justify-content: space-between;
   padding: 0.5rem 1rem;
 }
-.project-filter {
+.export-btn-container {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 1.5rem;
-  .range-filter {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    justify-content: flex-end;
-    .form-label {
-      white-space: nowrap;
-    }
-  }
+  position: relative;
 }
 .filter-options {
   display: flex;
@@ -45,5 +34,17 @@
     & span {
       color: $text-color !important;
     }
+  }
+}
+.filter-btn {
+  position: relative;
+  .filter-table-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 1rem;
   }
 }

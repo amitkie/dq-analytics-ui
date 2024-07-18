@@ -115,6 +115,7 @@ legend {
   justify-content: center;
 }
 .table-responsive {
+  max-height: calc(100vh - 150px);
   border-color: rgba(0, 0, 0, 30%);
   overflow: auto;
   border-radius: 0.5rem;
@@ -143,12 +144,7 @@ legend {
   }
 }
 .export-btn {
-  position: relative;
-  & .export-excel-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
+  display: flex;
 }
 .apexcharts-tooltip-title {
   @include secondaryFontBold;
@@ -174,4 +170,20 @@ legend {
 }
 
 #tooltip-top > .tooltip-arrow {
+}
+.pagination-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+.page-link.active,
+.active > .page-link {
+  @include secondaryFontBold();
+  background-color: $primary-color;
+  font-size: 0.875rem;
+}
+.page-link {
+  @include secondaryFont();
+  color: $primary-color;
 }

@@ -1,11 +1,25 @@
 import React from "react";
 import BubbleChart from "../../common/bubbleCharts/BubbleChart";
-
+import Form from "react-bootstrap/Form";
 import "./ScoreCard.scss";
 
 function ScoreCard() {
   return (
     <div className="row">
+      <div className="col-12">
+        <div className="project-filter">
+          <div className="range-filter">
+            <span>DQ score Range:</span>
+            <Form.Range />
+          </div>
+          <select name="category" className="Select-input">
+            <option value="beauty">Beauty</option>
+            <option value="haircare">Hair care</option>
+            <option value="baby">Baby</option>
+            <option value="mansGrooming">Male Grooming</option>
+          </select>
+        </div>
+      </div>
       <div className="col-md-6 col-sm-12">
         <div className="chart-group">
           <div className="chart-list">
