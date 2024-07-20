@@ -1,0 +1,31 @@
+@import "../../assets/mixins/mixins.scss";
+.category-filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  .Select-filter-category {
+    height: 44px;
+    border-radius: 6px;
+    border: 1px solid;
+    width: 270px;
+  }
+}
+.alphabet-filters {
+  display: flex;
+  margin: 0 1rem 0.5rem;
+  align-items: baseline;
+  justify-content: center;
+  & li {
+    @include secondaryFontBold();
+    color: $text-color;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 15%);
+    text-transform: uppercase;
+    list-style: none;
+    &:active,
+    &.active {
+      color: $white;
+      background-color: $primary-color;
+    }
+  }
+}

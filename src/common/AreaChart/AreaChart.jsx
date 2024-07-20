@@ -98,6 +98,14 @@ const series = [
 export default function App() {
   return (
     <div className="App">
+      <div className="area-chart-filter">
+        <select name="Metrics" className="Select-filter-metrics">
+          <option value="Select Metrics">Select Metrics</option>
+          <option value="haircare">Ecom</option>
+          <option value="baby">Social</option>
+          <option value="mansGrooming">Paid</option>
+        </select>
+      </div>
       <Chart options={options} series={series} type="area" />
     </div>
   );

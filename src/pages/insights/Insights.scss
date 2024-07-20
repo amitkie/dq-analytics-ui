@@ -45,4 +45,7 @@
   @include secondaryFontBold();
   font-size: 0.875rem;
   padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
 }

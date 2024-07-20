@@ -1,0 +1,10 @@
+.mixed-chart {
+  position: relative;
+  .Select-filter-metrics {
+    border: none;
+    position: absolute;
+    top: 0;
+    left: 0.875rem;
+    z-index: 11;
+  }
+}

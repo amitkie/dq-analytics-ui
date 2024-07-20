@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import SideBar from "../../components/sidebar/SideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
+import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
+import SuperThemes from "../../components/SuperThemes/SuperThemes";
+import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import BubbleChart from "../../common/bubbleCharts/BubbleChart";
 import { getData } from "../../services/q3";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
@@ -42,6 +45,20 @@ export default function Analytics() {
         <>
           <div className="row">
             <div className="col-12">
+              <div className="project-filter">
+                <div className="range-filter">
+                  <span>DQ score Range:</span>
+                  <Form.Range />
+                </div>
+                <select name="category" className="Select-input">
+                  <option value="beauty">Beauty</option>
+                  <option value="haircare">Hair care</option>
+                  <option value="baby">Baby</option>
+                  <option value="mansGrooming">Male Grooming</option>
+                </select>
+              </div>
+            </div>
+            <div className="col-12">
               <div className="scores-charts">
                 <span className="chart-title">DQ Score</span>
                 <BubbleChart />
@@ -76,10 +93,22 @@ export default function Analytics() {
       ),
     },
     {
+      label: "Super Themes",
+      disabled: "disabled",
+      content: (
+        <div>
+          <SuperThemes />
+        </div>
+      ),
+    },
+    {
       label: "Tabular Summary",
       content: (
         <div>
           <TableComponent data={data} columns={columns} />
+          <div className="pagination-container">
+            <PaginationComponent />
+          </div>
           {/* <Table responsive striped bordered className="insights-table">
             <tbody>
               {keysToDisplay.map((key, index) => (
@@ -170,7 +199,7 @@ export default function Analytics() {
             {/* <div className="project-table-data mt-5">
               <TableComponent />
             </div> */}
-            <div className="footer-button">
+            {/* <div className="footer-button">
               <ButtonComponent
                 btnClass={"btn-outline-secondary"}
                 btnName={"Back"}
@@ -179,7 +208,7 @@ export default function Analytics() {
                 btnClass={"btn-primary"}
                 btnName={"Go to Analytics"}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

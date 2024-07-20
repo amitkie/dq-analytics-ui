@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Chart from "react-apexcharts";
 
+import "./BarChart.scss";
+
 class BarChart extends Component {
   constructor(props) {
     super(props);
@@ -62,9 +64,9 @@ class BarChart extends Component {
           <div className="mixed-chart">
             <select name="Metrics" className="Select-filter-metrics">
               <option value="Select Metrics">Select Metrics</option>
-              <option value="haircare">Lux</option>
-              <option value="baby">Palmolive</option>
-              <option value="mansGrooming">Parachute</option>
+              <option value="haircare">Ecom</option>
+              <option value="baby">Social</option>
+              <option value="mansGrooming">Paid</option>
             </select>
             <Chart
               options={this.state.options}

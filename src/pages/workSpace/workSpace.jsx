@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import DateRangePicker from "react-bootstrap-daterangepicker";
 import SideBar from "../../components/sidebar/SideBar";
 import Modal from "react-bootstrap/Modal";
 import ButtonComponent from "../../common/button/button";
@@ -104,6 +105,17 @@ export default function WorkSpace() {
                       </select>
                     </div>
                     <div className="col">
+                      <span className="daterange">Date Range</span>
+                      <DateRangePicker
+                        initialSettings={{ showDropdowns: true }}
+                      >
+                        61 <input type="text" className="form-control col-4" />
+                        62{" "}
+                      </DateRangePicker>
+                    </div>
+                  </div>
+                  <div className="row mb-4">
+                    <div className="col">
                       <select className="Select-input" name="benchmarks">
                         <option value="Select benchmarks">
                           Select Benchmarks
@@ -113,20 +125,6 @@ export default function WorkSpace() {
                         <option value="70">70</option>
                         <option value="80">80</option>
                         <option value="90above">90 and above</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="row mb-4">
-                    <div className="col">
-                      <select className="Select-input" name="benchmarks">
-                        <option value="Select benchmarks">
-                          Select Date Range
-                        </option>
-                        <option value="50">Q1 2023</option>
-                        <option value="60">Q2 2023</option>
-                        <option value="70">Q3 2023</option>
-                        <option value="80">Q4 2023</option>
-                        <option value="90above">Q1 2024</option>
                       </select>
                     </div>
                   </div>
