@@ -106,12 +106,12 @@ export default function WorkSpace() {
                     </div>
                     <div className="col">
                       <span className="daterange">Date Range</span>
-                      <DateRangePicker
+                      {/* <DateRangePicker
                         initialSettings={{ showDropdowns: true }}
                       >
                         61 <input type="text" className="form-control col-4" />
                         62{" "}
-                      </DateRangePicker>
+                      </DateRangePicker> */}
                     </div>
                   </div>
                   <div className="row mb-4">
