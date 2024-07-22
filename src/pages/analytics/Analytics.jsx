@@ -124,17 +124,9 @@ export default function Analytics() {
         </div>
       ),
     },
+
     {
-      label: "Super Themes",
-      disabled: "disabled",
-      content: (
-        <div>
-          <SuperThemes />
-        </div>
-      ),
-    },
-    {
-      label: "Actual Values",
+      label: "DQ Scores",
       disabled: "disabled",
       content: (
         <div>
@@ -151,7 +143,7 @@ export default function Analytics() {
       ),
     },
     {
-      label: "DQ Brand Values",
+      label: "KPI Scores",
       content: (
         <div>
           <Table responsive striped bordered className="insights-table">
@@ -202,6 +194,15 @@ export default function Analytics() {
               ))}
             </tbody>
           </Table>
+        </div>
+      ),
+    },
+    {
+      label: "Super Themes",
+      disabled: "disabled",
+      content: (
+        <div>
+          <SuperThemes />
         </div>
       ),
     },

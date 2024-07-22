@@ -45,7 +45,7 @@ export default function HealthCard() {
             <h2 className="page-title ml-3">Health Card</h2>
             <div className="category-filter">
               <select name="Metrics" className="Select-filter-category">
-                <option value="Select Metrics">Select Metrics</option>
+                <option value="Select Metrics">Select Category</option>
                 <option value="haircare">Ecom</option>
                 <option value="baby">Social</option>
                 <option value="mansGrooming">Paid</option>
