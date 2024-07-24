@@ -79,9 +79,11 @@ export default function Analytics() {
               <tr>
                 <th className="col-1">Section</th>
                 <th className="col-1">Platform</th>
-                <th className="col-6">Metric list</th>
+                <th className="col-4">Metric list</th>
                 <th className="col-1">Category</th>
                 <th className="col-1">Weights</th>
+                <th className="col-1">Overall</th>
+                <th className="col-2">Category based</th>
                 <th className="col-1">Benchmarks</th>
               </tr>
             </thead>
@@ -90,8 +92,8 @@ export default function Analytics() {
                 <tr key={i}>
                   <td className="col-1">Ecom</td>
                   <td className="col-1">Ecom</td>
-                  <td className="col-6">{key}</td>
-                  <td className="col-2">{metricData[0].Category}</td>
+                  <td className="col-4">{key}</td>
+                  <td className="col-1">{metricData[0].Category}</td>
                   {console.log("category", metricData[0][key].Category)}
                   <td className="col-1">
                     <input
@@ -101,6 +103,57 @@ export default function Analytics() {
                       value="5"
                       placeholder="Add Weights"
                     />
+                  </td>
+                  <td className="col-1">
+                    <Form>
+                      {["checkbox"].map((type) => (
+                        <div key={type} className="mb-3">
+                          <Form.Check type={type} id={`check-api-${type}`}>
+                            <Form.Check.Input type={type} />
+                            <Form.Check.Label>Overall</Form.Check.Label>
+                            {/* <Form.Control.Feedback type="valid">
+                              You did it!
+                            </Form.Control.Feedback> */}
+                          </Form.Check>
+                        </div>
+                      ))}
+                    </Form>
+                  </td>
+                  <td className="col-2">
+                    <Form>
+                      {["checkbox"].map((type, index) => (
+                        <div key={`inline-${type}`} className="mb-3">
+                          <Form.Check
+                            inline
+                            label="Beauty"
+                            name={"group1" + index}
+                            type={type}
+                            id={`inline-${type}-1-${index}`}
+                          />
+                          <Form.Check
+                            inline
+                            label="Foods"
+                            name={"group1" + index}
+                            type={type}
+                            id={`inline-${type}-2-${index}`}
+                          />
+                          <Form.Check
+                            inline
+                            label="Male Grooming"
+                            name={"group3" + index}
+                            type={type}
+                            id={`inline-${type}-3-${index}`}
+                          />
+                          <Form.Check
+                            inline
+                            label="Hair Care"
+                            name={"group4" + index}
+                            type={type}
+                            id={`inline-${type}-3-${index}`}
+                          />
+                        </div>
+                      ))}
+                    </Form>
                   </td>
                   <td className="col-1">
                     {typeof metricData[0][key] === "number"
@@ -146,7 +199,13 @@ export default function Analytics() {
       label: "KPI Scores",
       content: (
         <div>
-          <Table responsive striped bordered className="insights-table">
+          <Table
+            responsive
+            striped
+            bordered
+            className="insights-table"
+            id="wrapper2"
+          >
             <tbody>
               {keysToDisplay.map((key, index) => (
                 <tr key={index}>
@@ -176,10 +235,11 @@ export default function Analytics() {
               <option value="mansGrooming">Parachute</option>
             </select>
             <select name="category" className="Select-input">
+              <option value="beauty">All</option>
               <option value="beauty">Beauty</option>
               <option value="haircare">Hair care</option>
-              <option value="baby">Baby</option>
-              <option value="mansGrooming">Men's Grooming</option>
+              <option value="baby">Foods</option>
+              <option value="mansGrooming">Male Grooming</option>
             </select>
           </div>
           <Table responsive striped bordered className="insights-table">
@@ -228,7 +288,14 @@ export default function Analytics() {
                     </p>
                   </div>
 
-                  <div className="export-btn-container">
+                  <div className="export-btn-container gap-3">
+                    <select name="category" className="Select-input">
+                      <option value="Select Metrics">Select Category</option>
+                      <option value="Beauty">Beauty</option>
+                      <option value="Foods">Foods</option>
+                      <option value="haircare">Hair Care</option>
+                      <option value="malegrooming">Male Grooming</option>
+                    </select>
                     <div className="export-btn">
                       <ButtonComponent
                         disabled
@@ -242,22 +309,52 @@ export default function Analytics() {
             </div>
             <div className="row">
               <div className="col-12">
-                <div className="filter-btn">
+                {/* <div className="filter-btn">
                   <div className="filter-table-btn">
-                    <ButtonComponent
-                      btnClass={"btn-primary"}
-                      btnName={"Platform"}
-                    />
-                    <ButtonComponent
-                      btnClass={"btn-primary"}
-                      btnName={"Metrics"}
-                    />
-                    <ButtonComponent
-                      btnClass={"btn-primary"}
-                      btnName={"section"}
-                    />
+                    
                   </div>
+                </div> */}
+                <div className="filter-options mb-3">
+                  <select name="category" className="Select-input">
+                    <option value="Select Metrics">Select Section</option>
+                    <option value="ecom">Ecom</option>
+                    <option value="Social">Social</option>
+                    <option value="Paid">Paid</option>
+                    <option value="brand-perf">Brand Perf</option>
+                  </select>
+                  <select name="category" className="Select-input">
+                    <option value="Select Metrics">Select platform</option>
+                    <option value="ecom">Amazon</option>
+                    <option value="Social">Amazon - Search Campaigns </option>
+                    <option value="Organic">Flipkart PLA Campaigns</option>
+                    <option value="Paid">Big Basket Campaigns</option>
+                    <option value="Brand Performance">Blinkit Campaigns</option>
+                    <option value="Brand Performance">Nykaa Campaigns</option>
+                    <option value="Brand Performance">Myntraa Campaigns</option>
+                    <option value="Brand Performance">SEO</option>
+                    <option value="Brand Performance">
+                      Facebook, Twitter, Instagram
+                    </option>
+                    <option value="Brand Performance">
+                      Gadwords, Facebook, DV360
+                    </option>
+                    <option value="Brand Performance">Google Analytics</option>
+                    <option value="Brand Performance">
+                      Page Speed Insights
+                    </option>
+                    <option value="Brand Performance">SEOptimer</option>
+                  </select>
+                  <select name="category" className="Select-input">
+                    <option value="Select Metrics">Select Metrics</option>
+                    <option value="ecom">Ecom</option>
+                    <option value="Social">Social</option>
+                    <option value="Organic">Organic</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Brand Performance">Brand Performance</option>
+                  </select>
                 </div>
+              </div>
+              <div className="col-12">
                 <TabComponent tabs={tabs} className="analytics-tabs" />
               </div>
             </div>

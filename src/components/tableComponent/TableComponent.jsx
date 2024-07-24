@@ -9,28 +9,30 @@ const TableComponent = ({ data, columns }) => {
     navigate(`/healthcardOverview`);
   };
   return (
-    <Table responsive striped bordered>
-      <thead>
-        <tr>
-          {columns.map((column, index) => (
-            <th key={index}>{column.header}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row, rowIndex) => (
-          <tr key={rowIndex} onClick={() => handleRowClick(row)}>
-            {columns.map((column, colIndex) => (
-              <td key={`${rowIndex}-${colIndex}`}>
-                {typeof row[column.accessor] === "number"
-                  ? row[column.accessor].toFixed(2)
-                  : row[column.accessor]}
-              </td>
+    <>
+      <Table responsive striped bordered>
+        <thead>
+          <tr>
+            {columns.map((column, index) => (
+              <th key={index}>{column.header}</th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody>
+          {data.map((row, rowIndex) => (
+            <tr key={rowIndex} onClick={() => handleRowClick(row)}>
+              {columns.map((column, colIndex) => (
+                <td key={`${rowIndex}-${colIndex}`}>
+                  {typeof row[column.accessor] === "number"
+                    ? row[column.accessor].toFixed(2)
+                    : row[column.accessor]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </>
   );
 };
 

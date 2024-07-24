@@ -3,6 +3,12 @@
   display: flex;
   flex-wrap: wrap;
 }
+.select-metric-option {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  justify-content: flex-start;
+}
 .metric-select {
   display: flex;
   flex-direction: column;
@@ -45,4 +51,46 @@ legend {
   display: flex;
   flex-direction: column;
   padding: 1rem;
+}
+.final-metrics-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+.final-metrics {
+  @include secondaryFont();
+  color: $text-color;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.form-select {
+  text-align: left;
+}
+.form-select.btn {
+  text-align: left !important;
+  border: 1px solid $input-stroke;
+  background-color: white;
+  &:hover {
+    background-color: $white;
+  }
+}
+.dropdown-toggle::after {
+  content: none !important;
+}
+.dropdown-checkbox {
+  margin-right: 0.5rem;
+}
+.selected-languages {
+  display: flex;
+  flex-direction: column;
+  max-height: 250px;
+  overflow-y: scroll;
+}
+.selected-metrics {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-right: 0.5rem;
 }

@@ -40,6 +40,11 @@ legend {
   margin-left: 10px;
   padding: 0 3px;
 }
+input[type="checkbox"] {
+  border: 1px solid $stroke-color;
+  width: 18px;
+  height: 18px;
+}
 // Bootstrap reset styles
 .form-control:focus {
   border-color: #9fa7b7;
@@ -141,6 +146,8 @@ legend {
   & tr:first-child {
     @include secondaryFontBold();
     background-color: $white;
+    position: sticky;
+    top: 0;
   }
 }
 .export-btn {
@@ -186,4 +193,9 @@ legend {
 .page-link {
   @include secondaryFont();
   color: $primary-color;
+}
+Table thead {
+  position: sticky;
+  top: 0px;
+  margin: 0 0 0 0;
 }
