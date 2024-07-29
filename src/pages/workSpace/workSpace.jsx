@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DateRangePicker from "react-bootstrap-daterangepicker";
 import SideBar from "../../components/sidebar/SideBar";
 import Modal from "react-bootstrap/Modal";
@@ -9,12 +9,60 @@ import TableComponent from "../../components/tableComponent/TableComponent";
 import Table from "react-bootstrap/Table";
 
 import "./workSpace.scss";
+import { getAllBrands, getAllCategories, getAllPlatforms } from "../../services/userService";
+import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 export default function WorkSpace() {
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [platforms, setPlatforms] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categoriesData = await getAllCategories();
+        setCategories(categoriesData.data.map(cat => ({
+          value: cat.id,
+          label: cat.name
+        })));
+
+        const brandsData = await getAllBrands();
+        setBrands(brandsData.data.map(brand => ({
+          value: brand.id,
+          label: brand.name
+        })));
+
+        const platformsData = await getAllPlatforms();
+        setPlatforms(platformsData.data.map(platform => ({
+          value: platform.id,
+          label: platform.name
+        })));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleCategoryChange = (selectedOptions) => {
+    setSelectedCategories(selectedOptions);
+  };
+
+  const handleBrandChange = (selectedOptions) => {
+    setSelectedBrands(selectedOptions);
+  };
+
+  const handlePlatformChange = (selectedOptions) => {
+    setSelectedPlatforms(selectedOptions);
+  };
 
   return (
     <>
@@ -52,14 +100,20 @@ export default function WorkSpace() {
                   <small>*All fields are mandatory</small>
                   <div className="row mb-4">
                     <div className="col">
-                      <select className="Select-input" name="category">
+                      {/* <select className="Select-input" name="category">
                         <option value="Select Category">Select Category</option>
                         <option value="Beauty">Beauty</option>
                         <option value="haircare">Hair care</option>
                         <option value="food">Food</option>
                         <option value="baby">Baby</option>
                         <option value="Male grooming">Male Grooming</option>
-                      </select>
+                      </select> */}
+                      <MultiSelectDropdown
+                        options={categories}
+                        selectedValues={selectedCategories}
+                        onChange={handleCategoryChange}
+                        placeholder="Select Categories"
+                      />
                     </div>
                     <div className="col">
                       <select className="Select-input" name="brands">

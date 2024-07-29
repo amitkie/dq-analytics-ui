@@ -24,7 +24,7 @@ export const login = async (data) => {
 
 export const getAllCategories = async () => {
   try {
-    const response = await axios.post("http://localhost:8080/api/v1/master/get-all-brands");
+    const response = await axios.get("http://localhost:8080/api/v1/master/get-all-brands");
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -41,7 +41,7 @@ export const getAllCategories = async () => {
 
 export const getAllBrands = async (data) => {
   try {
-    const response = await axios.post("http://localhost:8080/api/v1/master/get-all-categories", 
+    const response = await axios.get("api/v1/master/get-all-categories", 
     data
     );
 
@@ -60,7 +60,7 @@ export const getAllBrands = async (data) => {
 
 export const getAllCategoriesByBrandId = async (category_id) => {
   try {
-    const response = await axios.post(`http://localhost:8080/api/v1/master/get-all-categories-by-brand-id/${category_id}`);
+    const response = await axios.get(`http://localhost:8080/api/v1/master/get-all-categories-by-brand-id/${category_id}`);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -77,7 +77,7 @@ export const getAllCategoriesByBrandId = async (category_id) => {
 
 export const getAllSections = async () => {
   try {
-    const response = await axios.post("http://localhost:8080/api/v1/master/get-all-sections");
+    const response = await axios.get("http://localhost:8080/api/v1/master/get-all-sections");
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -94,7 +94,7 @@ export const getAllSections = async () => {
 
 export const getAllPlatforms = async () => {
   try {
-    const response = await axios.post("http://localhost:8080/api/v1/master/get-all-platforms");
+    const response = await axios.get("http://localhost:8080/api/v1/master/get-all-platforms");
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -111,7 +111,7 @@ export const getAllPlatforms = async () => {
 
 export const getAllPlatformsBySectionId = async (section_id) => {
   try {
-    const response = await axios.post(`http://localhost:8080/api/v1/master/get-all-platforms-by-section-id/${section_id}`);
+    const response = await axios.get(`http://localhost:8080/api/v1/master/get-all-platforms-by-section-id/${section_id}`);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -128,7 +128,7 @@ export const getAllPlatformsBySectionId = async (section_id) => {
 
 export const getAllMetrics = async () => {
   try {
-    const response = await axios.post("http://localhost:8080/api/v1/master/get-all-metrics");
+    const response = await axios.get("http://localhost:8080/api/v1/master/get-all-metrics");
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -146,7 +146,7 @@ export const getAllMetrics = async () => {
 
 export const getAllMetricsByPlatformId = async (platform_id) => {
   try {
-    const response = await axios.post(`http://localhost:8080/api/v1/master/get-all-metrics-by-platform-id/${platform_id}`);
+    const response = await axios.get(`http://localhost:8080/api/v1/master/get-all-metrics-by-platform-id/${platform_id}`);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -163,7 +163,7 @@ export const getAllMetricsByPlatformId = async (platform_id) => {
 
 export const getAllBenchmarks = async () => {
   try {
-    const response = await axios.post("http://localhost:8080/api/v1/master/get-all-benchmarks");
+    const response = await axios.get("http://localhost:8080/api/v1/master/get-all-benchmarks");
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -180,7 +180,7 @@ export const getAllBenchmarks = async () => {
 
 export const getAllFrequencies = async () => {
   try {
-    const response = await axios.post("http://localhost:8080/api/v1/master/get-all-frequencies");
+    const response = await axios.get("http://localhost:8080/api/v1/master/get-all-frequencies");
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
