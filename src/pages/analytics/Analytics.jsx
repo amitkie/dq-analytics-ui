@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import SideBar from "../../components/sidebar/SideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import TabComponent from "../../components/tabs/TabComponent";
@@ -14,6 +16,7 @@ import { getData } from "../../services/q3";
 import { getAMData } from "../../services/Quarter-actual-metric-data";
 import { getMetricData } from "../../services/metrics";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
+import { getSection } from "../../services/section-platform-metrics";
 
 import "./analytics.scss";
 
@@ -66,6 +69,21 @@ export default function Analytics() {
     } else {
       return <span style={{ color: "#cc3201" }}>{value}</span>;
     }
+  }
+
+  const section = getSection();
+  console.log(section);
+  let colorCode;
+  if (section === "Ecom") {
+    colorCode = "blue-color";
+  } else if (section === "Paid") {
+    colorCode = "purple-color";
+  } else if (section === "Brand Perf") {
+    colorCode = "orange-color";
+  } else if (section === "Social") {
+    colorCode = "green-color";
+  } else {
+    colorCode = "";
   }
 
   const tabs = [
@@ -125,12 +143,12 @@ export default function Analytics() {
                         <div key={`inline-${type}`} className="mb-3">
                           <Form.Check
                             inline
-                            label="Beauty"
+                            label="Category Based"
                             name={"group1" + index}
                             type={type}
                             id={`inline-${type}-1-${index}`}
                           />
-                          <Form.Check
+                          {/* <Form.Check
                             inline
                             label="Foods"
                             name={"group1" + index}
@@ -150,7 +168,7 @@ export default function Analytics() {
                             name={"group4" + index}
                             type={type}
                             id={`inline-${type}-3-${index}`}
-                          />
+                          /> */}
                         </div>
                       ))}
                     </Form>
@@ -209,9 +227,21 @@ export default function Analytics() {
             <tbody>
               {keysToDisplay.map((key, index) => (
                 <tr key={index}>
-                  <td className="col-3">{key}</td>
+                  <td className={`col-3 ${colorCode}`}>{key}</td>
                   {AMData.map((data, i) => (
-                    <td key={i}>{getColor(data[key], [60, 70, 80])}</td>
+                    <td key={i}>
+                      <OverlayTrigger
+                        key="top"
+                        placement="top"
+                        overlay={
+                          <Tooltip id="top">
+                            {getColor(data[key], [60, 70, 80])}
+                          </Tooltip>
+                        }
+                      >
+                        {getColor(data[key], [60, 70, 80])}
+                      </OverlayTrigger>
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -290,7 +320,7 @@ export default function Analytics() {
 
                   <div className="export-btn-container gap-3">
                     <select name="category" className="Select-input">
-                      <option value="Select Metrics">Select Category</option>
+                      <option value="Select Metrics">All </option>
                       <option value="Beauty">Beauty</option>
                       <option value="Foods">Foods</option>
                       <option value="haircare">Hair Care</option>
@@ -316,14 +346,14 @@ export default function Analytics() {
                 </div> */}
                 <div className="filter-options mb-3">
                   <select name="category" className="Select-input">
-                    <option value="Select Metrics">Select Section</option>
+                    <option value="Select Metrics">All </option>
                     <option value="ecom">Ecom</option>
                     <option value="Social">Social</option>
                     <option value="Paid">Paid</option>
                     <option value="brand-perf">Brand Perf</option>
                   </select>
                   <select name="category" className="Select-input">
-                    <option value="Select Metrics">Select platform</option>
+                    <option value="Select Metrics">All </option>
                     <option value="ecom">Amazon</option>
                     <option value="Social">Amazon - Search Campaigns </option>
                     <option value="Organic">Flipkart PLA Campaigns</option>
@@ -345,7 +375,7 @@ export default function Analytics() {
                     <option value="Brand Performance">SEOptimer</option>
                   </select>
                   <select name="category" className="Select-input">
-                    <option value="Select Metrics">Select Metrics</option>
+                    <option value="Select Metrics">All</option>
                     <option value="ecom">Ecom</option>
                     <option value="Social">Social</option>
                     <option value="Organic">Organic</option>

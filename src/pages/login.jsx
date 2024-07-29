@@ -1,17 +1,24 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Await, useNavigate } from "react-router-dom";
 import { ReactComponent as MyLogo } from "../assets/images/dq-logo.svg";
 import KieLogo from "../assets/images/kie-logo.png";
 import InputComponent from "../common/input/input";
 import ButtonComponent from "../common/button/button";
+import { login } from "../services/userService";
+
 import "./login.scss";
 
 export default function Login() {
   let navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const routeChange = () => {
-    let path = "/home";
-    navigate(path);
+  // const routeChange = () => {
+  //   let path = "/home";
+  //   navigate(path);
+  // };
+  const handleLogin = async () => {
+    const userdata = await login({ email, password });
   };
   return (
     <div className="container-fluid">
@@ -28,7 +35,7 @@ export default function Login() {
         </div>
         <div className="col-md-6 col-sm-12">
           <div className="login-form-container">
-            <form className="row">
+            <form className="row" onSubmit={handleLogin}>
               <span className="login-title">Login</span>
               <div className="mb-3">
                 <InputComponent
@@ -36,6 +43,8 @@ export default function Login() {
                   inputLabel={"Email"}
                   inputType={"email"}
                   placeholder={"Enter your Email"}
+                  inputValue={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="mb-3">
@@ -44,6 +53,8 @@ export default function Login() {
                   inputLabel={"Password"}
                   inputType={"password"}
                   placeholder={"Enter your Password"}
+                  inputValue={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="d-flex flex-row justify-content-between mb-3">
@@ -66,7 +77,6 @@ export default function Login() {
               <ButtonComponent
                 btnClass={"btn-primary w-100"}
                 btnName={"Login"}
-                onClick={routeChange}
               />
               <div className="d-flex">
                 <span className="orOption">Or</span>

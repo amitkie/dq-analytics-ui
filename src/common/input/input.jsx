@@ -1,7 +1,15 @@
 import React from "react";
 
 export default function input(props) {
-  const { id, inputLabel, inputType, placeholder, containerClass } = props;
+  const {
+    id,
+    inputLabel,
+    inputType,
+    placeholder,
+    containerClass,
+    inputValue,
+    onChange,
+  } = props;
   return (
     <div className={containerClass}>
       <label htmlFor={id} className="form-label">
@@ -12,6 +20,8 @@ export default function input(props) {
         className="form-control"
         id={id}
         placeholder={placeholder}
+        value={inputValue}
+        onChange={onChange}
       />
     </div>
   );

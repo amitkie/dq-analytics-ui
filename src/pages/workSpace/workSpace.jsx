@@ -114,7 +114,7 @@ export default function WorkSpace() {
                       </DateRangePicker> */}
                     </div>
                   </div>
-                  <div className="row mb-4">
+                  {/* <div className="row mb-4">
                     <div className="col">
                       <select className="Select-input" name="benchmarks">
                         <option value="Select benchmarks">
@@ -127,7 +127,7 @@ export default function WorkSpace() {
                         <option value="90above">90 and above</option>
                       </select>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </Modal.Body>
               <Modal.Footer className="d-flex justify-content-between">

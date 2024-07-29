@@ -72,7 +72,7 @@ const Home = () => {
       <div className="d-block px-4 mt-4">
         <div className="row">
           <div className="col-md-6 col-sm-12">
-            <div className="home-desc mb-4">
+            <div className="home-desc mb-5">
               <h2 className="page-title">DQ Analytics</h2>
               <p className="mb-4">Good Morning, User</p>
               {/* <p>
@@ -100,7 +100,7 @@ const Home = () => {
                 manual
               </p> */}
             </div>
-            <div className="recent-activity">
+            <div className="recent-activity mt-5 pt-5">
               <TabComponent tabs={tabs} className="home-tabs" />
             </div>
           </div>

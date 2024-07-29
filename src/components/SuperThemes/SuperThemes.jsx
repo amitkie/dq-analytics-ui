@@ -122,7 +122,7 @@ function SuperThemes() {
                       type="email"
                       class="form-control"
                       id="exampleFormControlInput1"
-                      placeholder="name@example.com"
+                      placeholder="CTR, ACOS, Purchases etc"
                     />
                   </div>
                   <div class="theme-content">
@@ -137,7 +137,7 @@ function SuperThemes() {
             <div className="col-4">
               <div className="create-theme">
                 <fieldset>
-                  <legend>Create Super Theme Group</legend>
+                  <legend>Create Metric Group</legend>
                   <div class="theme-content">
                     <label for="exampleFormControlInput1" class="form-label">
                       Select Metrics/Group from list
@@ -183,7 +183,7 @@ function SuperThemes() {
                       type="email"
                       class="form-control"
                       id="exampleFormControlInput1"
-                      placeholder="name@example.com"
+                      placeholder="CTR, ACOS, Purchases etc"
                     />
                   </div>
                   <div class="theme-content">
@@ -233,6 +233,16 @@ function SuperThemes() {
                     <h4>5</h4>
                   </div>
                 </fieldset>
+              </div>
+            </div>
+          </div>
+          <div className="row g-0">
+            <div className="col-12">
+              <div className="d-flex align-items-center justify-content-center mt-5">
+                <ButtonComponent
+                  btnClass={"btn-primary w-25"}
+                  btnName={"Save"}
+                />
               </div>
             </div>
           </div>
