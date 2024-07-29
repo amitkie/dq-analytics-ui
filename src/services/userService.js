@@ -22,10 +22,6 @@ export const login = async (data) => {
   }
 };
 
-
-// router.get('/get-all-benchmarks', getAllBenchmarkController);
-// router.get('/get-all-frequencies', getAllFrequencyController);
-
 export const getAllCategories = async () => {
   try {
     const response = await axios.post("http://localhost:8080/api/v1/master/get-all-brands");
