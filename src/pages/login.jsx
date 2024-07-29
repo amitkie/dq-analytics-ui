@@ -13,23 +13,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // const routeChange = () => {
-  //   let path = "/home";
-  //   navigate(path);
-  // };
   const handleLogin = async (e) => {
     const loginRequest = {
-      email:email,
-      password:password
-    }
+      email: email,
+      password: password,
+    };
     try {
       e.preventDefault();
       const userdata = await login(loginRequest);
-      navigate('home');
-      
-    } catch (error) {
-      
-    }
+      navigate("home");
+    } catch (error) {}
   };
   return (
     <div className="container-fluid">

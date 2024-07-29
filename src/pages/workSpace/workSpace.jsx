@@ -9,16 +9,26 @@ import TableComponent from "../../components/tableComponent/TableComponent";
 import Table from "react-bootstrap/Table";
 
 import "./workSpace.scss";
-import { getAllBrands, getAllCategories, getAllPlatforms } from "../../services/userService";
+import {
+  getAllBrands,
+  getAllCategories,
+  getAllPlatforms,
+  getAllMetrics,
+  getAllFrequencies,
+} from "../../services/userService";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [platforms, setPlatforms] = useState([]);
+  const [metrics, setMetrics] = useState([]);
+  const [frequencies, setFrequencies] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+  const [selectedMetrics, setselectedMetrics] = useState([]);
+  const [selectedFrequencies, setselectedFrequencies] = useState([]);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -28,22 +38,42 @@ export default function WorkSpace() {
     const fetchData = async () => {
       try {
         const categoriesData = await getAllCategories();
-        setCategories(categoriesData.data.map(cat => ({
-          value: cat.id,
-          label: cat.name
-        })));
+        setCategories(
+          categoriesData.data.map((cat) => ({
+            value: cat.id,
+            label: cat.name,
+          }))
+        );
 
         const brandsData = await getAllBrands();
-        setBrands(brandsData.data.map(brand => ({
-          value: brand.id,
-          label: brand.name
-        })));
+        setBrands(
+          brandsData.data.map((brand) => ({
+            value: brand.id,
+            label: brand.name,
+          }))
+        );
 
         const platformsData = await getAllPlatforms();
-        setPlatforms(platformsData.data.map(platform => ({
-          value: platform.id,
-          label: platform.name
-        })));
+        setPlatforms(
+          platformsData.data.map((platform) => ({
+            value: platform.id,
+            label: platform.name,
+          }))
+        );
+        const frequenciesData = await getAllFrequencies();
+        setFrequencies(
+          frequenciesData.data.map((frequencies) => ({
+            value: frequencies.id,
+            label: frequencies.name,
+          }))
+        );
+        const metricsData = await getAllMetrics();
+        setMetrics(
+          metricsData.data.map((metrics) => ({
+            value: metrics.id,
+            label: metrics.name,
+          }))
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -62,6 +92,14 @@ export default function WorkSpace() {
 
   const handlePlatformChange = (selectedOptions) => {
     setSelectedPlatforms(selectedOptions);
+  };
+
+  const handleMetricsChange = (selectedOptions) => {
+    setselectedMetrics(selectedOptions);
+  };
+
+  const handleFrequenciesChange = (selectedOptions) => {
+    setselectedFrequencies(selectedOptions);
   };
 
   return (
@@ -116,47 +154,38 @@ export default function WorkSpace() {
                       />
                     </div>
                     <div className="col">
-                      <select className="Select-input" name="brands">
-                        <option value="Select Brands">Select Brands</option>
-                        <option value="Himalaya">Himalaya</option>
-                        <option value="Palmolive">Palmolive</option>
-                        <option value="Lux">Lux</option>
-                        <option value="Parachute">Parachute</option>
-                        <option value="Pears">Pears</option>
-                      </select>
+                      <MultiSelectDropdown
+                        options={brands}
+                        selectedValues={selectedBrands}
+                        onChange={handleBrandChange}
+                        placeholder="Select Brands"
+                      />
                     </div>
                     <div className="col">
-                      <select className="Select-input" name="platform">
-                        <option value="Select Platform/Sectional wise">
-                          Select Platform/Sectional wise
-                        </option>
-                        <option value="Social">Social</option>
-                        <option value="Ecom">Ecom</option>
-                        <option value="Paid">Paid</option>
-                        <option value="Brand Perf">Brand Perf</option>
-                      </select>
+                      <MultiSelectDropdown
+                        options={platforms}
+                        selectedValues={selectedPlatforms}
+                        onChange={handlePlatformChange}
+                        placeholder="Select Platforms"
+                      />
                     </div>
                   </div>
                   <div className="row mb-4">
                     <div className="col">
-                      <select className="Select-input" name="metrics">
-                        <option value="Select metrics">Select Metrics</option>
-                        <option value="Beauty">Beauty</option>
-                        <option value="haircare">Hair care</option>
-                        <option value="food">Food</option>
-                        <option value="baby">Baby</option>
-                        <option value="Male grooming">Male Grooming</option>
-                      </select>
+                      <MultiSelectDropdown
+                        options={metrics}
+                        selectedValues={selectedMetrics}
+                        onChange={handleMetricsChange}
+                        placeholder="Select Metrics"
+                      />
                     </div>
                     <div className="col">
-                      <select className="Select-input" name="frequency">
-                        <option value="Select frequency">
-                          Select Frequency
-                        </option>
-                        <option value="Monthly">Monthly</option>
-                        <option value="Quarterly">Quarterly</option>
-                        <option value="Annually">Annually</option>
-                      </select>
+                      <MultiSelectDropdown
+                        options={frequencies}
+                        selectedValues={selectedFrequencies}
+                        onChange={handleFrequenciesChange}
+                        placeholder="Select Categories"
+                      />
                     </div>
                     <div className="col">
                       <span className="daterange">Date Range</span>

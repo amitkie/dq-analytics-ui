@@ -105,6 +105,20 @@ export default function Analytics() {
       label: "Tabular Summary",
       content: (
         <div>
+          <div className="filter-option">
+            <select name="category" className="Select-input">
+              <option value="beauty">Beauty</option>
+              <option value="haircare">Hair care</option>
+              <option value="baby">Baby</option>
+              <option value="mansGrooming">Male Grooming</option>
+            </select>
+            <select name="Brand" className="Select-input">
+              <option value="beauty">Himalaya</option>
+              <option value="haircare">Lux</option>
+              <option value="baby">Palmolive</option>
+              <option value="mansGrooming">Parachute</option>
+            </select>
+          </div>
           <TableComponent data={data} columns={columns} />
           <div className="pagination-container">
             <PaginationComponent />
