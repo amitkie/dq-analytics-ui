@@ -17,8 +17,19 @@ export default function Login() {
   //   let path = "/home";
   //   navigate(path);
   // };
-  const handleLogin = async () => {
-    const userdata = await login({ email, password });
+  const handleLogin = async (e) => {
+    const loginRequest = {
+      email:email,
+      password:password
+    }
+    try {
+      e.preventDefault();
+      const userdata = await login(loginRequest);
+      navigate('home');
+      
+    } catch (error) {
+      
+    }
   };
   return (
     <div className="container-fluid">
@@ -35,7 +46,7 @@ export default function Login() {
         </div>
         <div className="col-md-6 col-sm-12">
           <div className="login-form-container">
-            <form className="row" onSubmit={handleLogin}>
+            <form className="row">
               <span className="login-title">Login</span>
               <div className="mb-3">
                 <InputComponent
@@ -77,6 +88,7 @@ export default function Login() {
               <ButtonComponent
                 btnClass={"btn-primary w-100"}
                 btnName={"Login"}
+                onClick={handleLogin}
               />
               <div className="d-flex">
                 <span className="orOption">Or</span>
