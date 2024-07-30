@@ -45,6 +45,25 @@ input[type="checkbox"] {
   width: 18px;
   height: 18px;
 }
+.success-color {
+  background-color: $text-success;
+  color: $white;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+.warning-color {
+  background-color: $text-warning;
+  color: $white;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+.danger-color {
+  background-color: $text-danger;
+  color: $white;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
 // Bootstrap reset styles
 .form-control:focus {
   border-color: #9fa7b7;

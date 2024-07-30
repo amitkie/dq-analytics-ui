@@ -70,8 +70,12 @@
 }
 .score-details {
   display: flex;
+  align-items: baseline;
   flex-direction: column;
   justify-content: flex-start;
+  position: relative;
+  width: calc(100% - 50px);
+  padding: 0.675rem;
 }
 .brand-title {
   @include secondaryFontBold();
@@ -84,6 +88,8 @@
   font-size: 0.875rem;
   color: rgba($color: #333333, $alpha: 0.6);
   line-height: 1;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
 }
 .tab-container {
   @include boxWithShadow();
@@ -119,12 +125,6 @@
     font-size: 1.5rem;
   }
 }
-.score-details {
-  display: flex;
-  justify-content: flex-start;
-  align-items: baseline;
-  padding: 1rem;
-}
 .score-name {
   display: flex;
   flex-direction: column;
@@ -158,4 +158,22 @@
     line-height: 1.25;
     padding-left: 0.25rem;
   }
+}
+.percentile-score {
+  @include secondaryFontBold();
+  color: $primary-color;
+  font-size: 1rem;
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.score-diff {
+  @include secondaryFont();
+  display: flex;
+  position: absolute;
+  bottom: -4px;
+  right: 0;
+  align-items: center;
+  gap: 4px;
 }

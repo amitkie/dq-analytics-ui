@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SideBar from "../../components/sidebar/SideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import Form from "react-bootstrap/Form";
@@ -12,12 +12,57 @@ import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import BubbleChart from "../../common/bubbleCharts/BubbleChart";
 import { getData } from "../../services/q3";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
+import {
+  getAllBrands,
+  getAllCategories,
+  getAllPlatforms,
+  getAllMetrics,
+  getAllFrequencies,
+} from "../../services/userService";
+import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./Insights.scss";
 
 export default function Analytics() {
   const data = getData();
   const normalizedData = getNormalizedData();
+  const [category, setCategory] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [brand, setBrand] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categoriesData = await getAllCategories();
+        setCategory(
+          categoriesData.data.map((cat) => ({
+            value: cat.id,
+            label: cat.name,
+          }))
+        );
+
+        const brandsData = await getAllBrands();
+        setBrand(
+          brandsData.data.map((brand) => ({
+            value: brand.id,
+            label: brand.name,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleCategoryChanges = (selectedOptions) => {
+    setSelectedCategory(selectedOptions);
+  };
+
+  const handleBrandChanges = (selectedOptions) => {
+    setSelectedBrand(selectedOptions);
+  };
 
   const columns = [
     {
@@ -105,19 +150,19 @@ export default function Analytics() {
       label: "Tabular Summary",
       content: (
         <div>
-          <div className="filter-option">
-            <select name="category" className="Select-input">
-              <option value="beauty">Beauty</option>
-              <option value="haircare">Hair care</option>
-              <option value="baby">Baby</option>
-              <option value="mansGrooming">Male Grooming</option>
-            </select>
-            <select name="Brand" className="Select-input">
-              <option value="beauty">Himalaya</option>
-              <option value="haircare">Lux</option>
-              <option value="baby">Palmolive</option>
-              <option value="mansGrooming">Parachute</option>
-            </select>
+          <div className="filter-option d-flex mb-2 gap-3 justify-content-end">
+            <MultiSelectDropdown
+              options={category}
+              selectedValues={selectedCategory}
+              onChange={handleCategoryChanges}
+              placeholder="Select Categories"
+            />
+            <MultiSelectDropdown
+              options={brand}
+              selectedValues={selectedBrand}
+              onChange={handleBrandChanges}
+              placeholder="Select Categories"
+            />
           </div>
           <TableComponent data={data} columns={columns} />
           <div className="pagination-container">
@@ -199,11 +244,11 @@ export default function Analytics() {
             </div>
             <div className="row">
               <div className="col-12">
-                <div className="export-btn">
+                <div className="export-btn justify-content-end">
                   <ButtonComponent
                     disabled
                     btnClass={"btn-primary export-excel-btn"}
-                    btnName={"Export as Excel"}
+                    btnName={"Download"}
                   />
                 </div>
                 <TabComponent tabs={tabs} className="insights-tabs" />

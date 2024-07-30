@@ -1,6 +1,11 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import { IoIosTrendingUp } from "react-icons/io";
+import { IoIosTrendingDown } from "react-icons/io";
+
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import SideBar from "../../../components/sidebar/SideBar";
 import TabComponent from "../../../components/tabs/TabComponent";
 import ButtonComponent from "../../../common/button/button";
@@ -162,6 +167,17 @@ export default function HealthCardOverview() {
       ),
     },
   ];
+  function getColorScore(value, thresholds) {
+    if (typeof value === "string") {
+      return <span style={{ color: "#252627" }}>{value}</span>;
+    } else if (value > thresholds) {
+      return <span style={{ color: "#339900" }}>{value}</span>;
+    } else if (value < thresholds) {
+      return <span style={{ color: "#cc3201" }}>{value}</span>;
+    } else {
+      return <span style={{ color: "#252627" }}>{value}</span>;
+    }
+  }
 
   return (
     <>
@@ -223,8 +239,20 @@ export default function HealthCardOverview() {
                     <MdBubbleChart />
                   </div>
                   <div className="score-details">
-                    <div className="brand-title">59.2</div>
+                    <div className="brand-title">
+                      {getColorScore(59.2, [70.3])}
+                    </div>
                     <span className="brand-subtitle">DQ Score</span>
+                    <OverlayTrigger
+                      key="top"
+                      placement="top"
+                      overlay={<Tooltip id="top">Percentile Value</Tooltip>}
+                    >
+                      <div className="percentile-score">70.3</div>
+                    </OverlayTrigger>
+                    <div className="score-diff danger-color">
+                      <IoIosTrendingDown /> - 2.3
+                    </div>
                   </div>
                 </div>
                 <div className="score-list">
@@ -232,8 +260,20 @@ export default function HealthCardOverview() {
                     <MdOutlineStackedLineChart />
                   </div>
                   <div className="score-details">
-                    <div className="brand-title">50.2</div>
+                    <div className="brand-title">
+                      {getColorScore(50.2, [40.0])}
+                    </div>
                     <span className="brand-subtitle">Ecom DQ Score</span>
+                    <OverlayTrigger
+                      key="top"
+                      placement="top"
+                      overlay={<Tooltip id="top">Percentile Value</Tooltip>}
+                    >
+                      <div className="percentile-score">40.0</div>
+                    </OverlayTrigger>
+                    <div className="score-diff success-color">
+                      <IoIosTrendingUp /> + 4.3
+                    </div>
                   </div>
                 </div>
                 <div className="score-list">
@@ -241,8 +281,20 @@ export default function HealthCardOverview() {
                     <MdOutlineShowChart />
                   </div>
                   <div className="score-details">
-                    <div className="brand-title">50.7</div>
+                    <div className="brand-title">
+                      {getColorScore(50.7, [60.5])}
+                    </div>
                     <span className="brand-subtitle">Social DQ Score</span>
+                    <OverlayTrigger
+                      key="top"
+                      placement="top"
+                      overlay={<Tooltip id="top">Percentile Value</Tooltip>}
+                    >
+                      <div className="percentile-score">75.3</div>
+                    </OverlayTrigger>
+                    <div className="score-diff success-color">
+                      <IoIosTrendingUp /> + 2.3
+                    </div>
                   </div>
                 </div>
                 <div className="score-list">
@@ -250,8 +302,21 @@ export default function HealthCardOverview() {
                     <MdOutlineMultilineChart />
                   </div>
                   <div className="score-details">
-                    <div className="brand-title">55.4</div>
+                    <div className="brand-title">
+                      {" "}
+                      {getColorScore(55.4, [50])}
+                    </div>
                     <span className="brand-subtitle">Paid DQ Score</span>
+                    <OverlayTrigger
+                      key="top"
+                      placement="top"
+                      overlay={<Tooltip id="top">Percentile Value</Tooltip>}
+                    >
+                      <div className="percentile-score">50.0</div>
+                    </OverlayTrigger>
+                    <div className="score-diff warning-color">
+                      <IoIosTrendingUp /> + 0.3
+                    </div>
                   </div>
                 </div>
                 <div className="score-list">
@@ -259,8 +324,20 @@ export default function HealthCardOverview() {
                     <GiMultipleTargets />
                   </div>
                   <div className="score-details">
-                    <div className="brand-title">55.4</div>
+                    <div className="brand-title">
+                      {getColorScore(55.4, [50])}
+                    </div>
                     <span className="brand-subtitle">Brand Perf DQ Score</span>
+                    <OverlayTrigger
+                      key="top"
+                      placement="top"
+                      overlay={<Tooltip id="top">Percentile Value</Tooltip>}
+                    >
+                      <div className="percentile-score">52.4</div>
+                    </OverlayTrigger>
+                    <div className="score-diff danger-color">
+                      <IoIosTrendingDown /> - 1.3
+                    </div>
                   </div>
                 </div>
               </div>

@@ -7,8 +7,6 @@ import { AiOutlinePlus } from "react-icons/ai";
 import InputComponent from "../../common/input/input";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import Table from "react-bootstrap/Table";
-
-import "./workSpace.scss";
 import {
   getAllBrands,
   getAllCategories,
@@ -17,6 +15,8 @@ import {
   getAllFrequencies,
 } from "../../services/userService";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
+
+import "./workSpace.scss";
 
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
