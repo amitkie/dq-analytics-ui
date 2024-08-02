@@ -13,6 +13,8 @@ import {
   getAllPlatforms,
   getAllMetrics,
   getAllFrequencies,
+  getAllCategoriesByBrandIds,
+  getAllMetricsByPlatformId
 } from "../../services/userService";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
@@ -29,6 +31,8 @@ export default function WorkSpace() {
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [selectedMetrics, setselectedMetrics] = useState([]);
   const [selectedFrequencies, setselectedFrequencies] = useState([]);
+  const [isBrandsDisabled, setIsBrandsDisabled] = useState(true);
+  const [isMetrcsDisabled, setIsMetrcsDisabled] = useState(true);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -82,16 +86,53 @@ export default function WorkSpace() {
     fetchData();
   }, []);
 
-  const handleCategoryChange = (selectedOptions) => {
+  // const handleCategoryChange = (selectedOptions) => {
+  //   console.log(selectedOptions);
+  //   setSelectedCategories(selectedOptions);
+  // };
+
+  const handleCategoryChange = async (selectedOptions) => {
     setSelectedCategories(selectedOptions);
+    setIsBrandsDisabled(selectedOptions.length === 0);
+
+    if (selectedOptions.length > 0) {
+      try {
+        const categoryIds = selectedOptions.map((option) => option.value);
+        const brandsData = await getAllCategoriesByBrandIds(categoryIds);
+        setBrands(
+          brandsData.data.map((brand) => ({
+            value: brand.id,
+            label: brand.name,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    }
   };
 
   const handleBrandChange = (selectedOptions) => {
     setSelectedBrands(selectedOptions);
   };
 
-  const handlePlatformChange = (selectedOptions) => {
+  const handlePlatformChange = async (selectedOptions) => {
     setSelectedPlatforms(selectedOptions);
+    setIsMetrcsDisabled(selectedOptions.length === 0);
+
+    if(selectedOptions.length > 0){
+      try {
+        const platformIds = selectedOptions.map((option) => option.value);
+        const metricsData = await getAllMetricsByPlatformId(platformIds);
+        setMetrics(
+          metricsData.data.map((platform) => ({
+            value : platform.id,
+            label : platform.name
+          }))
+        )
+      } catch (error) {
+        
+      }
+    }
   };
 
   const handleMetricsChange = (selectedOptions) => {

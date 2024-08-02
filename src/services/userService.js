@@ -62,10 +62,10 @@ export const getAllBrands = async (data) => {
   }
 };
 
-export const getAllCategoriesByBrandId = async (category_id) => {
+export const getAllCategoriesByBrandIds = async (category_ids) => {
   try {
-    const response = await axios.get(
-      `http://localhost:8080/api/v1/master/get-all-categories-by-brand-id/${category_id}`
+    const response = await axios.post(
+      `http://localhost:8080/api/v1/master/get-all-categories-by-brand-ids`, {category_ids}
     );
 
     if (response.status !== 200) {
@@ -157,10 +157,10 @@ export const getAllMetrics = async () => {
   }
 };
 
-export const getAllMetricsByPlatformId = async (platform_id) => {
+export const getAllMetricsByPlatformId = async (platform_ids) => {
   try {
-    const response = await axios.get(
-      `http://localhost:8080/api/v1/master/get-all-metrics-by-platform-id/${platform_id}`
+    const response = await axios.post(
+      `http://localhost:8080/api/v1/master/get-all-metrics-by-platform-ids`, {platform_ids}
     );
 
     if (response.status !== 200) {
