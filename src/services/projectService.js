@@ -19,3 +19,21 @@ export const createProject = async (data) => {
     }
   };
   
+  export const getProjectDetailsByProjectId = async (projectId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/project/get-project/?project_id=${projectId}`
+      );
+  
+      if (response.status !== 200) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const frequenciesData = response.data;
+  
+      return frequenciesData;
+    } catch (error) {
+      console.error("Error in login:", error);
+      throw error;
+    }
+  };
