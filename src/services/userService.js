@@ -213,3 +213,23 @@ export const getAllFrequencies = async () => {
     throw error;
   }
 };
+
+export const getUserAndPaymentInfo = async (id) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/get-user-info",
+      {
+        userId: id,
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error in getting user info:", error);
+    throw error;
+  }
+};
