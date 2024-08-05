@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
@@ -19,8 +19,11 @@ import { getNormalizedData } from "../../services/quarter-metrics-normalised-dat
 import { getSection } from "../../services/section-platform-metrics";
 
 import "./analytics.scss";
+import { getProjectDetailsByProjectId } from "../../services/projectService";
 
 export default function Analytics() {
+  const [projectId, setProjectId] = useState(1);
+  const [projectDetails, setProjectDetails] = useState(null);
   const data = getData();
   const AMData = getAMData();
   const metricData = getMetricData();
@@ -30,6 +33,7 @@ export default function Analytics() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  
 
   const columns = [
     {
@@ -297,6 +301,22 @@ export default function Analytics() {
       ),
     },
   ];
+
+  useEffect(() => {
+    async function fetchProjectDetails() {
+      // setLoading(true);
+      try {
+        const response = await getProjectDetailsByProjectId(projectId);
+        setProjectDetails(response.data);
+      } catch (error) {
+        // setError(error.message);
+      } finally {
+        // setLoading(false);
+      }
+    }
+
+    fetchProjectDetails();
+  }, [projectId]);
 
   return (
     <>
