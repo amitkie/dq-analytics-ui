@@ -15,7 +15,7 @@ export default function Header() {
   const handleLogout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    dispatch(logout)
+    dispatch(logout())
     navigate("/")
   }
   return (
