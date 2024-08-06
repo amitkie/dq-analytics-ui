@@ -19,8 +19,16 @@ import AboutIcon from "../../assets/images/aboutTool-nav.png";
 
 import "./home.scss";
 import WorkSpace from "../workSpace/workSpace";
+import { useSelector } from "react-redux";
 
 const Home = () => {
+  const { projectInfo } = useSelector((state) => state.user);
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   useEffect(() => {
     const items = document.querySelectorAll(".circle-menu");
 
@@ -40,10 +48,13 @@ const Home = () => {
     {
       label: "Recent Activity",
       content: (
-        <div>
-          <p>Last activity on May 22, 2024</p>
-          <p>Project Name: DQ Files_May_24-Q1</p>
-        </div>
+        <div className="user-menu">
+        {projectInfo?.project?.map((item) => (
+          <div key={item.id} className="user-details">
+            <p>Last activity on {formatDate(item.updatedAt)}</p>
+            <p>Project Name: {item.project_name}</p>
+          </div>
+        ))}</div>
       ),
     },
     {

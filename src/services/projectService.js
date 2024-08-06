@@ -37,10 +37,10 @@ export const createProject = async (data) => {
       throw error;
     }
   };
-  export const getProjectDetailsByUserId = async (userId) => {
+  export const getProjectDetailsByUserId = async (userId) => { // This APi will give the project lists
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/project/get-project/?user_id=${userId}`
+        `http://localhost:8080/api/v1/project/get-project-by-user/?user_id=${userId}`
       );
   
       if (response.status !== 200) {
