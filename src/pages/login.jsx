@@ -22,8 +22,8 @@ export default function Login() {
     };
     try {
       e.preventDefault();
-      // const userdata = await login(loginRequest);
-      dispatch(loginRequest(loginRequest))
+      // const userdata = await login(loginRequestData);
+      dispatch(loginRequest({email, password}))
       navigate("home");
     } catch (error) {}
   };

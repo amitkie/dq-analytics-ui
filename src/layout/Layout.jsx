@@ -3,7 +3,7 @@ import HeaderComponent from "./header/header";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserAndPaymentInfo } from "../services/userService";
-import { getUserInfoRequest } from "../features/user/userSlice";
+import { getProjectInfoRequest, getUserInfoRequest } from "../features/user/userSlice";
 
 const AppLayout = ({ children }) => {
   const navigate = useNavigate();
@@ -12,9 +12,12 @@ const AppLayout = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect( () => {
-   dispatch(getUserInfoRequest(token))
+    if(token){
+      dispatch(getUserInfoRequest(token));
+      dispatch(getProjectInfoRequest(token));
+    }
   //  dispatch(user)
-  }, []);
+  }, [token]);
 
 
 
