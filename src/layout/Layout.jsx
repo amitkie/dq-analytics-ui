@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import HeaderComponent from "./header/header";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserAndPaymentInfo } from "../services/userService";
+import { getUserInfoRequest } from "../features/user/userSlice";
 
 const AppLayout = ({ children }) => {
   const navigate = useNavigate();
+
+  const { token } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect( () => {
+   dispatch(getUserInfoRequest(token))
+  //  dispatch(user)
+  }, []);
+
+
 
   return (
     <>

@@ -7,20 +7,23 @@ import ButtonComponent from "../common/button/button";
 import { login } from "../services/userService";
 
 import "./login.scss";
+import { useDispatch } from "react-redux";
+import { loginRequest } from "../features/user/userSlice";
 
 export default function Login() {
   let navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const dispatch = useDispatch();
   const handleLogin = async (e) => {
-    const loginRequest = {
+    const loginRequestData = {
       email: email,
       password: password,
     };
     try {
       e.preventDefault();
-      const userdata = await login(loginRequest);
+      // const userdata = await login(loginRequest);
+      dispatch(loginRequest(loginRequest))
       navigate("home");
     } catch (error) {}
   };

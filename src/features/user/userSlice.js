@@ -1,39 +1,52 @@
-// src/features/counterSlice.js
-
+// src/features/user/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+const token = JSON.parse(localStorage.getItem('userInfo'));
+const initialState = {
+  token: token,
+  userInfo: {},
+  loading: false,
+  error: null,
+};
 
-const userData = sessionStorage.getItem("userInfo")
-  ? JSON.parse(sessionStorage.getItem("userInfo"))
-  : {};
-
-export const userSlice = createSlice({
+const userSlice = createSlice({
   name: "user",
-  initialState: {
-    loading: true,
-    userInfo: userData,
-  },
+  initialState,
   reducers: {
-    getUserDataStart(state) {
+    loginRequest(state) {
       state.loading = true;
+      state.error = null;
     },
-    getUserDataSuccess(state, action) {
+    loginSuccess(state, action) {
       state.loading = false;
+      state.token = action.payload;
+    },
+    loginFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    logout(state) {
+      state.token = null;
+      state.userInfo = {};
+      state.loading = false;
+      state.error = null;
+
+    },
+    getUserInfoRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    getUserInfoSuccess(state, action) {
+      state.loading = false;
+      state.error = null;
       state.userInfo = action.payload;
     },
-    getUserDataError(state) {
+    getUserInfoFailure(state, action) {
       state.loading = false;
-    },
-    resetUser(state) {
-      state.userInfo = {};
+      state.error = action.payload;
     },
   },
 });
 
-export const {
-  getUserDataStart,
-  getUserDataSuccess,
-  getUserDataError,
-  resetUser,
-} = userSlice.actions;
-
+export const { loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure } =
+  userSlice.actions;
 export default userSlice.reducer;

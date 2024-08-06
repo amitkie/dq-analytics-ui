@@ -28,6 +28,19 @@
   width: 28px;
   height: 28px;
   font-size: 28px;
+  cursor: pointer
+}
+.logout-icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 28px;
+  height: 28px;
+  font-size: 28px;
+  cursor: pointer
+}
+.logout-icon:hover{
+  color: red
 }
 .user-name {
   @include secondaryFontBold();

@@ -5,11 +5,23 @@ import "./assets/fonts/DroidSans-Bold-webfont.ttf";
 import "./assets/fonts/DroidSans-Bold-webfont.woff";
 import "./assets/fonts/DroidSans-webfont.ttf";
 import "./assets/fonts/DroidSans-webfont.woff";
+import { Provider } from 'react-redux';
+import store from './store/store';
+// import DynamicAlert from "./components/DynamicAlert/DynamicAlert"
 
 import "./App.scss";
 
 function App() {
-  return <RouterProvider router={router} />;
+  // return <RouterProvider router={router} />;
+
+  return (
+    <Provider store={store}>
+        {/* <DynamicAlert/> */}
+      <RouterProvider router={router} />
+    </Provider>
+  );
+
+
 }
 
 export default App;
