@@ -5,23 +5,25 @@ import "./assets/fonts/DroidSans-Bold-webfont.ttf";
 import "./assets/fonts/DroidSans-Bold-webfont.woff";
 import "./assets/fonts/DroidSans-webfont.ttf";
 import "./assets/fonts/DroidSans-webfont.woff";
-import { Provider } from 'react-redux';
-import store from './store/store';
-// import DynamicAlert from "./components/DynamicAlert/DynamicAlert"
+import { Provider } from "react-redux";
+import store from "./store/store";
 
+// import DynamicAlert from "./components/DynamicAlert/DynamicAlert";
+
+import "bootstrap-daterangepicker/daterangepicker.css";
 import "./App.scss";
+import MessageAlert from "./components/Alerts/MessageAlert";
 
 function App() {
   // return <RouterProvider router={router} />;
 
   return (
     <Provider store={store}>
-        {/* <DynamicAlert/> */}
+      {/* <DynamicAlert /> */}
+      <MessageAlert />
       <RouterProvider router={router} />
     </Provider>
   );
-
-
 }
 
 export default App;

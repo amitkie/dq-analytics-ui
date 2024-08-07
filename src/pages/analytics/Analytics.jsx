@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
@@ -17,9 +18,9 @@ import { getAMData } from "../../services/Quarter-actual-metric-data";
 import { getMetricData } from "../../services/metrics";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 import { getSection } from "../../services/section-platform-metrics";
-
-import "./analytics.scss";
 import { getProjectDetailsByProjectId } from "../../services/projectService";
+import { createProject } from "../../services/projectService";
+import "./analytics.scss";
 
 export default function Analytics() {
   const [projectId, setProjectId] = useState(1);
@@ -33,7 +34,7 @@ export default function Analytics() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  
+  const { userInfo, projectInfo } = useSelector((state) => state.user);
 
   const columns = [
     {
@@ -110,78 +111,16 @@ export default function Analytics() {
               </tr>
             </thead>
             <tbody>
-              {Object.keys(metricData[0]).map((key, i) => (
-                <tr key={i}>
-                  <td className="col-1">Ecom</td>
-                  <td className="col-1">Ecom</td>
-                  <td className="col-4">{key}</td>
-                  <td className="col-1">{metricData[0].Category}</td>
-                  {console.log("category", metricData[0][key].Category)}
-                  <td className="col-1">
-                    <input
-                      type="text"
-                      className="form-control weights-input col-1"
-                      alt="add Weights"
-                      value="5"
-                      placeholder="Add Weights"
-                    />
-                  </td>
-                  <td className="col-1">
-                    <Form>
-                      {["checkbox"].map((type) => (
-                        <div key={type} className="mb-3">
-                          <Form.Check type={type} id={`check-api-${type}`}>
-                            <Form.Check.Input type={type} />
-                            <Form.Check.Label>Overall</Form.Check.Label>
-                            {/* <Form.Control.Feedback type="valid">
-                              You did it!
-                            </Form.Control.Feedback> */}
-                          </Form.Check>
-                        </div>
-                      ))}
-                    </Form>
-                  </td>
-                  <td className="col-2">
-                    <Form>
-                      {["checkbox"].map((type, index) => (
-                        <div key={`inline-${type}`} className="mb-3">
-                          <Form.Check
-                            inline
-                            label="Category Based"
-                            name={"group1" + index}
-                            type={type}
-                            id={`inline-${type}-1-${index}`}
-                          />
-                          {/* <Form.Check
-                            inline
-                            label="Foods"
-                            name={"group1" + index}
-                            type={type}
-                            id={`inline-${type}-2-${index}`}
-                          />
-                          <Form.Check
-                            inline
-                            label="Male Grooming"
-                            name={"group3" + index}
-                            type={type}
-                            id={`inline-${type}-3-${index}`}
-                          />
-                          <Form.Check
-                            inline
-                            label="Hair Care"
-                            name={"group4" + index}
-                            type={type}
-                            id={`inline-${type}-3-${index}`}
-                          /> */}
-                        </div>
-                      ))}
-                    </Form>
-                  </td>
-                  <td className="col-1">
-                    {typeof metricData[0][key] === "number"
-                      ? metricData[0][key].toFixed(2)
-                      : metricData[0][key]}
-                  </td>
+              {projectInfo?.project?.map((item, ind) => (
+                <tr key={item.id}>
+                  <td>{item?.brand_id}</td>
+                  <td>{item?.category_id}</td>
+                  <td>{item?.metric_id}</td>
+                  <td>{item?.category_id}</td>
+                  <td>{item?.frequency_id}</td>
+                  <td>{item?.updatedAt}</td>
+                  <td></td>
+                  <td>{ind + 1}</td>
                 </tr>
               ))}
             </tbody>

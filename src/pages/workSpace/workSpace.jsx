@@ -154,11 +154,11 @@ export default function WorkSpace() {
       const projectData = {
         project_name: projectName,
         user_id: 1, // Replace with actual user_id
-        metric_id: selectedMetrics.map(option => option.value),
-        brand_id: selectedBrands.map(option => option.value),
-        category_id: selectedCategories.map(option => option.value),
-        frequency_id: selectedFrequencies.map(option => option.value),
-        platform_id: selectedPlatforms.map(option => option.value),
+        metric_id: selectedMetrics.map((option) => option.value),
+        brand_id: selectedBrands.map((option) => option.value),
+        category_id: selectedCategories.map((option) => option.value),
+        frequency_id: selectedFrequencies.map((option) => option.value),
+        platform_id: selectedPlatforms.map((option) => option.value),
       };
       await createProject(projectData);
       setShow(false);
@@ -179,7 +179,11 @@ export default function WorkSpace() {
         <div className="col-11">
           <div className="workspace-container">
             <h2 className="page-title mt-4 ml-3">Workspace</h2>
-            <button type="button" className="create-workspace" onClick={handleShow}>
+            <button
+              type="button"
+              className="create-workspace"
+              onClick={handleShow}
+            >
               <AiOutlinePlus className="create-workspace-icon" /> Create Project
             </button>
             <Modal
@@ -252,8 +256,18 @@ export default function WorkSpace() {
                       />
                     </div>
                     <div className="col">
-                      <span className="daterange">Date Range</span>
-                      {/* Add DateRangePicker component if needed */}
+                      <DateRangePicker
+                        initialSettings={{
+                          startDate: "01/01/2020",
+                          endDate: "01/15/2020",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Select date"
+                        />
+                      </DateRangePicker>
                     </div>
                   </div>
                 </div>
@@ -285,28 +299,16 @@ export default function WorkSpace() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* <tr>
-                    <td>1</td>
-                    <td>Digital Assessment - 1</td>
-                    <td>Beauty</td>
-                    <td>Monthly</td>
-                    <td></td>
-                    <td>22 May, 2024</td>
-                  </tr>
-                  <tr> */}
-                  <tr>
-                    
-                  </tr>
-        {projectInfo?.project?.map((item, ind) => (
-          <tr key={item.id} className="user-details">
-            <td>{ind+1}</td>
-            <td>{item?.project_name}</td>
-            <td>{item?.category_id}</td>
-            <td>{item?.updatedAt}</td>
-            <td>{item?.frequency_id}</td>
-            <td>{item?.updatedAt}</td>
-          </tr>
-        ))}
+                  {projectInfo?.project?.map((item, ind) => (
+                    <tr key={item.id}>
+                      <td>{ind + 1}</td>
+                      <td>{item?.project_name}</td>
+                      <td>{item?.category_id}</td>
+                      <td>{item?.updatedAt}</td>
+                      <td>{item?.frequency_id}</td>
+                      <td>{item?.updatedAt}</td>
+                    </tr>
+                  ))}
                   {/* Add more rows as needed */}
                 </tbody>
               </Table>
