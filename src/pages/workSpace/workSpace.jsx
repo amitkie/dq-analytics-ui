@@ -303,9 +303,9 @@ export default function WorkSpace() {
                     <tr key={item.id}>
                       <td>{ind + 1}</td>
                       <td>{item?.project_name}</td>
-                      <td>{item?.category_id}</td>
+                      <td>{item?.categoryNames?.join(', ')}</td>
                       <td>{item?.updatedAt}</td>
-                      <td>{item?.frequency_id}</td>
+                      <td>{item?.frequencyNames?.join(', ')}</td>
                       <td>{item?.updatedAt}</td>
                     </tr>
                   ))}

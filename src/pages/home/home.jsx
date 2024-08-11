@@ -22,7 +22,7 @@ import WorkSpace from "../workSpace/workSpace";
 import { useSelector } from "react-redux";
 
 const Home = () => {
-  const { projectInfo } = useSelector((state) => state.user);
+  const { userInfo, projectInfo } = useSelector((state) => state.user);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -85,7 +85,7 @@ const Home = () => {
           <div className="col-md-6 col-sm-12">
             <div className="home-desc mb-5">
               <h2 className="page-title">DQ Analytics</h2>
-              <p className="mb-4">Good Morning, User</p>
+              <p className="mb-4">Good Morning, {userInfo?.user?.first_name} {userInfo?.user?.last_name}</p>
               {/* <p>
                 <strong>Workspace: </strong>Create new DQ Sheet , access older
                 DQ Sheet

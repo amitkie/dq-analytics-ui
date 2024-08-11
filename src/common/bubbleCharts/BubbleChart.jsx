@@ -74,7 +74,7 @@ class BubbleChart extends Component {
     };
 
     function calculateTheDiameter(data) {
-      console.log(data / 100);
+      // console.log(data / 100);
       return data / 100;
     }
     const series = [

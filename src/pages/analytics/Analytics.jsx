@@ -61,7 +61,7 @@ export default function Analytics() {
   const keysToDisplay = keys.slice(2);
 
   // console.log("tableData", AMData);
-  console.log("tableMetricData", metricData);
+  // console.log("tableMetricData", metricData);
 
   function getColor(value, thresholds) {
     // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
@@ -77,7 +77,7 @@ export default function Analytics() {
   }
 
   const section = getSection();
-  console.log(section);
+  // console.log(section);
   let colorCode;
   if (section === "Ecom") {
     colorCode = "blue-color";
@@ -111,13 +111,14 @@ export default function Analytics() {
               </tr>
             </thead>
             <tbody>
-              {projectInfo?.project?.map((item, ind) => (
+            
+              {projectDetails?.metrics?.map((item, ind) => (
                 <tr key={item.id}>
-                  <td>{item?.brand_id}</td>
-                  <td>{item?.category_id}</td>
-                  <td>{item?.metric_id}</td>
-                  <td>{item?.category_id}</td>
-                  <td>{item?.frequency_id}</td>
+                  <td>{item?.section?.name}</td>
+                  <td>{item?.platform?.name}</td>
+                  <td>{item?.name}</td>
+                  <td>{item?.categories?.join(', ')}</td>
+                  <td>{item?.frequency?.name}</td>
                   <td>{item?.updatedAt}</td>
                   <td></td>
                   <td>{ind + 1}</td>
@@ -246,7 +247,8 @@ export default function Analytics() {
       // setLoading(true);
       try {
         const response = await getProjectDetailsByProjectId(projectId);
-        setProjectDetails(response.data);
+        setProjectDetails(response?.project);
+        console.log(response?.project?.metrics)
       } catch (error) {
         // setError(error.message);
       } finally {

@@ -22,7 +22,7 @@ const TabComponent = ({ tabs, className, disabled }) => {
         ))}
       </ul>
       <div className="tab-content">{tabs[activeTab].content}</div>
-      {console.log(tabs.content)}
+      {tabs.content}
     </div>
   );
 };
