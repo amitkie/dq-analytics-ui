@@ -19,8 +19,7 @@ function App() {
 
   return (
     <Provider store={store}>
-      {/* <DynamicAlert /> */}
-      <MessageAlert />
+      {/* <MessageAlert /> */}
       <RouterProvider router={router} />
     </Provider>
   );

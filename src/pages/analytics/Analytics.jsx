@@ -23,7 +23,7 @@ import { createProject } from "../../services/projectService";
 import "./analytics.scss";
 
 export default function Analytics() {
-  const [projectId, setProjectId] = useState(1);
+  const [projectId, setProjectId] = useState(12);
   const [projectDetails, setProjectDetails] = useState(null);
   const data = getData();
   const AMData = getAMData();
@@ -34,6 +34,10 @@ export default function Analytics() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [checkStates, setCheckStates] = useState({})
+  const [weights, setWeights] = useState({});
+
+  
   const { userInfo, projectInfo } = useSelector((state) => state.user);
 
   const columns = [
@@ -91,6 +95,57 @@ export default function Analytics() {
     colorCode = "";
   }
 
+
+  const handleCheckboxChange = (metricId, type) => {
+    console.log("metrics",metricId);
+    
+    setCheckStates((prevStates) => ({
+      ...prevStates,
+      [metricId]: {
+        ...prevStates[metricId],
+        [type]: !prevStates[metricId]?.[type],
+      },
+    }));
+  };
+
+  const handleWeightChange = (metricId, value) => {
+    const newWeights = { ...weights, [metricId]: Number(value) };
+    setWeights(newWeights);
+    validateTotalWeights(newWeights);
+  };
+
+  const validateTotalWeights = (newWeights) => {
+    const totalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
+    if (totalWeight > 100) {
+      alert("Total weights exceed 100. Please adjust the values.");
+    }
+  };
+
+
+
+  useEffect(() => {
+    async function fetchProjectDetails() {
+      // setLoading(true);
+      try {
+        const response = await getProjectDetailsByProjectId(projectId);
+        setProjectDetails(response?.project);
+        setCheckStates(
+          response?.project?.metrics?.reduce((acc, item) => {
+            acc[item.id] = { overall: false, categoryBased: false };
+            return acc;
+          }, {}) || {}
+        );
+        console.log(response?.project?.metrics)
+      } catch (error) {
+        // setError(error.message);
+      } finally {
+        // setLoading(false);
+      }
+    }
+
+    fetchProjectDetails();
+  }, [projectId]);
+
   const tabs = [
     {
       label: "Weights and Benchmark",
@@ -113,15 +168,48 @@ export default function Analytics() {
             <tbody>
             
               {projectDetails?.metrics?.map((item, ind) => (
-                <tr key={item.id}>
+                <tr key={item.metric_id}>
                   <td>{item?.section?.name}</td>
                   <td>{item?.platform?.name}</td>
-                  <td>{item?.name}</td>
-                  <td>{item?.categories?.join(', ')}</td>
-                  <td>{item?.frequency?.name}</td>
-                  <td>{item?.updatedAt}</td>
-                  <td></td>
-                  <td>{ind + 1}</td>
+                  <td>{item?.metric_name
+                  }</td>
+                  <td>{projectDetails?.categories?.join(', ')}</td>
+                  {/* <td>{item?.weights}</td> */}
+                  <td>
+                    <input
+                      type="number"
+                      value={item?.weights || ''}
+                      onChange={(e) => handleWeightChange(item.metric_id, e.target.value)}
+                      min="0"
+                      max="100"
+                    />
+                  </td>
+                  <td>
+              <input
+                type="checkbox"
+                checked={checkStates[item.metric_id]?.overall || false}
+                onChange={() => handleCheckboxChange(item.metric_id, 'overall')}
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                checked={checkStates[item.metric_id]?.categoryBased || false}
+                onChange={() => handleCheckboxChange(item.metric_id, 'categoryBased')}
+              />
+            </td>
+            <td>
+            {/* TODO: Build a table to show category in m */}
+                    {checkStates[item.metric_id]?.categoryBased
+                      ? projectDetails?.categories.length > 0
+                        ? projectDetails?.categories.map((category, index) => (
+                            <div key={index}>{category || 0}</div>
+                          ))
+                        : 0
+                      : checkStates[item.metric_id]?.overall
+                      ? 'Overall Value'
+                      : 0}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -157,6 +245,16 @@ export default function Analytics() {
         </div>
       ),
     },
+
+    // TODO: Overall and Category will checkboxes
+    // Either overall checkbox can be clicked or Category
+    // If Overall is checked then one Benchmark value will be visible
+    // If Category is checked then it will be distributed in multiple columns based on category length and will show benchmark values
+    // Benchmark value is not editable
+    // Weights section will have input field.
+
+    // Once we save this data then DQ score will be generated and the other views will be displayed.
+    // Benchmarks value will be dependent on -> Categories -> then selected brands -> then actual Values
     {
       label: "KPI Scores",
       content: (
@@ -241,23 +339,6 @@ export default function Analytics() {
       ),
     },
   ];
-
-  useEffect(() => {
-    async function fetchProjectDetails() {
-      // setLoading(true);
-      try {
-        const response = await getProjectDetailsByProjectId(projectId);
-        setProjectDetails(response?.project);
-        console.log(response?.project?.metrics)
-      } catch (error) {
-        // setError(error.message);
-      } finally {
-        // setLoading(false);
-      }
-    }
-
-    fetchProjectDetails();
-  }, [projectId]);
 
   return (
     <>
