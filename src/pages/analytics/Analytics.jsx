@@ -18,12 +18,12 @@ import { getAMData } from "../../services/Quarter-actual-metric-data";
 import { getMetricData } from "../../services/metrics";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 import { getSection } from "../../services/section-platform-metrics";
-import { getProjectDetailsByProjectId } from "../../services/projectService";
+import { getProjectDetailsByProjectId, getBenchamarkValues } from "../../services/projectService";
 import { createProject } from "../../services/projectService";
 import "./analytics.scss";
 
 export default function Analytics() {
-  const [projectId, setProjectId] = useState(12);
+  const [projectId, setProjectId] = useState(1);
   const [projectDetails, setProjectDetails] = useState(null);
   const data = getData();
   const AMData = getAMData();
@@ -96,16 +96,39 @@ export default function Analytics() {
   }
 
 
-  const handleCheckboxChange = (metricId, type) => {
-    console.log("metrics",metricId);
-    
+  const handleCheckboxChange = async(metric, type) => {
+    console.log("metrics",metric?.metric_id);
+    // const reqPayload = {
+    //   ("Amazon", "Average ratings", "Category Based"),
+    //     ("Amazon - Search Campaigns", "Impressions","Overall"),
+    // }
     setCheckStates((prevStates) => ({
       ...prevStates,
-      [metricId]: {
-        ...prevStates[metricId],
-        [type]: !prevStates[metricId]?.[type],
+      [metric?.metric_id]: {
+        ...prevStates[metric?.metric_id],
+        [type]: !prevStates[metric?.metric_id]?.[type],
       },
     }));
+
+    const analysis_type = type == 'overall' ? 'Overall' : projectDetails?.categories;
+
+    console.log("ascsdvefvrgbetynretynrtyntynrtyn",metric)
+    const reqPayload = {
+      platform:metric?.platform?.name,
+      metric:metric?.metric_name,
+      // brand:projectDetails?.brands,
+      brand:"PureSense",
+      analysis_type:analysis_type,
+      start_date: "2024-01-01",
+      end_date: "2024-12-31"
+    }
+
+    try {
+      const benchmarks = await getBenchamarkValues(reqPayload);
+      console.log("Benchmark values:", benchmarks);
+    } catch (error) {
+      console.error("Error in fetching benchmark values:", error);
+    }
   };
 
   const handleWeightChange = (metricId, value) => {
@@ -124,8 +147,11 @@ export default function Analytics() {
 
 
   useEffect(() => {
+    console.log(projectInfo?.project);
+    
     async function fetchProjectDetails() {
       // setLoading(true);
+      setProjectId(projectInfo?.project[projectInfo?.project?.length - 1].id);
       try {
         const response = await getProjectDetailsByProjectId(projectId);
         setProjectDetails(response?.project);
@@ -179,7 +205,7 @@ export default function Analytics() {
                     <input
                       type="number"
                       value={item?.weights || ''}
-                      onChange={(e) => handleWeightChange(item.metric_id, e.target.value)}
+                      onChange={(e) => handleWeightChange(item, e.target.value)}
                       min="0"
                       max="100"
                     />
@@ -188,14 +214,14 @@ export default function Analytics() {
               <input
                 type="checkbox"
                 checked={checkStates[item.metric_id]?.overall || false}
-                onChange={() => handleCheckboxChange(item.metric_id, 'overall')}
+                onChange={() => handleCheckboxChange(item, 'overall')}
               />
             </td>
             <td>
               <input
                 type="checkbox"
                 checked={checkStates[item.metric_id]?.categoryBased || false}
-                onChange={() => handleCheckboxChange(item.metric_id, 'categoryBased')}
+                onChange={() => handleCheckboxChange(item, 'categoryBased')}
               />
             </td>
             <td>

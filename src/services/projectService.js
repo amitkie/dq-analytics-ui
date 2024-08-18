@@ -55,3 +55,22 @@ export const createProject = async (data) => {
       throw error;
     }
   };
+
+  export const getBenchamarkValues = async(data) =>{
+    try {
+      const response = await axios.post(
+        `https://ff48-2405-201-8026-1009-24fd-4abe-93c2-eb0b.ngrok-free.app/process_metric`,data
+      );
+  
+      if (response.status !== 200) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const frequenciesData = response.data;
+  
+      return frequenciesData;
+    } catch (error) {
+      console.error("Error in fetching benchmark:", error);
+      throw error;
+    }
+  }
