@@ -10,7 +10,7 @@ import SideBar from "../../../components/sidebar/SideBar";
 import TabComponent from "../../../components/tabs/TabComponent";
 import ButtonComponent from "../../../common/button/button";
 import Media from "../../../components/Media/Media";
-import BrandParachute from "../../../assets/images/brand-parachute.png";
+import BrandParachute from "../../../assets/images/lipton.jpeg";
 import { MdBubbleChart } from "react-icons/md";
 import { MdOutlineStackedLineChart } from "react-icons/md";
 import { MdOutlineShowChart } from "react-icons/md";
@@ -230,8 +230,8 @@ export default function HealthCardOverview() {
                     alt="Brand Logo"
                   />
                   <div className="score-details">
-                    <div className="brand-title">Parachute</div>
-                    <span className="brand-subtitle">Advanced body lotion</span>
+                    <div className="brand-title">Lipton</div>
+                    <span className="brand-subtitle">Tea</span>
                   </div>
                 </div>
                 <div className="score-list">
