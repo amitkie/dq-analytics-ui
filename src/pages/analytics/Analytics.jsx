@@ -116,8 +116,8 @@ export default function Analytics() {
     const reqPayload = {
       platform:metric?.platform?.name,
       metric:metric?.metric_name,
-      // brand:projectDetails?.brands,
-      brand:"PureSense",
+      brand:projectDetails?.brands,
+      // brand:"PureSense",
       analysis_type:analysis_type,
       start_date: "2024-01-01",
       end_date: "2024-12-31"
