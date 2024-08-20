@@ -59,7 +59,7 @@ export const createProject = async (data) => {
   export const getBenchamarkValues = async(data) =>{
     try {
       const response = await axios.post(
-        `https://ff48-2405-201-8026-1009-24fd-4abe-93c2-eb0b.ngrok-free.app/process_metric`,data
+        `https://97bb-2409-40e0-3a-c940-e56a-cf3e-ffe2-1632.ngrok-free.app/process_metric`,data
       );
   
       if (response.status !== 200) {

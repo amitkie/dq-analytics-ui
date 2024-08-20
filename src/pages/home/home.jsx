@@ -51,8 +51,8 @@ const Home = () => {
         <div className="user-menu">
         {projectInfo?.project?.map((item) => (
           <div key={item.id} className="user-details">
-            <p>Last activity on {formatDate(item.updatedAt)}</p>
-            <p>Project Name: {item.project_name}</p>
+            <p>Last activity on: <b>{formatDate(item.updatedAt)}</b></p>
+            <p>Project Name:  <b>{item.project_name}</b></p>
           </div>
         ))}</div>
       ),

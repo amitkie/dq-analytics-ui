@@ -18,7 +18,10 @@ import { getAMData } from "../../services/Quarter-actual-metric-data";
 import { getMetricData } from "../../services/metrics";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 import { getSection } from "../../services/section-platform-metrics";
-import { getProjectDetailsByProjectId, getBenchamarkValues } from "../../services/projectService";
+import {
+  getProjectDetailsByProjectId,
+  getBenchamarkValues,
+} from "../../services/projectService";
 import { createProject } from "../../services/projectService";
 import "./analytics.scss";
 
@@ -34,10 +37,9 @@ export default function Analytics() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [checkStates, setCheckStates] = useState({})
+  const [checkStates, setCheckStates] = useState({});
   const [weights, setWeights] = useState({});
 
-  
   const { userInfo, projectInfo } = useSelector((state) => state.user);
 
   const columns = [
@@ -95,9 +97,8 @@ export default function Analytics() {
     colorCode = "";
   }
 
-
-  const handleCheckboxChange = async(metric, type) => {
-    console.log("metrics",metric?.metric_id);
+  const handleCheckboxChange = async (metric, type) => {
+    console.log("metrics", metric?.metric_id);
     // const reqPayload = {
     //   ("Amazon", "Average ratings", "Category Based"),
     //     ("Amazon - Search Campaigns", "Impressions","Overall"),
@@ -110,18 +111,19 @@ export default function Analytics() {
       },
     }));
 
-    const analysis_type = type == 'overall' ? 'Overall' : projectDetails?.categories;
+    const analysis_type =
+      type == "overall" ? "Overall" : projectDetails?.categories;
 
-    console.log("ascsdvefvrgbetynretynrtyntynrtyn",metric)
+    console.log("ascsdvefvrgbetynretynrtyntynrtyn", metric);
     const reqPayload = {
-      platform:metric?.platform?.name,
-      metric:metric?.metric_name,
-      brand:projectDetails?.brands,
+      platform: metric?.platform?.name,
+      metric: metric?.metric_name,
+      brand: projectDetails?.brands,
       // brand:"PureSense",
-      analysis_type:analysis_type,
+      analysis_type: analysis_type,
       start_date: "2024-01-01",
-      end_date: "2024-12-31"
-    }
+      end_date: "2024-12-31",
+    };
 
     try {
       const benchmarks = await getBenchamarkValues(reqPayload);
@@ -138,22 +140,19 @@ export default function Analytics() {
   };
 
   const validateTotalWeights = (newWeights) => {
-    const totalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
+    const totalWeight = Object.values(newWeights).reduce(
+      (acc, curr) => acc + curr,
+      0
+    );
     if (totalWeight > 100) {
       alert("Total weights exceed 100. Please adjust the values.");
     }
   };
 
-
-
   useEffect(() => {
-    console.log(projectInfo?.project);
-    
-    async function fetchProjectDetails() {
-      // setLoading(true);
-      setProjectId(projectInfo?.project[projectInfo?.project?.length - 1].id);
+    async function fetchProjectDetails(id) {
       try {
-        const response = await getProjectDetailsByProjectId(projectId);
+        const response = await getProjectDetailsByProjectId(id);
         setProjectDetails(response?.project);
         setCheckStates(
           response?.project?.metrics?.reduce((acc, item) => {
@@ -161,16 +160,19 @@ export default function Analytics() {
             return acc;
           }, {}) || {}
         );
-        console.log(response?.project?.metrics)
+        console.log(response?.project?.metrics);
       } catch (error) {
-        // setError(error.message);
-      } finally {
-        // setLoading(false);
+        console.error("Error fetching project details:", error);
       }
     }
 
-    fetchProjectDetails();
-  }, [projectId]);
+    if (projectInfo && projectInfo?.project?.length > 0) {
+      const lastProject =
+        projectInfo?.project[projectInfo?.project?.length - 1];
+      setProjectId(lastProject.id);
+      fetchProjectDetails(lastProject.id);
+    }
+  }, [projectInfo]);
 
   const tabs = [
     {
@@ -192,49 +194,71 @@ export default function Analytics() {
               </tr>
             </thead>
             <tbody>
-            
               {projectDetails?.metrics?.map((item, ind) => (
                 <tr key={item.metric_id}>
                   <td>{item?.section?.name}</td>
                   <td>{item?.platform?.name}</td>
-                  <td>{item?.metric_name
-                  }</td>
-                  <td>{projectDetails?.categories?.join(', ')}</td>
+                  <td>{item?.metric_name}</td>
+                  <td>{projectDetails?.categories?.join(", ")}</td>
                   {/* <td>{item?.weights}</td> */}
                   <td>
                     <input
                       type="number"
-                      value={item?.weights || ''}
+                      value={item?.weights || ""}
                       onChange={(e) => handleWeightChange(item, e.target.value)}
                       min="0"
                       max="100"
                     />
                   </td>
                   <td>
-              <input
-                type="checkbox"
-                checked={checkStates[item.metric_id]?.overall || false}
-                onChange={() => handleCheckboxChange(item, 'overall')}
-              />
-            </td>
-            <td>
-              <input
-                type="checkbox"
-                checked={checkStates[item.metric_id]?.categoryBased || false}
-                onChange={() => handleCheckboxChange(item, 'categoryBased')}
-              />
-            </td>
-            <td>
-            {/* TODO: Build a table to show category in m */}
-                    {checkStates[item.metric_id]?.categoryBased
-                      ? projectDetails?.categories.length > 0
-                        ? projectDetails?.categories.map((category, index) => (
-                            <div key={index}>{category || 0}</div>
-                          ))
-                        : 0
-                      : checkStates[item.metric_id]?.overall
-                      ? 'Overall Value'
-                      : 0}
+                    <input
+                      type="checkbox"
+                      checked={checkStates[item.metric_id]?.overall || false}
+                      onChange={() => handleCheckboxChange(item, "overall")}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={
+                        checkStates[item.metric_id]?.categoryBased || false
+                      }
+                      onChange={() =>
+                        handleCheckboxChange(item, "categoryBased")
+                      }
+                    />
+                  </td>
+                  <td>
+                    {checkStates[item.metric_id]?.categoryBased ? (
+                      <Table responsive striped bordered>
+                        <thead>
+                          <tr>
+                            {projectDetails?.categories.map(
+                              (category, index) => (
+                                <th key={index}>{category}</th>
+                              )
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            {projectDetails?.categories.map(
+                              (category, index) => (
+                                <td key={index}>
+                                  {checkStates[item.metric_id]?.benchmark?.[
+                                    category
+                                  ] || "NA"}
+                                </td>
+                              )
+                            )}
+                          </tr>
+                        </tbody>
+                      </Table>
+                    ) : checkStates[item.metric_id]?.overall ? (
+                      checkStates[item.metric_id]?.benchmark?.Overall || "NA"
+                    ) : (
+                      "NA"
+                    )}
                   </td>
                 </tr>
               ))}
