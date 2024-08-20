@@ -14,19 +14,86 @@ export default function Login() {
   let navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const dispatch = useDispatch();
+  // const handleLogin = async (e) => {
+  //   const loginRequestData = {
+  //     email: email,
+  //     password: password,
+  //   };
+  //   try {
+  //     e.preventDefault();
+  //     // const userdata = await login(loginRequestData);
+  //     dispatch(loginRequest({email, password}))
+  //     navigate("home");
+  //   } catch (error) {}
+  // };
+
   const handleLogin = async (e) => {
-    const loginRequestData = {
-      email: email,
-      password: password,
-    };
+    e.preventDefault();
+
+    // Reset errors
+    setEmailError("");
+    setPasswordError("");
+
+    // Basic validation
+    if (!email) {
+      setEmailError("Email is required.");
+    } else if (!isValidEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+    }
+
+    if (!password) {
+      setPasswordError("Password is required.");
+    }
+
+    // Prevent login if there are errors
+    if (!email || !password || !isValidEmail(email)) {
+      return;
+    }
+
     try {
-      e.preventDefault();
-      // const userdata = await login(loginRequestData);
-      dispatch(loginRequest({email, password}))
+      const loginRequestData = {
+        email: email,
+        password: password,
+      };
+
+      dispatch(loginRequest(loginRequestData));
       navigate("home");
-    } catch (error) {}
+    } catch (error) {
+      // Handle login error
+    }
   };
+
+  // Function to validate email format
+  const isValidEmail = (email) => {
+    // Simple regex for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Handle input changes and clear errors
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (e.target.value) {
+      setEmailError("");
+      if (isValidEmail(e.target.value)) {
+        setEmailError("");
+      } else {
+        setEmailError("Please enter a valid email address.");
+      }
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    if (e.target.value) {
+      setPasswordError("");
+    }
+  };
+
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -51,8 +118,9 @@ export default function Login() {
                   inputType={"email"}
                   placeholder={"Enter your Email"}
                   inputValue={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                 />
+                {emailError && <span className="error-text">{emailError}</span>}
               </div>
               <div className="mb-3">
                 <InputComponent
@@ -61,8 +129,9 @@ export default function Login() {
                   inputType={"password"}
                   placeholder={"Enter your Password"}
                   inputValue={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                 />
+                 {passwordError && <span className="error-text">{passwordError}</span>}
               </div>
               <div className="d-flex flex-row justify-content-between mb-3">
                 <div className="form-check">
