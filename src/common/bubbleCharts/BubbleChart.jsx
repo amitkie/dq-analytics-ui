@@ -80,35 +80,35 @@ class BubbleChart extends Component {
     const series = [
       {
         name: "Himalaya",
-        data: [[69.61166879, 69, calculateTheDiameter(69.61166879)]],
+        data: [[69.61, 69, calculateTheDiameter(69.61)]],
       },
       {
         name: "Lux",
-        data: [[58.72804392, 58, calculateTheDiameter(58.72804392)]],
+        data: [[58.72, 58, calculateTheDiameter(58.72)]],
       },
       {
         name: "Palmolive",
-        data: [[49.34048354, 49, calculateTheDiameter(49.34048354)]],
+        data: [[49.34, 49, calculateTheDiameter(49.34)]],
       },
       {
         name: "Parachute",
-        data: [[50.23659889, 50, calculateTheDiameter(69.61166879)]],
+        data: [[50.23, 50, calculateTheDiameter(69.61)]],
       },
       {
         name: "Pears",
-        data: [[64.6882469, 64, calculateTheDiameter(58.72804392)]],
+        data: [[64.68, 64, calculateTheDiameter(58.72)]],
       },
       {
         name: "Vaseline",
-        data: [[61.17377378, 61, calculateTheDiameter(49.34048354)]],
+        data: [[61.17, 61, calculateTheDiameter(49.34)]],
       },
       {
         name: "69.84681446",
-        data: [[69.61166879, 69, calculateTheDiameter(69.61166879)]],
+        data: [[69.61, 69, calculateTheDiameter(69.61)]],
       },
       {
         name: "Dabur",
-        data: [[69.36505259, 30, calculateTheDiameter(58.72804392)]],
+        data: [[69.36, 30, calculateTheDiameter(58.72)]],
       },
     ];
     return (
