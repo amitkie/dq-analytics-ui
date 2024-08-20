@@ -327,11 +327,11 @@ export default function Analytics() {
                         placement="top"
                         overlay={
                           <Tooltip id="top">
-                            {getColor(data[key], [60, 70, 80])}
+                             {getColor(Number(data[key]).toFixed(2), [60, 70, 80])}
                           </Tooltip>
                         }
                       >
-                        {getColor(data[key], [60, 70, 80])}
+                         {getColor(Number(data[key]).toFixed(2), [60, 70, 80])}
                       </OverlayTrigger>
                     </td>
                   ))}

@@ -22,6 +22,7 @@ import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelec
 import "./workSpace.scss";
 import { createProject } from "../../services/projectService";
 import { useSelector } from "react-redux";
+import { formatDate } from "../../utils/dateFormatter";
 
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
@@ -304,9 +305,9 @@ export default function WorkSpace() {
                       <td>{ind + 1}</td>
                       <td>{item?.project_name}</td>
                       <td>{item?.categoryNames?.join(', ')}</td>
-                      <td>{item?.updatedAt}</td>
+                      <td>{formatDate(item?.updatedAt)}</td>
                       <td>{item?.frequencyNames?.join(', ')}</td>
-                      <td>{item?.updatedAt}</td>
+                      <td>{formatDate(item?.updatedAt)}</td>
                     </tr>
                   ))}
                   {/* Add more rows as needed */}

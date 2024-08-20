@@ -49,18 +49,34 @@ const Home = () => {
       label: "Recent Activity",
       content: (
         <div className="user-menu">
-        {projectInfo?.project?.map((item) => (
-          <div key={item.id} className="user-details">
-            <p>Last activity on: <b>{formatDate(item.updatedAt)}</b></p>
-            <p>Project Name:  <b>{item.project_name}</b></p>
-          </div>
-        ))}</div>
+        {projectInfo?.project?.length > 0 ? (
+          projectInfo.project.map((item) => (
+            <div key={item.id} className="user-details">
+              <p>Last activity on: <b>{formatDate(item.updatedAt)}</b></p>
+              <p>Project Name: <b>{item.project_name}</b></p>
+            </div>
+          ))
+        ) : (
+          <p>No Projects available. Please create one.</p>
+        )}
+      </div>
       ),
     },
     {
       label: "Recommended",
-      content: <div>Recommended content shown here</div>,
-    },
+      content: (
+        <div>
+          { projectInfo.project && projectInfo?.project?.length > 0 ? (
+            <div className="user-details">
+              <p>Last activity on: <b>{formatDate(projectInfo?.project[projectInfo?.project?.length - 1].updatedAt)}</b></p>
+              <p>Project Name: <b>{projectInfo?.project[projectInfo?.project?.length - 1].project_name}</b></p>
+            </div>
+          ) : (
+            <p>No Projects available. Please create one.</p>
+          )}
+        </div>
+      ),
+    }
   ];
   const Link = ({ id, children, className, title, to }) => (
     <OverlayTrigger
