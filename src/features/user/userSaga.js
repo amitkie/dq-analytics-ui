@@ -7,10 +7,11 @@ import { getProjectDetailsByUserId } from '../../services/projectService';
 
 function* handleLogin(action) {
   try {
-    const { email, password } = action?.payload;
+    const { email, password, navigate } = action?.payload;
     const response = yield call(() => login({email, password}));
   
     yield put(loginSuccess(response));
+    navigate("/home")
     // yield put(setAlert({ type: 'success', message: 'Login successful!' }));
   } catch (error) {
     yield put(loginFailure(error.message));

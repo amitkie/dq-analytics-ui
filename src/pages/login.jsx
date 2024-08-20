@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { loginRequest } from "../features/user/userSlice";
 
 export default function Login() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -57,10 +57,10 @@ export default function Login() {
       const loginRequestData = {
         email: email,
         password: password,
+        navigate
       };
 
       dispatch(loginRequest(loginRequestData));
-      navigate("home");
     } catch (error) {
       // Handle login error
     }
