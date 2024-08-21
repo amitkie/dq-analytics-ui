@@ -36,7 +36,7 @@
   -webkit-transition: all 0.5s;
   -o-transition: all 0.5s;
   .menu-icon {
-    font-size: 36px;
+    font-size: 86px;
     color: $white;
   }
   & div {
@@ -96,4 +96,8 @@
 }
 .circle-menu {
   position: absolute;
+}
+.user-activity {
+  display: flex;
+  gap: 1.5rem;
 }

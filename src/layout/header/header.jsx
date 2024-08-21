@@ -1,12 +1,10 @@
 import React from "react";
-import HeaderLogo from "../../assets/images/header-logo.png";
+import HeaderLogo from "../../assets/images/kiesquare-logo-transparent.png";
 import { FaRegCircleUser, FaPowerOff } from "react-icons/fa6";
 import "./header.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../features/user/userSlice";
-
-
 
 export default function Header() {
   const { userInfo } = useSelector((state) => state.user);
@@ -15,9 +13,9 @@ export default function Header() {
   const handleLogout = () => {
     sessionStorage.clear();
     localStorage.clear();
-    dispatch(logout())
-    navigate("/")
-  }
+    dispatch(logout());
+    navigate("/");
+  };
   return (
     <div className="header-container">
       <div className="row">
@@ -32,13 +30,14 @@ export default function Header() {
               <FaRegCircleUser width={28} height={28} />
             </span>
             <div className="user-details">
-              <span className="user-name">{userInfo?.user?.first_name} {userInfo?.user?.last_name}</span>
+              <span className="user-name">
+                {userInfo?.user?.first_name} {userInfo?.user?.last_name}
+              </span>
               <span className="user-email">{userInfo?.user?.email}</span>
             </div>
             <span className="logout-icon" onClick={handleLogout}>
-             <FaPowerOff width={28} height={28} />
+              <FaPowerOff width={28} height={28} />
             </span>
-
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { FaHome } from "react-icons/fa";
+import { IoHomeOutline } from "react-icons/io5";
 import WorkSpaceIcon from "../../assets/images/workspace.png";
 import AnalyticsIcon from "../../assets/images/analytics.png";
 import HealthCardIcon from "../../assets/images/health-card.png";
@@ -15,6 +16,7 @@ import HealthCardIconActive from "../../assets/images/health-cardActive.png";
 import InsightIconActive from "../../assets/images/insightActive.png";
 import SettingsIconActive from "../../assets/images/settingsActive.png";
 import AboutIconActive from "../../assets/images/aboutActive.png";
+import { IoIosHelpCircleOutline } from "react-icons/io";
 
 import "./SideBar.scss";
 
@@ -53,7 +55,7 @@ export default function SideBar() {
           onClick={() => handleMenuActive("home")}
         >
           <Link to={"/home"} title="Home" id="m-1">
-            <FaHome className="sidenav-icon" />
+            <IoHomeOutline className="sidenav-icon" />
           </Link>
         </li>
         <li
@@ -136,6 +138,14 @@ export default function SideBar() {
               className="sidenav-icon-img"
               alt="About Tool"
             />
+          </Link>
+        </li>
+        <li
+          className={`side-nav ${activeMenu === "help" ? "active" : ""}`}
+          onClick={() => handleMenuActive("help")}
+        >
+          <Link to={"/help"} title="Help" id="m-7">
+            <IoIosHelpCircleOutline size={48} color="black" />
           </Link>
         </li>
       </ul>

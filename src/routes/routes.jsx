@@ -12,6 +12,7 @@ import HealthCardOverview from "../pages/healthcard/overview/HealthCardOverview"
 import Settings from "../pages/Settings/Settings";
 import About from "../pages/About/About";
 import SuperThemes from "../components/SuperThemes/SuperThemes";
+import Help from "../components/Help/Help";
 
 const router = createBrowserRouter([
   {
@@ -87,6 +88,14 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <About />
+      </Layout>
+    ),
+  },
+  {
+    path: "/help",
+    element: (
+      <Layout>
+        <Help />
       </Layout>
     ),
   },

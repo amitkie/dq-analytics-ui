@@ -24,11 +24,14 @@
   }
 }
 .sidenav-icon {
-  font-size: 28px;
+  font-size: 36px;
   color: $text-color;
 }
 .sidenav-icon-img {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   color: $text-color;
+}
+.icon-active {
+  color: #d33f38;
 }

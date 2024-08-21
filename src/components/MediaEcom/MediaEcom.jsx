@@ -73,7 +73,7 @@ function MediaEcom() {
                     <p>Spends: </p>
                   </td>
                   <td>
-                    <span className="score-subscores">3570006.89 </span>
+                    <span className="score-subscores">35.89 </span>
                   </td>
                 </tr>
                 <tr>
@@ -81,7 +81,7 @@ function MediaEcom() {
                     <p>Impressions: </p>
                   </td>
                   <td>
-                    <span className="score-subscores">49159000.00</span>
+                    <span className="score-subscores">49.00</span>
                   </td>
                 </tr>
                 <tr>
@@ -97,7 +97,7 @@ function MediaEcom() {
                     <p>Clicks:</p>
                   </td>
                   <td>
-                    <span className="score-subscores"> 161658.00</span>
+                    <span className="score-subscores"> 16.00</span>
                   </td>
                 </tr>
                 <tr>
@@ -129,7 +129,7 @@ function MediaEcom() {
                     <p>Sales:</p>
                   </td>
                   <td>
-                    <span className="score-subscores"> 4730632.39</span>
+                    <span className="score-subscores"> 47.39</span>
                   </td>
                 </tr>
                 <tr>
@@ -154,7 +154,7 @@ function MediaEcom() {
                     <p>Spends: </p>
                   </td>
                   <td>
-                    <span className="score-subscores">3570006.89 </span>
+                    <span className="score-subscores">35.89 </span>
                   </td>
                 </tr>
                 <tr>
@@ -162,7 +162,7 @@ function MediaEcom() {
                     <p>Impressions: </p>
                   </td>
                   <td>
-                    <span className="score-subscores">49159000.00</span>
+                    <span className="score-subscores">49.00</span>
                   </td>
                 </tr>
                 <tr>
@@ -178,7 +178,7 @@ function MediaEcom() {
                     <p>Clicks:</p>
                   </td>
                   <td>
-                    <span className="score-subscores"> 161658.00</span>
+                    <span className="score-subscores"> 16.00</span>
                   </td>
                 </tr>
                 <tr>
@@ -210,7 +210,7 @@ function MediaEcom() {
                     <p>Sales:</p>
                   </td>
                   <td>
-                    <span className="score-subscores"> 4730632.39</span>
+                    <span className="score-subscores"> 47.39</span>
                   </td>
                 </tr>
                 <tr>

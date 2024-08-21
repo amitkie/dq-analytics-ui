@@ -9,7 +9,8 @@ import { useNavigate } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { Link } from "react-router-dom";
-import { IoIosHome } from "react-icons/io";
+// import { IoIosHome } from "react-icons/io";
+import { IoHomeOutline } from "react-icons/io5";
 import WorkSpaceIcon from "../../assets/images/workspace-nav.png";
 import AnalyticsIcon from "../../assets/images/analytics-nav.png";
 import HealthCardIcon from "../../assets/images/health-card-nav.png";
@@ -25,7 +26,7 @@ const Home = () => {
   const { userInfo, projectInfo } = useSelector((state) => state.user);
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
@@ -49,34 +50,54 @@ const Home = () => {
       label: "Recent Activity",
       content: (
         <div className="user-menu">
-        {projectInfo?.project?.length > 0 ? (
-          projectInfo.project.map((item) => (
-            <div key={item.id} className="user-details">
-              <p>Last activity on: <b>{formatDate(item.updatedAt)}</b></p>
-              <p>Project Name: <b>{item.project_name}</b></p>
-            </div>
-          ))
-        ) : (
-          <p>No Projects available. Please create one.</p>
-        )}
-      </div>
+          {projectInfo?.project?.length > 0 ? (
+            projectInfo.project.map((item) => (
+              <div key={item.id} className="user-activity">
+                <p>
+                  Last activity on: <b>{formatDate(item.updatedAt)}</b>
+                </p>
+                <p>
+                  Project Name: <b>{item.project_name}</b>
+                </p>
+              </div>
+            ))
+          ) : (
+            <p>No Projects available. Please create one.</p>
+          )}
+        </div>
       ),
     },
     {
       label: "Recommended",
       content: (
         <div>
-          { projectInfo.project && projectInfo?.project?.length > 0 ? (
-            <div className="user-details">
-              <p>Last activity on: <b>{formatDate(projectInfo?.project[projectInfo?.project?.length - 1].updatedAt)}</b></p>
-              <p>Project Name: <b>{projectInfo?.project[projectInfo?.project?.length - 1].project_name}</b></p>
+          {projectInfo.project && projectInfo?.project?.length > 0 ? (
+            <div className="user-activity">
+              <p>
+                Last activity on:{" "}
+                <b>
+                  {formatDate(
+                    projectInfo?.project[projectInfo?.project?.length - 1]
+                      .updatedAt
+                  )}
+                </b>
+              </p>
+              <p>
+                Project Name:{" "}
+                <b>
+                  {
+                    projectInfo?.project[projectInfo?.project?.length - 1]
+                      .project_name
+                  }
+                </b>
+              </p>
             </div>
           ) : (
             <p>No Projects available. Please create one.</p>
           )}
         </div>
       ),
-    }
+    },
   ];
   const Link = ({ id, children, className, title, to }) => (
     <OverlayTrigger
@@ -101,7 +122,10 @@ const Home = () => {
           <div className="col-md-6 col-sm-12">
             <div className="home-desc mb-5">
               <h2 className="page-title">DQ Analytics</h2>
-              <p className="mb-4">Good Morning, {userInfo?.user?.first_name} {userInfo?.user?.last_name}</p>
+              <p className="mb-4">
+                Good Morning, {userInfo?.user?.first_name}{" "}
+                {userInfo?.user?.last_name}
+              </p>
               {/* <p>
                 <strong>Workspace: </strong>Create new DQ Sheet , access older
                 DQ Sheet
@@ -134,7 +158,7 @@ const Home = () => {
           <div className="col-md-6 col-sm-12">
             <div className="main-nav">
               <div className="menu-home">
-                <IoIosHome className="menu-icon" />
+                <IoHomeOutline className="menu-icon" />
                 <span className="menu-text">Home</span>
               </div>
 
@@ -198,7 +222,7 @@ const Home = () => {
                 <Link
                   to={"/settings"}
                   className="menu-list-nav"
-                  title="update te general user settings, light mode/dark mode"
+                  title="update the general user settings"
                 >
                   <img
                     src={SettingsIcon}

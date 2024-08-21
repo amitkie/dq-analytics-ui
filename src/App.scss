@@ -79,7 +79,7 @@ input[type="checkbox"] {
   line-height: 18px;
 }
 .form-control {
-  border: 1px solid #9fa7b7;
+  border: 1px solid #e0e3e8;
   width: 100%;
   max-width: 358px;
   height: 42px;
@@ -231,6 +231,38 @@ Table thead {
 .orange-color {
   border-left: 3px solid #ff8225;
 }
-.error-text{
+.error-text {
   color: red;
+  font-size: 13px;
+  line-height: 1.2;
+  animation: showErrors 0.5s ease-in-out;
+}
+@keyframes showErrors {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.error-border {
+  border-color: $text-danger;
+  animation: horizontal-shaking 0.35s ease;
+}
+@keyframes horizontal-shaking {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }

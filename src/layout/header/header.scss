@@ -19,8 +19,8 @@
 }
 .user-details {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  flex-direction: column;
+  gap: 0;
 }
 .user-icon {
   display: flex;
@@ -29,7 +29,7 @@
   width: 28px;
   height: 28px;
   font-size: 28px;
-  cursor: pointer
+  cursor: pointer;
 }
 .logout-icon {
   display: flex;
@@ -38,12 +38,15 @@
   width: 28px;
   height: 28px;
   font-size: 28px;
-  cursor: pointer
+  cursor: pointer;
 }
-.logout-icon:hover{
-  color: red
+.logout-icon:hover {
+  color: red;
 }
 .user-name {
   @include secondaryFontBold();
+  font-size: 0.875rem;
+}
+.user-email {
   font-size: 0.875rem;
 }

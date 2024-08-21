@@ -9,6 +9,7 @@ export default function input(props) {
     containerClass,
     inputValue,
     onChange,
+    classNames,
   } = props;
   return (
     <div className={containerClass}>
@@ -17,7 +18,7 @@ export default function input(props) {
       </label>
       <input
         type={inputType}
-        className="form-control"
+        className={`form-control ${classNames}`}
         id={id}
         placeholder={placeholder}
         value={inputValue}

@@ -81,10 +81,19 @@
 }
 .kie-logo {
   position: absolute;
-  bottom: 0px;
+  bottom: 20px;
   left: 50px;
   display: block;
   width: 289px;
-  height: 109px;
+  height: auto;
   border-radius: 4px;
+}
+
+@media (max-width: 1199.98px) {
+  .top-triangle {
+    display: none;
+  }
+  .bottom-triangle {
+    display: none;
+  }
 }

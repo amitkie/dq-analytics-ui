@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Await, useNavigate } from "react-router-dom";
 import { ReactComponent as MyLogo } from "../assets/images/dq-logo.svg";
-import KieLogo from "../assets/images/kie-logo.png";
+import KieLogo from "../assets/images/Kiesquare-white.png";
 import InputComponent from "../common/input/input";
 import ButtonComponent from "../common/button/button";
 import { login } from "../services/userService";
@@ -57,7 +57,7 @@ export default function Login() {
       const loginRequestData = {
         email: email,
         password: password,
-        navigate
+        navigate,
       };
 
       dispatch(loginRequest(loginRequestData));
@@ -93,11 +93,10 @@ export default function Login() {
     }
   };
 
-
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-md-6 col-sm-12">
+        <div className="col-sm-12 col-md-12 col-lg-6 ">
           <div className="login-left">
             <div className="top-triangle"></div>
             <div className="logo">
@@ -107,7 +106,7 @@ export default function Login() {
             <img src={KieLogo} className="kie-logo" alt="KieSquare" />
           </div>
         </div>
-        <div className="col-md-6 col-sm-12">
+        <div className="col-sm-12 col-md-12 col-lg-6 ">
           <div className="login-form-container">
             <form className="row">
               <span className="login-title">Login</span>
@@ -119,7 +118,10 @@ export default function Login() {
                   placeholder={"Enter your Email"}
                   inputValue={email}
                   onChange={handleEmailChange}
+                  tabIndex="0"
+                  classNames={emailError && "error-border"}
                 />
+
                 {emailError && <span className="error-text">{emailError}</span>}
               </div>
               <div className="mb-3">
@@ -130,8 +132,12 @@ export default function Login() {
                   placeholder={"Enter your Password"}
                   inputValue={password}
                   onChange={handlePasswordChange}
+                  tabIndex="1"
+                  classNames={passwordError && "error-border"}
                 />
-                 {passwordError && <span className="error-text">{passwordError}</span>}
+                {passwordError && (
+                  <span className="error-text">{passwordError}</span>
+                )}
               </div>
               <div className="d-flex flex-row justify-content-between mb-3">
                 <div className="form-check">
@@ -154,6 +160,7 @@ export default function Login() {
                 btnClass={"btn-primary w-100"}
                 btnName={"Login"}
                 onClick={handleLogin}
+                tabIndex="2"
               />
               <div className="d-flex">
                 <span className="orOption">Or</span>
