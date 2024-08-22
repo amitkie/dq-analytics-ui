@@ -117,16 +117,74 @@ export default function Analytics() {
     console.log("ascsdvefvrgbetynretynrtyntynrtyn", metric);
     const reqPayload = {
       platform: metric?.platform?.name,
-      metric: metric?.metric_name,
+      // platform: metric?.platform?.name,
+      metrics: metric?.metric_name,
       brand: projectDetails?.brands,
       // brand:"PureSense",
       analysis_type: analysis_type,
-      start_date: "2024-01-01",
-      end_date: "2024-12-31",
+      start_date: "2024-04-01",
+      end_date: "2024-06-30",
     };
 
     try {
       const benchmarks = await getBenchamarkValues(reqPayload);
+      // overall
+    //   {
+    //     "results": [
+    //         {
+    //             "platform": "DV360",
+    //             "metric": "Impressions",
+    //             "brands": [
+    //                 "Pure Sense",
+    //                 "Livon"
+    //             ],
+    //             "analysis_type": "Overall",
+    //             "percentile": 0.75,
+    //             "result": 2116500,
+    //             "categories": [
+    //                 "Beauty"
+    //             ]
+    //         }
+    //     ]
+    // }
+
+    // category based
+  //   {
+  //     "results": [
+  //         {
+  //             "platform": "DV360",
+  //             "metric": "Impressions",
+  //             "brands": [
+  //                 "Pure Sense",
+  //                 "Livon"
+  //             ],
+  //             "analysis_type": [
+  //                 "Beauty",
+  //                 "Foods"
+  //             ],
+  //             "category": "Beauty",
+  //             "percentile": 0.75,
+  //             "result": 2116500,
+  //             "categories": [
+  //                 "Beauty"
+  //             ]
+  //         },
+  //         {
+  //             "platform": "DV360",
+  //             "metric": "Impressions",
+  //             "brands": [
+  //                 "Pure Sense",
+  //                 "Livon"
+  //             ],
+  //             "analysis_type": [
+  //                 "Beauty",
+  //                 "Foods"
+  //             ],
+  //             "category": "Foods",
+  //             "result": "No data available"
+  //         }
+  //     ]
+  // }
       console.log("Benchmark values:", benchmarks);
     } catch (error) {
       console.error("Error in fetching benchmark values:", error);
@@ -169,8 +227,8 @@ export default function Analytics() {
     if (projectInfo && projectInfo?.project?.length > 0) {
       const lastProject =
         projectInfo?.project[projectInfo?.project?.length - 1];
-      setProjectId(lastProject.id);
-      fetchProjectDetails(lastProject.id);
+      setProjectId(lastProject?.id);
+      fetchProjectDetails(lastProject?.id);
     }
   }, [projectInfo]);
 
