@@ -23,6 +23,7 @@ import "./workSpace.scss";
 import { createProject } from "../../services/projectService";
 import { useSelector } from "react-redux";
 import { formatDate } from "../../utils/dateFormatter";
+import { useNavigate } from "react-router-dom";
 
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
@@ -45,6 +46,7 @@ export default function WorkSpace() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const { userInfo, projectInfo } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -154,14 +156,17 @@ export default function WorkSpace() {
     try {
       const projectData = {
         project_name: projectName,
-        user_id: 1, // Replace with actual user_id
+        user_id:userInfo?.user?.id , // Replace with actual user_id
         metric_id: selectedMetrics.map((option) => option.value),
         brand_id: selectedBrands.map((option) => option.value),
         category_id: selectedCategories.map((option) => option.value),
         frequency_id: selectedFrequencies.map((option) => option.value),
         platform_id: selectedPlatforms.map((option) => option.value),
       };
-      await createProject(projectData);
+      const projectCreated = await createProject(projectData);
+      if(projectCreated){
+        navigate("/analytics")
+      }
       setShow(false);
       // Optionally, reset form fields or show a success message
     } catch (error) {
