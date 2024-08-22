@@ -24,10 +24,12 @@ import {
 } from "../../services/projectService";
 import { createProject } from "../../services/projectService";
 import "./analytics.scss";
+import AnalyticsTable from "./AnalyticsTable";
 
 export default function Analytics() {
   const [projectId, setProjectId] = useState(1);
-  const [projectDetails, setProjectDetails] = useState(null);
+  const [projectDetails, setProjectDetails] = useState({});
+  const [metrics, setMetrics] = useState([]);
   const data = getData();
   const AMData = getAMData();
   const metricData = getMetricData();
@@ -97,20 +99,7 @@ export default function Analytics() {
     colorCode = "";
   }
 
-  const handleCheckboxChange = async (metric, type) => {
-    console.log("metrics", metric?.metric_id);
-    // const reqPayload = {
-    //   ("Amazon", "Average ratings", "Category Based"),
-    //     ("Amazon - Search Campaigns", "Impressions","Overall"),
-    // }
-    setCheckStates((prevStates) => ({
-      ...prevStates,
-      [metric?.metric_id]: {
-        ...prevStates[metric?.metric_id],
-        [type]: !prevStates[metric?.metric_id]?.[type],
-      },
-    }));
-
+  const handleCheckboxChange = async (event, metric, type) => {
     const analysis_type =
       type == "overall" ? "Overall" : projectDetails?.categories;
 
@@ -128,68 +117,87 @@ export default function Analytics() {
 
     try {
       const benchmarks = await getBenchamarkValues(reqPayload);
+      setMetrics((prev) => {
+        return prev.map((ele) => {
+          if (type === "overall") {
+            if (ele.metric_id === metric.metric_id) {
+              ele.isOverallChecked = !ele.isOverallChecked;
+              ele.isCategoryBasedChecked = false;
+              ele.benchmark = benchmarks.results;
+            }
+          }
+          if (type === "categoryBased") {
+            if (ele.metric_id === metric.metric_id) {
+              ele.isCategoryBasedChecked = !ele.isCategoryBasedChecked;
+              ele.isOverallChecked = false;
+              ele.benchmark = benchmarks.results;
+            }
+          }
+          return ele;
+        });
+      });
       // overall
-    //   {
-    //     "results": [
-    //         {
-    //             "platform": "DV360",
-    //             "metric": "Impressions",
-    //             "brands": [
-    //                 "Pure Sense",
-    //                 "Livon"
-    //             ],
-    //             "analysis_type": "Overall",
-    //             "percentile": 0.75,
-    //             "result": 2116500,
-    //             "categories": [
-    //                 "Beauty"
-    //             ]
-    //         }
-    //     ]
-    // }
-
-    // category based
-  //   {
-  //     "results": [
-  //         {
-  //             "platform": "DV360",
-  //             "metric": "Impressions",
-  //             "brands": [
-  //                 "Pure Sense",
-  //                 "Livon"
-  //             ],
-  //             "analysis_type": [
-  //                 "Beauty",
-  //                 "Foods"
-  //             ],
-  //             "category": "Beauty",
-  //             "percentile": 0.75,
-  //             "result": 2116500,
-  //             "categories": [
-  //                 "Beauty"
-  //             ]
-  //         },
-  //         {
-  //             "platform": "DV360",
-  //             "metric": "Impressions",
-  //             "brands": [
-  //                 "Pure Sense",
-  //                 "Livon"
-  //             ],
-  //             "analysis_type": [
-  //                 "Beauty",
-  //                 "Foods"
-  //             ],
-  //             "category": "Foods",
-  //             "result": "No data available"
-  //         }
-  //     ]
-  // }
+      //   {
+      //     "results": [
+      //         {
+      //             "platform": "DV360",
+      //             "metric": "Impressions",
+      //             "brands": [
+      //                 "Pure Sense",
+      //                 "Livon"
+      //             ],
+      //             "analysis_type": "Overall",
+      //             "percentile": 0.75,
+      //             "result": 2116500,
+      //             "categories": [
+      //                 "Beauty"
+      //             ]
+      //         }
+      //     ]
+      // }
+      // category based
+      //   {
+      //     "results": [
+      //         {
+      //             "platform": "DV360",
+      //             "metric": "Impressions",
+      //             "brands": [
+      //                 "Pure Sense",
+      //                 "Livon"
+      //             ],
+      //             "analysis_type": [
+      //                 "Beauty",
+      //                 "Foods"
+      //             ],
+      //             "category": "Beauty",
+      //             "percentile": 0.75,
+      //             "result": 2116500,
+      //             "categories": [
+      //                 "Beauty"
+      //             ]
+      //         },
+      //         {
+      //             "platform": "DV360",
+      //             "metric": "Impressions",
+      //             "brands": [
+      //                 "Pure Sense",
+      //                 "Livon"
+      //             ],
+      //             "analysis_type": [
+      //                 "Beauty",
+      //                 "Foods"
+      //             ],
+      //             "category": "Foods",
+      //             "result": "No data available"
+      //         }
+      //     ]
+      // }
       console.log("Benchmark values:", benchmarks);
     } catch (error) {
       console.error("Error in fetching benchmark values:", error);
     }
   };
+  console.log(metrics);
 
   const handleWeightChange = (metricId, value) => {
     const newWeights = { ...weights, [metricId]: Number(value) };
@@ -212,6 +220,13 @@ export default function Analytics() {
       try {
         const response = await getProjectDetailsByProjectId(id);
         setProjectDetails(response?.project);
+        setMetrics(() => {
+          return response?.project?.metrics?.map((ele) => {
+            ele.isOverallChecked = false;
+            ele.isCategoryBasedChecked = false;
+            return ele;
+          });
+        });
         setCheckStates(
           response?.project?.metrics?.reduce((acc, item) => {
             acc[item.id] = { overall: false, categoryBased: false };
@@ -238,90 +253,12 @@ export default function Analytics() {
       content: (
         <div>
           {/* <TableComponent data={AMData} columns={columnsMetrics} /> */}
-          <Table responsive striped bordered>
-            <thead>
-              <tr>
-                <th className="col-1">Section</th>
-                <th className="col-1">Platform</th>
-                <th className="col-4">Metric list</th>
-                <th className="col-1">Category</th>
-                <th className="col-1">Weights</th>
-                <th className="col-1">Overall</th>
-                <th className="col-2">Category based</th>
-                <th className="col-1">Benchmarks</th>
-              </tr>
-            </thead>
-            <tbody>
-              {projectDetails?.metrics?.map((item, ind) => (
-                <tr key={item.metric_id}>
-                  <td>{item?.section?.name}</td>
-                  <td>{item?.platform?.name}</td>
-                  <td>{item?.metric_name}</td>
-                  <td>{projectDetails?.categories?.join(", ")}</td>
-                  {/* <td>{item?.weights}</td> */}
-                  <td>
-                    <input
-                      type="number"
-                      value={item?.weights || ""}
-                      onChange={(e) => handleWeightChange(item, e.target.value)}
-                      min="0"
-                      max="100"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={checkStates[item.metric_id]?.overall || false}
-                      onChange={() => handleCheckboxChange(item, "overall")}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={
-                        checkStates[item.metric_id]?.categoryBased || false
-                      }
-                      onChange={() =>
-                        handleCheckboxChange(item, "categoryBased")
-                      }
-                    />
-                  </td>
-                  <td>
-                    {checkStates[item.metric_id]?.categoryBased ? (
-                      <Table responsive striped bordered>
-                        <thead>
-                          <tr>
-                            {projectDetails?.categories.map(
-                              (category, index) => (
-                                <th key={index}>{category}</th>
-                              )
-                            )}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            {projectDetails?.categories.map(
-                              (category, index) => (
-                                <td key={index}>
-                                  {checkStates[item.metric_id]?.benchmark?.[
-                                    category
-                                  ] || "NA"}
-                                </td>
-                              )
-                            )}
-                          </tr>
-                        </tbody>
-                      </Table>
-                    ) : checkStates[item.metric_id]?.overall ? (
-                      checkStates[item.metric_id]?.benchmark?.Overall || "NA"
-                    ) : (
-                      "NA"
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          <AnalyticsTable
+            projectDetails={projectDetails}
+            checkStates={checkStates}
+            metrics={metrics}
+            handleCheckboxChange={handleCheckboxChange}
+          />
           <div className="row">
             <div className="col12">
               <div className="save-table-btn">
@@ -385,11 +322,14 @@ export default function Analytics() {
                         placement="top"
                         overlay={
                           <Tooltip id="top">
-                             {getColor(Number(data[key]).toFixed(2), [60, 70, 80])}
+                            {getColor(
+                              Number(data[key]).toFixed(2),
+                              [60, 70, 80]
+                            )}
                           </Tooltip>
                         }
                       >
-                         {getColor(Number(data[key]).toFixed(2), [60, 70, 80])}
+                        {getColor(Number(data[key]).toFixed(2), [60, 70, 80])}
                       </OverlayTrigger>
                     </td>
                   ))}
