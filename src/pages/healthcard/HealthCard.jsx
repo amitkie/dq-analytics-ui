@@ -56,7 +56,7 @@ export default function HealthCard() {
             {alphabets.map((alphabet, index) => (
               <li
                 key={index}
-                className={filter === alphabet ? "active" : ""}
+                // className={filter === alphabet ? "active" : ""}
                 onClick={() => handleAlphabetClick(alphabet)}
               >
                 {alphabet}

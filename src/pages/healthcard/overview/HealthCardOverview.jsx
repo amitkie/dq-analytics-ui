@@ -29,23 +29,35 @@ import { useParams } from "react-router-dom";
 export default function HealthCardOverview() {
   const { brand } = useParams();
   const [healthCardData, setHealthCardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   useEffect(() => {
     fetchHealthCardData();
   }, []);
-
   const fetchHealthCardData = async () => {
-    const data = {
-      brand: [brand],
-      start_date: "2024-01-01",
-      end_date: "2024-12-31",
-    };
-    const healthCard = await getHealthCardDetails(data);
-    if (healthCard) {
-      console.log(healthCard, "aayyayayyayayayyayayyayayayya");
+    setLoading(true); // Start loading
+    setError(null); // Reset error state
 
-      setHealthCardData(healthCard);
+    try {
+      const data = {
+        brand: [brand],
+        start_date: "2024-01-01",
+        end_date: "2024-12-31",
+      };
+      const healthCard = await getHealthCardDetails(data);
+      if (healthCard) {
+        setHealthCardData(healthCard);
+      } else {
+        setError("No data found");
+      }
+    } catch (error) {
+      console.error("Error fetching health card data:", error);
+      setError("No data found"); // Set error message if API call fails
+    } finally {
+      setLoading(false); // End loading
     }
   };
+
   const tabs = [
     {
       label: "Media - Ecom",
@@ -258,10 +270,20 @@ export default function HealthCardOverview() {
               </div>
             </div>
             <div className="tab-container">
-              <TabComponent
-                tabs={tabs}
-                className="custom-tabs healthcard-tab"
-              />
+              {loading ? (
+                <div className="spinner-container">
+                  <div className="spinner-grow text-primary" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                </div>
+              ) : error ? (
+                <div className="no-data-found">No data found</div>
+              ) : (
+                <TabComponent
+                  tabs={tabs}
+                  className="custom-tabs healthcard-tab"
+                />
+              )}
             </div>
           </div>
         </div>
