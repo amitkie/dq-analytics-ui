@@ -145,7 +145,7 @@ export default function HealthCardOverview() {
                     alt="Brand Logo"
                   />
                   <div className="score-details">
-                    <div className="brand-title">Lipton</div>
+                    <div className="brand-title">{brand}</div>
                     <span className="brand-subtitle">Tea</span>
                   </div>
                 </div>

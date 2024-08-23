@@ -731,7 +731,9 @@ function MediaEcom({ healthCardData }) {
                           </td>
                           <td>
                             <span className="score-subscores">
-                              {score?.toFixed(2)}
+                              {isNaN(Number(score))
+                                ? "NA"
+                                : Number(score).toFixed(2)}
                             </span>
                           </td>
                         </tr>
