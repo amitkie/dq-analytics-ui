@@ -25,6 +25,7 @@ import {
 import { createProject } from "../../services/projectService";
 import "./analytics.scss";
 import AnalyticsTable from "./AnalyticsTable";
+import KPITable from "./KPITable";
 
 export default function Analytics() {
   const [projectId, setProjectId] = useState(1);
@@ -136,63 +137,6 @@ export default function Analytics() {
           return ele;
         });
       });
-      // overall
-      //   {
-      //     "results": [
-      //         {
-      //             "platform": "DV360",
-      //             "metric": "Impressions",
-      //             "brands": [
-      //                 "Pure Sense",
-      //                 "Livon"
-      //             ],
-      //             "analysis_type": "Overall",
-      //             "percentile": 0.75,
-      //             "result": 2116500,
-      //             "categories": [
-      //                 "Beauty"
-      //             ]
-      //         }
-      //     ]
-      // }
-      // category based
-      //   {
-      //     "results": [
-      //         {
-      //             "platform": "DV360",
-      //             "metric": "Impressions",
-      //             "brands": [
-      //                 "Pure Sense",
-      //                 "Livon"
-      //             ],
-      //             "analysis_type": [
-      //                 "Beauty",
-      //                 "Foods"
-      //             ],
-      //             "category": "Beauty",
-      //             "percentile": 0.75,
-      //             "result": 2116500,
-      //             "categories": [
-      //                 "Beauty"
-      //             ]
-      //         },
-      //         {
-      //             "platform": "DV360",
-      //             "metric": "Impressions",
-      //             "brands": [
-      //                 "Pure Sense",
-      //                 "Livon"
-      //             ],
-      //             "analysis_type": [
-      //                 "Beauty",
-      //                 "Foods"
-      //             ],
-      //             "category": "Foods",
-      //             "result": "No data available"
-      //         }
-      //     ]
-      // }
-      console.log("Benchmark values:", benchmarks);
     } catch (error) {
       console.error("Error in fetching benchmark values:", error);
     }
@@ -303,44 +247,49 @@ export default function Analytics() {
     {
       label: "KPI Scores",
       content: (
-        <div>
-          <Table
-            responsive
-            striped
-            bordered
-            className="insights-table"
-            id="wrapper2"
-          >
-            <tbody>
-              {keysToDisplay.map((key, index) => (
-                <tr key={index}>
-                  <td className={`col-3 ${colorCode}`}>{key}</td>
-                  {AMData.map((data, i) => (
-                    <td key={i}>
-                      <OverlayTrigger
-                        key="top"
-                        placement="top"
-                        overlay={
-                          <Tooltip id="top">
-                            {getColor(
-                              Number(data[key]).toFixed(2),
-                              [60, 70, 80]
-                            )}
-                          </Tooltip>
-                        }
-                      >
-                        {getColor(Number(data[key]).toFixed(2), [60, 70, 80])}
-                      </OverlayTrigger>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-          <div className="pagination-container">
-            <PaginationComponent />
-          </div>
-        </div>
+        <KPITable
+          metrics={metrics}
+          projectDetails={projectDetails}
+          getColor={getColor}
+        />
+        // <div>
+        //   <Table
+        //     responsive
+        //     striped
+        //     bordered
+        //     className="insights-table"
+        //     id="wrapper2"
+        //   >
+        //     <tbody>
+        //       {keysToDisplay.map((key, index) => (
+        //         <tr key={index}>
+        //           <td className={`col-3 ${colorCode}`}>{key}</td>
+        //           {AMData.map((data, i) => (
+        //             <td key={i}>
+        //               <OverlayTrigger
+        //                 key="top"
+        //                 placement="top"
+        //                 overlay={
+        //                   <Tooltip id="top">
+        //                     {getColor(
+        //                       Number(data[key]).toFixed(2),
+        //                       [60, 70, 80]
+        //                     )}
+        //                   </Tooltip>
+        //                 }
+        //               >
+        //                 {getColor(Number(data[key]).toFixed(2), [60, 70, 80])}
+        //               </OverlayTrigger>
+        //             </td>
+        //           ))}
+        //         </tr>
+        //       ))}
+        //     </tbody>
+        //   </Table>
+        //   <div className="pagination-container">
+        //     <PaginationComponent />
+        //   </div>
+        // </div>
       ),
     },
     {

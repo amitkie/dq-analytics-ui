@@ -6,6 +6,8 @@ const TableComponent = ({ data, columns }) => {
   const navigate = useNavigate();
 
   const handleRowClick = (row) => {
+    console.log(row, "rooooooowDatat");
+
     navigate(`/healthcardOverview`);
   };
   return (

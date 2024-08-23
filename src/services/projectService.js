@@ -77,3 +77,41 @@ export const getBenchamarkValues = async (data) => {
     throw error;
   }
 };
+export const getKPIScoreValues = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://8305-2405-201-8026-1009-59bc-f008-1a51-98df.ngrok-free.app/analytics_metric/`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const frequenciesData = response.data;
+
+    return frequenciesData;
+  } catch (error) {
+    console.error("Error in fetching benchmark:", error);
+    throw error;
+  }
+};
+export const getHealthCardDetails = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://ebab-2405-201-8026-1009-59bc-f008-1a51-98df.ngrok-free.app/health_card/`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const frequenciesData = response.data;
+
+    return frequenciesData;
+  } catch (error) {
+    console.error("Error in fetching benchmark:", error);
+    throw error;
+  }
+};

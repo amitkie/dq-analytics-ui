@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { IoIosTrendingUp } from "react-icons/io";
@@ -22,8 +22,27 @@ import PaidMedia from "../../../components/paidMedia/PaidMedia";
 import MediaEcom from "../../../components/MediaEcom/MediaEcom";
 import MediaOffPlatform from "../../../components/MediaOffPlatform/MediaOffPlatform";
 import SocialMedia from "../../../components/SocialMedia/SocialMedia";
+import { getHealthCardDetails } from "../../../services/projectService";
 
 export default function HealthCardOverview() {
+  const [healthCardData, setHealthCardData] = useState(null);
+  useEffect(() => {
+    fetchHealthCardData();
+  }, []);
+
+  const fetchHealthCardData = async () => {
+    const data = {
+      brand: ["Pure Sense"],
+      start_date: "2024-01-01",
+      end_date: "2024-12-31",
+    };
+    const healthCard = await getHealthCardDetails(data);
+    if (healthCard) {
+      console.log(healthCard, "aayyayayyayayayyayayyayayayya");
+
+      setHealthCardData(healthCard);
+    }
+  };
   const tabs = [
     {
       label: "Media - Ecom",

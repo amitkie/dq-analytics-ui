@@ -156,7 +156,7 @@ export default function WorkSpace() {
     try {
       const projectData = {
         project_name: projectName,
-        user_id:userInfo?.user?.id , // Replace with actual user_id
+        user_id: userInfo?.user?.id, // Replace with actual user_id
         metric_id: selectedMetrics.map((option) => option.value),
         brand_id: selectedBrands.map((option) => option.value),
         category_id: selectedCategories.map((option) => option.value),
@@ -164,8 +164,10 @@ export default function WorkSpace() {
         platform_id: selectedPlatforms.map((option) => option.value),
       };
       const projectCreated = await createProject(projectData);
-      if(projectCreated){
-        navigate("/analytics")
+      if (projectCreated) {
+        setTimeout(() => {
+          navigate("/analytics");
+        }, 1000);
       }
       setShow(false);
       // Optionally, reset form fields or show a success message
@@ -309,9 +311,9 @@ export default function WorkSpace() {
                     <tr key={item.id}>
                       <td>{ind + 1}</td>
                       <td>{item?.project_name}</td>
-                      <td>{item?.categoryNames?.join(', ')}</td>
+                      <td>{item?.categoryNames?.join(", ")}</td>
                       <td>{formatDate(item?.updatedAt)}</td>
-                      <td>{item?.frequencyNames?.join(', ')}</td>
+                      <td>{item?.frequencyNames?.join(", ")}</td>
                       <td>{formatDate(item?.updatedAt)}</td>
                     </tr>
                   ))}
