@@ -1,10 +1,12 @@
 import React from "react";
 
-function MediaEcom() {
+function MediaEcom({ healthCardData }) {
+  console.log(healthCardData);
+
   return (
     <div>
       <div className="row g-3" data-masonry='{"percentPosition": true }'>
-        <div className="col-3">
+        {/* <div className="col-3">
           <div className="overview-box">
             <div className="box-title">
               Ecommerce <small> Organic</small>
@@ -710,7 +712,36 @@ function MediaEcom() {
               </table>
             </div>
           </div>
-        </div>
+        </div> */}
+
+        {healthCardData &&
+          Object.entries(healthCardData).map(([key, value], index) => (
+            <div key={index} className="col-3">
+              <div className="overview-box">
+                <div className="box-title">
+                  {key} <small> Organic</small>
+                </div>
+                <div className="score-details">
+                  <table className="score-table">
+                    <tbody>
+                      {Object.entries(value).map(([metric, score], i) => (
+                        <tr key={i}>
+                          <td>
+                            <p>{metric}:</p>
+                          </td>
+                          <td>
+                            <span className="score-subscores">
+                              {score?.toFixed(2)}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ import MediaEcom from "../../../components/MediaEcom/MediaEcom";
 import MediaOffPlatform from "../../../components/MediaOffPlatform/MediaOffPlatform";
 import SocialMedia from "../../../components/SocialMedia/SocialMedia";
 import { getHealthCardDetails } from "../../../services/projectService";
+import BrandPerformance from "../../../components/BrandPerformance/BrandPerformance";
 
 export default function HealthCardOverview() {
   const [healthCardData, setHealthCardData] = useState(null);
@@ -46,143 +47,36 @@ export default function HealthCardOverview() {
   const tabs = [
     {
       label: "Media - Ecom",
-      content: <MediaEcom />,
+      content: (
+        <MediaEcom
+          healthCardData={healthCardData && healthCardData?.results["Ecom"]}
+        />
+      ),
     },
     {
       label: "Media - Off Platform",
-      content: <MediaOffPlatform />,
+      content: (
+        <MediaOffPlatform
+          healthCardData={healthCardData && healthCardData?.results["Paid"]}
+        />
+      ),
     },
     {
       label: "Social Media",
-      content: <SocialMedia />,
+      content: (
+        <SocialMedia
+          healthCardData={healthCardData && healthCardData?.results["Social"]}
+        />
+      ),
     },
     {
       label: "Brand Performance",
       content: (
-        <div className="row justify-content-center g-3">
-          <div className="col-3">
-            <div className="overview-box">
-              <div className="box-title">Website Performance</div>
-              <div className="score-details">
-                <table className="score-table">
-                  <tr>
-                    <td>
-                      <p>Performance Score - Mobile:</p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">95.67%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Largest Contentful Paint (LCP):</p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">4.31 </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>First Input Display (FID): </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">785</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Cummulative Layout Shift (CLS): </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">61.44%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>First Contentful Paint (FCP): </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">61.44%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Time to Interact (TTI): </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">61.44%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Total Blocking Time (TBT): </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">61.44%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Speed Index: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">61.44%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Organic Rank: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">61.44%</span>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div className="col-3">
-            <div className="overview-box">
-              <div className="box-title">SEOptimer Tool Inputs</div>
-              <div className="score-details">
-                <table className="score-table">
-                  <tr>
-                    <td>
-                      <p>SEOptimer Grade:</p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">95.67%</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Usability Grade:</p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">4.31 </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Performance Grade: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">785</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>Social Grade: </p>
-                    </td>
-                    <td>
-                      <span className="score-subscores">61.44%</span>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <BrandPerformance
+          healthCardData={
+            healthCardData && healthCardData?.results["Brand Perf"]
+          }
+        />
       ),
     },
   ];
