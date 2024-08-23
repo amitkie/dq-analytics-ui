@@ -68,7 +68,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/healthcardoverview",
+    path: "/healthcardoverview/:brand",
     element: (
       <Layout>
         <HealthCardOverview />

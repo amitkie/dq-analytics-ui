@@ -6,9 +6,7 @@ const TableComponent = ({ data, columns }) => {
   const navigate = useNavigate();
 
   const handleRowClick = (row) => {
-    console.log(row, "rooooooowDatat");
-
-    navigate(`/healthcardOverview`);
+    navigate(`/healthcardOverview/${row?.Brands}`);
   };
   return (
     <>
@@ -22,7 +20,11 @@ const TableComponent = ({ data, columns }) => {
         </thead>
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr key={rowIndex} onClick={() => handleRowClick(row)}>
+            <tr
+              className="c-pointer"
+              key={rowIndex}
+              onClick={() => handleRowClick(row)}
+            >
               {columns.map((column, colIndex) => (
                 <td key={`${rowIndex}-${colIndex}`}>
                   {typeof row[column.accessor] === "number"

@@ -24,8 +24,10 @@ import MediaOffPlatform from "../../../components/MediaOffPlatform/MediaOffPlatf
 import SocialMedia from "../../../components/SocialMedia/SocialMedia";
 import { getHealthCardDetails } from "../../../services/projectService";
 import BrandPerformance from "../../../components/BrandPerformance/BrandPerformance";
+import { useParams } from "react-router-dom";
 
 export default function HealthCardOverview() {
+  const { brand } = useParams();
   const [healthCardData, setHealthCardData] = useState(null);
   useEffect(() => {
     fetchHealthCardData();
@@ -33,7 +35,7 @@ export default function HealthCardOverview() {
 
   const fetchHealthCardData = async () => {
     const data = {
-      brand: ["Pure Sense"],
+      brand: [brand],
       start_date: "2024-01-01",
       end_date: "2024-12-31",
     };
