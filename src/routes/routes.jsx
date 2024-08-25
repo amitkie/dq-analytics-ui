@@ -36,7 +36,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/analytics",
+    path: "/analytics/:projectId",
     element: (
       <Layout>
         <Analytics />

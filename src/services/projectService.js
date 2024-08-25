@@ -61,7 +61,7 @@ export const getProjectDetailsByUserId = async (userId) => {
 export const getBenchamarkValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://8305-2405-201-8026-1009-59bc-f008-1a51-98df.ngrok-free.app/process_metric/`,
+      `https://c76b-2405-201-8026-1009-d125-a81-6f77-83c4.ngrok-free.app/process_metric/`,
       data
     );
 

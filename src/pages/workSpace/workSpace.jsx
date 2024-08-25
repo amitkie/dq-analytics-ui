@@ -150,6 +150,10 @@ export default function WorkSpace() {
     setSelectedFrequencies(selectedOptions);
   };
 
+  const handleProjectClick = (id) => {
+    navigate(`/analytics/${id}`);
+  };
+
   const handleSave = async () => {
     setLoading(true);
     setError(null);
@@ -165,8 +169,10 @@ export default function WorkSpace() {
       };
       const projectCreated = await createProject(projectData);
       if (projectCreated) {
+        console.log(projectCreated);
+
         setTimeout(() => {
-          navigate("/analytics");
+          navigate(`/analytics/${projectCreated?.data?.id}`);
         }, 1000);
       }
       setShow(false);
@@ -266,8 +272,8 @@ export default function WorkSpace() {
                     <div className="col">
                       <DateRangePicker
                         initialSettings={{
-                          startDate: "01/01/2020",
-                          endDate: "01/15/2020",
+                          startDate: "04/01/2024",
+                          endDate: "06/15/2024",
                         }}
                       >
                         <input
@@ -310,7 +316,16 @@ export default function WorkSpace() {
                   {projectInfo?.project?.map((item, ind) => (
                     <tr key={item.id}>
                       <td>{ind + 1}</td>
-                      <td>{item?.project_name}</td>
+                      <td
+                        onClick={() => handleProjectClick(item.id)}
+                        style={{
+                          cursor: "pointer",
+                          color: "blue",
+                          textDecoration: "underline",
+                        }}
+                      >
+                        {item?.project_name}
+                      </td>
                       <td>{item?.categoryNames?.join(", ")}</td>
                       <td>{formatDate(item?.updatedAt)}</td>
                       <td>{item?.frequencyNames?.join(", ")}</td>

@@ -26,15 +26,17 @@ import { createProject } from "../../services/projectService";
 import "./analytics.scss";
 import AnalyticsTable from "./AnalyticsTable";
 import KPITable from "./KPITable";
+import { useParams } from "react-router-dom";
 
 export default function Analytics() {
-  const [projectId, setProjectId] = useState(1);
+  const [projectIds, setProjectIds] = useState(1);
   const [projectDetails, setProjectDetails] = useState({});
   const [metrics, setMetrics] = useState([]);
   const data = getData();
   const AMData = getAMData();
   const metricData = getMetricData();
   const normalizedData = getNormalizedData();
+  const { projectId } = useParams();
 
   const [show, setShow] = useState(false);
 
@@ -183,13 +185,18 @@ export default function Analytics() {
       }
     }
 
-    if (projectInfo && projectInfo?.project?.length > 0) {
-      const lastProject =
-        projectInfo?.project[projectInfo?.project?.length - 1];
-      setProjectId(lastProject?.id);
-      fetchProjectDetails(lastProject?.id);
+    // if (projectInfo && projectInfo?.project?.length > 0) {
+    //   const lastProject =
+    //     projectInfo?.project[projectInfo?.project?.length - 1];
+    //   setProjectId(lastProject?.id);
+    //   fetchProjectDetails(lastProject?.id);
+    // }
+
+    if (projectId) {
+      setProjectIds(projectId);
+      fetchProjectDetails(projectId);
     }
-  }, [projectInfo]);
+  }, [projectId]);
 
   const tabs = [
     {
