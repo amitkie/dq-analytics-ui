@@ -34,15 +34,10 @@ function Settings() {
   ];
   return (
     <>
-      <div className="row g-0">
-        <div className="col-1">
-          <SideBar />
-        </div>
-        <div className="col-11">
-          <div className="workspace-container">
-            <h2 className="page-title mt-4 ml-3">Settings</h2>
-            <TabComponent tabs={tabs} className="Settings-tab" />
-          </div>
+      <div className="col-12">
+        <div className="workspace-container">
+          <h2 className="page-title mt-4 ml-3">Settings</h2>
+          <TabComponent tabs={tabs} className="Settings-tab" />
         </div>
       </div>
     </>

@@ -12,7 +12,7 @@ import store from "./store/store";
 
 import "bootstrap-daterangepicker/daterangepicker.css";
 import "./App.scss";
-import MessageAlert from "./components/Alerts/MessageAlert";
+// import MessageAlert from "./components/Alerts/MessageAlert";
 
 function App() {
   // return <RouterProvider router={router} />;

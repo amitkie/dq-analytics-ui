@@ -109,25 +109,25 @@ export default function Analytics() {
                 <BubbleChart />
               </div>
             </div>
-            <div className="col-6">
+            <div className="col-sm-12 xol-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Ecom DQ Score</span>
                 <BubbleChart />
               </div>
             </div>
-            <div className="col-6">
+            <div className="col-sm-12 xol-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Social DQ Score</span>
                 <BubbleChart />
               </div>
             </div>
-            <div className="col-6">
+            <div className="col-sm-12 xol-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Organic DQ Score</span>
                 <BubbleChart />
               </div>
             </div>
-            <div className="col-6">
+            <div className="col-sm-12 xol-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Paid DQ Score</span>
                 <BubbleChart />
@@ -194,11 +194,7 @@ export default function Analytics() {
   ];
   return (
     <>
-      <div className="row g-0">
-        <div className="col-1">
-          <SideBar />
-        </div>
-        <div className="col-11">
+      <div className="col-12">
           <div className="workspace-container">
             <h2 className="page-title mt-4 ml-3">Insights</h2>
 
@@ -270,7 +266,6 @@ export default function Analytics() {
             </div> */}
           </div>
         </div>
-      </div>
     </>
   );
 }

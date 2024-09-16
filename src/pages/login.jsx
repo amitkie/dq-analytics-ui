@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Await, useNavigate } from "react-router-dom";
 import { ReactComponent as MyLogo } from "../assets/images/dq-logo.svg";
 import KieLogo from "../assets/images/Kiesquare-white.png";
+import KieLogoOG from "../assets/images/kiesquare-logo-transparent.png";
 import InputComponent from "../common/input/input";
 import ButtonComponent from "../common/button/button";
 import { login } from "../services/userService";
-
+import { IoIosEye } from "react-icons/io";
+import { IoIosEyeOff } from "react-icons/io";
 import "./login.scss";
 import { useDispatch } from "react-redux";
 import { loginRequest } from "../features/user/userSlice";
+import { useSelector } from "react-redux";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,6 +19,33 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [passwordType, setPasswordType] = useState("password");
+
+  const {isMobileView } = useSelector((state) => state.user);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    }
+    
+    window.addEventListener("resize", handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isMobile])
+
+
+  const togglePasswordVisibility = (e) => {
+    e.preventDefault();
+    setPasswordType((prevType) =>
+      prevType === "password" ? "text" : "password"
+    );
+  };
   const dispatch = useDispatch();
   // const handleLogin = async (e) => {
   //   const loginRequestData = {
@@ -94,16 +124,19 @@ export default function Login() {
   };
 
   return (
-    <div className="container-fluid">
-      <div className="row">
+    <div className="container-fluid g-0">
+      <div className="row g-0">
         <div className="col-sm-12 col-md-12 col-lg-6 ">
           <div className="login-left">
-            <div className="top-triangle"></div>
+            {!isMobile && <div className="top-triangle"></div>}
+            
             <div className="logo">
               <MyLogo className="logo-component" />
             </div>
-            <div className="bottom-triangle"></div>
-            <img src={KieLogo} className="kie-logo" alt="KieSquare" />
+            {!isMobile && <div className="bottom-triangle"></div>}
+            
+            
+            <img src={isMobile ? KieLogoOG : KieLogo}  className="kie-logo" alt="KieSquare" />
           </div>
         </div>
         <div className="col-sm-12 col-md-12 col-lg-6 ">
@@ -124,17 +157,27 @@ export default function Login() {
 
                 {emailError && <span className="error-text">{emailError}</span>}
               </div>
-              <div className="mb-3">
+              <div className="mb-3 position-relative">
                 <InputComponent
                   id={"passwordText"}
                   inputLabel={"Password"}
-                  inputType={"password"}
+                  inputType={passwordType}
                   placeholder={"Enter your Password"}
                   inputValue={password}
                   onChange={handlePasswordChange}
                   tabIndex="1"
                   classNames={passwordError && "error-border"}
                 />
+                 <span
+                  onClick={togglePasswordVisibility}
+                  className="eye-icon-btn"
+                >
+                  {passwordType === "password" ? (
+                    <IoIosEyeOff className="eye-icon-off" />
+                  ) : (
+                    <IoIosEye className="eye-icon-on" />
+                  )}
+                </span>
                 {passwordError && (
                   <span className="error-text">{passwordError}</span>
                 )}
@@ -162,13 +205,13 @@ export default function Login() {
                 onClick={handleLogin}
                 tabIndex="2"
               />
-              <div className="d-flex">
+              {/* <div className="d-flex">
                 <span className="orOption">Or</span>
               </div>
               <ButtonComponent
                 btnClass={"btn-outline-secondary w-100"}
                 btnName={"Sign in with Google"}
-              />
+              /> */}
             </form>
           </div>
         </div>

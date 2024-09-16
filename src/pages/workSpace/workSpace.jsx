@@ -48,6 +48,24 @@ export default function WorkSpace() {
   const { userInfo, projectInfo } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
+  const [dateRange, setDateRange] = useState({
+    startDate: "04/01/2024",
+    endDate: "06/15/2024",
+  });
+
+  // Function to handle date range changes
+  const handleDateRangeChange = (event, picker) => {
+    setDateRange({
+      startDate: picker.startDate.format('MM/DD/YYYY'),
+      endDate: picker.endDate.format('MM/DD/YYYY'),
+    });
+
+    console.log("picker", picker)
+  };
+
+  // Function to handle date range changes
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -166,6 +184,8 @@ export default function WorkSpace() {
         category_id: selectedCategories.map((option) => option.value),
         frequency_id: selectedFrequencies.map((option) => option.value),
         platform_id: selectedPlatforms.map((option) => option.value),
+        start_date: dateRange.startDate,
+        end_date: dateRange.endDate,
       };
       const projectCreated = await createProject(projectData);
       if (projectCreated) {
@@ -186,11 +206,7 @@ export default function WorkSpace() {
 
   return (
     <>
-      <div className="row g-0">
-        <div className="col-1">
-          <SideBar />
-        </div>
-        <div className="col-11">
+      <div className="col-12">
           <div className="workspace-container">
             <h2 className="page-title mt-4 ml-3">Workspace</h2>
             <button
@@ -224,8 +240,8 @@ export default function WorkSpace() {
                 </div>
                 <div className="select-options-container">
                   <small>*All fields are mandatory</small>
-                  <div className="row mb-4">
-                    <div className="col">
+                  <div className="row mb-4 g-4">
+                    <div className="col-lg-4 col-md-6">
                       <MultiSelectDropdown
                         options={categories}
                         selectedValues={selectedCategories}
@@ -233,7 +249,7 @@ export default function WorkSpace() {
                         placeholder="Select Categories"
                       />
                     </div>
-                    <div className="col">
+                    <div className="col-lg-4 col-md-6">
                       <MultiSelectDropdown
                         options={brands}
                         selectedValues={selectedBrands}
@@ -242,7 +258,7 @@ export default function WorkSpace() {
                         isDisabled={isBrandsDisabled}
                       />
                     </div>
-                    <div className="col">
+                    <div className="col-lg-4 col-md-6">
                       <MultiSelectDropdown
                         options={platforms}
                         selectedValues={selectedPlatforms}
@@ -250,9 +266,7 @@ export default function WorkSpace() {
                         placeholder="Select Platforms"
                       />
                     </div>
-                  </div>
-                  <div className="row mb-4">
-                    <div className="col">
+                    <div className="col-lg-4 col-md-6">
                       <MultiSelectDropdown
                         options={metrics}
                         selectedValues={selectedMetrics}
@@ -261,7 +275,7 @@ export default function WorkSpace() {
                         isDisabled={isMetricsDisabled}
                       />
                     </div>
-                    <div className="col">
+                    <div className="col-lg-4 col-md-6">
                       <MultiSelectDropdown
                         options={frequencies}
                         selectedValues={selectedFrequencies}
@@ -269,17 +283,18 @@ export default function WorkSpace() {
                         placeholder="Select Frequencies"
                       />
                     </div>
-                    <div className="col">
+                    <div className="col-lg-4 col-md-6">
                       <DateRangePicker
                         initialSettings={{
-                          startDate: "04/01/2024",
-                          endDate: "06/15/2024",
+                          startDate: dateRange.startDate,
+                          endDate: dateRange.endDate,
                         }}
                       >
                         <input
                           type="text"
                           className="form-control"
                           placeholder="Select date"
+                          onChange={handleDateRangeChange}
                         />
                       </DateRangePicker>
                     </div>
@@ -338,7 +353,6 @@ export default function WorkSpace() {
             </div>
           </div>
         </div>
-      </div>
     </>
   );
 }

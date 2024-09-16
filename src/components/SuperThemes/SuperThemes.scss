@@ -94,3 +94,17 @@ legend {
   justify-content: space-between;
   padding-right: 0.5rem;
 }
+
+@media (max-width: 1179px) {
+  .select-metric-option .Select-input {
+    width: 50%;
+  }
+}
+@media (max-width: 767px) {
+  .select-metric-option .Select-input {
+    width: 100%;
+  }
+  .select-metric-option {
+    flex-direction: column;
+  }
+}

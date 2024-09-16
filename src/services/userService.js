@@ -3,7 +3,7 @@ import axios from "axios";
 export const login = async (data) => {
   try {
     const response = await axios.post(
-      "http://localhost:8080/api/v1/login",
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/login",
       data
     );
 
@@ -27,7 +27,7 @@ export const login = async (data) => {
 export const getAllCategories = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/api/v1/master/get-all-categories"
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-categories"
     );
 
     if (response.status !== 200) {
@@ -46,7 +46,7 @@ export const getAllCategories = async () => {
 export const getAllBrands = async (data) => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/api/v1/master/get-all-brands",
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-brands",
       data
     );
 
@@ -66,7 +66,7 @@ export const getAllBrands = async (data) => {
 export const getAllCategoriesByBrandIds = async (category_ids) => {
   try {
     const response = await axios.post(
-      `http://localhost:8080/api/v1/master/get-all-categories-by-brand-ids`, {category_ids}
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-categories-by-brand-ids`, {category_ids}
     );
 
     if (response.status !== 200) {
@@ -85,7 +85,7 @@ export const getAllCategoriesByBrandIds = async (category_ids) => {
 export const getAllSections = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/api/v1/master/get-all-sections"
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-sections"
     );
 
     if (response.status !== 200) {
@@ -104,7 +104,7 @@ export const getAllSections = async () => {
 export const getAllPlatforms = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/api/v1/master/get-all-platforms"
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-platforms"
     );
 
     if (response.status !== 200) {
@@ -123,7 +123,7 @@ export const getAllPlatforms = async () => {
 export const getAllPlatformsBySectionId = async (section_id) => {
   try {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/master/get-all-platforms-by-section-id/${section_id}`
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-platforms-by-section-id/${section_id}`
     );
 
     if (response.status !== 200) {
@@ -142,7 +142,7 @@ export const getAllPlatformsBySectionId = async (section_id) => {
 export const getAllMetrics = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/api/v1/master/get-all-metrics"
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-metrics"
     );
 
     if (response.status !== 200) {
@@ -161,7 +161,7 @@ export const getAllMetrics = async () => {
 export const getAllMetricsByPlatformId = async (platform_ids) => {
   try {
     const response = await axios.post(
-      `http://localhost:8080/api/v1/master/get-all-metrics-by-platform-ids`, {platform_ids}
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-metrics-by-platform-ids`, {platform_ids}
     );
 
     if (response.status !== 200) {
@@ -180,7 +180,7 @@ export const getAllMetricsByPlatformId = async (platform_ids) => {
 export const getAllBenchmarks = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/api/v1/master/get-all-benchmarks"
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-benchmarks"
     );
 
     if (response.status !== 200) {
@@ -199,7 +199,7 @@ export const getAllBenchmarks = async () => {
 export const getAllFrequencies = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/api/v1/master/get-all-frequencies"
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-frequencies"
     );
 
     if (response.status !== 200) {
@@ -218,7 +218,7 @@ export const getAllFrequencies = async () => {
 export const getUserAndPaymentInfo = async (id) => {
   try {
     const response = await axios.post(
-      "http://localhost:8080/api/v1/get-user-data",
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/get-user-data",
       {
         userId: id,
       }

@@ -29,3 +29,24 @@
     }
   }
 }
+.healthcard-heading {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width:767px) {
+  .healthcard-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .alphabet-filters {
+    justify-content: flex-start;
+    overflow-x: scroll;
+    padding-left: 0;
+  }
+  .category-filter,
+  .category-filter .Select-filter-category {
+    width: 100%;
+  }
+}

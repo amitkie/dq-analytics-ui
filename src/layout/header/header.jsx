@@ -1,13 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HeaderLogo from "../../assets/images/kiesquare-logo-transparent.png";
 import { FaRegCircleUser, FaPowerOff } from "react-icons/fa6";
 import "./header.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../features/user/userSlice";
+import { getHamburgerRequest, getMobileRequest, logout } from "../../features/user/userSlice";
 
 export default function Header() {
   const { userInfo } = useSelector((state) => state.user);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showHamburger, setShowHamburger] = useState()
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      dispatch(getMobileRequest(window.innerWidth < 768))
+    }
+    
+    window.addEventListener("resize", handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isMobile])
+
+  const toggleHamburger = () => {
+    setShowHamburger(!showHamburger);
+    dispatch(getHamburgerRequest(!showHamburger))
+  }
+ 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleLogout = () => {
@@ -19,13 +42,16 @@ export default function Header() {
   return (
     <div className="header-container">
       <div className="row">
-        <div className="col-md-6 col-sm-12">
+      <div className={`col-md-6 col-sm-12 ${isMobile ? "justify-sm-between" : ""}`}>
           <div className="header-logo">
             <img src={HeaderLogo} className="header-logo" alt="Header Logo" />
           </div>
+          <div className="hamburger-icon" onClick={toggleHamburger}>
+            <span className="hamburger-menu" ></span>
+          </div> 
         </div>
         <div className="col-md-6 col-sm-12 align-items-end">
-          <div className="user-info">
+          <div className="user-info" style={{ display: !isMobile || (isMobile && showHamburger) ? "flex" : "none" }}>
             <span className="user-icon">
               <FaRegCircleUser width={28} height={28} />
             </span>

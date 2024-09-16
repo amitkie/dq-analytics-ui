@@ -35,3 +35,24 @@
     }
   }
 }
+
+@media (max-width:768px) {
+  .chart-list {
+    width: 100%;
+  }
+  .project-filter {
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+    padding: .5rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .dq-score-bubble {
+    margin-top: 1rem;
+  }
+  .chart-list,
+  .dq-score-bubble,
+  .chart-box {
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.13);
+  }
+}

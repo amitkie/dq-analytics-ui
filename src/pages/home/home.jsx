@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TabComponent from "../../components/tabs/TabComponent";
 // import {
 //   CircleMenu,
@@ -24,6 +24,8 @@ import { useSelector } from "react-redux";
 
 const Home = () => {
   const { userInfo, projectInfo } = useSelector((state) => state.user);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -32,19 +34,38 @@ const Home = () => {
 
   useEffect(() => {
     const items = document.querySelectorAll(".circle-menu");
-
+  
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+  
+    window.addEventListener("resize", handleResize);
+  
+    // Initial call to set the layout based on the current window size
+    handleResize();
+  
     const halfCircleDegrees = 220; // Adjust the degrees for half-circle
-
+  
     for (let i = 0, l = items.length; i < l; i++) {
       const angle =
         -0.5 * Math.PI - ((halfCircleDegrees / 180) * i * Math.PI) / l;
-      const leftValue = (17 - 40 * Math.cos(angle)).toFixed(4) + "%";
-      const topValue = (35 + 35 * Math.sin(angle)).toFixed(4) + "%";
-
+      const leftValue = isMobile
+        ? (17 - 50 * Math.cos(angle)).toFixed(4) + "%"
+        : (17 - 40 * Math.cos(angle)).toFixed(4) + "%";
+      const topValue = isMobile
+        ? (25 + 25 * Math.sin(angle)).toFixed(4) + "%"
+        : (35 + 35 * Math.sin(angle)).toFixed(4) + "%";
+  
       items[i].style.left = leftValue;
       items[i].style.top = topValue;
     }
-  }, []);
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isMobile]);
+
+
   const tabs = [
     {
       label: "Recent Activity",
@@ -70,7 +91,7 @@ const Home = () => {
     {
       label: "Recommended",
       content: (
-        <div>
+        <div className="user-menu">
           {projectInfo.project && projectInfo?.project?.length > 0 ? (
             <div className="user-activity">
               <p>
@@ -119,43 +140,19 @@ const Home = () => {
     <>
       <div className="d-block px-4 mt-4">
         <div className="row">
-          <div className="col-md-6 col-sm-12">
-            <div className="home-desc mb-5">
-              <h2 className="page-title">DQ Analytics</h2>
+          <div className="col-sm-12 col-md-12 col-lg-6 order-sm-last order-md-last order-lg-first">
+            <div className="home-desc">
+              <h2 className="page-title">Digi-Cadence</h2>
               <p className="mb-4">
                 Good Morning, {userInfo?.user?.first_name}{" "}
                 {userInfo?.user?.last_name}
               </p>
-              {/* <p>
-                <strong>Workspace: </strong>Create new DQ Sheet , access older
-                DQ Sheet
-              </p>
-              <p>
-                <strong>Analytics:</strong> View the last opened or new created
-                DQ Sheet
-              </p>
-              <p>
-                <strong>Health Cards:</strong> Brand Portfolio with metrics
-                Information
-              </p>
-              <p>
-                <strong>Insights:</strong> Select multiple already generated DQ
-                Sheets for insights
-              </p>
-              <p>
-                <strong>Settings:</strong> update te general user settings,
-                light mode/dark mode
-              </p>
-              <p>
-                <strong>About Tool:</strong> Description about the tool, user
-                manual
-              </p> */}
             </div>
-            <div className="recent-activity mt-5 pt-5">
+            <div className="recent-activity mt-5">
               <TabComponent tabs={tabs} className="home-tabs" />
             </div>
           </div>
-          <div className="col-md-6 col-sm-12">
+          <div className="col-sm-12 col-md-12 col-lg-6 order-sm-first order-md-first order-lg-last mt-5">
             <div className="main-nav">
               <div className="menu-home">
                 <IoHomeOutline className="menu-icon" />
@@ -177,8 +174,9 @@ const Home = () => {
                 </Link>
               </div>
               <div className="circle-menu">
-                <Link
-                  to={"/analytics"}
+                {/* <Link
+                  to={`/analytics/${projectInfo?.project[projectInfo?.project?.length-1].id}`}
+                  // to={`/analytics/1`}
                   className="menu-list-nav"
                   title="View the last opened or new created DQ Sheet"
                 >
@@ -188,7 +186,37 @@ const Home = () => {
                     alt="Analytics"
                   />
                   <span className="menu-text">Analytics</span>
-                </Link>
+                </Link> */}
+
+                {projectInfo.project && projectInfo?.project?.length > 0 ? (
+                  <Link
+                    to={`/analytics/${projectInfo?.project[projectInfo?.project?.length - 1].id}`}
+                    className="menu-list-nav"
+                    title="View the last opened or newly created DQ Sheet"
+                  >
+                    <img
+                      src={AnalyticsIcon}
+                      className="sidenav-icon-img"
+                      alt="Analytics"
+                    />
+                    <span className="menu-text">Analytics</span>
+                  </Link>
+                ) : (
+                  <div
+                    className="menu-list-nav"
+                    onClick={() => alert('Please create a project first to view this page.')}
+                    style={{ cursor: 'pointer' }}
+                    title="No projects available. Click to create one."
+                  >
+                    <img
+                      src={AnalyticsIcon}
+                      className="sidenav-icon-img"
+                      alt="No Projects Available"
+                    />
+                    <span className="menu-text">Analytics</span>
+                  </div>
+                )}
+
               </div>
               <div className="circle-menu">
                 <Link

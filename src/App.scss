@@ -2,8 +2,9 @@
 
 body {
   @include secondaryFont();
-  padding: 0;
+  -webkit-font-smoothing: antialiased;
   margin: 0;
+  padding: 0;
   background-color: $background-color;
   color: $text-color;
   font-size: 0.875rem;
@@ -267,5 +268,19 @@ Table thead {
   }
   100% {
     transform: translateX(0);
+  }
+}
+
+
+@media (max-width:767px) {
+  .form-label {
+    width: 150px;
+    white-space: nowrap;
+  }
+}
+@media (min-width:768px) and (max-width:1180px) {
+  .form-label {
+    width: 150px;
+    white-space: nowrap;
   }
 }

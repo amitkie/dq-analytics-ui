@@ -9,7 +9,7 @@ function GeneralSettings() {
     <>
       <div className="row">
         <span className="settings-title">Update your Personal details</span>
-        <div className="col-6">
+        <div className="col-sm-12 col-xl-6">
           <div className="mb-3">
             <InputComponent
               id={"firstname"}
@@ -29,7 +29,7 @@ function GeneralSettings() {
             />
           </div>
         </div>
-        <div className="col-6">
+        <div className="col-sm-12 col-xl-6">
           <div className="mb-3">
             <InputComponent
               id={"lastname"}

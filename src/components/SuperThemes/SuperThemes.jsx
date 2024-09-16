@@ -96,7 +96,7 @@ function SuperThemes() {
             </div>
           </div>
           <div className="row row-flex g-0">
-            <div className="col-4">
+            <div className="col-md-6 col-lg-4">
               <div className="create-theme">
                 <fieldset>
                   <legend>Create Super Theme Group</legend>
@@ -134,7 +134,7 @@ function SuperThemes() {
                 </fieldset>
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-md-6 col-lg-4">
               <div className="create-theme">
                 <fieldset>
                   <legend>Create Metric Group</legend>
@@ -195,7 +195,7 @@ function SuperThemes() {
                 </fieldset>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-md-6 col-lg-2">
               <div className="create-theme">
                 <fieldset>
                   <legend>Super Theme Final Metrics</legend>
@@ -225,7 +225,7 @@ function SuperThemes() {
                 </fieldset>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-md-6 col-lg-2">
               <div className="create-theme">
                 <fieldset>
                   <legend>Weights of selected groups</legend>

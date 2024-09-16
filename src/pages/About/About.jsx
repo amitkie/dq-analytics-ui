@@ -7,19 +7,14 @@ import "./About.scss";
 function About() {
   return (
     <>
-      <div className="row g-0">
-        <div className="col-1">
-          <SideBar />
-        </div>
-        <div className="col-11">
-          <div className="workspace-container">
-            <h2 className="page-title mt-4 ml-3">About Tool</h2>
-          </div>
+      <div className="col-12">
+        <div className="workspace-container">
+          <h2 className="page-title mt-4 ml-3">About Tool</h2>
           <div className="row">
-            <div className="col-6">
+            <div className="col-md-12 col-lg-6">
               <p>
-                <strong>DQ Analytics Services:</strong> Transforming Raw Data
-                into Actionable Insights DQ Analytics services go beyond just
+                <strong>Digi-Cadence Services:</strong> Transforming Raw Data
+                into Actionable Insights Digi-Cadence services go beyond just
                 providing software tools. They offer a comprehensive approach to
                 help businesses leverage the power of clean, high-quality data.
                 Here's a breakdown of what DQ.
@@ -66,7 +61,7 @@ function About() {
               </p>
               <ul>
                 <li>
-                  DQ Analytics specialists help you develop a data governance
+                  Digi-Cadence specialists help you develop a data governance
                   strategy to define data quality standards and ownership.
                 </li>
                 <li>
@@ -96,20 +91,20 @@ function About() {
                 </li>
               </ul>
               <p>
-                Overall, DQ Analytics tools are valuable assets for any
+                Overall, Digi-Cadence tools are valuable assets for any
                 organization that relies on data to make decisions. By improving
                 data quality, these tools can lead to significant benefits in
                 terms of cost savings, efficiency, and overall business success.
               </p>
             </div>
-            <div className="col-4">
+            <div className="col-md-12 col-lg-4">
               <img src={AboutImg} alt="About Tool" className="responsive-img" />
             </div>
           </div>
           <div className="row">
             <div className="col-12">
               <p>
-                <strong>Benefits of DQ Analytics Services:</strong>
+                <strong>Benefits of Digi-Cadence Services:</strong>
               </p>
               <ul>
                 <li>
@@ -133,7 +128,7 @@ function About() {
                   consistent and accurate data.
                 </li>
                 <li>
-                  DQ Analytics services cater to various business needs. Here
+                  Digi-Cadence services cater to various business needs. Here
                   are some examples:
                 </li>
                 <li>
@@ -149,7 +144,7 @@ function About() {
                   data for improved marketing and sales strategies.
                 </li>
                 <li>
-                  In conclusion, DQ Analytics services offer a valuable solution
+                  In conclusion, Digi-Cadence services offer a valuable solution
                   for businesses looking to unlock the full potential of their
                   data.
                 </li>

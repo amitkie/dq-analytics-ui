@@ -1,4 +1,4 @@
-@import "variables", "colors", "fonts";
+@import "variables", "colors", "fonts", "reset";
 
 @mixin boxWithShadow() {
   background-color: $white;

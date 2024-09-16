@@ -1,25 +1,25 @@
-// // src/features/alert/alertSlice.js
-// import { createSlice } from '@reduxjs/toolkit';
+// import { createSlice } from "@reduxjs/toolkit";
 
 // const initialState = {
-//   type: null,
+//   variant: 'primary', // Default variant
 //   message: '',
+//   show: false
 // };
 
 // const alertSlice = createSlice({
 //   name: 'alert',
 //   initialState,
 //   reducers: {
-//     setAlert(state, action) {
-//       state.type = action.payload.type;
+//     showAlert(state, action) {
+//       state.variant = action.payload.variant;
 //       state.message = action.payload.message;
+//       state.show = action.payload.show; // Use the show property from the payload
 //     },
-//     clearAlert(state) {
-//       state.type = null;
-//       state.message = '';
-//     },
-//   },
+//     hideAlert(state) {
+//       state.show = false;
+//     }
+//   }
 // });
 
-// export const { setAlert, clearAlert } = alertSlice.actions;
+// export const { showAlert, hideAlert } = alertSlice.actions;
 // export default alertSlice.reducer;

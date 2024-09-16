@@ -88,6 +88,22 @@
   height: auto;
   border-radius: 4px;
 }
+.eye-icon-off,
+.eye-icon-on {
+  font-size: 18px;
+  display: block;
+}
+.eye-icon-off {
+  color: #b5b5b5;
+}
+.eye-icon-on {
+  color: #222222;
+}
+.eye-icon-btn {
+  position: absolute;
+  top: 37px;
+  right: 25px;
+}
 
 @media (max-width: 1199.98px) {
   .top-triangle {
@@ -96,4 +112,29 @@
   .bottom-triangle {
     display: none;
   }
+  .login-left {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: .5rem 0.875rem;
+    background-color: $white;
+  }
+  .login-form-container {
+    margin: 30px auto;
+    padding: 50px;
+    width: calc(100% - 32px);
+  }
+  .logo {
+    align-items: flex-start;
+  }
+  .logo-component {
+    height: auto;
+    width: 45%;
+    margin: 0;
+  }
+  .kie-logo {
+    position: initial;
+    width: 45%;
+  }
 }
+

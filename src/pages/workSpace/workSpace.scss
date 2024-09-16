@@ -51,3 +51,20 @@
   @include boxWithShadow();
   border: 1px solid rgba(0, 0, 0, 30%);
 }
+.btn-close {
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-close:hover {
+  transform: rotate(180deg);
+}
+
+.modal-content {
+  height: calc(100vh - 100px);
+}
+
+@media (max-width:767px) {
+  .workspace-container {
+    padding: 0 .75rem;
+  }
+}

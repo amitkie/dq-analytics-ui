@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import SideBar from "../../components/sidebar/SideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
-import { getData } from "../../services/q3";
+import { gethealthCardData } from "../../services/HealthCard";
 
 import "./HealthCard.scss";
 
 export default function HealthCard() {
-  const data = getData();
+  const data = gethealthCardData();
   const [filter, setFilter] = useState("");
   const [filteredData, setFilteredData] = useState(data);
   const alphabets = "abcdefghijklmnopqrstuvwxyz".split("");
@@ -25,23 +25,19 @@ export default function HealthCard() {
   const columns = [
     {
       header: "S.no",
-      accessor: {},
+      accessor: "Serial_no",
     },
     { header: "Brands", accessor: "Brands" },
     {
       header: "Organisation",
-      accessor: {},
+      accessor: "Organisation",
     },
     { header: "Category", accessor: "Category" },
   ];
   return (
-    <div className="row g-0">
-      <div className="col-1">
-        <SideBar />
-      </div>
-      <div className="col-11">
+    <div className="col-12">
         <div className="workspace-container">
-          <div className="d-flex justify-content-between">
+          <div className="healthcard-heading">
             <h2 className="page-title ml-3">Health Card</h2>
             <div className="category-filter">
               <select name="Metrics" className="Select-filter-category">
@@ -67,6 +63,5 @@ export default function HealthCard() {
           <TableComponent data={data} columns={columns} />
         </div>
       </div>
-    </div>
   );
 }

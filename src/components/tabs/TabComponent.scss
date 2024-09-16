@@ -3,10 +3,12 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  overflow: hidden;
 }
 
 .tab-list {
   display: flex;
+  align-items: flex-end;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -104,4 +106,14 @@
   border-bottom: 1px solid #d9dbdf;
   box-shadow: none;
   background-color: transparent;
+}
+
+@media (max-width: 1179px) {
+  .tab-list button,
+  .tab-list .active button {
+    padding: 1rem;
+  }
+  .tab-list {
+    overflow-x: scroll;
+  }
 }

@@ -101,3 +101,42 @@
   display: flex;
   gap: 1.5rem;
 }
+.user-menu {
+  height: 100%;
+  max-height: 350px;
+  overflow-y: scroll;
+}
+
+@media (max-width:767px) {
+  .menu-list-nav {
+    width: 90px;
+    height: 90px;
+  }
+  .menu-list-nav img {
+    width: 36px;
+    height: 36px;
+  }
+  .menu-list-nav .menu-text {
+    font-size: .75rem;
+  }
+  .menu-home {
+    width: 130px;
+    height: 130px;
+    top: calc(50% - 200px);
+    left: 20px;
+  }
+  .menu-home .menu-icon{
+    font-size: 48px;
+  }
+  .user-activity {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.15);
+    margin-bottom: 1rem;
+  }
+  .user-activity p {
+    margin-bottom: 0;
+  }
+}

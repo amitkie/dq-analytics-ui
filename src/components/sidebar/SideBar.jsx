@@ -19,9 +19,27 @@ import AboutIconActive from "../../assets/images/aboutActive.png";
 import { IoIosHelpCircleOutline } from "react-icons/io";
 
 import "./SideBar.scss";
+import { useSelector } from "react-redux";
 
 export default function SideBar() {
   const [activeMenu, setActiveMenu] = useState("");
+  const { userInfo, projectInfo , isHamburgerOpen, isMobileView } = useSelector((state) => state.user);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    }
+    
+    window.addEventListener("resize", handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isMobile])
 
   useEffect(() => {
     const savedActiveMenu = localStorage.getItem("activeMenu");
@@ -48,7 +66,7 @@ export default function SideBar() {
     </OverlayTrigger>
   );
   return (
-    <div className="sidebar-container">
+    <div className="sidebar-container" style={{ display: !isMobileView || (isMobileView && isHamburgerOpen) ? "flex" : "none"}}>
       <ul className="p-0">
         <li
           className={`side-nav ${activeMenu === "home" ? "active" : ""}`}
@@ -56,6 +74,9 @@ export default function SideBar() {
         >
           <Link to={"/home"} title="Home" id="m-1">
             <IoHomeOutline className="sidenav-icon" />
+          </Link>
+          <Link to={"/home"}>
+            <span className="mob-menu">Home</span>
           </Link>
         </li>
         <li
@@ -71,12 +92,17 @@ export default function SideBar() {
               alt="workspace"
             />
           </Link>
+          <Link to={"/workspace"}>
+            <span className="mob-menu">Workspace</span>
+          </Link>
         </li>
         <li
           className={`side-nav ${activeMenu === "analytics" ? "active" : ""}`}
           onClick={() => handleMenuActive("analytics")}
         >
-          <Link to={"/analytics"} title="Analytics" id="m-3">
+          {/* <Link 
+          // to={`/analytics/${projectInfo?.project[projectInfo?.project?.length - 1].id}`} 
+          title="Analytics" id="m-3">
             <img
               src={
                 activeMenu === "analytics" ? AnalyticsIconActive : AnalyticsIcon
@@ -84,6 +110,40 @@ export default function SideBar() {
               className="sidenav-icon-img"
               alt="Analytics"
             />
+          </Link> */}
+                <Link
+          to={
+            projectInfo.project && projectInfo?.project?.length > 0
+              ? `/analytics/${projectInfo?.project[projectInfo?.project?.length - 1].id}`
+              : undefined // Link should be undefined if no project exists
+          }
+          title="Analytics"
+          id="m-3"
+          onClick={(e) => {
+            if (!(projectInfo.project && projectInfo?.project?.length > 0)) {
+              alert('Please create a project to view this page.');
+            }
+          }}
+        >
+          <img
+            src={
+              activeMenu === "analytics" ? AnalyticsIconActive : AnalyticsIcon
+            }
+            className="sidenav-icon-img"
+            alt="Analytics"
+          />
+        </Link>
+        <Link
+          to={
+            projectInfo.project && projectInfo?.project?.length > 0
+              ? `/analytics/${projectInfo?.project[projectInfo?.project?.length - 1].id}`
+              : undefined // Link should be undefined if no project exists
+          }onClick={(e) => {
+            if (!(projectInfo.project && projectInfo?.project?.length > 0)) {
+              alert('Please create a project to view this page.');
+            }
+          }}>
+          <span className="mob-menu">Analytics</span>
           </Link>
         </li>
         <li
@@ -101,6 +161,9 @@ export default function SideBar() {
               alt="Health Card"
             />
           </Link>
+          <Link to={"/healthcard"}>
+            <span className="mob-menu">Health Card</span>
+          </Link>
         </li>
         <li
           className={`side-nav ${activeMenu === "insights" ? "active" : ""}`}
@@ -112,6 +175,9 @@ export default function SideBar() {
               className="sidenav-icon-img"
               alt="Insights"
             />
+          </Link>
+          <Link to={"/insights"} >
+            <span className="mob-menu">Insights</span>
           </Link>
         </li>
         <li
@@ -127,6 +193,9 @@ export default function SideBar() {
               alt="Settings"
             />
           </Link>
+          <Link to={"/settings"}>
+            <span className="mob-menu">Settings</span>
+          </Link>
         </li>
         <li
           className={`side-nav ${activeMenu === "about" ? "active" : ""}`}
@@ -139,6 +208,9 @@ export default function SideBar() {
               alt="About Tool"
             />
           </Link>
+          <Link to={"/about"}>
+            <span className="mob-menu">About Tool</span>
+          </Link>
         </li>
         <li
           className={`side-nav ${activeMenu === "help" ? "active" : ""}`}
@@ -146,6 +218,9 @@ export default function SideBar() {
         >
           <Link to={"/help"} title="Help" id="m-7">
             <IoIosHelpCircleOutline size={48} color="black" />
+          </Link>
+          <Link  to={"/help"}>
+            <span className="mob-menu">Help</span>
           </Link>
         </li>
       </ul>

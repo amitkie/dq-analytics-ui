@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
@@ -21,12 +21,16 @@ import { getSection } from "../../services/section-platform-metrics";
 import {
   getProjectDetailsByProjectId,
   getBenchamarkValues,
+  saveMetricsOfProject,
+  getNormalizedValues,
+  getDQScore,
 } from "../../services/projectService";
 import { createProject } from "../../services/projectService";
 import "./analytics.scss";
 import AnalyticsTable from "./AnalyticsTable";
 import KPITable from "./KPITable";
 import { useParams } from "react-router-dom";
+import ComparisionView from "./ComparisionView";
 
 export default function Analytics() {
   const [projectIds, setProjectIds] = useState(1);
@@ -39,13 +43,20 @@ export default function Analytics() {
   const { projectId } = useParams();
 
   const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [checkStates, setCheckStates] = useState({});
   const [weights, setWeights] = useState({});
+  const [totalWeights, setTotalWeights] = useState(100);
 
   const { userInfo, projectInfo } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const [normalizedValue, setNormalizedValue] = useState([]);
+  const [dqScoreValue, setDQScoreValue] = useState([]);
+
 
   const columns = [
     {
@@ -68,27 +79,41 @@ export default function Analytics() {
     Header: key,
     accessor: key,
   }));
-  const keys = Array.from(new Set(AMData.flatMap(Object.keys)));
+  const keys = Array.from(new Set(normalizedValue.flatMap(Object.keys)));
   const keysToDisplay = keys.slice(2);
 
-  // console.log("tableData", AMData);
-  // console.log("tableMetricData", metricData);
+  // function getColor(value, thresholds) {
+  //   // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
+  //   if (typeof value === "string") {
+  //     return <span style={{ color: "#252627" }}>{value}</span>;
+  //   } else if (value > thresholds[2]) {
+  //     return <span style={{ color: "#339900" }}>{value}</span>;
+  //   } else if (value > thresholds[1] && value < thresholds[2]) {
+  //     return <span style={{ color: "#ed8b00" }}>{value}</span>;
+  //   } else {
+  //     return <span style={{ color: "#cc3201" }}>{value}</span>;
+  //   }
+  // }
 
-  function getColor(value, thresholds) {
-    // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
-    if (typeof value === "string") {
-      return <span style={{ color: "#252627" }}>{value}</span>;
-    } else if (value > thresholds[2]) {
-      return <span style={{ color: "#339900" }}>{value}</span>;
-    } else if (value > thresholds[1] && value < thresholds[2]) {
-      return <span style={{ color: "#ed8b00" }}>{value}</span>;
-    } else {
-      return <span style={{ color: "#cc3201" }}>{value}</span>;
+  const getColor = (section) => {
+    switch (section) {
+      case "Ecom":
+        return "#328fa8";
+      case "Paid":
+        return "#339900";
+      case "Social":
+        return "#ed8b00";
+      case "Brand Perf":
+        return "#cc3201";
+      default:
+        return "#000000";
     }
-  }
-
+  };
+  // Ecom : [ "metrics1","metrcs2"
+  // ] 
+  // Order of KPI: Ecom > Social > Paid > Brand Perf
+  // Order of Comparison: View Ecom > Social > Paid > Brand Perf
   const section = getSection();
-  // console.log(section);
   let colorCode;
   if (section === "Ecom") {
     colorCode = "blue-color";
@@ -105,8 +130,6 @@ export default function Analytics() {
   const handleCheckboxChange = async (event, metric, type) => {
     const analysis_type =
       type == "overall" ? "Overall" : projectDetails?.categories;
-
-    console.log("ascsdvefvrgbetynretynrtyntynrtyn", metric);
     const reqPayload = {
       platform: metric?.platform?.name,
       // platform: metric?.platform?.name,
@@ -143,12 +166,34 @@ export default function Analytics() {
       console.error("Error in fetching benchmark values:", error);
     }
   };
-  console.log(metrics);
 
   const handleWeightChange = (metricId, value) => {
+
+    // Parse the input value to a number and create a new weights object
     const newWeights = { ...weights, [metricId]: Number(value) };
+
+    // Calculate the total weight
+    const totalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
+
+    // Check if the total weight exceeds 100
+    if (totalWeight > 100) {
+      alert('Total weights exceed 100. Please adjust the values.');
+
+      // Revert the changed value back to its previous state
+      newWeights[metricId] = weights[metricId];
+
+      // Recalculate the total weight after reverting
+      const updatedTotalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
+
+      // Update the state with the reverted values
+      setTotalWeights(updatedTotalWeight);
+      setWeights(newWeights);
+      return;
+    }
+
+    // If total weight is within the allowed range, update the state as usual
     setWeights(newWeights);
-    validateTotalWeights(newWeights);
+    setTotalWeights(totalWeight);
   };
 
   const validateTotalWeights = (newWeights) => {
@@ -156,8 +201,9 @@ export default function Analytics() {
       (acc, curr) => acc + curr,
       0
     );
+    setTotalWeights(totalWeight)
     if (totalWeight > 100) {
-      alert("Total weights exceed 100. Please adjust the values.");
+      alert('Total weights exceed 100. Please adjust the values.');
     }
   };
 
@@ -167,6 +213,15 @@ export default function Analytics() {
         const response = await getProjectDetailsByProjectId(id);
         setProjectDetails(response?.project);
         setMetrics(() => {
+          if (response?.project?.metrics && response?.project?.metrics?.length > 0) {
+
+            const initialWeight = 100 / response?.project?.metrics?.length;
+            const initialWeights = response?.project?.metrics?.reduce((acc, item) => {
+              acc[item.metric_id] = initialWeight;
+              return acc;
+            }, {});
+            setWeights(initialWeights);
+          }
           return response?.project?.metrics?.map((ele) => {
             ele.isOverallChecked = false;
             ele.isCategoryBasedChecked = false;
@@ -179,24 +234,140 @@ export default function Analytics() {
             return acc;
           }, {}) || {}
         );
-        console.log(response?.project?.metrics);
       } catch (error) {
         console.error("Error fetching project details:", error);
       }
     }
 
-    // if (projectInfo && projectInfo?.project?.length > 0) {
-    //   const lastProject =
-    //     projectInfo?.project[projectInfo?.project?.length - 1];
-    //   setProjectId(lastProject?.id);
-    //   fetchProjectDetails(lastProject?.id);
-    // }
+    async function fetchComparedValue(id) {
+      const project_id = 22;
+
+      const requestPayload = {
+        "project_ids": [project_id]
+      };
+
+      try {
+        const compareNormalizeValue = await getNormalizedValues(requestPayload);
+        const filterData = compareNormalizeValue.filter((ele) => ele.project_id == project_id);
+        const uniqueBrands = filterData.reduce((acc, item) => {
+          if (!acc.map[item.brandName]) {
+            acc.map[item.brandName] = true;
+            acc.result.push(item);
+          }
+          return acc;
+        }, { map: {}, result: [] }).result;
+        console.log("API Response:----------------", uniqueBrands);
+        setNormalizedValue(uniqueBrands);
+      } catch (error) {
+        console.error("Error in Fetching Data:", error);
+      }
+    }
+
+    async function fetchDQScoreValue(id) {
+      const project_id = 22;
+
+      const requestPayload = {
+        "project_id": project_id
+      };
+
+      try {
+        const dqScoreValueResponse = await getDQScore(requestPayload);
+        
+        console.log("DQ SCORE______", dqScoreValueResponse);
+        setDQScoreValue(dqScoreValueResponse?.data);
+      } catch (error) {
+        console.error("Error in Fetching Data:", error);
+      }
+    }
 
     if (projectId) {
       setProjectIds(projectId);
       fetchProjectDetails(projectId);
+      fetchComparedValue(projectId);
+      fetchDQScoreValue(projectId);
+
     }
+
+
+
+
   }, [projectId]);
+
+  const saveWeights = async () => {
+    const saveMetricsPayload = generateApiPayload(metrics);
+    try {
+      const response = await saveMetricsOfProject(saveMetricsPayload);
+      if (response) {
+        if (response.status == 'success') {
+          // dispatch(showAlert({ variant: 'success', message: 'Weights saved successfully' }));
+          alert('Weights saved successfully!');
+          setProjectIds(projectId);
+        }
+      }
+
+    } catch (error) {
+      if (error.response && error.response.status === 400 && error.response.data.message === 'Project Benchmark has already been saved, you cannot create another instance.') {
+        alert('Error: Project Benchmark has already been added, you cannot create another instance.');
+      } else {
+        alert('An error occurred!');
+      }
+    }
+
+
+    // localStorage.setItem(`project_${projectId}_weights`, JSON.stringify(saveMetricsPayload));
+    // alert("Weights and benchmarks saved successfully!");
+  };
+
+  const generateApiPayload = (metrics) => {
+    const project_id = projectId;   // Example project ID
+    return metrics?.map(metric => {
+      const categoryIds = metric?.categories?.map(category => category?.id) || [];
+      // Iterate over categories and match the benchmark data
+      const benchmarkData = metric?.categories?.map(category => {
+        const matchedBenchmark = metric?.benchmark?.find(bm => bm?.categories?.includes(category?.name)) || {}; // Match based on category
+        if (metric?.isOverallChecked) {
+          return {
+            categoryId: category?.id,
+            categoryName: category?.name,
+            sectionName: metric?.section?.name,
+            sectionId: metric?.section?.id,
+            percentile: matchedBenchmark?.percentile,
+            overallValue: matchedBenchmark?.value,
+            actualValue: matchedBenchmark?.actualValue
+          }
+        } else {
+          return {
+            categoryId: category?.id,
+            categoryName: category?.name,
+            sectionName: metric?.section?.name,
+            sectionId: metric?.section?.id,
+            percentile: matchedBenchmark?.percentile,
+            benchmarkValue: matchedBenchmark?.value || null,  // Get the benchmark value or default to null
+            actualValue: matchedBenchmark?.actualValue || null  // Get the actual value or default to null
+          };
+        }
+
+      });
+
+      if (benchmarkData) {
+        return {
+          project_id: project_id,
+          sectionId: metric?.section?.id || null,  // Default to null if sectionId is missing
+          platformId: metric?.platform?.id || null,  // Default to null if platformId is missing
+          isOverall: metric?.isOverallChecked || false,  // Default to false if isOverallChecked is missing
+          isCategory: metric?.isCategoryBasedChecked || false,  // Default to false if isCategoryBasedChecked is missing
+          metricId: metric?.metric_id || null,  // Default to null if metricId is missing
+          weights: metric?.weights || 0,  // Default to 0 if weights are missing
+          categoryIds: categoryIds,
+          brandIds: metric?.brands?.map(brand => brand?.id) || [],
+          benchmarks: JSON.stringify(new Set(benchmarkData))  // Safely stringify the benchmark data
+        };
+      }
+
+    });
+  };
+
+
 
   const tabs = [
     {
@@ -208,7 +379,11 @@ export default function Analytics() {
             projectDetails={projectDetails}
             checkStates={checkStates}
             metrics={metrics}
+            weights={weights}
+            totalWeights={totalWeights}
             handleCheckboxChange={handleCheckboxChange}
+            handleWeightChange={handleWeightChange}
+            isBenchmarkSaved={projectDetails?.is_benchmark_saved}
           />
           <div className="row">
             <div className="col12">
@@ -216,6 +391,8 @@ export default function Analytics() {
                 <ButtonComponent
                   btnClass={"btn-primary"}
                   btnName={"Save Weights"}
+                  disabled={projectDetails?.is_benchmark_saved}
+                  onClick={saveWeights}
                 />
               </div>
             </div>
@@ -229,7 +406,7 @@ export default function Analytics() {
       disabled: "disabled",
       content: (
         <div>
-          <ScoreCard />
+          <ScoreCard dqScoreValue={dqScoreValue}/>
         </div>
       ),
     },
@@ -303,36 +480,64 @@ export default function Analytics() {
       label: "Comparison View",
       content: (
         <div>
+          {/* Filter options for Brands and Category */}
           <div className="filter-options">
             <select name="Brands" className="Select-input">
-              <option value="beauty">Himalaya</option>
-              <option value="haircare">Lux</option>
-              <option value="baby">Palmolive</option>
-              <option value="mansGrooming">Parachute</option>
+              <option value="himalaya">Himalaya</option>
+              <option value="lux">Lux</option>
+              <option value="palmolive">Palmolive</option>
+              <option value="parachute">Parachute</option>
             </select>
             <select name="category" className="Select-input">
-              <option value="beauty">All</option>
+              <option value="all">All</option>
               <option value="beauty">Beauty</option>
               <option value="haircare">Hair care</option>
-              <option value="baby">Foods</option>
-              <option value="mansGrooming">Male Grooming</option>
+              <option value="foods">Foods</option>
+              <option value="male-grooming">Male Grooming</option>
             </select>
           </div>
+
           <Table responsive striped bordered className="insights-table">
+            <thead>
+              <tr>
+                <th>Platform</th>
+                <th>Metric</th>
+                {normalizedValue && normalizedValue.map((item) => item.brandName).map((brand, index) => {
+                  return <th key={index}>{brand}</th>
+                })}
+
+              </tr>
+            </thead>
             <tbody>
-              {keysToDisplay.map((key, index) => (
-                <tr key={index}>
-                  <td className="col-3">{key}</td>
-                  {normalizedData.map((data, i) => (
-                    <td key={i}>{data[key]}</td>
-                  ))}
-                </tr>
-              ))}
+              {normalizedValue &&
+                [...new Set(normalizedValue.map((item) => item.metricid))].map((metricId) => {
+                  const filteredMetric = normalizedValue.filter((item) => item.metricid === metricId);
+                  return (
+                    <tr key={metricId}>
+                      <td>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            backgroundColor: getColor(filteredMetric[0].sectionName),
+                            marginRight: '5px',
+                          }}
+                        ></span> {filteredMetric[0].sectionName}</td>
+                      <td>Metric {filteredMetric[0].metricid}</td>
+                      {filteredMetric.map((item, index) => (
+                        <td key={index}>{item.actualValue}</td>
+                      ))}
+                    </tr>
+                  );
+                })}
             </tbody>
           </Table>
         </div>
       ),
     },
+
     {
       label: "Super Themes",
       disabled: "disabled",
@@ -346,99 +551,95 @@ export default function Analytics() {
 
   return (
     <>
-      <div className="row g-0">
-        <div className="col-1">
-          <SideBar />
-        </div>
-        <div className="col-11">
-          <div className="workspace-container">
-            <h2 className="page-title">Analytics</h2>
+      <div className="col-12">
+        <div className="workspace-container">
+          <h2 className="page-title">Analytics</h2>
 
-            <div className="row mb-3">
-              <div className="col-12">
-                <div className="analytics-filter">
-                  <div className="project-details">
-                    <p className="mb-0">
-                      Project Name:
-                      <strong>Digital Assessment-1</strong>
-                    </p>
-                  </div>
+          <div className="row mb-3">
+            <div className="col-12">
+              <div className="analytics-filter">
+                <div className="project-details">
+                  <p className="mb-0">
+                    Project Name:
+                    <strong>{projectDetails?.project_name}</strong>
+                  </p>
+                </div>
 
-                  <div className="export-btn-container gap-3">
-                    <select name="category" className="Select-input">
-                      <option value="Select Metrics">All </option>
-                      <option value="Beauty">Beauty</option>
-                      <option value="Foods">Foods</option>
-                      <option value="haircare">Hair Care</option>
-                      <option value="malegrooming">Male Grooming</option>
-                    </select>
-                    <div className="export-btn">
-                      <ButtonComponent
-                        disabled
-                        btnClass={"btn-primary export-excel-btn"}
-                        btnName={"Export as Excel"}
-                      />
-                    </div>
+                <div className="export-btn-container gap-3">
+                  <select name="category" className="Select-input">
+                    <option value="Select Metrics">All </option>
+                    <option value="Beauty">Beauty</option>
+                    <option value="Foods">Foods</option>
+                    <option value="haircare">Hair Care</option>
+                    <option value="malegrooming">Male Grooming</option>
+                  </select>
+                  <div className="export-btn">
+                    <ButtonComponent
+                      disabled
+                      btnClass={"btn-primary export-excel-btn"}
+                      btnName={"Export as Excel"}
+                    />
                   </div>
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col-12">
-                {/* <div className="filter-btn">
+          </div>
+          <div className="row">
+            <div className="col-12">
+              {/* <div className="filter-btn">
                   <div className="filter-table-btn">
                     
                   </div>
                 </div> */}
-                <div className="filter-options mb-3">
-                  <select name="category" className="Select-input">
-                    <option value="Select Metrics">All </option>
-                    <option value="ecom">Ecom</option>
-                    <option value="Social">Social</option>
-                    <option value="Paid">Paid</option>
-                    <option value="brand-perf">Brand Perf</option>
-                  </select>
-                  <select name="category" className="Select-input">
-                    <option value="Select Metrics">All </option>
-                    <option value="ecom">Amazon</option>
-                    <option value="Social">Amazon - Search Campaigns </option>
-                    <option value="Organic">Flipkart PLA Campaigns</option>
-                    <option value="Paid">Big Basket Campaigns</option>
-                    <option value="Brand Performance">Blinkit Campaigns</option>
-                    <option value="Brand Performance">Nykaa Campaigns</option>
-                    <option value="Brand Performance">Myntraa Campaigns</option>
-                    <option value="Brand Performance">SEO</option>
-                    <option value="Brand Performance">
-                      Facebook, Twitter, Instagram
-                    </option>
-                    <option value="Brand Performance">
-                      Gadwords, Facebook, DV360
-                    </option>
-                    <option value="Brand Performance">Google Analytics</option>
-                    <option value="Brand Performance">
-                      Page Speed Insights
-                    </option>
-                    <option value="Brand Performance">SEOptimer</option>
-                  </select>
-                  <select name="category" className="Select-input">
-                    <option value="Select Metrics">All</option>
-                    <option value="ecom">Ecom</option>
-                    <option value="Social">Social</option>
-                    <option value="Organic">Organic</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Brand Performance">Brand Performance</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-12">
-                <TabComponent tabs={tabs} className="analytics-tabs" />
+              <div className="filter-options mb-3">
+                <select name="category" className="Select-input">
+                  <option value="Select Metrics">All </option>
+                  <option value="ecom">Ecom</option>
+                  <option value="Social">Social</option>
+                  <option value="Paid">Paid</option>
+                  <option value="brand-perf">Brand Perf</option>
+                </select>
+                <select name="category" className="Select-input">
+                  <option value="Select Metrics">All </option>
+                  <option value="ecom">Amazon</option>
+                  <option value="Social">Amazon - Search Campaigns </option>
+                  <option value="Organic">Flipkart PLA Campaigns</option>
+                  <option value="Paid">Big Basket Campaigns</option>
+                  <option value="Brand Performance">Blinkit Campaigns</option>
+                  <option value="Brand Performance">Nykaa Campaigns</option>
+                  <option value="Brand Performance">Myntraa Campaigns</option>
+                  <option value="Brand Performance">SEO</option>
+                  <option value="Brand Performance">
+                    Facebook, Twitter, Instagram
+                  </option>
+                  <option value="Brand Performance">
+                    Gadwords, Facebook, DV360
+                  </option>
+                  <option value="Brand Performance">Google Analytics</option>
+                  <option value="Brand Performance">
+                    Page Speed Insights
+                  </option>
+                  <option value="Brand Performance">SEOptimer</option>
+                </select>
+                <select name="category" className="Select-input">
+                  <option value="Select Metrics">All</option>
+                  <option value="ecom">Ecom</option>
+                  <option value="Social">Social</option>
+                  <option value="Organic">Organic</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Brand Performance">Brand Performance</option>
+                </select>
               </div>
             </div>
+            <div className="col-12">
+              <TabComponent tabs={tabs} className="analytics-tabs" />
+            </div>
+          </div>
 
-            {/* <div className="project-table-data mt-5">
+          {/* <div className="project-table-data mt-5">
               <TableComponent />
             </div> */}
-            {/* <div className="footer-button">
+          {/* <div className="footer-button">
               <ButtonComponent
                 btnClass={"btn-outline-secondary"}
                 btnName={"Back"}
@@ -448,7 +649,6 @@ export default function Analytics() {
                 btnName={"Go to Analytics"}
               />
             </div> */}
-          </div>
         </div>
       </div>
       {/* <Modal
