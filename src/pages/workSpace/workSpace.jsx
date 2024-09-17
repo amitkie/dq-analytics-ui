@@ -54,13 +54,15 @@ export default function WorkSpace() {
   });
 
   // Function to handle date range changes
-  const handleDateRangeChange = (event, picker) => {
+  const handleDateRangeChange = (event) => {
+    console.log(event);
+    
+    const { startDate, endDate } = event;
+    console.log(startDate, endDate)
     setDateRange({
-      startDate: picker.startDate.format('MM/DD/YYYY'),
-      endDate: picker.endDate.format('MM/DD/YYYY'),
+      startDate: startDate.format("MM/DD/YYYY"),
+      endDate: endDate.format("MM/DD/YYYY"),
     });
-
-    console.log("picker", picker)
   };
 
   // Function to handle date range changes
@@ -187,6 +189,11 @@ export default function WorkSpace() {
         start_date: dateRange.startDate,
         end_date: dateRange.endDate,
       };
+
+      console.log(projectData, 'projectData')
+
+
+      return;
       const projectCreated = await createProject(projectData);
       if (projectCreated) {
         console.log(projectCreated);
@@ -207,152 +214,153 @@ export default function WorkSpace() {
   return (
     <>
       <div className="col-12">
-          <div className="workspace-container">
-            <h2 className="page-title mt-4 ml-3">Workspace</h2>
-            <button
-              type="button"
-              className="create-workspace"
-              onClick={handleShow}
-            >
-              <AiOutlinePlus className="create-workspace-icon" /> Create Project
-            </button>
-            <Modal
-              size="xl"
-              aria-labelledby="contained-modal-title-vcenter"
-              centered
-              show={show}
-              onHide={handleClose}
-              className="modal-height"
-            >
-              <Modal.Header closeButton>
-                <Modal.Title>Create Project</Modal.Title>
-              </Modal.Header>
-              <Modal.Body className="pb-5">
-                <div className="project-name mb-4">
-                  <InputComponent
-                    id="projectName"
-                    inputLabel="Project Name"
-                    inputType="text"
-                    placeholder="Digital Assessment"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                  />
-                </div>
-                <div className="select-options-container">
-                  <small>*All fields are mandatory</small>
-                  <div className="row mb-4 g-4">
-                    <div className="col-lg-4 col-md-6">
-                      <MultiSelectDropdown
-                        options={categories}
-                        selectedValues={selectedCategories}
-                        onChange={handleCategoryChange}
-                        placeholder="Select Categories"
-                      />
-                    </div>
-                    <div className="col-lg-4 col-md-6">
-                      <MultiSelectDropdown
-                        options={brands}
-                        selectedValues={selectedBrands}
-                        onChange={handleBrandChange}
-                        placeholder="Select Brands"
-                        isDisabled={isBrandsDisabled}
-                      />
-                    </div>
-                    <div className="col-lg-4 col-md-6">
-                      <MultiSelectDropdown
-                        options={platforms}
-                        selectedValues={selectedPlatforms}
-                        onChange={handlePlatformChange}
-                        placeholder="Select Platforms"
-                      />
-                    </div>
-                    <div className="col-lg-4 col-md-6">
-                      <MultiSelectDropdown
-                        options={metrics}
-                        selectedValues={selectedMetrics}
-                        onChange={handleMetricsChange}
-                        placeholder="Select Metrics"
-                        isDisabled={isMetricsDisabled}
-                      />
-                    </div>
-                    <div className="col-lg-4 col-md-6">
-                      <MultiSelectDropdown
-                        options={frequencies}
-                        selectedValues={selectedFrequencies}
-                        onChange={handleFrequenciesChange}
-                        placeholder="Select Frequencies"
-                      />
-                    </div>
-                    <div className="col-lg-4 col-md-6">
-                      <DateRangePicker
-                        initialSettings={{
-                          startDate: dateRange.startDate,
-                          endDate: dateRange.endDate,
-                        }}
-                      >
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Select date"
-                          onChange={handleDateRangeChange}
-                        />
-                      </DateRangePicker>
-                    </div>
+        <div className="workspace-container">
+          <h2 className="page-title mt-4 ml-3">Workspace</h2>
+          <button
+            type="button"
+            className="create-workspace"
+            onClick={handleShow}
+          >
+            <AiOutlinePlus className="create-workspace-icon" /> Create Project
+          </button>
+          <Modal
+            size="xl"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+            show={show}
+            onHide={handleClose}
+            className="modal-height"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Create Project</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="pb-5">
+              <div className="project-name mb-4">
+                <InputComponent
+                  id="projectName"
+                  inputLabel="Project Name"
+                  inputType="text"
+                  placeholder="Digital Assessment"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                />
+              </div>
+              <div className="select-options-container">
+                <small>*All fields are mandatory</small>
+                <div className="row mb-4 g-4">
+                  <div className="col-lg-4 col-md-6">
+                    <MultiSelectDropdown
+                      options={categories}
+                      selectedValues={selectedCategories}
+                      onChange={handleCategoryChange}
+                      placeholder="Select Categories"
+                    />
                   </div>
+                  <div className="col-lg-4 col-md-6">
+                    <MultiSelectDropdown
+                      options={brands}
+                      selectedValues={selectedBrands}
+                      onChange={handleBrandChange}
+                      placeholder="Select Brands"
+                      isDisabled={isBrandsDisabled}
+                    />
+                  </div>
+                  <div className="col-lg-4 col-md-6">
+                    <MultiSelectDropdown
+                      options={platforms}
+                      selectedValues={selectedPlatforms}
+                      onChange={handlePlatformChange}
+                      placeholder="Select Platforms"
+                    />
+                  </div>
+                  <div className="col-lg-4 col-md-6">
+                    <MultiSelectDropdown
+                      options={metrics}
+                      selectedValues={selectedMetrics}
+                      onChange={handleMetricsChange}
+                      placeholder="Select Metrics"
+                      isDisabled={isMetricsDisabled}
+                    />
+                  </div>
+                  <div className="col-lg-4 col-md-6">
+                    <MultiSelectDropdown
+                      options={frequencies}
+                      selectedValues={selectedFrequencies}
+                      onChange={handleFrequenciesChange}
+                      placeholder="Select Frequencies"
+                    />
+                  </div>
+                  <div className="col-lg-4 col-md-6">
+                    <DateRangePicker
+                      initialSettings={{
+                        startDate: dateRange.startDate,
+                        endDate: dateRange.endDate,
+                      }}
+                      onApply={(e, picker) => handleDateRangeChange(picker)}
+                    >
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Select date"
+                      />
+                    </DateRangePicker>
+                  </div>
+
                 </div>
-              </Modal.Body>
-              <Modal.Footer className="d-flex justify-content-between">
-                <ButtonComponent
-                  btnClass="btn-outline-secondary"
-                  btnName="Cancel"
-                  onClick={handleClose}
-                />
-                <ButtonComponent
-                  btnClass="btn-primary px-4"
-                  btnName={loading ? "Saving..." : "Save"}
-                  onClick={handleSave}
-                  disabled={loading} // Disable button while saving
-                />
-              </Modal.Footer>
-            </Modal>
-            <div className="project-table-data mt-5">
-              <Table responsive striped bordered>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Project Name</th>
-                    <th>Category</th>
-                    <th>Date Range</th>
-                    <th>Frequency</th>
-                    <th>Last modified on</th>
+              </div>
+            </Modal.Body>
+            <Modal.Footer className="d-flex justify-content-between">
+              <ButtonComponent
+                btnClass="btn-outline-secondary"
+                btnName="Cancel"
+                onClick={handleClose}
+              />
+              <ButtonComponent
+                btnClass="btn-primary px-4"
+                btnName={loading ? "Saving..." : "Save"}
+                onClick={handleSave}
+                disabled={loading} // Disable button while saving
+              />
+            </Modal.Footer>
+          </Modal>
+          <div className="project-table-data mt-5">
+            <Table responsive striped bordered>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Project Name</th>
+                  <th>Category</th>
+                  <th>Date Range</th>
+                  <th>Frequency</th>
+                  <th>Last modified on</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projectInfo?.project?.map((item, ind) => (
+                  <tr key={item.id}>
+                    <td>{ind + 1}</td>
+                    <td
+                      onClick={() => handleProjectClick(item.id)}
+                      style={{
+                        cursor: "pointer",
+                        color: "blue",
+                        textDecoration: "underline",
+                      }}
+                    >
+                      {item?.project_name}
+                    </td>
+                    <td>{item?.categoryNames?.join(", ")}</td>
+                    <td>{formatDate(item?.updatedAt)}</td>
+                    <td>{item?.frequencyNames?.join(", ")}</td>
+                    <td>{formatDate(item?.updatedAt)}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {projectInfo?.project?.map((item, ind) => (
-                    <tr key={item.id}>
-                      <td>{ind + 1}</td>
-                      <td
-                        onClick={() => handleProjectClick(item.id)}
-                        style={{
-                          cursor: "pointer",
-                          color: "blue",
-                          textDecoration: "underline",
-                        }}
-                      >
-                        {item?.project_name}
-                      </td>
-                      <td>{item?.categoryNames?.join(", ")}</td>
-                      <td>{formatDate(item?.updatedAt)}</td>
-                      <td>{item?.frequencyNames?.join(", ")}</td>
-                      <td>{formatDate(item?.updatedAt)}</td>
-                    </tr>
-                  ))}
-                  {/* Add more rows as needed */}
-                </tbody>
-              </Table>
-            </div>
+                ))}
+                {/* Add more rows as needed */}
+              </tbody>
+            </Table>
           </div>
         </div>
+      </div>
     </>
   );
 }

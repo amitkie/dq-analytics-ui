@@ -240,7 +240,7 @@ export default function Analytics() {
     }
 
     async function fetchComparedValue(id) {
-      const project_id = 22;
+      const project_id = id;
 
       const requestPayload = {
         "project_ids": [project_id]
@@ -264,7 +264,7 @@ export default function Analytics() {
     }
 
     async function fetchDQScoreValue(id) {
-      const project_id = 22;
+      const project_id = id;
 
       const requestPayload = {
         "project_id": project_id

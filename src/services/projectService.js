@@ -193,7 +193,7 @@ export const getNormalizedValues = async (data) => {
 export const getDQScore = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8020.inc1.devtunnels.ms/get_data`,
+      `https://hzz4tlcw-8005.inc1.devtunnels.ms/get_data`,
       data
     );
 
