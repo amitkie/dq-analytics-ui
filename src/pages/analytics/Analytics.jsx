@@ -525,7 +525,7 @@ export default function Analytics() {
                             marginRight: '5px',
                           }}
                         ></span> {filteredMetric[0].sectionName}</td>
-                      <td>Metric {filteredMetric[0].metricid}</td>
+                      <td> {filteredMetric[0].metricname}</td>
                       {filteredMetric.map((item, index) => (
                         <td key={index}>{item.actualValue}</td>
                       ))}

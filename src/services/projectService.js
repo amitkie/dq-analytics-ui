@@ -174,7 +174,7 @@ export const getHealthCardDetails = async (data) => {
 export const getNormalizedValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8015.inc1.devtunnels.ms/normalized_value`,
+      `https://dndrvx80-8015.inc1.devtunnels.ms/normalized_value`,
       data
     );
 

@@ -21,8 +21,8 @@ const AnalyticsTable = ({
           <th className="col-1">Category</th>
           <th className="col-1">Weights ({totalWeights})</th>
           <th className="col-1">Overall</th>
-          <th className="col-2">Category based</th>
-          <th className="col-1">Benchmarks</th>
+          <th className="col-1">Category based</th>
+          <th className="col-2">Benchmarks</th>
         </tr>
       </thead>
       {!isBenchmarkSaved ? (<tbody>
@@ -42,7 +42,7 @@ const AnalyticsTable = ({
                 onChange={(e) => handleWeightChange(item?.metric_id, e.target.value)}
                 min="0"
                 max="100"
-                className={totalWeights > 100 ? "input-error" : ""}
+                className={totalWeights > 100 ? "input-error form-input" : "form-input"}
                 style={totalWeights > 100 ? { borderColor: 'red' } : {}}
               />
             </td>
@@ -64,25 +64,28 @@ const AnalyticsTable = ({
             </td>
             <td>
               {item.isCategoryBasedChecked ? (
-                <Table responsive striped bordered>
-                  {item.benchmark.map(({ category, value }, index) => (
+                <Table responsive>
+                 
                     <>
-                      <thead>
+                      {/* <thead>
                         <tr>
                           <th key={index}>{category}</th>
                         </tr>
-                      </thead>
+                      </thead> */}
                       <tbody>
+                      {item.benchmark.map(({ category, value }, index) => (
                         <tr>
+                          <td key={index}><strong>{category}</strong></td>
                           <td key={index}>
                             {isNaN(Number(value))
                               ? "NA"
                               : Number(value).toFixed(2)}
                           </td>
                         </tr>
+                        ))}
                       </tbody>
                     </>
-                  ))}
+                  
                 </Table>
               ) : item.isOverallChecked ? (
                 <>

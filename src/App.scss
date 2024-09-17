@@ -271,6 +271,14 @@ Table thead {
   }
 }
 
+.form-input {
+  border: 1px solid #c2c2c2;
+  box-shadow: none;
+  padding: 10px 4px;
+  border-radius: 6px;
+  width: 100px;
+}
+
 
 @media (max-width:767px) {
   .form-label {
