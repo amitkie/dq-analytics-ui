@@ -38,8 +38,8 @@ const AnalyticsTable = ({
                 type="number"
                 // value={item?.weights || ""}
                 // onChange={(e) => handleWeightChange(item, e.target.value)}
-                value={weights[item?.metric_id]}
-                onChange={(e) => handleWeightChange(item?.metric_id, e.target.value)}
+                value={weights[item?.metric_id]?.toFixed(2)} 
+                onChange={(e) => handleWeightChange(item?.metric_id, parseFloat(e.target.value).toFixed(2))} 
                 min="0"
                 max="100"
                 className={totalWeights > 100 ? "input-error form-input" : "form-input"}

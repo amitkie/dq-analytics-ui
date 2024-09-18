@@ -207,78 +207,79 @@ export default function Analytics() {
     }
   };
 
-  useEffect(() => {
-    async function fetchProjectDetails(id) {
-      try {
-        const response = await getProjectDetailsByProjectId(id);
-        setProjectDetails(response?.project);
-        setMetrics(() => {
-          if (response?.project?.metrics && response?.project?.metrics?.length > 0) {
+  async function fetchProjectDetails(id) {
+    try {
+      const response = await getProjectDetailsByProjectId(id);
+      setProjectDetails(response?.project);
+      setMetrics(() => {
+        if (response?.project?.metrics && response?.project?.metrics?.length > 0) {
 
-            const initialWeight = 100 / response?.project?.metrics?.length;
-            const initialWeights = response?.project?.metrics?.reduce((acc, item) => {
-              acc[item.metric_id] = initialWeight;
-              return acc;
-            }, {});
-            setWeights(initialWeights);
-          }
-          return response?.project?.metrics?.map((ele) => {
-            ele.isOverallChecked = false;
-            ele.isCategoryBasedChecked = false;
-            return ele;
-          });
-        });
-        setCheckStates(
-          response?.project?.metrics?.reduce((acc, item) => {
-            acc[item.id] = { overall: false, categoryBased: false };
+          const initialWeight = 100 / response?.project?.metrics?.length;
+          const initialWeights = response?.project?.metrics?.reduce((acc, item) => {
+            acc[item.metric_id] = initialWeight;
             return acc;
-          }, {}) || {}
-        );
-      } catch (error) {
-        console.error("Error fetching project details:", error);
-      }
-    }
-
-    async function fetchComparedValue(id) {
-      const project_id = id;
-
-      const requestPayload = {
-        "project_ids": [project_id]
-      };
-
-      try {
-        const compareNormalizeValue = await getNormalizedValues(requestPayload);
-        const filterData = compareNormalizeValue.filter((ele) => ele.project_id == project_id);
-        const uniqueBrands = filterData.reduce((acc, item) => {
-          if (!acc.map[item.brandName]) {
-            acc.map[item.brandName] = true;
-            acc.result.push(item);
-          }
+          }, {});
+          setWeights(initialWeights);
+        }
+        return response?.project?.metrics?.map((ele) => {
+          ele.isOverallChecked = false;
+          ele.isCategoryBasedChecked = false;
+          return ele;
+        });
+      });
+      setCheckStates(
+        response?.project?.metrics?.reduce((acc, item) => {
+          acc[item.id] = { overall: false, categoryBased: false };
           return acc;
-        }, { map: {}, result: [] }).result;
-        console.log("API Response:----------------", uniqueBrands);
-        setNormalizedValue(uniqueBrands);
-      } catch (error) {
-        console.error("Error in Fetching Data:", error);
-      }
+        }, {}) || {}
+      );
+    } catch (error) {
+      console.error("Error fetching project details:", error);
     }
+  }
 
-    async function fetchDQScoreValue(id) {
-      const project_id = id;
+  async function fetchComparedValue(id) {
+    const project_id = id;
 
-      const requestPayload = {
-        "project_id": project_id
-      };
+    const requestPayload = {
+      "project_ids": [project_id]
+    };
 
-      try {
-        const dqScoreValueResponse = await getDQScore(requestPayload);
-        
-        console.log("DQ SCORE______", dqScoreValueResponse);
-        setDQScoreValue(dqScoreValueResponse?.data);
-      } catch (error) {
-        console.error("Error in Fetching Data:", error);
-      }
+    try {
+      const compareNormalizeValue = await getNormalizedValues(requestPayload);
+      const filterData = compareNormalizeValue.filter((ele) => ele.project_id == project_id);
+      const uniqueBrands = filterData.reduce((acc, item) => {
+        if (!acc.map[item.brandName]) {
+          acc.map[item.brandName] = true;
+          acc.result.push(item);
+        }
+        return acc;
+      }, { map: {}, result: [] }).result;
+      console.log("API Response:----------------", uniqueBrands);
+      setNormalizedValue(uniqueBrands);
+    } catch (error) {
+      console.error("Error in Fetching Data:", error);
     }
+  }
+
+  async function fetchDQScoreValue(id) {
+    const project_id = id;
+
+    const requestPayload = {
+      "project_id": project_id
+    };
+
+    try {
+      const dqScoreValueResponse = await getDQScore(requestPayload);
+      
+      console.log("DQ SCORE______", dqScoreValueResponse);
+      setDQScoreValue(dqScoreValueResponse?.data);
+    } catch (error) {
+      console.error("Error in Fetching Data:", error);
+    }
+  }
+
+  useEffect(() => {
 
     if (projectId) {
       setProjectIds(projectId);
@@ -289,19 +290,20 @@ export default function Analytics() {
     }
 
 
-
-
   }, [projectId]);
 
   const saveWeights = async () => {
     const saveMetricsPayload = generateApiPayload(metrics);
+    console.log('saveMetricsPayload', saveMetricsPayload)
+
     try {
       const response = await saveMetricsOfProject(saveMetricsPayload);
       if (response) {
         if (response.status == 'success') {
           // dispatch(showAlert({ variant: 'success', message: 'Weights saved successfully' }));
           alert('Weights saved successfully!');
-          setProjectIds(projectId);
+          fetchProjectDetails(projectId)
+          console.log("saveWeights", response)
         }
       }
 
@@ -313,18 +315,26 @@ export default function Analytics() {
       }
     }
 
-
-    // localStorage.setItem(`project_${projectId}_weights`, JSON.stringify(saveMetricsPayload));
-    // alert("Weights and benchmarks saved successfully!");
   };
 
   const generateApiPayload = (metrics) => {
     const project_id = projectId;   // Example project ID
+  
     return metrics?.map(metric => {
       const categoryIds = metric?.categories?.map(category => category?.id) || [];
+  
       // Iterate over categories and match the benchmark data
       const benchmarkData = metric?.categories?.map(category => {
-        const matchedBenchmark = metric?.benchmark?.find(bm => bm?.categories?.includes(category?.name)) || {}; // Match based on category
+        // Find the benchmark that matches the current category
+        const matchedBenchmark = metric?.benchmark?.find(bm => 
+          bm?.categories?.includes(category?.name) || bm?.category === "Overall"
+        ) || {};  // Handle missing benchmark
+  
+        console.log(matchedBenchmark, 'matchedBenchmark 1')
+        console.log(matchedBenchmark?.actualValue?.[metric?.brands?.[0]?.name], 'matchedBenchmark 2')
+        console.log(matchedBenchmark?.actualValue, 'matchedBenchmark 3')
+
+        // Check if the metric is marked as "Overall" or "Category Based"
         if (metric?.isOverallChecked) {
           return {
             categoryId: category?.id,
@@ -333,8 +343,8 @@ export default function Analytics() {
             sectionId: metric?.section?.id,
             percentile: matchedBenchmark?.percentile,
             overallValue: matchedBenchmark?.value,
-            actualValue: matchedBenchmark?.actualValue
-          }
+            actualValue: matchedBenchmark?.actualValue, 
+          };
         } else {
           return {
             categoryId: category?.id,
@@ -342,30 +352,30 @@ export default function Analytics() {
             sectionName: metric?.section?.name,
             sectionId: metric?.section?.id,
             percentile: matchedBenchmark?.percentile,
-            benchmarkValue: matchedBenchmark?.value || null,  // Get the benchmark value or default to null
-            actualValue: matchedBenchmark?.actualValue || null  // Get the actual value or default to null
+            benchmarkValue: matchedBenchmark?.value,  
+            actualValue: matchedBenchmark?.actualValue,
           };
         }
-
       });
-
+  
+     
       if (benchmarkData) {
         return {
           project_id: project_id,
-          sectionId: metric?.section?.id || null,  // Default to null if sectionId is missing
-          platformId: metric?.platform?.id || null,  // Default to null if platformId is missing
-          isOverall: metric?.isOverallChecked || false,  // Default to false if isOverallChecked is missing
-          isCategory: metric?.isCategoryBasedChecked || false,  // Default to false if isCategoryBasedChecked is missing
-          metricId: metric?.metric_id || null,  // Default to null if metricId is missing
-          weights: metric?.weights || 0,  // Default to 0 if weights are missing
+          sectionId: metric?.section?.id || null, 
+          platformId: metric?.platform?.id || null, 
+          isOverall: metric?.isOverallChecked || false, 
+          isCategory: metric?.isCategoryBasedChecked || false, 
+          metricId: metric?.metric_id || null, 
+          weights: metric?.weights || 0,  
           categoryIds: categoryIds,
           brandIds: metric?.brands?.map(brand => brand?.id) || [],
-          benchmarks: JSON.stringify(new Set(benchmarkData))  // Safely stringify the benchmark data
+          benchmarks: JSON.stringify(benchmarkData)  
         };
       }
-
     });
   };
+  
 
 
 

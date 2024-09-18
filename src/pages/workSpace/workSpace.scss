@@ -67,4 +67,8 @@
   .workspace-container {
     padding: 0 .75rem;
   }
+  .modal-content {
+    height: calc(100vh - 40px);
+  }
+
 }

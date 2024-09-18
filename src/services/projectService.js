@@ -26,7 +26,7 @@ export const saveMetricsOfProject = async (data) => {
       data
     );
 
-    console.log(response)
+    console.log("saveWeights",response)
 
     if (response?.status !== 200) {
       throw new Error("Network response was not ok");
@@ -36,7 +36,7 @@ export const saveMetricsOfProject = async (data) => {
 
     return frequenciesData;
   } catch (error) {
-    console.error("Error in login:", error);
+    console.error("Error in save weights:", error);
     throw error;
   }
 };
@@ -174,7 +174,7 @@ export const getHealthCardDetails = async (data) => {
 export const getNormalizedValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://dndrvx80-8015.inc1.devtunnels.ms/normalized_value`,
+      `https://hzz4tlcw-8004.inc1.devtunnels.ms/normalized_value`,
       data
     );
 
@@ -193,7 +193,7 @@ export const getNormalizedValues = async (data) => {
 export const getDQScore = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8005.inc1.devtunnels.ms/get_data`,
+      `https://hzz4tlcw-8008.inc1.devtunnels.ms/get_data`,
       data
     );
 
@@ -209,5 +209,23 @@ export const getDQScore = async (data) => {
     throw error;
   }
 };
+export const getBrandData = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8012.inc1.devtunnels.ms/get_brand_data`,
+      data
+    );
 
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getBrandDataDetails = response.data;
+
+    return getBrandDataDetails;
+  } catch (error) {
+    console.error("Error in fetching :", error);
+    throw error;
+  }
+};
 

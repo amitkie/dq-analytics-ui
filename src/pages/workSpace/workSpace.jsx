@@ -177,6 +177,7 @@ export default function WorkSpace() {
   const handleSave = async () => {
     setLoading(true);
     setError(null);
+    console.log("save clicked");
     try {
       const projectData = {
         project_name: projectName,
@@ -191,9 +192,7 @@ export default function WorkSpace() {
       };
 
       console.log(projectData, 'projectData')
-
-
-      return;
+      
       const projectCreated = await createProject(projectData);
       if (projectCreated) {
         console.log(projectCreated);
@@ -292,15 +291,17 @@ export default function WorkSpace() {
                   </div>
                   <div className="col-lg-4 col-md-6">
                     <DateRangePicker
+                      
                       initialSettings={{
                         startDate: dateRange.startDate,
                         endDate: dateRange.endDate,
+                         
                       }}
                       onApply={(e, picker) => handleDateRangeChange(picker)}
                     >
                       <input
                         type="text"
-                        className="form-control"
+                        className="form-control col-4"
                         placeholder="Select date"
                       />
                     </DateRangePicker>

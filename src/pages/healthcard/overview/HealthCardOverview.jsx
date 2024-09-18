@@ -22,7 +22,7 @@ import PaidMedia from "../../../components/paidMedia/PaidMedia";
 import MediaEcom from "../../../components/MediaEcom/MediaEcom";
 import MediaOffPlatform from "../../../components/MediaOffPlatform/MediaOffPlatform";
 import SocialMedia from "../../../components/SocialMedia/SocialMedia";
-import { getHealthCardDetails } from "../../../services/projectService";
+import { getHealthCardDetails, getBrandData } from "../../../services/projectService";
 import BrandPerformance from "../../../components/BrandPerformance/BrandPerformance";
 import { useParams } from "react-router-dom";
 
@@ -31,9 +31,14 @@ export default function HealthCardOverview() {
   const [healthCardData, setHealthCardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [brandDetailData, setBrandDetailData] = useState([]);
+
+
   useEffect(() => {
     fetchHealthCardData();
+    fetchBrandScoreDetails();
   }, []);
+
   const fetchHealthCardData = async () => {
     setLoading(true); // Start loading
     setError(null); // Reset error state
@@ -58,6 +63,30 @@ export default function HealthCardOverview() {
       setLoading(false); // End loading
     }
   };
+
+  const fetchBrandScoreDetails = async () => {
+    setLoading(true);
+    setError(null)
+    const requestPayload = {
+      "brand_name": "Livon"
+    }
+    try{
+      const brandScoreDetails = await getBrandData(requestPayload);
+      if(brandScoreDetails) {
+        setBrandDetailData(brandScoreDetails?.data)
+        console.log("brandScoreDetails", brandScoreDetails);
+      } else {
+        setError("No Data Found")
+      }
+    } catch (error) {
+      console.error("Error fetching Brand Score data:", error);
+      setError("No data found"); // Set error message if API call fails
+    } finally {
+      setLoading(false); // End loading
+    }
+  }
+
+
 
   const tabs = [
     {
@@ -154,7 +183,7 @@ export default function HealthCardOverview() {
                   alt="Brand Logo"
                 />
                 <div className="score-details">
-                  <div className="brand-title">{brand}</div>
+                  <div className="brand-title">{brandDetailData.map(item => item.Brand_Name)}</div>
                   <span className="brand-subtitle">Tea</span>
                 </div>
               </div>
@@ -164,7 +193,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {getColorScore(59.2, [70.3])}
+                  {brandDetailData.map(item => getColorScore(item.Overall_Final_Score, 70.3))}
                   </div>
                   <span className="brand-subtitle">DQ Score</span>
                   <OverlayTrigger
@@ -184,8 +213,8 @@ export default function HealthCardOverview() {
                   <MdOutlineStackedLineChart />
                 </div>
                 <div className="score-details">
-                  <div className="brand-title">
-                    {getColorScore(50.2, [40.0])}
+                  <div className="brand-title"> 
+                  {brandDetailData.map(item => getColorScore(item.Ecom, 40.0))}
                   </div>
                   <span className="brand-subtitle">Ecom DQ Score</span>
                   <OverlayTrigger
@@ -206,7 +235,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {getColorScore(50.7, [60.5])}
+                  {brandDetailData.map(item => getColorScore(item.social, 60.5))}
                   </div>
                   <span className="brand-subtitle">Social DQ Score</span>
                   <OverlayTrigger
@@ -227,8 +256,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {" "}
-                    {getColorScore(55.4, [50])}
+                    {brandDetailData.map(item => getColorScore(item.paid, 50))}
                   </div>
                   <span className="brand-subtitle">Paid DQ Score</span>
                   <OverlayTrigger
@@ -249,7 +277,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {getColorScore(55.4, [50])}
+                  {brandDetailData.map(item => getColorScore(item.Brand_Perf, 50))}
                   </div>
                   <span className="brand-subtitle">Brand Perf DQ Score</span>
                   <OverlayTrigger
