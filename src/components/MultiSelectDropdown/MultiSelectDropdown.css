@@ -25,7 +25,8 @@
     border: 1px solid #ddd;
     background: #fff;
     border-radius: 4px;
-    max-height: 200px;
+    height: max-content;
+    max-height: 300px;
     overflow-y: auto;
     z-index: 1000;
   }
@@ -39,7 +40,8 @@
   }
   
   .options {
-    max-height: 180px;
+    height: 100%;
+    max-height: 240px;
     overflow-y: auto;
   }
   
