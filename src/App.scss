@@ -308,3 +308,31 @@ Table thead {
     white-space: nowrap;
   }
 }
+
+
+.loader-container-sm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+}
+
+.loader-sm {
+  width: 24px;
+  height: 24px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-text {
+  margin-left: 10px;
+  font-size: 14px;
+}

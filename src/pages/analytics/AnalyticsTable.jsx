@@ -77,16 +77,12 @@ const AnalyticsTable = ({
                 onChange={(e) => handleCheckboxChange(e, item, "categoryBased")}
               />
             </td>
-            <td>
+            {/* <td>
               {item.isCategoryBasedChecked ? (
                 <Table responsive>
 
                   <>
-                    {/* <thead>
-                        <tr>
-                          <th key={index}>{category}</th>
-                        </tr>
-                      </thead> */}
+                  
                     <tbody>
                       {item.benchmark.map(({ category, value }, index) => (
                         <tr>
@@ -111,7 +107,38 @@ const AnalyticsTable = ({
               ) : (
                 "NA"
               )}
+            </td> */}
+
+            <td>
+              {item?.isLoading ? (
+                <div className="loader-container-sm">
+                  <div className="loader-sm"></div>
+                  <span className="loader-text">Loading...</span>
+                </div>
+              ) : item.isCategoryBasedChecked ? (
+                <Table responsive>
+                  <tbody>
+                    {item.benchmark.map(({ category, value }, index) => (
+                      <tr key={index}>
+                        <td><strong>{category}</strong></td>
+                        <td>
+                          {isNaN(Number(value)) ? "NA" : Number(value).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              ) : item.isOverallChecked ? (
+                <>
+                  {isNaN(Number(item.benchmark[0]?.value))
+                    ? "NA"
+                    : Number(item.benchmark[0]?.value).toFixed(2)}
+                </>
+              ) : (
+                "NA"
+              )}
             </td>
+
           </tr>
         ))}
       </tbody>) : (

@@ -189,7 +189,8 @@ export default function WorkSpace() {
   };
 
   const handleFrequenciesChange = (selectedOptions) => {
-    setSelectedFrequencies(selectedOptions);
+    console.log(selectedOptions?.target?.value,'selectedOptions')
+    setSelectedFrequencies(selectedOptions?.target?.value);
   };
 
   const handleProjectClick = (id) => {
@@ -199,19 +200,20 @@ export default function WorkSpace() {
   const handleSave = async () => {
     setLoading(true);
     setError(null);
-    console.log("save clicked");
+    console.log("save clicked", selectedFrequencies);
     try {
       const projectData = {
         project_name: projectName,
         user_id: userInfo?.user?.id, // Replace with actual user_id
-        metric_id: selectedMetrics.map((option) => option.value),
-        brand_id: selectedBrands.map((option) => option.value),
-        category_id: selectedCategories.map((option) => option.value),
-        frequency_id: selectedFrequencies.map((option) => option.value),
-        platform_id: selectedPlatforms.map((option) => option.value),
-        start_date: dateRange.startDate,
-        end_date: dateRange.endDate,
+        metric_id: selectedMetrics?.map((option) => option.value),
+        brand_id: selectedBrands?.map((option) => option.value),
+        category_id: selectedCategories?.map((option) => option.value),
+        frequency_id: [selectedFrequencies],
+        platform_id: selectedPlatforms?.map((option) => option.value),
+        start_date: dateRange?.startDate,
+        end_date: dateRange?.endDate,
       };
+
 
       console.log(projectData, 'projectData')
       
@@ -226,6 +228,7 @@ export default function WorkSpace() {
       setShow(false);
       // Optionally, reset form fields or show a success message
     } catch (error) {
+      console.log(error,'jjjj')
       setError(error.message);
     } finally {
       setLoading(false);
@@ -307,24 +310,24 @@ export default function WorkSpace() {
                     />
                   </div>
                   <div className="col-lg-4 col-md-6">
-                  {/* <select 
+                  <select 
                     className="form-control-select" 
                     onChange={handleFrequenciesChange} 
                     selectedValues={selectedFrequencies}
                   >
                     <option value="">Select Frequencies</option>
-                    {frequencies.map(option => (
+                    {frequencies?.map(option => (
                       <option key={option.value} value={option.value}>
                         {option.label}
                       </option>
                     ))}
-                  </select> */}
-                    <MultiSelectDropdown
+                  </select>
+                    {/* <MultiSelectDropdown
                       options={frequencies}
                       selectedValues={selectedFrequencies}
                       onChange={handleFrequenciesChange}
                       placeholder="Select Frequencies"
-                    />
+                    /> */}
                   </div>
                   <div className="col-lg-4 col-md-6">
                     <DateRangePicker

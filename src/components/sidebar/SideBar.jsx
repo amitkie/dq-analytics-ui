@@ -101,7 +101,7 @@ export default function SideBar() {
           onClick={() => handleMenuActive("analytics")}
         >
           {/* <Link 
-          // to={`/analytics/${projectInfo?.project[projectInfo?.project?.length - 1].id}`} 
+          // to={`/analytics/${projectInfo?.project[0].id}`} 
           title="Analytics" id="m-3">
             <img
               src={
@@ -114,7 +114,7 @@ export default function SideBar() {
                 <Link
           to={
             projectInfo.project && projectInfo?.project?.length > 0
-              ? `/analytics/${projectInfo?.project[projectInfo?.project?.length - 1].id}`
+              ? `/analytics/${projectInfo?.project[0].id}`
               : undefined // Link should be undefined if no project exists
           }
           title="Analytics"
@@ -136,7 +136,7 @@ export default function SideBar() {
         <Link
           to={
             projectInfo.project && projectInfo?.project?.length > 0
-              ? `/analytics/${projectInfo?.project[projectInfo?.project?.length - 1].id}`
+              ? `/analytics/${projectInfo?.project[0].id}`
               : undefined // Link should be undefined if no project exists
           }onClick={(e) => {
             if (!(projectInfo.project && projectInfo?.project?.length > 0)) {

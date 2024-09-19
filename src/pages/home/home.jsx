@@ -98,7 +98,7 @@ const Home = () => {
                 Last activity on:{" "}
                 <b>
                   {formatDate(
-                    projectInfo?.project[projectInfo?.project?.length - 1]
+                    projectInfo?.project[0]
                       .updatedAt
                   )}
                 </b>
@@ -107,7 +107,7 @@ const Home = () => {
                 Project Name:{" "}
                 <b>
                   {
-                    projectInfo?.project[projectInfo?.project?.length - 1]
+                    projectInfo?.project[0]
                       .project_name
                   }
                 </b>
@@ -190,7 +190,7 @@ const Home = () => {
 
                 {projectInfo.project && projectInfo?.project?.length > 0 ? (
                   <Link
-                    to={`/analytics/${projectInfo?.project[projectInfo?.project?.length - 1].id}`}
+                    to={`/analytics/${projectInfo?.project[0].id}`}
                     className="menu-list-nav"
                     title="View the last opened or newly created DQ Sheet"
                   >

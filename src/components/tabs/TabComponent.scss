@@ -117,3 +117,9 @@
     overflow-x: scroll;
   }
 }
+
+.tab-list li button.disabled-tab {
+  cursor: not-allowed;
+  background-color: #ccc;
+  color: #666;
+}

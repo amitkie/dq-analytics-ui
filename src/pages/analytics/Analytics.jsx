@@ -214,7 +214,11 @@ export default function Analytics() {
   // Edge Case Handling
   const handleCheckboxChange = async (event, metric, type) => {
     const isChecked = event.target.checked;
-  
+    setMetrics((prev) =>
+      prev.map((ele) =>
+        ele?.metric_id === metric?.metric_id ? { ...ele, isLoading: true } : ele
+      )
+    );
     if (isChecked) {
       // If the checkbox is checked, make the API call
       const analysis_type =
@@ -233,13 +237,14 @@ export default function Analytics() {
   
         setMetrics((prev) =>
           prev.map((ele) => {
-            if (ele.metric_id === metric.metric_id) {
+            if (ele?.metric_id === metric?.metric_id) {
               if (type === "overall") {
                 return {
                   ...ele,
                   isOverallChecked: true,
                   isCategoryBasedChecked: false,
                   benchmark: benchmarks.results,
+                  isLoading: false,
                 };
               } else if (type === "categoryBased") {
                 return {
@@ -247,6 +252,7 @@ export default function Analytics() {
                   isCategoryBasedChecked: true,
                   isOverallChecked: false,
                   benchmark: benchmarks.results,
+                  isLoading: false,
                 };
               }
             }
@@ -255,6 +261,11 @@ export default function Analytics() {
         );
       } catch (error) {
         console.error("Error in fetching benchmark values:", error);
+        setMetrics((prev) =>
+          prev.map((ele) =>
+            ele.metric_id === metric.metric_id ? { ...ele, isLoading: false } : ele
+          )
+        ); 
       }
     } else {
       // If the checkbox is unchecked, just reset the values
@@ -266,7 +277,8 @@ export default function Analytics() {
               isOverallChecked: type === "overall" ? false : ele.isOverallChecked,
               isCategoryBasedChecked:
                 type === "categoryBased" ? false : ele.isCategoryBasedChecked,
-              benchmark: null, // Reset the benchmark
+              benchmark: null, 
+              isLoading: false, 
             };
           }
           return ele;
@@ -309,6 +321,7 @@ export default function Analytics() {
                 isCategoryBasedChecked: true,
                 isOverallChecked: false,
                 benchmark: benchmarks.results,
+                isLoading: false,
               };
             }
           } catch (error) {
@@ -321,7 +334,8 @@ export default function Analytics() {
             isOverallChecked: type === "overall" ? false : metric.isOverallChecked,
             isCategoryBasedChecked:
               type === "categoryBased" ? false : metric.isCategoryBasedChecked,
-            benchmark: null, // Reset the benchmark
+            benchmark: null, 
+            isLoading: false,
           };
         }
       })
@@ -802,7 +816,7 @@ export default function Analytics() {
               </div>
             </div>
             <div className="col-12">
-              <TabComponent tabs={tabs} className="analytics-tabs" />
+              <TabComponent tabs={tabs} isBenchmarkDataSaved={projectDetails?.is_benchmark_saved}  className="analytics-tabs" />
             </div>
           </div>
 
