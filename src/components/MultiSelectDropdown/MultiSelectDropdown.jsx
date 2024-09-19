@@ -19,6 +19,18 @@ const MultiSelectDropdown = ({
     onChange(newSelection);
   };
 
+  const allSelected = options.length > 0 && selectedValues.length === options.length;
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      // Deselect all if currently all are selected
+      onChange([]);
+    } else {
+      // Select all if not already selected
+      onChange(options);
+    }
+  };
+
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
   const filteredOptions = options.filter((option) =>
@@ -49,6 +61,14 @@ const MultiSelectDropdown = ({
             onChange={handleSearch}
           />
           <div className="options">
+          <div className="option" onClick={handleSelectAll}>
+            <input
+              type="checkbox"
+              checked={allSelected}
+              onChange={handleSelectAll}
+            />
+            <span>Select All</span>
+          </div>
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <div
@@ -58,7 +78,12 @@ const MultiSelectDropdown = ({
                   }`}
                   onClick={() => handleSelect(option)}
                 >
-                  {option.label}
+                  <input
+                    type="checkbox"
+                    checked={selectedValues.includes(option)}
+                    onChange={() => handleSelect(option)}
+                  />
+                  <span>{option.label}</span>
                 </div>
               ))
             ) : (
