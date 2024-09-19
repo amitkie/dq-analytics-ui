@@ -8,6 +8,7 @@ const AnalyticsTable = ({
   projectDetails,
   checkStates,
   weights,
+  handleSelectAll,
   totalWeights
 }) => {
 
@@ -20,8 +21,22 @@ const AnalyticsTable = ({
           <th className="col-4">Metric list</th>
           <th className="col-1">Category</th>
           <th className="col-1">Weights ({totalWeights})</th>
-          <th className="col-1">Overall</th>
-          <th className="col-1">Category based</th>
+          <th className="col-1">
+            <input
+              type="checkbox"
+              onChange={(e) => handleSelectAll(e, "overall")}
+              className="c-pointer"
+            />{" "}
+            Overall
+          </th>
+          <th className="col-1">
+            <input
+              type="checkbox"
+              onChange={(e) => handleSelectAll(e, "categoryBased")}
+              className="c-pointer"
+            />{" "}
+            Category based
+          </th>
           <th className="col-2">Benchmarks</th>
         </tr>
       </thead>
@@ -38,8 +53,8 @@ const AnalyticsTable = ({
                 type="number"
                 // value={item?.weights || ""}
                 // onChange={(e) => handleWeightChange(item, e.target.value)}
-                value={weights[item?.metric_id]?.toFixed(2)} 
-                onChange={(e) => handleWeightChange(item?.metric_id, parseFloat(e.target.value).toFixed(2))} 
+                value={weights[item?.metric_id]?.toFixed(2)}
+                onChange={(e) => handleWeightChange(item?.metric_id, parseFloat(e.target.value).toFixed(2))}
                 min="0"
                 max="100"
                 className={totalWeights > 100 ? "input-error form-input" : "form-input"}
@@ -65,14 +80,14 @@ const AnalyticsTable = ({
             <td>
               {item.isCategoryBasedChecked ? (
                 <Table responsive>
-                 
-                    <>
-                      {/* <thead>
+
+                  <>
+                    {/* <thead>
                         <tr>
                           <th key={index}>{category}</th>
                         </tr>
                       </thead> */}
-                      <tbody>
+                    <tbody>
                       {item.benchmark.map(({ category, value }, index) => (
                         <tr>
                           <td key={index}><strong>{category}</strong></td>
@@ -82,10 +97,10 @@ const AnalyticsTable = ({
                               : Number(value).toFixed(2)}
                           </td>
                         </tr>
-                        ))}
-                      </tbody>
-                    </>
-                  
+                      ))}
+                    </tbody>
+                  </>
+
                 </Table>
               ) : item.isOverallChecked ? (
                 <>

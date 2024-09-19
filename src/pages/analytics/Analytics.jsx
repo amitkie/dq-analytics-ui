@@ -127,71 +127,230 @@ export default function Analytics() {
     colorCode = "";
   }
 
-  const handleCheckboxChange = async (event, metric, type) => {
-    const analysis_type =
-      type == "overall" ? "Overall" : projectDetails?.categories;
-    const reqPayload = {
-      platform: metric?.platform?.name,
-      // platform: metric?.platform?.name,
-      metrics: metric?.metric_name,
-      brand: projectDetails?.brands,
-      // brand:"PureSense",
-      analysis_type: analysis_type,
-      start_date: "2024-04-01",
-      end_date: "2024-06-30",
-    };
+  // const handleCheckboxChange = async (event, metric, type) => {
+  //   const analysis_type =
+  //     type == "overall" ? "Overall" : projectDetails?.categories;
+  //   const reqPayload = {
+  //     platform: metric?.platform?.name,
+  //     // platform: metric?.platform?.name,
+  //     metrics: metric?.metric_name,
+  //     brand: projectDetails?.brands,
+  //     // brand:"PureSense",
+  //     analysis_type: analysis_type,
+  //     start_date: projectDetails?.start_date,
+  //     end_date: projectDetails?.end_date,
+  //   };
 
-    try {
-      const benchmarks = await getBenchamarkValues(reqPayload);
-      setMetrics((prev) => {
-        return prev.map((ele) => {
-          if (type === "overall") {
+  //   try {
+  //     const benchmarks = await getBenchamarkValues(reqPayload);
+  //     setMetrics((prev) => {
+  //       return prev.map((ele) => {
+  //         if (type === "overall") {
+  //           if (ele.metric_id === metric.metric_id) {
+  //             ele.isOverallChecked = !ele.isOverallChecked;
+  //             ele.isCategoryBasedChecked = false;
+  //             ele.benchmark = benchmarks.results;
+  //           }
+  //         }
+  //         if (type === "categoryBased") {
+  //           if (ele.metric_id === metric.metric_id) {
+  //             ele.isCategoryBasedChecked = !ele.isCategoryBasedChecked;
+  //             ele.isOverallChecked = false;
+  //             ele.benchmark = benchmarks.results;
+  //           }
+  //         }
+  //         return ele;
+  //       });
+  //     });
+  //   } catch (error) {
+  //     console.error("Error in fetching benchmark values:", error);
+  //   }
+  // };
+
+  // const handleSelectAll = async (e, type) => {
+  //   const isChecked = e.target.checked;
+  
+  //   const updatedMetrics = await Promise.all(
+  //     metrics?.map(async (metric) => {
+  //       const analysis_type =
+  //         type === "overall" ? "Overall" : projectDetails?.categories;
+  //       const reqPayload = {
+  //         platform: metric?.platform?.name,
+  //         metrics: metric?.metric_name,
+  //         brand: projectDetails?.brands,
+  //         analysis_type: analysis_type,
+  //         start_date: projectDetails?.start_date,
+  //         end_date: projectDetails?.end_date,
+  //       };
+  
+  //       try {
+  //         const benchmarks = await getBenchamarkValues(reqPayload);
+  
+  //         // Update the metric state based on type (overall or categoryBased)
+  //         if (type === "overall") {
+  //           return {
+  //             ...metric,
+  //             isOverallChecked: isChecked,
+  //             isCategoryBasedChecked: !isChecked, // Uncheck the category-based checkbox
+  //             benchmark: benchmarks.results,
+  //           };
+  //         } else if (type === "categoryBased") {
+  //           return {
+  //             ...metric,
+  //             isCategoryBasedChecked: isChecked,
+  //             isOverallChecked: !isChecked, // Uncheck the overall checkbox
+  //             benchmark: benchmarks.results,
+  //           };
+  //         }
+  //       } catch (error) {
+  //         console.error("Error in fetching benchmark values:", error);
+  //       }
+  //       return metric;
+  //     })
+  //   );
+  //   setMetrics(updatedMetrics);
+  // };
+
+  // Edge Case Handling
+  const handleCheckboxChange = async (event, metric, type) => {
+    const isChecked = event.target.checked;
+  
+    if (isChecked) {
+      // If the checkbox is checked, make the API call
+      const analysis_type =
+        type === "overall" ? "Overall" : projectDetails?.categories;
+      const reqPayload = {
+        platform: metric?.platform?.name,
+        metrics: metric?.metric_name,
+        brand: projectDetails?.brands,
+        analysis_type: analysis_type,
+        start_date: projectDetails?.start_date,
+        end_date: projectDetails?.end_date,
+      };
+  
+      try {
+        const benchmarks = await getBenchamarkValues(reqPayload);
+  
+        setMetrics((prev) =>
+          prev.map((ele) => {
             if (ele.metric_id === metric.metric_id) {
-              ele.isOverallChecked = !ele.isOverallChecked;
-              ele.isCategoryBasedChecked = false;
-              ele.benchmark = benchmarks.results;
+              if (type === "overall") {
+                return {
+                  ...ele,
+                  isOverallChecked: true,
+                  isCategoryBasedChecked: false,
+                  benchmark: benchmarks.results,
+                };
+              } else if (type === "categoryBased") {
+                return {
+                  ...ele,
+                  isCategoryBasedChecked: true,
+                  isOverallChecked: false,
+                  benchmark: benchmarks.results,
+                };
+              }
             }
-          }
-          if (type === "categoryBased") {
-            if (ele.metric_id === metric.metric_id) {
-              ele.isCategoryBasedChecked = !ele.isCategoryBasedChecked;
-              ele.isOverallChecked = false;
-              ele.benchmark = benchmarks.results;
-            }
+            return ele;
+          })
+        );
+      } catch (error) {
+        console.error("Error in fetching benchmark values:", error);
+      }
+    } else {
+      // If the checkbox is unchecked, just reset the values
+      setMetrics((prev) =>
+        prev.map((ele) => {
+          if (ele.metric_id === metric.metric_id) {
+            return {
+              ...ele,
+              isOverallChecked: type === "overall" ? false : ele.isOverallChecked,
+              isCategoryBasedChecked:
+                type === "categoryBased" ? false : ele.isCategoryBasedChecked,
+              benchmark: null, // Reset the benchmark
+            };
           }
           return ele;
-        });
-      });
-    } catch (error) {
-      console.error("Error in fetching benchmark values:", error);
+        })
+      );
     }
   };
 
+  const handleSelectAll = async (e, type) => {
+    const isChecked = e.target.checked;
+  
+    const updatedMetrics = await Promise.all(
+      metrics.map(async (metric) => {
+        // If the checkbox is checked, make the API call
+        if (isChecked) {
+          const analysis_type =
+            type === "overall" ? "Overall" : projectDetails?.categories;
+          const reqPayload = {
+            platform: metric?.platform?.name,
+            metrics: metric?.metric_name,
+            brand: projectDetails?.brands,
+            analysis_type: analysis_type,
+            start_date: projectDetails?.start_date,
+            end_date: projectDetails?.end_date,
+          };
+  
+          try {
+            const benchmarks = await getBenchamarkValues(reqPayload);
+  
+            if (type === "overall") {
+              return {
+                ...metric,
+                isOverallChecked: true,
+                isCategoryBasedChecked: false,
+                benchmark: benchmarks.results,
+              };
+            } else if (type === "categoryBased") {
+              return {
+                ...metric,
+                isCategoryBasedChecked: true,
+                isOverallChecked: false,
+                benchmark: benchmarks.results,
+              };
+            }
+          } catch (error) {
+            console.error("Error in fetching benchmark values:", error);
+          }
+        } else {
+          // If the checkbox is unchecked, reset the values
+          return {
+            ...metric,
+            isOverallChecked: type === "overall" ? false : metric.isOverallChecked,
+            isCategoryBasedChecked:
+              type === "categoryBased" ? false : metric.isCategoryBasedChecked,
+            benchmark: null, // Reset the benchmark
+          };
+        }
+      })
+    );
+  
+    setMetrics(updatedMetrics);
+  };
+  
+  
+  
+
   const handleWeightChange = (metricId, value) => {
 
-    // Parse the input value to a number and create a new weights object
     const newWeights = { ...weights, [metricId]: Number(value) };
 
-    // Calculate the total weight
     const totalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
 
-    // Check if the total weight exceeds 100
     if (totalWeight > 100) {
       alert('Total weights exceed 100. Please adjust the values.');
 
-      // Revert the changed value back to its previous state
       newWeights[metricId] = weights[metricId];
 
-      // Recalculate the total weight after reverting
       const updatedTotalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
 
-      // Update the state with the reverted values
       setTotalWeights(updatedTotalWeight);
       setWeights(newWeights);
       return;
     }
 
-    // If total weight is within the allowed range, update the state as usual
     setWeights(newWeights);
     setTotalWeights(totalWeight);
   };
@@ -392,6 +551,7 @@ export default function Analytics() {
             weights={weights}
             totalWeights={totalWeights}
             handleCheckboxChange={handleCheckboxChange}
+            handleSelectAll={handleSelectAll}
             handleWeightChange={handleWeightChange}
             isBenchmarkSaved={projectDetails?.is_benchmark_saved}
           />
@@ -535,9 +695,9 @@ export default function Analytics() {
                             marginRight: '5px',
                           }}
                         ></span> {filteredMetric[0].sectionName}</td>
-                      <td> {filteredMetric[0].metricname}</td>
+                      <td> {filteredMetric[0].metricName}</td>
                       {filteredMetric.map((item, index) => (
-                        <td key={index}>{item.actualValue}</td>
+                        <td key={index}>{item.normalized}</td>
                       ))}
                     </tr>
                   );
