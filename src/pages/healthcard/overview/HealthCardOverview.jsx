@@ -148,15 +148,12 @@ export default function HealthCardOverview() {
                 btnClass={"btn-primary"}
                 btnName={"Export as Excel"}
               />
-              <ButtonGroup aria-label="Basic example">
+              <ButtonGroup aria-label="Select Frequency">
                 <Button className="group-btn" variant="outline-secondary">
                   Monthly
                 </Button>
                 <Button className="group-btn" variant="primary">
                   Quarterly
-                </Button>
-                <Button className="group-btn" variant="outline-secondary">
-                  Annually
                 </Button>
               </ButtonGroup>
               <select name="filter" className="filter-input">
