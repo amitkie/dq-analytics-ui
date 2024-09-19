@@ -19,6 +19,25 @@ export const createProject = async (data) => {
     throw error;
   }
 };
+export const getProjecName = async (data) => {
+  try {
+    const response = await axios.get(
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/check-project-name/?project_name=${data}`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const projectData = response.data;
+
+    return projectData;
+  } catch (error) {
+    console.error("Error in login:", error);
+    throw error;
+  }
+};
 export const saveMetricsOfProject = async (data) => {
   try {
     const response = await axios.post(

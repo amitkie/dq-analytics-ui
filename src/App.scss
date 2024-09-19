@@ -93,6 +93,18 @@ input[type="checkbox"] {
   width: 100%;
   max-width: 358px;
 }
+.red-border {
+  border-color: red !important;
+  border: 1px solid red !important;
+  color: red !important;
+}
+
+.green-border {
+  border-color: green !important;
+  border: 1px solid green !important;
+  color: green !important;
+}
+
 .btn-primary {
   background-color: $primary-color;
   font-weight: bold;
@@ -277,6 +289,10 @@ Table thead {
   padding: 10px 4px;
   border-radius: 6px;
   width: 100px;
+}
+
+.modal-body {
+  overflow-x: auto;
 }
 
 

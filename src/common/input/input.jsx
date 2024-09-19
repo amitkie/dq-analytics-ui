@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 
-export default function input(props) {
+export default function InputComponent(props) {
   const {
     id,
     inputLabel,
@@ -11,6 +11,15 @@ export default function input(props) {
     onChange,
     classNames,
   } = props;
+
+  const [isDirty, setIsDirty] = useState(false);
+
+  const handleBlur = () => {
+    setIsDirty(true);
+  };
+
+  const inputClassNames = `form-control ${isDirty ? classNames : ''}`;
+
   return (
     <div className={containerClass}>
       <label htmlFor={id} className="form-label">
@@ -18,11 +27,12 @@ export default function input(props) {
       </label>
       <input
         type={inputType}
-        className={`form-control ${classNames}`}
+        className={inputClassNames}
         id={id}
         placeholder={placeholder}
         value={inputValue}
         onChange={onChange}
+        onBlur={handleBlur} // Set isDirty to true when the input loses focus
       />
     </div>
   );

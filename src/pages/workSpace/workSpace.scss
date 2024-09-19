@@ -63,6 +63,40 @@
   height: calc(100vh - 100px);
 }
 
+select {
+  margin: 0;      
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+select.form-control-select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, #333 50%),
+    linear-gradient(135deg, #333 50%, transparent 50%);
+  background-position:
+    calc(100% - 23px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px),
+    calc(100% - 2.5em) 0.5em;
+  background-size:
+  8px 8px, 8px 8px, 0px 2.5em;
+  background-repeat: no-repeat;
+  display: flex;
+  width: 100%;
+  max-width: 350px;
+  border-radius: 8px;
+  border:1px solid #ddd;
+  padding: 12px;
+}
+
+select.form-control-select:focus {
+  border-color:  #E0E3E8;
+  outline: 0;
+}
+
+
 @media (max-width:767px) {
   .workspace-container {
     padding: 0 .75rem;

@@ -20,7 +20,7 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./workSpace.scss";
-import { createProject } from "../../services/projectService";
+import { createProject, getProjecName } from "../../services/projectService";
 import { useSelector } from "react-redux";
 import { formatDate } from "../../utils/dateFormatter";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +42,8 @@ export default function WorkSpace() {
   const [projectName, setProjectName] = useState(""); // State for project name
   const [loading, setLoading] = useState(false); // State for loading status
   const [error, setError] = useState(null); // State for error messages
+  const [isAvailable, setIsAvailable] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -162,6 +164,26 @@ export default function WorkSpace() {
     }
   };
 
+  const handleProjectNameChange = async (e) => {
+    console.log(e.target.value)
+    const name = e.target.value;
+    setProjectName(name);
+
+    if (name.length > 0) {
+      try {
+        const response = await getProjecName(name);
+        setIsAvailable(true);
+        setErrorMessage('');
+      } catch (error) {
+        setIsAvailable(false);
+        setErrorMessage(error.response.data.message);
+      }
+    } else {
+      setIsAvailable(null);
+    }
+  };
+
+
   const handleMetricsChange = (selectedOptions) => {
     setSelectedMetrics(selectedOptions);
   };
@@ -234,16 +256,19 @@ export default function WorkSpace() {
               <Modal.Title>Create Project</Modal.Title>
             </Modal.Header>
             <Modal.Body className="pb-5">
-              <div className="project-name mb-4">
-                <InputComponent
-                  id="projectName"
-                  inputLabel="Project Name"
-                  inputType="text"
-                  placeholder="Digital Assessment"
-                  value={projectName}
-                  onChange={(e) => setProjectName(e.target.value)}
-                />
-              </div>
+            <div className="project-name mb-4">
+              <InputComponent
+                id="projectName"
+                inputLabel="Project Name"
+                inputType="text"
+                placeholder="Digital Assessment"
+                inputValue={projectName}
+                classNames={isAvailable === false ? 'red-border' : 'green-border'}
+                onChange={(e) => handleProjectNameChange(e)}
+              />
+              {isAvailable === false && <p style={{ color: 'red' }}>{errorMessage}</p>}
+            </div>
+
               <div className="select-options-container">
                 <small>*All fields are mandatory</small>
                 <div className="row mb-4 g-4">
@@ -282,6 +307,18 @@ export default function WorkSpace() {
                     />
                   </div>
                   <div className="col-lg-4 col-md-6">
+                  {/* <select 
+                    className="form-control-select" 
+                    onChange={handleFrequenciesChange} 
+                    selectedValues={selectedFrequencies}
+                  >
+                    <option value="">Select Frequencies</option>
+                    {frequencies.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select> */}
                     <MultiSelectDropdown
                       options={frequencies}
                       selectedValues={selectedFrequencies}
