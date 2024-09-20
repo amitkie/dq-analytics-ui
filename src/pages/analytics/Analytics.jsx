@@ -25,12 +25,21 @@ import {
   getNormalizedValues,
   getDQScore,
 } from "../../services/projectService";
+import {
+  getAllBrands,
+  getAllCategories,
+  getAllPlatforms,
+  getAllMetrics,
+  getAllFrequencies,
+  getAllCategoriesByBrandIds,
+  getAllMetricsByPlatformId,
+} from "../../services/userService";
+import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import { createProject } from "../../services/projectService";
 import "./analytics.scss";
 import AnalyticsTable from "./AnalyticsTable";
 import KPITable from "./KPITable";
 import { useParams } from "react-router-dom";
-import ComparisionView from "./ComparisionView";
 
 export default function Analytics() {
   const [projectIds, setProjectIds] = useState(1);
@@ -56,6 +65,14 @@ export default function Analytics() {
 
   const [normalizedValue, setNormalizedValue] = useState([]);
   const [dqScoreValue, setDQScoreValue] = useState([]);
+
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [platforms, setPlatforms] = useState([]);
+  const [frequencies, setFrequencies] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [brand, setBrand] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState([]);
 
 
   const columns = [
@@ -98,13 +115,13 @@ export default function Analytics() {
   const getColor = (section) => {
     switch (section) {
       case "Ecom":
-        return "#328fa8";
+        return "#2A61DD";
       case "Paid":
-        return "#339900";
+        return "##279E70";
       case "Social":
-        return "#ed8b00";
+        return "#FF9800";
       case "Brand Perf":
-        return "#cc3201";
+        return "#C82519";
       default:
         return "#000000";
     }
@@ -169,7 +186,7 @@ export default function Analytics() {
 
   // const handleSelectAll = async (e, type) => {
   //   const isChecked = e.target.checked;
-  
+
   //   const updatedMetrics = await Promise.all(
   //     metrics?.map(async (metric) => {
   //       const analysis_type =
@@ -182,10 +199,10 @@ export default function Analytics() {
   //         start_date: projectDetails?.start_date,
   //         end_date: projectDetails?.end_date,
   //       };
-  
+
   //       try {
   //         const benchmarks = await getBenchamarkValues(reqPayload);
-  
+
   //         // Update the metric state based on type (overall or categoryBased)
   //         if (type === "overall") {
   //           return {
@@ -231,10 +248,10 @@ export default function Analytics() {
         start_date: projectDetails?.start_date,
         end_date: projectDetails?.end_date,
       };
-  
+
       try {
         const benchmarks = await getBenchamarkValues(reqPayload);
-  
+
         setMetrics((prev) =>
           prev.map((ele) => {
             if (ele?.metric_id === metric?.metric_id) {
@@ -265,7 +282,7 @@ export default function Analytics() {
           prev.map((ele) =>
             ele.metric_id === metric.metric_id ? { ...ele, isLoading: false } : ele
           )
-        ); 
+        );
       }
     } else {
       // If the checkbox is unchecked, just reset the values
@@ -277,8 +294,8 @@ export default function Analytics() {
               isOverallChecked: type === "overall" ? false : ele.isOverallChecked,
               isCategoryBasedChecked:
                 type === "categoryBased" ? false : ele.isCategoryBasedChecked,
-              benchmark: null, 
-              isLoading: false, 
+              benchmark: null,
+              isLoading: false,
             };
           }
           return ele;
@@ -289,7 +306,7 @@ export default function Analytics() {
 
   const handleSelectAll = async (e, type) => {
     const isChecked = e.target.checked;
-  
+
     const updatedMetrics = await Promise.all(
       metrics.map(async (metric) => {
         // If the checkbox is checked, make the API call
@@ -304,10 +321,10 @@ export default function Analytics() {
             start_date: projectDetails?.start_date,
             end_date: projectDetails?.end_date,
           };
-  
+
           try {
             const benchmarks = await getBenchamarkValues(reqPayload);
-  
+
             if (type === "overall") {
               return {
                 ...metric,
@@ -334,18 +351,18 @@ export default function Analytics() {
             isOverallChecked: type === "overall" ? false : metric.isOverallChecked,
             isCategoryBasedChecked:
               type === "categoryBased" ? false : metric.isCategoryBasedChecked,
-            benchmark: null, 
+            benchmark: null,
             isLoading: false,
           };
         }
       })
     );
-  
+
     setMetrics(updatedMetrics);
   };
-  
-  
-  
+
+
+
 
   const handleWeightChange = (metricId, value) => {
 
@@ -420,16 +437,21 @@ export default function Analytics() {
 
     try {
       const compareNormalizeValue = await getNormalizedValues(requestPayload);
-      const filterData = compareNormalizeValue.filter((ele) => ele.project_id == project_id);
-      const uniqueBrands = filterData.reduce((acc, item) => {
-        if (!acc.map[item.brandName]) {
-          acc.map[item.brandName] = true;
-          acc.result.push(item);
-        }
-        return acc;
-      }, { map: {}, result: [] }).result;
-      console.log("API Response:----------------", uniqueBrands);
-      setNormalizedValue(uniqueBrands);
+      console.log(compareNormalizeValue, 'compareNormalizeValue')
+      if (compareNormalizeValue) {
+        const filterData = compareNormalizeValue?.filter((ele) => ele?.project_id === projectId);
+        console.log('filterData', filterData)
+        const uniqueMetrics = compareNormalizeValue?.reduce((acc, item) => {
+          if (!acc.map[item.metricName]) {
+            acc.map[item.metricName] = true;
+            acc.result.push(item);  // Push the first occurrence of each metricName
+          }
+          return acc;
+        }, { map: {}, result: [] }).result;
+        console.log(uniqueMetrics, 'uniqueMetrics')
+        setNormalizedValue(uniqueMetrics);
+      }
+
     } catch (error) {
       console.error("Error in Fetching Data:", error);
     }
@@ -444,7 +466,7 @@ export default function Analytics() {
 
     try {
       const dqScoreValueResponse = await getDQScore(requestPayload);
-      
+
       console.log("DQ SCORE______", dqScoreValueResponse);
       setDQScoreValue(dqScoreValueResponse?.data);
     } catch (error) {
@@ -457,13 +479,76 @@ export default function Analytics() {
     if (projectId) {
       setProjectIds(projectId);
       fetchProjectDetails(projectId);
-      fetchComparedValue(projectId);
-      fetchDQScoreValue(projectId);
 
     }
 
+    const fetchData = async () => {
+      try {
+        const categoriesData = await getAllCategories();
+        setCategories(
+          categoriesData.data.map((cat) => ({
+            value: cat.id,
+            label: cat.name,
+          }))
+        );
+
+        const brandsData = await getAllBrands();
+        setBrands(
+          brandsData.data.map((brand) => ({
+            value: brand.id,
+            label: brand.name,
+          }))
+        );
+
+        const platformsData = await getAllPlatforms();
+        setPlatforms(
+          platformsData.data.map((platform) => ({
+            value: platform.id,
+            label: platform.name,
+          }))
+        );
+
+        const frequenciesData = await getAllFrequencies();
+        setFrequencies(
+          frequenciesData.data.map((freq) => ({
+            value: freq.id,
+            label: freq.name,
+          }))
+        );
+
+        const metricsData = await getAllMetrics();
+        setMetrics(
+          metricsData.data.map((metric) => ({
+            value: metric.id,
+            label: metric.name,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
 
   }, [projectId]);
+
+  useEffect(() => {
+    if (projectDetails?.is_benchmark_saved) {
+      fetchComparedValue(projectId);
+      fetchDQScoreValue(projectId);
+    }
+  }, [projectDetails?.is_benchmark_saved])
+
+  const handleCategoryChange = async (selectedOptions) => {
+    setSelectedCategories(selectedOptions);
+    if (selectedOptions.length > 0) {
+      try {
+        const categoryIds = selectedOptions.map((option) => option.value);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    }
+  };
 
   const saveWeights = async () => {
     const saveMetricsPayload = generateApiPayload(metrics);
@@ -475,7 +560,9 @@ export default function Analytics() {
         if (response.status == 'success') {
           // dispatch(showAlert({ variant: 'success', message: 'Weights saved successfully' }));
           alert('Weights saved successfully!');
-          fetchProjectDetails(projectId)
+          fetchProjectDetails(projectId);
+          fetchComparedValue(projectId);
+          fetchDQScoreValue(projectId);
           console.log("saveWeights", response)
         }
       }
@@ -492,17 +579,17 @@ export default function Analytics() {
 
   const generateApiPayload = (metrics) => {
     const project_id = projectId;   // Example project ID
-  
+
     return metrics?.map(metric => {
       const categoryIds = metric?.categories?.map(category => category?.id) || [];
-  
+
       // Iterate over categories and match the benchmark data
       const benchmarkData = metric?.categories?.map(category => {
         // Find the benchmark that matches the current category
-        const matchedBenchmark = metric?.benchmark?.find(bm => 
+        const matchedBenchmark = metric?.benchmark?.find(bm =>
           bm?.categories?.includes(category?.name) || bm?.category === "Overall"
         ) || {};  // Handle missing benchmark
-  
+
         console.log(matchedBenchmark, 'matchedBenchmark 1')
         console.log(matchedBenchmark?.actualValue?.[metric?.brands?.[0]?.name], 'matchedBenchmark 2')
         console.log(matchedBenchmark?.actualValue, 'matchedBenchmark 3')
@@ -516,7 +603,7 @@ export default function Analytics() {
             sectionId: metric?.section?.id,
             percentile: matchedBenchmark?.percentile,
             overallValue: matchedBenchmark?.value,
-            actualValue: matchedBenchmark?.actualValue, 
+            actualValue: matchedBenchmark?.actualValue,
           };
         } else {
           return {
@@ -525,30 +612,30 @@ export default function Analytics() {
             sectionName: metric?.section?.name,
             sectionId: metric?.section?.id,
             percentile: matchedBenchmark?.percentile,
-            benchmarkValue: matchedBenchmark?.value,  
+            benchmarkValue: matchedBenchmark?.value,
             actualValue: matchedBenchmark?.actualValue,
           };
         }
       });
-  
-     
+
+
       if (benchmarkData) {
         return {
           project_id: project_id,
-          sectionId: metric?.section?.id || null, 
-          platformId: metric?.platform?.id || null, 
-          isOverall: metric?.isOverallChecked || false, 
-          isCategory: metric?.isCategoryBasedChecked || false, 
-          metricId: metric?.metric_id || null, 
-          weights: metric?.weights || 0,  
+          sectionId: metric?.section?.id || null,
+          platformId: metric?.platform?.id || null,
+          isOverall: metric?.isOverallChecked || false,
+          isCategory: metric?.isCategoryBasedChecked || false,
+          metricId: metric?.metric_id || null,
+          weights: metric?.weights || 0,
           categoryIds: categoryIds,
           brandIds: metric?.brands?.map(brand => brand?.id) || [],
-          benchmarks: JSON.stringify(benchmarkData)  
+          benchmarks: JSON.stringify(benchmarkData)
         };
       }
     });
   };
-  
+
 
 
 
@@ -590,7 +677,8 @@ export default function Analytics() {
       disabled: "disabled",
       content: (
         <div>
-          <ScoreCard dqScoreValue={dqScoreValue}/>
+          <ScoreCard dqScoreValue={dqScoreValue} />
+          {/* <ScoreCard dqScoreValue={dqScoreValue.filter((item) => item.includes(handleCategoryChange))} /> */}
         </div>
       ),
     },
@@ -665,7 +753,7 @@ export default function Analytics() {
       content: (
         <div>
           {/* Filter options for Brands and Category */}
-          <div className="filter-options">
+          <div className="filter-options mb-2">
             <select name="Brands" className="Select-input">
               <option value="himalaya">Himalaya</option>
               <option value="lux">Lux</option>
@@ -680,24 +768,34 @@ export default function Analytics() {
               <option value="male-grooming">Male Grooming</option>
             </select>
           </div>
-
+          <ul class="legend">
+            <li> Ecom</li>
+            <li> Social</li>
+            <li> Paid</li>
+            <li> Brand Pref</li>
+          </ul>
+          {normalizedValue && normalizedValue.length > 0 ? (
           <Table responsive striped bordered className="insights-table">
             <thead>
               <tr>
                 <th>Platform</th>
                 <th>Metric</th>
-                {normalizedValue && normalizedValue.map((item) => item.brandName).map((brand, index) => {
-                  return <th key={index}>{brand}</th>
-                })}
-
+                {normalizedValue &&
+                  [...new Set(normalizedValue.map((item) => item.brandName))].map((brand, index) => {
+                    return <th key={index}>{brand}</th>;
+                  })}
               </tr>
             </thead>
             <tbody>
               {normalizedValue &&
-                [...new Set(normalizedValue.map((item) => item.metricid))].map((metricId) => {
-                  const filteredMetric = normalizedValue.filter((item) => item.metricid === metricId);
+
+                [...new Set(normalizedValue?.map((item) => item?.metricid))].map((metricId) => {
+                  const filteredMetric = normalizedValue?.filter((item) => item?.metricid === metricId);
+                  console.log(normalizedValue, 'normalizedValue')
+                  // Display one row per metric
                   return (
                     <tr key={metricId}>
+                      {/* Display sectionName once for the metric */}
                       <td>
                         <span
                           style={{
@@ -705,19 +803,34 @@ export default function Analytics() {
                             width: '10px',
                             height: '10px',
                             borderRadius: '50%',
-                            backgroundColor: getColor(filteredMetric[0].sectionName),
+                            backgroundColor: getColor(filteredMetric[0]?.sectionName),
                             marginRight: '5px',
                           }}
-                        ></span> {filteredMetric[0].sectionName}</td>
-                      <td> {filteredMetric[0].metricName}</td>
-                      {filteredMetric.map((item, index) => (
-                        <td key={index}>{item.normalized}</td>
-                      ))}
+                        ></span>
+                        {filteredMetric[0]?.platformName}
+                      </td>
+
+                      {/* Display metricName once for the metric */}
+                      <td>{filteredMetric[0]?.metricName}</td>
+
+                      {/* Display normalized values per brand */}
+                      {normalizedValue
+                        .filter((item) => item?.metricid === metricId)
+                        .map((item, index) => (
+                          <td key={index}>{item?.normalized}</td>
+                        ))}
                     </tr>
                   );
                 })}
             </tbody>
           </Table>
+          ) : (
+            <div className="loader-container-sm">
+              <div className="loader-sm"></div>
+              <span className="loader-text">Loading...</span>
+            </div>
+          )}
+
         </div>
       ),
     },
@@ -750,6 +863,12 @@ export default function Analytics() {
                 </div>
 
                 <div className="export-btn-container gap-3">
+                  <MultiSelectDropdown
+                    options={categories}
+                    selectedValues={selectedCategories}
+                    onChange={handleCategoryChange}
+                    placeholder="Select Categories"
+                  />
                   <select name="category" className="Select-input">
                     <option value="Select Metrics">All </option>
                     <option value="Beauty">Beauty</option>
@@ -816,7 +935,7 @@ export default function Analytics() {
               </div>
             </div>
             <div className="col-12">
-              <TabComponent tabs={tabs} isBenchmarkDataSaved={projectDetails?.is_benchmark_saved}  className="analytics-tabs" />
+              <TabComponent tabs={tabs} isBenchmarkDataSaved={projectDetails?.is_benchmark_saved} className="analytics-tabs" />
             </div>
           </div>
 
