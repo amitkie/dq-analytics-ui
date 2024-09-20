@@ -14,7 +14,6 @@ const KPITable = ({ getColor, metrics, projectDetails }) => {
   const totalBrands = projectDetails?.brands?.length || 0;
   const totalPages = Math.ceil(totalBrands / itemsPerPage);
 
-  // Use brandsToDisplay for the table content
   const brandsToDisplay = projectDetails?.brands.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -25,15 +24,14 @@ const KPITable = ({ getColor, metrics, projectDetails }) => {
   };
 
   const fetchKPIScores = async () => {
-    setLoading(true); // Start loading
-    setError(null);   // Reset error state
+    setLoading(true); 
+    setError(null);  
   
     const data = {
-      platform: metrics?.map((metric) => metric.platform.name),
+      platform: metrics?.map((metric) => metric.platform?.name),
       metrics: metrics?.map((metric) => metric.metric_name),
       brand: projectDetails?.brands,
       analysis_type: "Overall",
-      // Date Range needs to be selected
       start_date: "2024-01-01",
       end_date: "2024-12-31",
     };
@@ -43,12 +41,12 @@ const KPITable = ({ getColor, metrics, projectDetails }) => {
       setKpiData(kpiScores?.results || []);
     } catch (error) {
       console.error("Error fetching KPI scores:", error);
-      setError("Failed to load KPI scores"); // Set error message
+      setError("Failed to load KPI scores"); 
     } finally {
-      setLoading(false); // End loading
+      setLoading(false); 
     }
   };
-  //   const platform = metrics.map(metric => metric.platform.name);
+ 
 
   useEffect(() => {
     fetchKPIScores();
@@ -59,12 +57,16 @@ const KPITable = ({ getColor, metrics, projectDetails }) => {
     if (!kpiData || kpiData?.length === 0) {
       return (
         <tr>
-          <td colSpan={brandsToDisplay?.length + 2}>No data available</td>
+          <td colSpan={brandsToDisplay?.length + 2}>
+            <div className="loader-container-sm">
+              <div className="loader-sm"></div>
+              <span className="loader-text">Loading...</span>
+            </div>
+          </td>
         </tr>
       );
     }
 
-    // Create rows for each combination of platform and metric
     return metrics?.map((metric, metricIndex) => (
       <tr key={metricIndex}>
         <td>
@@ -74,24 +76,25 @@ const KPITable = ({ getColor, metrics, projectDetails }) => {
           width: '10px',
           height: '10px',
           borderRadius: '50%',
-          backgroundColor: getColor(metric?.platform.section), // Assuming section is part of the platform object
+          backgroundColor: getColor(metric?.section?.name),
           marginRight: '5px',
         }}
+       
       ></span>
-          {metric?.platform.name}
+          {metric?.platform?.name}
+          {console.log(metric?.section?.name, 'metric?.platform.section')}
           </td>
         <td>{metric?.metric_name}</td>
         {brandsToDisplay?.map((brand, brandIndex) => {
           const resultData = kpiData?.find(
             (data) =>
-              data?.platform === metric?.platform.name &&
+              data?.platform === metric?.platform?.name &&
               data?.metric === metric?.metric_name &&
               data?.brand === brand
           );
 
           const color = getColor(resultData?.section);
-          console.log(color, "checkkkkkkkk")
-          // Change this logic to check the section
+          console.log(color, "checkkkkkkkk", resultData?.section)
 
           return (
             <td key={brandIndex}>
@@ -105,6 +108,12 @@ const KPITable = ({ getColor, metrics, projectDetails }) => {
 
   return (
     <div>
+      <ul class="legend">
+        <li> Ecom</li>
+        <li> Social</li>
+        <li> Paid</li>
+        <li> Brand Pref</li>
+      </ul>
       <Table
         responsive
         striped

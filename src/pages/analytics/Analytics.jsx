@@ -515,14 +515,14 @@ export default function Analytics() {
             label: freq.name,
           }))
         );
-
-        const metricsData = await getAllMetrics();
-        setMetrics(
-          metricsData.data.map((metric) => ({
-            value: metric.id,
-            label: metric.name,
-          }))
-        );
+        // Change the Name of metrics it is already in use
+        // const metricsData = await getAllMetrics();
+        // setMetrics(
+        //   metricsData.data.map((metric) => ({
+        //     value: metric.id,
+        //     label: metric.name,
+        //   }))
+        // );
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -635,7 +635,6 @@ export default function Analytics() {
       }
     });
   };
-
 
 
 

@@ -1,4 +1,5 @@
 import { Table } from "react-bootstrap";
+import "./AnalyticsTable.scss";
 
 const AnalyticsTable = ({
   isBenchmarkSaved = false,
@@ -22,25 +23,30 @@ const AnalyticsTable = ({
           <th className="col-1">Category</th>
           <th className="col-1">Weights ({totalWeights})</th>
           <th className="col-1">
+            <div className="thead-align">
             <input
               type="checkbox"
               onChange={(e) => handleSelectAll(e, "overall")}
               className="c-pointer"
-            />{" "}
+            />
             Overall
+            </div>
           </th>
           <th className="col-1">
+          <div className="thead-align">
             <input
               type="checkbox"
               onChange={(e) => handleSelectAll(e, "categoryBased")}
               className="c-pointer"
-            />{" "}
+            />
             Category based
+          </div>
           </th>
           <th className="col-2">Benchmarks</th>
         </tr>
       </thead>
       {!isBenchmarkSaved ? (<tbody>
+        
         {metrics?.map((item, ind) => (
           <tr key={item.metric_id}>
             <td>{item?.section?.name}</td>
