@@ -64,6 +64,9 @@ export default function Analytics() {
   const dispatch = useDispatch();
 
   const [normalizedValue, setNormalizedValue] = useState([]);
+  const [uniqueComparisonBrandName, setUniqueComparisonBrandName] = useState([]);
+  const [comparisonData, setComparisonData] = useState([]);
+
   const [dqScoreValue, setDQScoreValue] = useState([]);
 
   const [categories, setCategories] = useState([]);
@@ -439,6 +442,10 @@ export default function Analytics() {
       const compareNormalizeValue = await getNormalizedValues(requestPayload);
       console.log(compareNormalizeValue, 'compareNormalizeValue')
       if (compareNormalizeValue) {
+
+
+
+        setComparisonData(compareNormalizeValue)
         const filterData = compareNormalizeValue?.filter((ele) => ele?.project_id === projectId);
         console.log('filterData', filterData)
         const uniqueMetrics = compareNormalizeValue?.reduce((acc, item) => {
@@ -449,13 +456,55 @@ export default function Analytics() {
           return acc;
         }, { map: {}, result: [] }).result;
         console.log(uniqueMetrics, 'uniqueMetrics')
-        setNormalizedValue(uniqueMetrics);
+        const uniqueData = transformComparisonViewApiData(compareNormalizeValue);
+        console.log('uniqueData',uniqueData )
+        const uniqueComparisonBrandNames = Array.from(new Set(compareNormalizeValue.map(item => item.brandName)));
+        setUniqueComparisonBrandName(uniqueComparisonBrandNames);
+        setNormalizedValue(uniqueData);
       }
 
     } catch (error) {
       console.error("Error in Fetching Data:", error);
     }
   }
+
+  const transformComparisonViewApiData = (data) => {
+
+      const transformedData = {};
+  
+      data?.forEach(item => {
+          const { platformName, metricName, brandName, normalized } = item;
+  
+          if (!transformedData[platformName]) {
+              transformedData[platformName] = {};
+          }
+  
+          if (!transformedData[platformName][metricName]) {
+              transformedData[platformName][metricName] = {
+                  platformName: platformName,
+                  metricName: metricName,
+                  brands: {}
+              };
+          }
+  
+          transformedData[platformName][metricName].brands[brandName] = normalized;
+      });
+  
+      const result = [];
+      Object.keys(transformedData).forEach(platform => {
+          Object.keys(transformedData[platform]).forEach(metric => {
+              const row = {
+                  platformName: platform,
+                  metricName: metric,
+                  ...transformedData[platform][metric].brands
+              };
+              result.push(row);
+          });
+      });
+  
+      return result;
+  };
+  
 
   async function fetchDQScoreValue(id) {
     const project_id = id;
@@ -751,7 +800,6 @@ export default function Analytics() {
       label: "Comparison View",
       content: (
         <div>
-          {/* Filter options for Brands and Category */}
           <div className="filter-options mb-2">
             <select name="Brands" className="Select-input">
               <option value="himalaya">Himalaya</option>
@@ -773,54 +821,27 @@ export default function Analytics() {
             <li> Paid</li>
             <li> Brand Pref</li>
           </ul>
-          {normalizedValue && normalizedValue.length > 0 ? (
+          {normalizedValue && normalizedValue?.length > 0 ? (
           <Table responsive striped bordered className="insights-table">
             <thead>
               <tr>
                 <th>Platform</th>
                 <th>Metric</th>
-                {normalizedValue &&
-                  [...new Set(normalizedValue.map((item) => item.brandName))].map((brand, index) => {
-                    return <th key={index}>{brand}</th>;
-                  })}
+                {uniqueComparisonBrandName?.map(brand => (
+                        <th key={brand}>{brand}</th>
+                    ))}
               </tr>
             </thead>
             <tbody>
-              {normalizedValue &&
-
-                [...new Set(normalizedValue?.map((item) => item?.metricid))].map((metricId) => {
-                  const filteredMetric = normalizedValue?.filter((item) => item?.metricid === metricId);
-                  console.log(normalizedValue, 'normalizedValue')
-                  // Display one row per metric
-                  return (
-                    <tr key={metricId}>
-                      {/* Display sectionName once for the metric */}
-                      <td>
-                        <span
-                          style={{
-                            display: 'inline-block',
-                            width: '10px',
-                            height: '10px',
-                            borderRadius: '50%',
-                            backgroundColor: getColor(filteredMetric[0]?.sectionName),
-                            marginRight: '5px',
-                          }}
-                        ></span>
-                        {filteredMetric[0]?.platformName}
-                      </td>
-
-                      {/* Display metricName once for the metric */}
-                      <td>{filteredMetric[0]?.metricName}</td>
-
-                      {/* Display normalized values per brand */}
-                      {normalizedValue
-                        .filter((item) => item?.metricid === metricId)
-                        .map((item, index) => (
-                          <td key={index}>{item?.normalized}</td>
+                {normalizedValue?.map((row, index) => (
+                    <tr key={index}>
+                        <td>{row?.platformName}</td>
+                        <td>{row?.metricName}</td>
+                        {uniqueComparisonBrandName?.map(brand => (
+                            <td key={brand}>{row[brand] || "-"}</td>
                         ))}
                     </tr>
-                  );
-                })}
+                ))}
             </tbody>
           </Table>
           ) : (
@@ -829,6 +850,9 @@ export default function Analytics() {
               <span className="loader-text">Loading...</span>
             </div>
           )}
+
+
+
 
         </div>
       ),
