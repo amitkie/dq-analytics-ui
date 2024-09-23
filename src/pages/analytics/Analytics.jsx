@@ -69,14 +69,11 @@ export default function Analytics() {
 
   const [dqScoreValue, setDQScoreValue] = useState([]);
 
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [platforms, setPlatforms] = useState([]);
-  const [frequencies, setFrequencies] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [brand, setBrand] = useState([]);
-  const [selectedBrand, setSelectedBrand] = useState([]);
+  const [filterCategories, setFilterCategories] = useState([]);
+  const [selectedFilterCategories, setSelectedFilterCategories] = useState([]);
 
+  const [filterPlatforms, setFilterPlatforms] = useState([]);
+  const [selectedfilterPlatforms, setSelectedFilterPlatforms] = useState([]);
 
   const columns = [
     {
@@ -102,18 +99,18 @@ export default function Analytics() {
   const keys = Array.from(new Set(normalizedValue.flatMap(Object.keys)));
   const keysToDisplay = keys.slice(2);
 
-  // function getColor(value, thresholds) {
-  //   // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
-  //   if (typeof value === "string") {
-  //     return <span style={{ color: "#252627" }}>{value}</span>;
-  //   } else if (value > thresholds[2]) {
-  //     return <span style={{ color: "#339900" }}>{value}</span>;
-  //   } else if (value > thresholds[1] && value < thresholds[2]) {
-  //     return <span style={{ color: "#ed8b00" }}>{value}</span>;
-  //   } else {
-  //     return <span style={{ color: "#cc3201" }}>{value}</span>;
-  //   }
-  // }
+  function getColorScore(value, thresholds) {
+    // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
+    if (typeof value === "string") {
+      return <span style={{ color: "#252627" }}>{value}</span>;
+    } else if (value > thresholds[2]) {
+      return <span style={{ color: "#339900" }}>{value}</span>;
+    } else if (value > thresholds[1] && value < thresholds[2]) {
+      return <span style={{ color: "#ed8b00" }}>{value}</span>;
+    } else {
+      return <span style={{ color: "#cc3201" }}>{value}</span>;
+    }
+  }
 
   const getColor = (section) => {
     switch (section) {
@@ -522,36 +519,28 @@ export default function Analytics() {
     const fetchData = async () => {
       try {
         const categoriesData = await getAllCategories();
-        setCategories(
+        setFilterCategories(
           categoriesData.data.map((cat) => ({
             value: cat.id,
             label: cat.name,
           }))
         );
 
-        const brandsData = await getAllBrands();
-        setBrands(
-          brandsData.data.map((brand) => ({
-            value: brand.id,
-            label: brand.name,
-          }))
-        );
-
         const platformsData = await getAllPlatforms();
-        setPlatforms(
+        setFilterPlatforms(
           platformsData.data.map((platform) => ({
             value: platform.id,
             label: platform.name,
           }))
         );
-
+        // console.log("platformsData", brandsData)
         const frequenciesData = await getAllFrequencies();
-        setFrequencies(
-          frequenciesData.data.map((freq) => ({
-            value: freq.id,
-            label: freq.name,
-          }))
-        );
+        // setFrequencies(
+        //   frequenciesData.data.map((freq) => ({
+        //     value: freq.id,
+        //     label: freq.name,
+        //   }))
+        // );
         // Change the Name of metrics it is already in use
         // const metricsData = await getAllMetrics();
         // setMetrics(
@@ -576,8 +565,8 @@ export default function Analytics() {
     }
   }, [projectDetails?.is_benchmark_saved])
 
-  const handleCategoryChange = async (selectedOptions) => {
-    setSelectedCategories(selectedOptions);
+  const handleFilterCategory = async (selectedOptions) => {
+    setSelectedFilterCategories(selectedOptions);
     if (selectedOptions.length > 0) {
       try {
         const categoryIds = selectedOptions.map((option) => option.value);
@@ -586,6 +575,18 @@ export default function Analytics() {
       }
     }
   };
+
+  const handleSelectedPlatforms = async (selectedOptions) => {
+    setSelectedFilterPlatforms(selectedOptions);
+    if (selectedOptions.length > 0) {
+      try {
+        const platformsFiltered = selectedOptions.map((option) => option.value)
+      }catch (error) {
+        console.error("Error fetching platforms:", error);
+      }
+    }
+  };
+
 
   const saveWeights = async () => {
     const saveMetricsPayload = generateApiPayload(metrics);
@@ -743,6 +744,7 @@ export default function Analytics() {
           metrics={metrics}
           projectDetails={projectDetails}
           getColor={getColor}
+          getColorScore={getColorScore}
         />
         // <div>
         //   <Table
@@ -875,18 +877,19 @@ export default function Analytics() {
 
                 <div className="export-btn-container gap-3">
                   <MultiSelectDropdown
-                    options={categories}
-                    selectedValues={selectedCategories}
-                    onChange={handleCategoryChange}
+                    options={filterCategories}
+                    selectedValues={selectedFilterCategories}
+                    onChange={handleFilterCategory}
                     placeholder="Select Categories"
                   />
-                  <select name="category" className="Select-input">
+                  
+                  {/* <select name="category" className="Select-input">
                     <option value="Select Metrics">All </option>
                     <option value="Beauty">Beauty</option>
                     <option value="Foods">Foods</option>
                     <option value="haircare">Hair Care</option>
                     <option value="malegrooming">Male Grooming</option>
-                  </select>
+                  </select> */}
                   <div className="export-btn">
                     <ButtonComponent
                       disabled
@@ -906,6 +909,7 @@ export default function Analytics() {
                   </div>
                 </div> */}
               <div className="filter-options mb-3">
+              
                 <select name="category" className="Select-input">
                   <option value="Select Metrics">All </option>
                   <option value="ecom">Ecom</option>
@@ -913,7 +917,13 @@ export default function Analytics() {
                   <option value="Paid">Paid</option>
                   <option value="brand-perf">Brand Perf</option>
                 </select>
-                <select name="category" className="Select-input">
+                <MultiSelectDropdown
+                    options={filterPlatforms}
+                    selectedValues={selectedfilterPlatforms}
+                    onChange={handleSelectedPlatforms}
+                    placeholder="Select Platforms"
+                  />
+                {/* <select name="category" className="Select-input">
                   <option value="Select Metrics">All </option>
                   <option value="ecom">Amazon</option>
                   <option value="Social">Amazon - Search Campaigns </option>
@@ -934,7 +944,7 @@ export default function Analytics() {
                     Page Speed Insights
                   </option>
                   <option value="Brand Performance">SEOptimer</option>
-                </select>
+                </select> */}
                 <select name="category" className="Select-input">
                   <option value="Select Metrics">All</option>
                   <option value="ecom">Ecom</option>

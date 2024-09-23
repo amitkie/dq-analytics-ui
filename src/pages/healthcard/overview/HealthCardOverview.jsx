@@ -145,7 +145,7 @@ export default function HealthCardOverview() {
             <h2 className="page-title mt-4 ml-3">Health Card</h2>
             <div className="filter-section">
               <ButtonComponent
-                disabled
+                // disabled
                 btnClass={"btn-primary"}
                 btnName={"Export as Excel"}
               />

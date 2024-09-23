@@ -18,8 +18,11 @@ const TabComponent = ({ tabs, className, disabled, isBenchmarkDataSaved=false })
       <ul className="tab-list">
         {tabs.map((tab, index) => (
           <li key={index} className={activeTab === index ? "active" : ""}>
-            <button className={index !== 0 && !isBenchmarkDataSaved ? "disabled-tab" : ""} 
-             onClick={() => handleTabChange(index)} disabled={index !== 0 && !isBenchmarkDataSaved}>
+            <button 
+            // className={index !== 0 && !isBenchmarkDataSaved ? "disabled-tab" : ""} 
+             onClick={() => handleTabChange(index)}
+              // disabled={index !== 0 && !isBenchmarkDataSaved}
+              >
               {tab.label}
             </button>
           </li>

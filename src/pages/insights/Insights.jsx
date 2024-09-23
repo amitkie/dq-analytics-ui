@@ -22,19 +22,29 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./Insights.scss";
+import { getProjectListsByFilter } from "../../services/projectService";
 
-export default function Analytics() {
+export default function Insights() {
   const data = getData();
   const normalizedData = getNormalizedData();
-  const [category, setCategory] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [frequencies, setFrequencies] = useState([]);
+  const [projects, setProjects] = useState([]);
+
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedFrequencies, setSelectedFrequencies] = useState([]);
+  const [selectedProjects, setSelectedProjects] = useState([]);
+
+
   const [brand, setBrand] = useState([]);
+
   const [selectedBrand, setSelectedBrand] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const categoriesData = await getAllCategories();
-        setCategory(
+        setCategories(
           categoriesData.data.map((cat) => ({
             value: cat.id,
             label: cat.name,
@@ -48,6 +58,16 @@ export default function Analytics() {
             label: brand.name,
           }))
         );
+
+        const frequencyData = await getAllFrequencies();
+        setFrequencies(
+          frequencyData?.data?.map((brand) => ({
+            value: brand.id,
+            label: brand.name,
+          }))
+        );
+
+        // const projectsData = await getProjectListsByFilter();
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -56,13 +76,55 @@ export default function Analytics() {
     fetchData();
   }, []);
 
-  const handleCategoryChanges = (selectedOptions) => {
-    setSelectedCategory(selectedOptions);
-  };
+  const fetchProjectsByFilter = async(frequency, categories) => {
+
+    try {
+      const projectData = await getProjectListsByFilter(frequency, categories);
+     
+      setProjects(
+        projectData?.map((project) => ({
+        value: project?.id,
+        label: project?.project_name,
+      }))
+    )
+    } catch (error) {
+      
+    }
+   
+  }
+  useEffect(() => {
+    if (selectedFrequencies && selectedCategories.length > 0) {
+   console.log(selectedFrequencies, 'selectedFrequencies')
+   console.log(selectedCategories, 'selectedCategories')
+      fetchProjectsByFilter(selectedFrequencies, selectedCategories);
+    
+    }
+  }, [selectedFrequencies, selectedCategories]);
 
   const handleBrandChanges = (selectedOptions) => {
     setSelectedBrand(selectedOptions);
   };
+
+
+  const handleFrequenciesChange = (selectedOptions) => {
+    console.log(selectedOptions?.target?.value,'selectedOptions')
+    setSelectedFrequencies(selectedOptions?.target?.value);
+  };
+
+  const handleCategoryChanges = (selectedOptions) => {
+    console.log(selectedOptions, 'categories')
+    const categoryOptions = selectedOptions?.map((cg) => cg?.value)
+    console.log(categoryOptions)
+    setSelectedCategories(categoryOptions);
+  };
+
+  const handleProjectChanges = (selectedOptions) => {
+    selectedProjects(selectedOptions);
+  };
+
+
+
+
 
   const columns = [
     {
@@ -152,8 +214,8 @@ export default function Analytics() {
         <div>
           <div className="filter-option d-flex mb-2 gap-3 justify-content-end">
             <MultiSelectDropdown
-              options={category}
-              selectedValues={selectedCategory}
+              options={categories}
+              selectedValues={selectedCategories}
               onChange={handleCategoryChanges}
               placeholder="Select Categories"
             />
@@ -205,18 +267,44 @@ export default function Analytics() {
                     Select files from saved Projects
                   </span>
                   <div className="insights-project-filter">
-                    <select name="frequency" className="Select-input">
+                    {/* <select name="frequency" className="Select-input">
                       <option value="beauty">Monthly</option>
                       <option value="haircare">Quarterly</option>
-                      <option value="baby">Annually</option>
-                    </select>
-                    <select name="category" className="Select-input">
+                    </select> */}
+                    <select 
+                    className="form-control-select" 
+                    onChange={handleFrequenciesChange} 
+                    selectedValues={selectedFrequencies}
+                  >
+                    <option value="">Select Frequencies</option>
+                    {frequencies?.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                    <MultiSelectDropdown
+                      options={categories}
+                      selectedValues={selectedCategories}
+                      onChange={handleCategoryChanges}
+                      disabled={selectedFrequencies?.length == 0}
+                      placeholder="Select Categories"
+                    />
+                    <MultiSelectDropdown
+                      options={projects}
+                      selectedValues={selectedProjects}
+                      onChange={handleProjectChanges}
+                      disabled={selectedCategories?.lenth == 0}
+                      placeholder="Select Workspace"
+                    />
+                    
+                    {/* <select name="category" className="Select-input">
                       <option value="beauty">Beauty</option>
                       <option value="haircare">Hair care</option>
                       <option value="baby">Baby</option>
                       <option value="mansGrooming">Men's Grooming</option>
-                    </select>
-                    <select name="files" className="Select-input">
+                    </select> */}
+                    {/* <select name="files" className="Select-input">
                       <option value="digitalAssessment-1">
                         Digital Assessment -1
                       </option>
@@ -229,7 +317,7 @@ export default function Analytics() {
                       <option value="digitalAssessment-4">
                         Digital Assessment -4
                       </option>
-                    </select>
+                    </select> */}
                     <ButtonComponent
                       btnClass={"btn-primary"}
                       btnName={"Submit"}
@@ -242,12 +330,12 @@ export default function Analytics() {
               <div className="col-12">
                 <div className="export-btn justify-content-end">
                   <ButtonComponent
-                    disabled
+                     disabled
                     btnClass={"btn-primary export-excel-btn"}
                     btnName={"Download"}
                   />
                 </div>
-                <TabComponent tabs={tabs} className="insights-tabs" />
+                <TabComponent tabs={tabs} isBenchmarkDataSaved={true} className="insights-tabs" />
               </div>
             </div>
 

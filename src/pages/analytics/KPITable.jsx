@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import { getKPIScoreValues } from "../../services/projectService";
 
-const KPITable = ({ getColor, metrics, projectDetails }) => {
+const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [kpiData, setKpiData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -98,7 +98,9 @@ const KPITable = ({ getColor, metrics, projectDetails }) => {
 
           return (
             <td key={brandIndex}>
-              {resultData?.result !== null ? resultData?.result : "N/A"}
+              
+              {/* {resultData?.result !== null ? resultData?.result : "N/A"} */}
+              {resultData?.result !== null ? getColorScore(Number(resultData?.result).toFixed(2), [60, 70, 80]) : "N/A"}
             </td>
           );
         })}

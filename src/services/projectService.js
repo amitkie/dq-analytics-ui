@@ -98,40 +98,37 @@ export const getProjectDetailsByUserId = async (userId) => {
   }
 };
 
+export const getProjectListsByFilter = async ( frequencyId, categoryIds) => {
+  try {
+    // Build the URL with frequencyId and dynamically add categoryIds
+    let url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects-by-id?frequency_id=${frequencyId}`;
+    console.log(categoryIds, 'categoryIds')
+
+    if(categoryIds?.length > 0){
+
+      categoryIds?.forEach((categoryId, index) => {
+        url += `&category_id[${index}]=${categoryId}`;
+      });
+  
+      // Make the GET request
+      const response = await axios.get(url);
+  
+      if (response.status !== 200) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const projectData = response.data;
+      return projectData;
+    }
+  } catch (error) {
+    console.error("Error fetching project lists:", error);
+    throw error;
+  }
+};
+
+
 export const getBenchamarkValues = async (data) => {
 
-//   samplePayload = [
-//     {
-//         "project_id": 15,
-//         "sectionId": 3,
-//         "platformId": 3,
-//         "isOverall": false,
-//         "isCategory": true,
-//         "metricId": 12,
-//         "weights": 50,
-//         "categoryIds": [
-//             1,
-//             2,
-//             3
-//         ],
-//         "benchmarks": "[{'categoryId': 1 , benchmarkValue: 33.4, actualValue:45},{'categoryId': 2 , benchmarkValue: 33.4, , actualValue:48},{'categoryId': 3 , benchmarkValue: 33.4 ,actualValue:45}, ]"
-//     },
-//     {
-//         "project_id": 15,
-//         "sectionId": 3,
-//         "platformId": 3,
-//         "isOverall": true,
-//         "isCategory": false,
-//         "metricId": 13,
-//         "weights": 50,
-//         "categoryIds": [
-//             1,
-//             2,
-//             3
-//         ],
-//         "benchmarks": "[benchmarkValue:'60.0',actualValue:1005]"
-//     }
-// ]
   try {
     const response = await axios.post(
       `https://dndrvx80-8011.inc1.devtunnels.ms/process_metric`,

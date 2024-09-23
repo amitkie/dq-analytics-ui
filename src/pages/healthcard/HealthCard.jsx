@@ -4,23 +4,36 @@ import TableComponent from "../../components/tableComponent/TableComponent";
 import { gethealthCardData } from "../../services/HealthCard";
 
 import "./HealthCard.scss";
+import { getAllBrands } from "../../services/userService";
 
 export default function HealthCard() {
   const data = gethealthCardData();
-  const [filter, setFilter] = useState("");
   const [filteredData, setFilteredData] = useState(data);
+  const [alphabetFilter, setAlphabetFilter] = useState("");
   const alphabets = "abcdefghijklmnopqrstuvwxyz".split("");
+  
   useEffect(() => {
-    if (filter === "") {
+    fetchAllBrands();
+    console.log('Alphabet Filter:', alphabetFilter); 
+    if (alphabetFilter === "") {
       setFilteredData(data);
     } else {
-      setFilteredData(
-        data.filter((item) => item.name.toLowerCase().startsWith(filter))
-      );
+      setFilteredData(data.filter(item => item.Brands?.toLowerCase().startsWith(alphabetFilter.toLowerCase())));
+      // setFilteredData( data.filter((item) => item.name.toLowerCase().startsWith(alphabetFilter.toLowerCase())));
+      console.log("data", data.Brands)
     }
-  }, [filter, data]);
+  }, [alphabetFilter, data]);
+
+  const fetchAllBrands = async() => {
+    try {
+      const brandsData = await getAllBrands();
+    } catch (error) {
+      console.log("error fetching brands", error);
+    }
+  }
+
   const handleAlphabetClick = (alphabet) => {
-    setFilter(alphabet);
+    setAlphabetFilter(alphabet);
   };
   const columns = [
     {
@@ -36,32 +49,37 @@ export default function HealthCard() {
   ];
   return (
     <div className="col-12">
-        <div className="workspace-container">
-          <div className="healthcard-heading">
-            <h2 className="page-title ml-3">Health Card</h2>
-            <div className="category-filter">
-              <select name="Metrics" className="Select-filter-category">
-                <option value="Select Metrics">Select Category</option>
-                <option value="haircare">Ecom</option>
-                <option value="baby">Social</option>
-                <option value="mansGrooming">Paid</option>
-              </select>
-            </div>
+      <div className="workspace-container">
+        <div className="healthcard-heading">
+          <h2 className="page-title ml-3">Health Card</h2>
+          <div className="category-filter">
+            <select name="Metrics" className="Select-filter-category">
+              <option value="Select Metrics">Select Category</option>
+              <option value="haircare">Ecom</option>
+              <option value="baby">Social</option>
+              <option value="mansGrooming">Paid</option>
+            </select>
           </div>
-          <ul className="alphabet-filters">
-            {alphabets.map((alphabet, index) => (
-              <li
-                key={index}
-                // className={filter === alphabet ? "active" : ""}
-                onClick={() => handleAlphabetClick(alphabet)}
-              >
-                {alphabet}
-              </li>
-            ))}
-          </ul>
-
-          <TableComponent data={data} columns={columns} />
         </div>
+        <ul className="alphabet-filters">
+          {alphabets.map((alphabet, index) => (
+            <li
+              key={index}
+              // className={filter === alphabet ? "active" : ""}
+              onClick={() => handleAlphabetClick(alphabet)}
+            >
+              {alphabet}
+            </li>
+          ))}
+          <li><button onClick={() => setAlphabetFilter('')}>Clear Filter</button></li>
+        </ul>
+
+        <TableComponent 
+          data={filteredData} 
+          columns={columns} 
+        />
+
       </div>
-  );
+    </div>
+  )
 }

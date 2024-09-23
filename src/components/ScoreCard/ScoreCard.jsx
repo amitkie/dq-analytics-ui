@@ -5,7 +5,6 @@ import Form from "react-bootstrap/Form";
 import "./ScoreCard.scss";
 
 function ScoreCard({dqScoreValue}) {
-  console.log('dqqqqq', dqScoreValue)
   return (
     <div className="row">
       <div className="col-12">
