@@ -49,6 +49,8 @@
 .brand-dqscores {
   display: flex;
   gap: 1rem;
+  overflow-x: scroll;
+  padding: .25rem
 }
 .score-list {
   @include brandScores();
@@ -57,6 +59,7 @@
   align-items: center;
   justify-content: flex-start;
   flex: 1;
+  min-width: 220px;
 }
 .metric-icon {
   display: flex;
@@ -75,7 +78,8 @@
   justify-content: flex-start;
   position: relative;
   width: calc(100% - 50px);
-  padding: 0.675rem;
+  padding: 1.3rem 0.675rem;
+  line-height: 2;
 }
 .brand-title {
   @include secondaryFontBold();
@@ -87,7 +91,7 @@
   @include secondaryFont();
   font-size: 0.875rem;
   color: rgba($color: #333333, $alpha: 0.6);
-  line-height: 1;
+  line-height: 2;
   white-space: nowrap;
   margin-bottom: 0.5rem;
 }
@@ -227,18 +231,13 @@
   .title-section {
     margin-bottom: 1rem;
   }
-  .score-list {
-    min-width:250px;
-  }
   .brand-overview{
     overflow: hidden;
   }
-  .brand-dqscores {
-    overflow-x: scroll;
-  }
+  
 }
 
-@media (min-width:768px) and (max-width:1180px) {
+@media (min-width:768px) and (max-width:1199px) {
   .title-section {
     flex-direction: column;
     align-items: flex-start;
@@ -249,13 +248,8 @@
   .title-section {
     margin-bottom: 1rem;
   }
-  .score-list {
-    min-width:250px;
-  }
   .brand-overview{
     overflow: hidden;
   }
-  .brand-dqscores {
-    overflow-x: scroll;
-  }
 }
+

@@ -28,12 +28,12 @@ const KPITable = ({ getColor, metrics, projectDetails }) => {
     setError(null);  
   
     const data = {
-      platform: metrics?.map((metric) => metric.platform?.name),
-      metrics: metrics?.map((metric) => metric.metric_name),
+      platform: Array.from(new Set(metrics?.map((metric) => metric.platform?.name))) ,
+      metrics: Array.from(new Set( metrics?.map((metric) => metric.metric_name))),
       brand: projectDetails?.brands,
       analysis_type: "Overall",
-      start_date: "2024-01-01",
-      end_date: "2024-12-31",
+      start_date: projectDetails?.start_date,
+      end_date: projectDetails?.end_date,
     };
   
     try {

@@ -174,16 +174,17 @@ input[type="checkbox"] {
     // }
   }
 }
-.insights-table {
-  & tr:first-child {
-    @include secondaryFontBold();
-    background-color: $white;
-    position: sticky;
-    top: 0;
-  }
-}
+// .insights-table {
+//   & tr:first-child {
+//     @include secondaryFontBold();
+//     background-color: $white;
+//     position: sticky;
+//     top: 0;
+//   }
+// }
 .export-btn {
   display: flex;
+  white-space: nowrap;
 }
 .apexcharts-tooltip-title {
   @include secondaryFontBold;
@@ -335,4 +336,57 @@ Table thead {
 .loader-text {
   margin-left: 10px;
   font-size: 14px;
+}
+
+.legend {
+  display: flex;
+  gap: 2rem;
+  flex-flow: row wrap;
+  margin-bottom: .5rem ;
+  padding-left: 0;
+}
+.legend li {
+  padding-left: 1.5rem;
+  display: block;
+  position: relative;
+}
+.legend li:nth-child(1)::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: #2A61DD;
+  position: absolute;
+  border-radius: 50%;
+  top: 15%;
+  left: 0;
+}
+.legend li:nth-child(2)::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: #279E70;
+  position: absolute;
+  border-radius: 50%;
+  top: 15%;
+  left: 0;
+}
+.legend li:nth-child(3)::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: #FF9800;
+  position: absolute;
+  border-radius: 50%;
+  top: 15%;
+  left: 0;
+}
+.legend li:nth-child(4)::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: #C82519;
+  position: absolute;
+  border-radius: 50%;
+  top: 15%;
+  left: 0;
 }

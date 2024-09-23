@@ -68,8 +68,9 @@ export default function HealthCardOverview() {
     setLoading(true);
     setError(null)
     const requestPayload = {
-      "brand_name": "Livon"
-    }
+      "brand_name": "Livon",
+      "project_ids":["59"]
+    }  
     try{
       const brandScoreDetails = await getBrandData(requestPayload);
       if(brandScoreDetails) {
@@ -180,7 +181,7 @@ export default function HealthCardOverview() {
                   alt="Brand Logo"
                 />
                 <div className="score-details">
-                  <div className="brand-title">{brandDetailData.map(item => item.Brand_Name)}</div>
+                  <div className="brand-title">{brandDetailData?.map(item => item.type ==="overall" ? item.Brand_Name : "")}</div>
                   <span className="brand-subtitle">Tea</span>
                 </div>
               </div>
@@ -190,7 +191,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => getColorScore(item.Overall_Final_Score, 70.3))}
+                  {brandDetailData.map(item => getColorScore(item.type ==="overall" ? item.Overall_Final_Score : "", 70.3))}
                   </div>
                   <span className="brand-subtitle">DQ Score</span>
                   <OverlayTrigger
@@ -211,7 +212,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title"> 
-                  {brandDetailData.map(item => getColorScore(item.Ecom, 40.0))}
+                  {brandDetailData.map(item => getColorScore(item.type ==="overall" && item.Ecom, 40.0))}
                   </div>
                   <span className="brand-subtitle">Ecom DQ Score</span>
                   <OverlayTrigger
@@ -232,7 +233,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => getColorScore(item.social, 60.5))}
+                  {brandDetailData.map(item => getColorScore(item.type ==="overall" && item.social, 60.5))}
                   </div>
                   <span className="brand-subtitle">Social DQ Score</span>
                   <OverlayTrigger
@@ -253,7 +254,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {brandDetailData.map(item => getColorScore(item.paid, 50))}
+                    {brandDetailData.map(item => getColorScore(item.type ==="overall" && item.paid, 50))}
                   </div>
                   <span className="brand-subtitle">Paid DQ Score</span>
                   <OverlayTrigger
@@ -274,7 +275,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => getColorScore(item.Brand_Perf, 50))}
+                  {brandDetailData.map(item => getColorScore(item.type ==="overall" && item.Brand_Perf, 50))}
                   </div>
                   <span className="brand-subtitle">Brand Perf DQ Score</span>
                   <OverlayTrigger

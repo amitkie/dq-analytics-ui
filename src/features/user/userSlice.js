@@ -1,6 +1,17 @@
 // src/features/user/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-const token = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')):null;
+const userInfo = localStorage.getItem('userInfo');
+let token = null;
+
+if (userInfo && userInfo !== "undefined") {
+  try {
+    token = JSON.parse(userInfo);
+  } catch (error) {
+    console.error("Invalid JSON in userInfo:", error);
+    token = null;
+  }
+}
+
 const initialState = {
   token: token,
   userInfo: {},

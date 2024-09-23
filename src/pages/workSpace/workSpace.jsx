@@ -39,9 +39,10 @@ export default function WorkSpace() {
   const [isBrandsDisabled, setIsBrandsDisabled] = useState(true);
   const [isMetricsDisabled, setIsMetricsDisabled] = useState(true);
   const [show, setShow] = useState(false);
-  const [projectName, setProjectName] = useState(""); // State for project name
-  const [loading, setLoading] = useState(false); // State for loading status
-  const [error, setError] = useState(null); // State for error messages
+  const [projectName, setProjectName] = useState(""); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [isAvailable, setIsAvailable] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -235,6 +236,19 @@ export default function WorkSpace() {
     }
   };
 
+  const isFormValid = () => {
+    return (
+      projectName && 
+      selectedCategories.length > 0 &&
+      selectedBrands.length > 0 &&
+      selectedPlatforms.length > 0 &&
+      selectedMetrics.length > 0 &&
+      selectedFrequencies.length > 0 &&
+      dateRange.startDate && dateRange.endDate
+    );
+  };
+  
+
   return (
     <>
       <div className="col-12">
@@ -360,7 +374,7 @@ export default function WorkSpace() {
                 btnClass="btn-primary px-4"
                 btnName={loading ? "Saving..." : "Save"}
                 onClick={handleSave}
-                disabled={loading} // Disable button while saving
+                disabled={loading || !isFormValid()}
               />
             </Modal.Footer>
           </Modal>

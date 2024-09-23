@@ -55,11 +55,12 @@
   
   .option:hover {
     background-color: #f0f0f0;
+    color: #0d47a0;
   }
   
   .option.selected {
     background-color: #F4F4F4;
-    color: #fff;
+    color: #121314;
   }
   
   .no-options {

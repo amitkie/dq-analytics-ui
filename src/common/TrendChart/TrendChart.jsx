@@ -309,10 +309,10 @@ class TrendChart extends Component {
           text: "",
         },
         grid: {
-          show: true,
+          show: false,
         },
         legend: {
-          show: true,
+          show: false,
         },
         xaxis: {
           type: 'category',

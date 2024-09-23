@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import { getNormalizedValues } from "../../services/projectService";
 
-const ComparisionView = ({ compareNormalizeValue }) => {
+const ComparisionView = ({ compareNormalizeValue, projectDetails }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [compareData, setCompareData] = useState([]);
   const [loading, setLoading] = useState(false);

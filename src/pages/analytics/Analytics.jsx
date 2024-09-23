@@ -443,19 +443,7 @@ export default function Analytics() {
       console.log(compareNormalizeValue, 'compareNormalizeValue')
       if (compareNormalizeValue) {
 
-
-
         setComparisonData(compareNormalizeValue)
-        const filterData = compareNormalizeValue?.filter((ele) => ele?.project_id === projectId);
-        console.log('filterData', filterData)
-        const uniqueMetrics = compareNormalizeValue?.reduce((acc, item) => {
-          if (!acc.map[item.metricName]) {
-            acc.map[item.metricName] = true;
-            acc.result.push(item);  // Push the first occurrence of each metricName
-          }
-          return acc;
-        }, { map: {}, result: [] }).result;
-        console.log(uniqueMetrics, 'uniqueMetrics')
         const uniqueData = transformComparisonViewApiData(compareNormalizeValue);
         console.log('uniqueData',uniqueData )
         const uniqueComparisonBrandNames = Array.from(new Set(compareNormalizeValue.map(item => item.brandName)));
@@ -821,7 +809,7 @@ export default function Analytics() {
             <li> Paid</li>
             <li> Brand Pref</li>
           </ul>
-          {normalizedValue && normalizedValue?.length > 0 ? (
+          {normalizedValue?.length > 0 ? (
           <Table responsive striped bordered className="insights-table">
             <thead>
               <tr>
