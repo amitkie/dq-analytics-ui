@@ -12,11 +12,18 @@ class BarChart extends Component {
           id: "bar",
           redrawOnWindowResize: true,
         },
+        dataLabels: {
+          
+          position: 'top',
+        },
         plotOptions: {
           bar: {
             borderRadius: 1,
             borderRadiusApplication: "end",
             horizontal: true,
+          },
+          dataLabels: {
+            position: 'top',
           },
         },
         grid: {

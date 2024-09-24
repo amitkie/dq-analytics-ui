@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import SideBar from "../../components/sidebar/SideBar";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import Form from "react-bootstrap/Form";
-import Table from "react-bootstrap/Table";
 import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
-import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import SuperThemes from "../../components/SuperThemes/SuperThemes";
 import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import BubbleChart from "../../common/bubbleCharts/BubbleChart";
@@ -22,7 +19,7 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./Insights.scss";
-import { getProjectListsByFilter } from "../../services/projectService";
+import { getProjectListsByFilter, getDQScoreMultipleProjects } from "../../services/projectService";
 
 export default function Insights() {
   const data = getData();
@@ -34,6 +31,8 @@ export default function Insights() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedFrequencies, setSelectedFrequencies] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
+  const [insightsDQScore, setInsightsDQScore] = useState([]);
+  const [loading, setLoading] = useState(false);
 
 
   const [brand, setBrand] = useState([]);
@@ -76,28 +75,28 @@ export default function Insights() {
     fetchData();
   }, []);
 
-  const fetchProjectsByFilter = async(frequency, categories) => {
+  const fetchProjectsByFilter = async (frequency, categories) => {
 
     try {
       const projectData = await getProjectListsByFilter(frequency, categories);
-     
+
       setProjects(
         projectData?.map((project) => ({
-        value: project?.id,
-        label: project?.project_name,
-      }))
-    )
+          value: project?.id,
+          label: project?.project_name,
+        }))
+      )
     } catch (error) {
-      
+
     }
-   
+
   }
   useEffect(() => {
     if (selectedFrequencies && selectedCategories.length > 0) {
-   console.log(selectedFrequencies, 'selectedFrequencies')
-   console.log(selectedCategories, 'selectedCategories')
-      fetchProjectsByFilter(selectedFrequencies, selectedCategories);
-    
+      console.log(selectedFrequencies, 'selectedFrequencies')
+      console.log(selectedCategories, 'selectedCategories')
+      fetchProjectsByFilter(selectedFrequencies, selectedCategories.map((sc) => sc?.value));
+
     }
   }, [selectedFrequencies, selectedCategories]);
 
@@ -107,20 +106,48 @@ export default function Insights() {
 
 
   const handleFrequenciesChange = (selectedOptions) => {
-    console.log(selectedOptions?.target?.value,'selectedOptions')
+    console.log(selectedOptions?.target?.value, 'selectedOptions')
     setSelectedFrequencies(selectedOptions?.target?.value);
   };
 
   const handleCategoryChanges = (selectedOptions) => {
-    console.log(selectedOptions, 'categories')
-    const categoryOptions = selectedOptions?.map((cg) => cg?.value)
-    console.log(categoryOptions)
-    setSelectedCategories(categoryOptions);
+    // const categoryOptions = selectedOptions?.map((cg) => cg?.value);  
+
+    setSelectedCategories((prevSelectedCategories) => {
+      // Combine previous selected values with new ones, ensuring no duplicates
+      const updatedCategories = [...new Set([...prevSelectedCategories, ...selectedOptions])];
+      console.log(updatedCategories, 'updatedCategories')
+      return updatedCategories;
+    });
   };
 
   const handleProjectChanges = (selectedOptions) => {
-    selectedProjects(selectedOptions);
+    setSelectedProjects(selectedOptions);
   };
+
+  const fetchDQScoresBasedOnFilter = async () => {
+    setLoading(true);
+    if (selectedProjects?.length > 0) {
+      const selectedProjectsOptions = selectedProjects?.map((cg) => cg?.value);
+      const requestedPayload = {
+        project_ids: selectedProjectsOptions,
+      };
+      console.log(requestedPayload, 'requestedPayload');
+
+      const insightsDQScoreData = await getDQScoreMultipleProjects(requestedPayload);
+      if (insightsDQScoreData?.data?.length > 0) {
+        setLoading(false);
+        setInsightsDQScore(insightsDQScoreData?.data[0]);
+      } else {
+        setLoading(false);
+        setInsightsDQScore(null);
+      }
+      console.log(insightsDQScoreData?.data[0], 'insightsDQScore');
+    }
+  };
+  useEffect(() => {
+    console.log(insightsDQScore, 'Updated insightsDQScore');
+  }, [insightsDQScore]);
 
 
 
@@ -143,7 +170,7 @@ export default function Insights() {
     { header: "Organic DQ", accessor: "Organic DQ" },
   ];
   const keys = Array.from(new Set(normalizedData.flatMap(Object.keys)));
-  const keysToDisplay = keys.slice(2);
+  const keysToDisplay = keys?.slice(2);
   // console.log("tableData", data);
   const tabs = [
     {
@@ -168,33 +195,83 @@ export default function Insights() {
             <div className="col-12">
               <div className="scores-charts">
                 <span className="chart-title">DQ Score</span>
-                <BubbleChart />
+                {loading ? (
+                  <div className="loader-container-sm">
+                    <div className="loader-sm"></div>
+                    <span className="loader-text">Loading...</span>
+                  </div>
+                ) : insightsDQScore ? (
+                  <BubbleChart key={`Overall_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Overall_Final_Score" />
+                ) : (
+                  <p>No data available</p>
+                )}
               </div>
             </div>
-            <div className="col-sm-12 xol-md-6 col-lg-6">
+
+            <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Ecom DQ Score</span>
-                <BubbleChart />
+                {loading ? (
+                  <div className="loader-container-sm">
+                    <div className="loader-sm"></div>
+                    <span className="loader-text">Loading...</span>
+                  </div>
+                ) : insightsDQScore ? (
+                  <BubbleChart key={`Ecom_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Ecom" />
+                ) : (
+                  <p>No data available</p>
+                )}
               </div>
             </div>
-            <div className="col-sm-12 xol-md-6 col-lg-6">
+
+            <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Social DQ Score</span>
-                <BubbleChart />
+                {loading ? (
+                  <div className="loader-container-sm">
+                    <div className="loader-sm"></div>
+                    <span className="loader-text">Loading...</span>
+                  </div>
+                ) : insightsDQScore ? (
+                  <BubbleChart key={`Social_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Social" />
+                ) : (
+                  <p>No data available</p>
+                )}
               </div>
             </div>
-            <div className="col-sm-12 xol-md-6 col-lg-6">
-              <div className="scores-charts">
-                <span className="chart-title">Organic DQ Score</span>
-                <BubbleChart />
-              </div>
-            </div>
-            <div className="col-sm-12 xol-md-6 col-lg-6">
+
+            <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Paid DQ Score</span>
-                <BubbleChart />
+                {loading ? (
+                  <div className="loader-container-sm">
+                    <div className="loader-sm"></div>
+                    <span className="loader-text">Loading...</span>
+                  </div>
+                ) : insightsDQScore ? (
+                  <BubbleChart key={`Paid_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Paid" />
+                ) : (
+                  <p>No data available</p>
+                )}
               </div>
             </div>
+
+            <div className="col-sm-12 col-md-6 col-lg-6">
+              <div className="scores-charts">
+                <span className="chart-title">Brand Performance Score</span>
+                {loading ? (
+                  <div className="loader-container-sm">
+                    <div className="loader-sm"></div>
+                    <span className="loader-text">Loading...</span>
+                  </div>
+                ) : insightsDQScore ? (
+                  <BubbleChart key={`BrandPerf_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Brand_Perf" />
+                ) : (
+                  <p>No data available</p>
+                )}
+              </div>
+            </div>
+
           </div>
         </>
       ),
@@ -257,23 +334,23 @@ export default function Insights() {
   return (
     <>
       <div className="col-12">
-          <div className="workspace-container">
-            <h2 className="page-title mt-4 ml-3">Insights</h2>
+        <div className="workspace-container">
+          <h2 className="page-title mt-4 ml-3">Insights</h2>
 
-            <div className="row mb-4">
-              <div className="col-12">
-                <div className="insights-filter">
-                  <span className="subtitle">
-                    Select files from saved Projects
-                  </span>
-                  <div className="insights-project-filter">
-                    {/* <select name="frequency" className="Select-input">
+          <div className="row mb-4">
+            <div className="col-12">
+              <div className="insights-filter">
+                <span className="subtitle">
+                  Select files from saved Projects
+                </span>
+                <div className="insights-project-filter">
+                  {/* <select name="frequency" className="Select-input">
                       <option value="beauty">Monthly</option>
                       <option value="haircare">Quarterly</option>
                     </select> */}
-                    <select 
-                    className="form-control-select" 
-                    onChange={handleFrequenciesChange} 
+                  <select
+                    className="form-control-select"
+                    onChange={handleFrequenciesChange}
                     selectedValues={selectedFrequencies}
                   >
                     <option value="">Select Frequencies</option>
@@ -283,28 +360,28 @@ export default function Insights() {
                       </option>
                     ))}
                   </select>
-                    <MultiSelectDropdown
-                      options={categories}
-                      selectedValues={selectedCategories}
-                      onChange={handleCategoryChanges}
-                      disabled={selectedFrequencies?.length == 0}
-                      placeholder="Select Categories"
-                    />
-                    <MultiSelectDropdown
-                      options={projects}
-                      selectedValues={selectedProjects}
-                      onChange={handleProjectChanges}
-                      disabled={selectedCategories?.lenth == 0}
-                      placeholder="Select Workspace"
-                    />
-                    
-                    {/* <select name="category" className="Select-input">
+                  <MultiSelectDropdown
+                    options={categories}
+                    selectedValues={selectedCategories}
+                    onChange={handleCategoryChanges}
+                    disabled={selectedFrequencies?.length == 0}
+                    placeholder="Select Categories"
+                  />
+                  <MultiSelectDropdown
+                    options={projects}
+                    selectedValues={selectedProjects}
+                    onChange={handleProjectChanges}
+                    disabled={selectedCategories?.lenth == 0}
+                    placeholder="Select Workspace"
+                  />
+
+                  {/* <select name="category" className="Select-input">
                       <option value="beauty">Beauty</option>
                       <option value="haircare">Hair care</option>
                       <option value="baby">Baby</option>
                       <option value="mansGrooming">Men's Grooming</option>
                     </select> */}
-                    {/* <select name="files" className="Select-input">
+                  {/* <select name="files" className="Select-input">
                       <option value="digitalAssessment-1">
                         Digital Assessment -1
                       </option>
@@ -318,31 +395,33 @@ export default function Insights() {
                         Digital Assessment -4
                       </option>
                     </select> */}
-                    <ButtonComponent
-                      btnClass={"btn-primary"}
-                      btnName={"Submit"}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-12">
-                <div className="export-btn justify-content-end">
                   <ButtonComponent
-                     disabled
-                    btnClass={"btn-primary export-excel-btn"}
-                    btnName={"Download"}
+                    btnClass={"btn-primary"}
+                    disabled={selectedProjects?.length == 0}
+                    onClick={fetchDQScoresBasedOnFilter}
+                    btnName={"Submit"}
                   />
                 </div>
-                <TabComponent tabs={tabs} isBenchmarkDataSaved={true} className="insights-tabs" />
               </div>
             </div>
+          </div>
+          <div className="row">
+            <div className="col-12">
+              <div className="export-btn justify-content-end">
+                <ButtonComponent
+                  disabled
+                  btnClass={"btn-primary export-excel-btn"}
+                  btnName={"Download"}
+                />
+              </div>
+              <TabComponent tabs={tabs} isBenchmarkDataSaved={true} className="insights-tabs" />
+            </div>
+          </div>
 
-            {/* <div className="project-table-data mt-5">
+          {/* <div className="project-table-data mt-5">
               <TableComponent />
             </div> */}
-            {/* <div className="footer-button">
+          {/* <div className="footer-button">
               <ButtonComponent
                 btnClass={"btn-outline-secondary"}
                 btnName={"Back"}
@@ -352,8 +431,8 @@ export default function Insights() {
                 btnName={"Go to Analytics"}
               />
             </div> */}
-          </div>
         </div>
+      </div>
     </>
   );
 }

@@ -131,7 +131,7 @@ export const getBenchamarkValues = async (data) => {
 
   try {
     const response = await axios.post(
-      `https://dndrvx80-8011.inc1.devtunnels.ms/process_metric`,
+      `https://dndrvx80-8011.inc1.devtunnels.ms/process_metric/`,
       data
     );
 
@@ -218,6 +218,25 @@ export const getDQScore = async (data) => {
     }
 
     const compareNormalizeData = response.data;
+
+    return compareNormalizeData;
+  } catch (error) {
+    console.error("Error in fetching :", error);
+    throw error;
+  }
+};
+export const getDQScoreMultipleProjects = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8014.inc1.devtunnels.ms/get_multi_data`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const compareNormalizeData = response?.data;
 
     return compareNormalizeData;
   } catch (error) {
