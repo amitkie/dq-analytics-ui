@@ -6,7 +6,7 @@ import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import SuperThemes from "../../components/SuperThemes/SuperThemes";
 import PaginationComponent from "../../common/Pagination/PaginationComponent";
-import BubbleChart from "../../common/bubbleCharts/BubbleChart";
+import LineChart from "../../common/LineChart/LineChart";
 import { getData } from "../../services/q3";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 import {
@@ -137,12 +137,12 @@ export default function Insights() {
       const insightsDQScoreData = await getDQScoreMultipleProjects(requestedPayload);
       if (insightsDQScoreData?.data?.length > 0) {
         setLoading(false);
-        setInsightsDQScore(insightsDQScoreData?.data[0]);
+        setInsightsDQScore(insightsDQScoreData?.data);
       } else {
         setLoading(false);
         setInsightsDQScore(null);
       }
-      console.log(insightsDQScoreData?.data[0], 'insightsDQScore');
+      console.log(insightsDQScoreData?.data, 'insightsDQScore');
     }
   };
   useEffect(() => {
@@ -201,7 +201,7 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <BubbleChart key={`Overall_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Overall_Final_Score" />
+                  <LineChart key={`Overall_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Overall_Final_Score" />
                 ) : (
                   <p>No data available</p>
                 )}
@@ -217,7 +217,7 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <BubbleChart key={`Ecom_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Ecom" />
+                  <LineChart key={`Ecom_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Ecom" />
                 ) : (
                   <p>No data available</p>
                 )}
@@ -233,7 +233,7 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <BubbleChart key={`Social_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Social" />
+                  <LineChart key={`Social_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Social" />
                 ) : (
                   <p>No data available</p>
                 )}
@@ -249,7 +249,7 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <BubbleChart key={`Paid_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Paid" />
+                  <LineChart key={`Paid_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Paid" />
                 ) : (
                   <p>No data available</p>
                 )}
@@ -265,7 +265,7 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <BubbleChart key={`BrandPerf_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Brand_Perf" />
+                  <LineChart key={`BrandPerf_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Brand_Perf" />
                 ) : (
                   <p>No data available</p>
                 )}
