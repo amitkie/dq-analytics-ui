@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ButtonComponent from "../../common/button/button";
 import SideBar from "../../components/sidebar/SideBar";
 import { LiaArrowRightSolid } from "react-icons/lia";
@@ -6,8 +6,9 @@ import { Dropdown } from "react-bootstrap";
 import { FaTimes } from "react-icons/fa";
 
 import "./SuperThemes.scss";
+import MultiSelectDropdown from "../MultiSelectDropdown/MultiSelectDropdown";
 
-function SuperThemes() {
+function SuperThemes({ metrics, normalizedValue }) {
   const [field, setField] = useState([]);
   const languages = [
     "Average ratings",
@@ -22,9 +23,67 @@ function SuperThemes() {
     "CPC",
     "Purchases",
   ];
+  console.log(metrics, "metricsData");
+  console.log(normalizedValue, 'normalizedValue')
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const [uniqueSectionsBasedOnProjectId, setUniqueSectionsBasedOnProjectId] = useState([]);
+  const [uniqueSelectedSectionsBasedOnProjectId, setSelectedUniqueSectionsBasedOnProjectId] = useState([]);
+  const [uniquePlatformsBasedOnProjectId, setUniquePlatformsBasedOnProjectId] = useState([]);
+  const [uniqueSelectedPlatformsBasedOnProjectId, setSelectedUniquePlatformsBasedOnProjectId] = useState([]);
+  const [uniqueMetricsBasedOnProjectId, setUniqueMetricsBasedOnProjectId] = useState([]);
+  const [uniqueSelectedMetricsBasedOnProjectId, setUniqueSelectedMetricsBasedOnProjectId] = useState([]);
+
+  useEffect(() => {
+    if (metrics) {
+
+      setUniqueSectionsBasedOnProjectId(() => {
+        const uniqueSections = metrics
+          ?.map((mc) => mc.section)
+          ?.filter((section, index, self) =>
+            index === self.findIndex((s) => s.id === section.id)
+          )?.map((section) => ({
+            value: section.id,
+            label: section.name
+          }));
+
+        return uniqueSections;
+      });
+
+      setUniquePlatformsBasedOnProjectId(() => {
+        const uniquePlatforms = metrics
+          ?.map((mc) => mc.platform)
+          ?.filter((platform, index, self) =>
+            index === self.findIndex((s) => s.id === platform.id)
+          )?.map((platform) => ({
+            value: platform.id,
+            label: platform.name
+          }));
+
+        return uniquePlatforms;
+      });
+
+      setUniqueMetricsBasedOnProjectId(
+        () => metrics?.map((mc) => {
+          return { label: mc.metric_name, value: mc.metric_id }
+        })
+      )
+
+    }
+
+
+  }, [metrics])
+
+  const handleSectionChange = (selectedOptions) => {
+    setSelectedUniqueSectionsBasedOnProjectId(selectedOptions)
+  }
+  const handlePlatformChange = (selectedOptions) => {
+    setSelectedUniquePlatformsBasedOnProjectId(selectedOptions)
+  }
+  const handleMetricChange = (selectedOptions) => {
+    setUniqueSelectedMetricsBasedOnProjectId(selectedOptions)
+  }
   const toggleLang = (option) => {
     if (selectedLanguages.includes(option)) {
       setSelectedLanguages(selectedLanguages.filter((item) => item !== option));
@@ -49,43 +108,24 @@ function SuperThemes() {
               <div className="metric-select">
                 <h4>Super Themes Setup</h4>
                 <div className="select-metric-option">
-                  <select name="category" className="Select-input">
-                    <option value="Select Metrics">Select Section</option>
-                    <option value="ecom">Ecom</option>
-                    <option value="Social">Social</option>
-                    <option value="Paid">Paid</option>
-                    <option value="brand-perf">Brand Perf</option>
-                  </select>
-                  <select name="category" className="Select-input">
-                    <option value="Select Metrics">Select platform</option>
-                    <option value="ecom">Amazon</option>
-                    <option value="Social">Amazon - Search Campaigns </option>
-                    <option value="Organic">Flipkart PLA Campaigns</option>
-                    <option value="Paid">Big Basket Campaigns</option>
-                    <option value="Brand Performance">Blinkit Campaigns</option>
-                    <option value="Brand Performance">Nykaa Campaigns</option>
-                    <option value="Brand Performance">Myntraa Campaigns</option>
-                    <option value="Brand Performance">SEO</option>
-                    <option value="Brand Performance">
-                      Facebook, Twitter, Instagram
-                    </option>
-                    <option value="Brand Performance">
-                      Gadwords, Facebook, DV360
-                    </option>
-                    <option value="Brand Performance">Google Analytics</option>
-                    <option value="Brand Performance">
-                      Page Speed Insights
-                    </option>
-                    <option value="Brand Performance">SEOptimer</option>
-                  </select>
-                  <select name="category" className="Select-input">
-                    <option value="Select Metrics">Select Metrics</option>
-                    <option value="ecom">Ecom</option>
-                    <option value="Social">Social</option>
-                    <option value="Organic">Organic</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Brand Performance">Brand Performance</option>
-                  </select>
+                  <MultiSelectDropdown
+                    options={uniqueSectionsBasedOnProjectId}
+                    selectedValues={uniqueSelectedSectionsBasedOnProjectId}
+                    onChange={handleSectionChange}
+                    placeholder="Select Sections"
+                  />
+                  <MultiSelectDropdown
+                    options={uniquePlatformsBasedOnProjectId}
+                    selectedValues={uniqueSelectedPlatformsBasedOnProjectId}
+                    onChange={handlePlatformChange}
+                    placeholder="Select Platforms"
+                  />
+                  <MultiSelectDropdown
+                    options={uniqueMetricsBasedOnProjectId}
+                    selectedValues={uniqueSelectedMetricsBasedOnProjectId}
+                    onChange={handleMetricChange}
+                    placeholder="Select Metrics"
+                  />
                   <ButtonComponent
                     btnClass={"btn-primary next-btn"}
                     btnIconAfter={<LiaArrowRightSolid />}
@@ -104,15 +144,12 @@ function SuperThemes() {
                     <label for="exampleFormControlInput1" class="form-label">
                       Select Metrics/Group from list
                     </label>
-                    <select
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
-                      <option selected>Select</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select>
+                    <MultiSelectDropdown
+                      options={uniqueMetricsBasedOnProjectId}
+                      selectedValues={uniqueSelectedMetricsBasedOnProjectId}
+                      onChange={handleMetricChange}
+                      placeholder="Select Metrics"
+                    />
                   </div>
                   <div class="theme-content">
                     <label for="exampleFormControlInput1" class="form-label">
@@ -142,7 +179,7 @@ function SuperThemes() {
                     <label for="exampleFormControlInput1" class="form-label">
                       Select Metrics/Group from list
                     </label>
-                    <Dropdown
+                    {/* <Dropdown
                       show={isDropdownOpen}
                       onToggle={handleDropdownToggle}
                     >
@@ -173,7 +210,14 @@ function SuperThemes() {
                           </Dropdown.Item>
                         ))}
                       </Dropdown.Menu>
-                    </Dropdown>
+                    </Dropdown> */}
+
+                    <MultiSelectDropdown
+                      options={uniqueMetricsBasedOnProjectId}
+                      selectedValues={uniqueSelectedMetricsBasedOnProjectId}
+                      onChange={handleMetricChange}
+                      placeholder="Select Metrics"
+                    />
                   </div>
                   <div class="theme-content">
                     <label for="exampleFormControlInput1" class="form-label">

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./MultiSelectDropdown.css"; // Make sure to include styling
+import { IoMdClose } from "react-icons/io";
+
 
 const MultiSelectDropdown = ({
   options,
@@ -30,7 +32,9 @@ const MultiSelectDropdown = ({
       onChange(options);
     }
   };
-
+  const handleUnselect = ( ) => {
+    console.log('clicked')
+  };
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
   const filteredOptions = options.filter((option) =>
@@ -44,7 +48,7 @@ const MultiSelectDropdown = ({
           {selectedValues.length > 0
             ? selectedValues.map((item, index) => (
                 <span className="selected-items" key={index}>
-                  {item.label}
+                  {item.label} <IoMdClose onClick={() => handleUnselect()}/>
                 </span>
               ))
             : placeholder}

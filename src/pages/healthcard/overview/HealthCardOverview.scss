@@ -108,6 +108,7 @@
   border: 1px solid #e0e3e8;
   border-radius: 8px;
   margin-bottom: 1rem;
+  background-color: #fff;
 }
 .basemedia {
   display: flex;
@@ -199,6 +200,7 @@
   border: 3px solid #e5e5e5;
   border-radius: 50%;
   border-top: 3px solid #0d47a0;
+  aspect-ratio: 1;
   width: 28px;
   height: 28px;
   -webkit-animation: spin 1.5s linear infinite; /* Safari */
@@ -253,3 +255,34 @@
   }
 }
 
+.brand-header {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  .competitor {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap:12px;
+    .competitor-title{
+      font-size: 16px;
+    }
+    .competitor-list {
+      @include secondaryFontBold();
+      list-style-type: none;
+      display: flex;
+      padding: 0;
+      margin: 0;
+      gap: .75rem;
+      align-items: baseline;
+      justify-content: flex-start;
+      font-size: 16px;
+      font-weight: 700;
+    }
+  }
+}
+.custom-tabs.healthcard-tab .tab-content{
+  padding: 1rem;
+}

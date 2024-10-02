@@ -1,28 +1,25 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { IoIosTrendingUp } from "react-icons/io";
 import { IoIosTrendingDown } from "react-icons/io";
-
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import SideBar from "../../../components/sidebar/SideBar";
 import TabComponent from "../../../components/tabs/TabComponent";
 import ButtonComponent from "../../../common/button/button";
-import Media from "../../../components/Media/Media";
-import BrandParachute from "../../../assets/images/lipton.jpeg";
 import { MdBubbleChart } from "react-icons/md";
 import { MdOutlineStackedLineChart } from "react-icons/md";
 import { MdOutlineShowChart } from "react-icons/md";
 import { MdOutlineMultilineChart } from "react-icons/md";
 import { GiMultipleTargets } from "react-icons/gi";
-
+import * as XLSX from "xlsx";
 import "./HealthCardOverview.scss";
 import PaidMedia from "../../../components/paidMedia/PaidMedia";
 import MediaEcom from "../../../components/MediaEcom/MediaEcom";
 import MediaOffPlatform from "../../../components/MediaOffPlatform/MediaOffPlatform";
 import SocialMedia from "../../../components/SocialMedia/SocialMedia";
-import { getHealthCardDetails, getBrandData } from "../../../services/projectService";
+import { getHealthCardDetails, getBrandData, getBrandImages } from "../../../services/projectService";
 import BrandPerformance from "../../../components/BrandPerformance/BrandPerformance";
 import { useParams } from "react-router-dom";
 
@@ -32,12 +29,20 @@ export default function HealthCardOverview() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [brandDetailData, setBrandDetailData] = useState([]);
+  const [brandImages, setBrandImages] = useState([]);
 
+
+  const navigate = useNavigate();
+
+  const handleReportClick = () => {
+    navigate('/healthcardreport');
+  };
 
   useEffect(() => {
     fetchHealthCardData();
     fetchBrandScoreDetails();
-  }, []);
+    fetchBrandImages();
+  }, [brand]);
 
   const fetchHealthCardData = async () => {
     setLoading(true); // Start loading
@@ -68,7 +73,7 @@ export default function HealthCardOverview() {
     setLoading(true);
     setError(null)
     const requestPayload = {
-      "brand_name": "Livon",
+      "brand_name": brand,
       "project_ids":["59"]
     }  
     try{
@@ -87,8 +92,28 @@ export default function HealthCardOverview() {
     }
   }
 
+  const fetchBrandImages = async () => {
+    setLoading(true);
+    setError(null);
 
+    try {
+      const brandImageDetails = await getBrandImages(brand);
+  
+      if (brandImageDetails) {
+        setBrandImages(brandImageDetails);
+        console.log("brandImageDetails", brandImageDetails);
+      } else {
+        setError("No Data Found");
+      }
+    } catch (error) {
+      setError("Error fetching brand images.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const tabColors = ['#C1DED3', '#A6CCE0', '#DFE9DE', '#FCFAFB', '#E2E3EF']
   const tabs = [
     {
       label: "Media - Ecom",
@@ -136,6 +161,40 @@ export default function HealthCardOverview() {
       return <span style={{ color: "#252627" }}>{value}</span>;
     }
   }
+  const handleExport = () => {
+    const workbook = XLSX.utils.book_new();
+  
+    // Check if healthCardData and its properties are defined and format them correctly
+    const ecomData = healthCardData && healthCardData?.results["Ecom"];
+    const paidData = healthCardData && healthCardData?.results["Paid"];
+  
+    // Check if data exists before proceeding with conversion
+    if (ecomData && ecomData.length) {
+      const worksheet1 = XLSX.utils.aoa_to_sheet(formatToAOA(ecomData));
+      XLSX.utils.book_append_sheet(workbook, worksheet1, "Sheet1");
+    } else {
+      console.error("Ecom data is undefined or empty.");
+    }
+    console.log('worksheet1', ecomData, paidData);
+    
+    if (paidData && paidData.length) {
+      const worksheet2 = XLSX.utils.aoa_to_sheet(formatToAOA(paidData));
+      XLSX.utils.book_append_sheet(workbook, worksheet2, "Sheet2");
+    } else {
+      console.error("Paid data is undefined or empty.");
+    }
+  
+    // Export the workbook
+    XLSX.writeFile(workbook, "HealthCardOverview.xlsx");
+  };
+  
+  // Helper function to format data into array of arrays (AOA) format
+  const formatToAOA = (data) => {
+    // If data is already in the correct format, return it as is.
+    // Otherwise, you may need to transform the object into an array of arrays.
+    return Array.isArray(data) ? data : Object.entries(data);
+  };
+
 
   return (
     <>
@@ -147,7 +206,14 @@ export default function HealthCardOverview() {
               <ButtonComponent
                 // disabled
                 btnClass={"btn-primary"}
+                btnName={"Health Card Report"}
+                onClick={handleReportClick}
+              />
+              <ButtonComponent
+                // disabled
+                btnClass={"btn-primary"}
                 btnName={"Export as Excel"}
+                onClick={handleExport}
               />
               <ButtonGroup aria-label="Select Frequency">
                 <Button className="group-btn" variant="outline-secondary">
@@ -172,16 +238,24 @@ export default function HealthCardOverview() {
             </div>
           </div>
           <div className="brand-overview">
+            <div className="brand-header">
             <span className="section-title">Brand Overview</span>
+            <div className="competitor">
+              <span className="competitor-title">Competitor List</span>
+              <ul className="competitor-list">
+                <li>{brand}</li>
+              </ul>
+            </div>
+            </div>
             <div className="brand-dqscores">
               <div className="score-list">
                 <img
-                  src={BrandParachute}
+                  src={brandImages}
                   className="metric-icon"
                   alt="Brand Logo"
                 />
                 <div className="score-details">
-                  <div className="brand-title">{brandDetailData?.map(item => item.type ==="overall" ? item.Brand_Name : "")}</div>
+                  <div className="brand-title">{brandDetailData?.map(item => item.Brand_Name)}</div>
                   <span className="brand-subtitle">Tea</span>
                 </div>
               </div>
@@ -191,7 +265,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => getColorScore(item.type ==="overall" ? item.Overall_Final_Score : "", 70.3))}
+                  {brandDetailData.map(item => getColorScore((item.Overall_Final_Score).toFixed(2), 70.3))}
                   </div>
                   <span className="brand-subtitle">DQ Score</span>
                   <OverlayTrigger
@@ -212,7 +286,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title"> 
-                  {brandDetailData.map(item => getColorScore(item.type ==="overall" && item.Ecom, 40.0))}
+                  {brandDetailData.map(item => getColorScore(item.Ecom ? (item.Ecom).toFixed(2) : 0, 40.0))}
                   </div>
                   <span className="brand-subtitle">Ecom DQ Score</span>
                   <OverlayTrigger
@@ -233,7 +307,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => getColorScore(item.type ==="overall" && item.social, 60.5))}
+                  {brandDetailData.map(item => getColorScore((item.social).toFixed(2), 60.5))}
                   </div>
                   <span className="brand-subtitle">Social DQ Score</span>
                   <OverlayTrigger
@@ -254,7 +328,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {brandDetailData.map(item => getColorScore(item.type ==="overall" && item.paid, 50))}
+                    {brandDetailData.map(item => getColorScore((item.Paid).toFixed(2), 50))}
                   </div>
                   <span className="brand-subtitle">Paid DQ Score</span>
                   <OverlayTrigger
@@ -275,7 +349,7 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => getColorScore(item.type ==="overall" && item.Brand_Perf, 50))}
+                  {brandDetailData.map(item => getColorScore((item.Brand_Perf).toFixed(2), 50))}
                   </div>
                   <span className="brand-subtitle">Brand Perf DQ Score</span>
                   <OverlayTrigger
@@ -308,7 +382,9 @@ export default function HealthCardOverview() {
               // <div className="no-data-found">No data found</div>
             ) : (
               <TabComponent
+                isBenchmarkDataSaved={true}
                 tabs={tabs}
+                tabColors={tabColors}
                 className="custom-tabs healthcard-tab"
               />
             )}

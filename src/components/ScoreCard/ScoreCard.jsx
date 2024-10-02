@@ -4,7 +4,7 @@ import TrendChart from "../../common/TrendChart/TrendChart";
 import Form from "react-bootstrap/Form";
 import "./ScoreCard.scss";
 
-function ScoreCard({dqScoreValue}) {
+function ScoreCard({dqScoreValue, dqScoreLoading=false}) {
   return (
     <div className="row">
       <div className="col-12">
@@ -24,26 +24,69 @@ function ScoreCard({dqScoreValue}) {
       <div className="col-md-12 col-lg-6 mb-md-4 mt-md-4">
         <div className="chart-group">
           <div className="chart-list">
-          <TrendChart dqScoreValue={dqScoreValue} chartType="Ecom" />
+            {
+            !dqScoreLoading ? 
+            <TrendChart dqScoreValue={dqScoreValue} chartType="Ecom" />
+            : (<div className="loader-container-sm">
+              <div className="loader-sm"></div>
+              <span className="loader-text">Loading, Please Wait</span>
+            </div>)  
+           }
             <span className="graph-title">Ecom DQ Score</span>
           </div>
           <div className="chart-list">
-          <TrendChart dqScoreValue={dqScoreValue} chartType="Social" />
+            {
+              !dqScoreLoading ? 
+              <TrendChart dqScoreValue={dqScoreValue} chartType="Social" />
+              : (
+                <div className="loader-container-sm">
+              <div className="loader-sm"></div>
+              <span className="loader-text">Loading, Please Wait</span>
+            </div>
+              )
+            }
             <span className="graph-title">Social DQ Score</span>
           </div>
           <div className="chart-list">
-          <TrendChart dqScoreValue={dqScoreValue} chartType="Paid" />
+            {
+              !dqScoreLoading ? 
+              <TrendChart dqScoreValue={dqScoreValue} chartType="Paid" />
+              : (
+                <div className="loader-container-sm">
+                <div className="loader-sm"></div>
+                <span className="loader-text">Loading, Please Wait</span>
+              </div>
+              )
+            }
             <span className="graph-title">Paid DQ Score</span>
           </div>
           <div className="chart-list">
-          <TrendChart dqScoreValue={dqScoreValue} chartType="Brand Perf" />
+            {
+              !dqScoreLoading ? 
+              <TrendChart dqScoreValue={dqScoreValue} chartType="Brand Perf" />
+              : (
+                <div className="loader-container-sm">
+                <div className="loader-sm"></div>
+                <span className="loader-text">Loading, Please Wait</span>
+              </div>
+              )
+            }
             <span className="graph-title">Brand Perf DQ Score</span>
           </div>
         </div>
       </div>
       <div className="col-md-12 col-lg-6 mb-md-4">
         <div className="dq-score-bubble">
-        <TrendChart dqScoreValue={dqScoreValue} chartType="Overall_Final_Score" />
+          {
+            !dqScoreLoading ? 
+            <TrendChart dqScoreValue={dqScoreValue} chartType="Overall_Final_Score" />
+            : (
+              <div className="loader-container-sm">
+              <div className="loader-sm"></div>
+              <span className="loader-text">Loading, Please Wait</span>
+            </div>
+            )
+          }
           <span className="graph-title">DQ Score</span>
         </div>
       </div>

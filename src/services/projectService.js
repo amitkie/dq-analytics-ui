@@ -256,8 +256,25 @@ export const getBrandData = async (data) => {
     }
 
     const getBrandDataDetails = response.data;
-
+    console.log('getBrandDataDetails', getBrandDataDetails)
     return getBrandDataDetails;
+  } catch (error) {
+    console.error("Error in fetching :", error);
+    throw error;
+  }
+};
+export const getBrandImages = async (data) => {
+  try {
+
+    let url = `https://dndrvx80-8013.inc1.devtunnels.ms/brand-images/${data}`;
+    const response = await axios.get(url, { responseType: 'blob' });
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+    
+    const imageUrl = URL.createObjectURL(response.data);
+    console.log('imageUrl',imageUrl)
+    return imageUrl; 
   } catch (error) {
     console.error("Error in fetching :", error);
     throw error;

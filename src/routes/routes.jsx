@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 import Login from "../pages/login";
 import Home from "../pages/home/home";
@@ -13,6 +13,7 @@ import Settings from "../pages/Settings/Settings";
 import About from "../pages/About/About";
 import SuperThemes from "../components/SuperThemes/SuperThemes";
 import Help from "../components/Help/Help";
+import HealthCardReport from "../pages/healthcard/HealthCardReport";
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,14 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <HealthCardOverview />
+      </Layout>
+    ),
+  },
+  {
+    path: "/healthcardreport",
+    element: (
+      <Layout>
+        <HealthCardReport />
       </Layout>
     ),
   },

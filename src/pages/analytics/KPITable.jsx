@@ -14,7 +14,7 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
   const totalBrands = projectDetails?.brands?.length || 0;
   const totalPages = Math.ceil(totalBrands / itemsPerPage);
 
-  const brandsToDisplay = projectDetails?.brands.slice(
+  const brandsToDisplay = projectDetails?.brands?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -71,16 +71,31 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
       <tr key={metricIndex}>
         <td>
         <span
-        style={{
-          display: 'inline-block',
-          width: '10px',
-          height: '10px',
-          borderRadius: '50%',
-          backgroundColor: getColor(metric?.section?.name),
-          marginRight: '5px',
-        }}
-       
-      ></span>
+          style={{
+            display: 'inline-block',
+            width: '10px',
+            height: '10px',
+            borderRadius: '50%',
+            backgroundColor: getColor(metric?.section?.name),
+            marginRight: '5px',
+          }}
+        
+        ></span>
+          {metric?.section?.name}
+          {console.log(metric?.section?.name, 'metric?.platform.section')}
+          </td>
+        <td>
+        <span
+          style={{
+            display: 'inline-block',
+            width: '10px',
+            height: '10px',
+            borderRadius: '50%',
+            backgroundColor: getColor(metric?.section?.name),
+            marginRight: '5px',
+          }}
+        
+        ></span>
           {metric?.platform?.name}
           {console.log(metric?.section?.name, 'metric?.platform.section')}
           </td>
@@ -94,13 +109,19 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
           );
 
           const color = getColor(resultData?.section);
-          console.log(color, "checkkkkkkkk", resultData?.section)
+          console.log(color, "xxxxxxxxxxxxxxxx", resultData)
 
           return (
             <td key={brandIndex}>
               
               {/* {resultData?.result !== null ? resultData?.result : "N/A"} */}
+
+              <span
+                title={`Metric: ${resultData?.metricName || 'N/A'}\nBenchmark: ${resultData?.benchmarkValue || 'N/A'}`}
+                style={{ color: getColorScore(Number(resultData?.result).toFixed(2), [60, 70, 80]) }}
+              >
               {resultData?.result !== null ? getColorScore(Number(resultData?.result).toFixed(2), [60, 70, 80]) : "N/A"}
+              </span>
             </td>
           );
         })}
@@ -125,9 +146,10 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
       >
         <thead>
           <tr>
+            <th>Section</th>
             <th>Platform</th>
             <th>Metrics</th>
-            {brandsToDisplay.map((brandItem, index) => (
+            {brandsToDisplay.sort((a, b) => a.localeCompare(b)).map((brandItem, index) => (
               <th key={index}>{brandItem}</th>
             ))}
           </tr>

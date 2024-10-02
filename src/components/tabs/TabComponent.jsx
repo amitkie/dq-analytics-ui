@@ -3,11 +3,10 @@ import PropTypes from "prop-types";
 
 import "./TabComponent.scss";
 
-const TabComponent = ({ tabs, className, disabled, isBenchmarkDataSaved=false }) => {
+const TabComponent = ({ tabs, className, disabled, tabColors=[], isBenchmarkDataSaved=false }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (index) => {
-    console.log(isBenchmarkDataSaved, "isBenchmarkDataSaved")
     if(isBenchmarkDataSaved){
       setActiveTab(index);
     }
@@ -28,8 +27,13 @@ const TabComponent = ({ tabs, className, disabled, isBenchmarkDataSaved=false })
           </li>
         ))}
       </ul>
-      <div className="tab-content">{tabs[activeTab].content}</div>
-      {tabs.content}
+      <div className="tab-content" 
+      style={{ 
+          backgroundColor: tabColors[activeTab] }}
+          >
+            {tabs[activeTab]?.content}
+      </div>
+      {tabs?.content}
     </div>
   );
 };

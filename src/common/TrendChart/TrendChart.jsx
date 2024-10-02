@@ -285,13 +285,16 @@ class TrendChart extends Component {
       // Check if the brand already exists in the accumulator
       if (acc[brand]) {
         // Average the values if brand already exists
-        acc[brand].y = (acc[brand].y + value) / 2;
+        // acc[brand].y = (acc[brand].y + (value)?.toFixed) / 2;
+        acc[brand] = { x: brand, y: (value)?.toFixed(2) };
+
       } else {
-        acc[brand] = { x: brand, y: value };
+        acc[brand] = { x: brand, y: (value)?.toFixed(2) };
       }
 
       return acc;
     }, {});
+    console.log(aggregatedData, 'aggregatedData')
 
     // Convert aggregated data to an array
     const seriesData = Object.values(aggregatedData);
@@ -302,8 +305,34 @@ class TrendChart extends Component {
           height: 450,
           type: "bar",
         },
+
         dataLabels: {
           enabled: true,
+          // formatter: function (val) {
+          //   return val + "%";
+          // },
+          offsetY: -20,
+          style: {
+            fontSize: '12px',
+            colors: ["#304758"]
+          }
+        },
+        // dataLabels: {
+        //   enabled: true,
+        //   offsetY: -10,
+        //   style: {
+        //     fontSize: '12px',
+        //     colors: "#304758",
+        //   }
+        // },
+        plotOptions: {
+          bar: {
+            borderRadius: 2,
+            dataLabels: {
+              position: 'top', // top, center, bottom
+            },
+            
+          }
         },
         title: {
           text: "",

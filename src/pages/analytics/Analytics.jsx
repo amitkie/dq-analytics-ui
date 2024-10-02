@@ -30,6 +30,7 @@ import {
   getAllCategories,
   getAllPlatforms,
   getAllMetrics,
+  getAllSections,
   getAllFrequencies,
   getAllCategoriesByBrandIds,
   getAllMetricsByPlatformId,
@@ -40,6 +41,9 @@ import "./analytics.scss";
 import AnalyticsTable from "./AnalyticsTable";
 import KPITable from "./KPITable";
 import { useParams } from "react-router-dom";
+import { FaInfo } from "react-icons/fa";
+
+
 
 export default function Analytics() {
   const [projectIds, setProjectIds] = useState(1);
@@ -53,6 +57,7 @@ export default function Analytics() {
 
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dqScoreLoading, setDQScoreLoading] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -74,6 +79,13 @@ export default function Analytics() {
 
   const [filterPlatforms, setFilterPlatforms] = useState([]);
   const [selectedfilterPlatforms, setSelectedFilterPlatforms] = useState([]);
+
+  const [filterSection, setFilterSection] = useState([]);
+  const [selectedFilterSection, setSelectedFilterSection] = useState([]);
+
+  const [filterMetrics, setFilterMetrics] = useState([]);
+  const [selectedFilterMetrics, setSelectedFilterMetrics] = useState([]);
+
 
   const columns = [
     {
@@ -97,11 +109,11 @@ export default function Analytics() {
     accessor: key,
   }));
   const keys = Array.from(new Set(normalizedValue.flatMap(Object.keys)));
-  const keysToDisplay = keys.slice(2);
+  const keysToDisplay = keys?.slice(2);
 
   function getColorScore(value, thresholds) {
     // thresholds is expected to be an array with three elements: [redThreshold, yellowThreshold, greenThreshold]
-    if (typeof value === "string") {
+    if (typeof value === "") {
       return <span style={{ color: "#252627" }}>{value}</span>;
     } else if (value > thresholds[2]) {
       return <span style={{ color: "#339900" }}>{value}</span>;
@@ -458,32 +470,44 @@ export default function Analytics() {
       const transformedData = {};
   
       data?.forEach(item => {
-          const { platformName, metricName, brandName, normalized } = item;
+          const {sectionName, platformName, metricName, brandName, normalized } = item;
   
-          if (!transformedData[platformName]) {
-              transformedData[platformName] = {};
-          }
+
+        // Initialize section level
+        if (!transformedData[sectionName]) {
+            transformedData[sectionName] = {};
+        }
+
+        // Initialize platform level under the section
+        if (!transformedData[sectionName][platformName]) {
+            transformedData[sectionName][platformName] = {};
+        }
+
+        // Initialize metric level under the platform
+        if (!transformedData[sectionName][platformName][metricName]) {
+            transformedData[sectionName][platformName][metricName] = {
+                platformName: platformName,
+                metricName: metricName,
+                brands: {}
+            };
+        }
   
-          if (!transformedData[platformName][metricName]) {
-              transformedData[platformName][metricName] = {
-                  platformName: platformName,
-                  metricName: metricName,
-                  brands: {}
-              };
-          }
-  
-          transformedData[platformName][metricName].brands[brandName] = normalized;
+          transformedData[sectionName][platformName][metricName].brands[brandName] = normalized;
       });
   
       const result = [];
-      Object.keys(transformedData).forEach(platform => {
-          Object.keys(transformedData[platform]).forEach(metric => {
-              const row = {
-                  platformName: platform,
-                  metricName: metric,
-                  ...transformedData[platform][metric].brands
-              };
-              result.push(row);
+      // Iterate over sections, platforms, and metrics to build the final result
+        Object.keys(transformedData).forEach(section => {
+          Object.keys(transformedData[section]).forEach(platform => {
+              Object.keys(transformedData[section][platform]).forEach(metric => {
+                  const row = {
+                      sectionName: section,
+                      platformName: platform,
+                      metricName: metric,
+                      ...transformedData[section][platform][metric].brands
+                  };
+                  result.push(row);
+              });
           });
       });
   
@@ -500,10 +524,13 @@ export default function Analytics() {
 
     try {
       const dqScoreValueResponse = await getDQScore(requestPayload);
-
-      console.log("DQ SCORE______", dqScoreValueResponse);
-      setDQScoreValue(dqScoreValueResponse?.data);
+      if(dqScoreValueResponse){
+        console.log("DQ SCORE______", dqScoreValueResponse);
+        setDQScoreLoading(false);
+        setDQScoreValue(dqScoreValueResponse?.data);
+      }
     } catch (error) {
+      setDQScoreLoading(false);
       console.error("Error in Fetching Data:", error);
     }
   }
@@ -533,8 +560,7 @@ export default function Analytics() {
             label: platform.name,
           }))
         );
-        // console.log("platformsData", brandsData)
-        const frequenciesData = await getAllFrequencies();
+        // const frequenciesData = await getAllFrequencies();
         // setFrequencies(
         //   frequenciesData.data.map((freq) => ({
         //     value: freq.id,
@@ -542,10 +568,35 @@ export default function Analytics() {
         //   }))
         // );
         // Change the Name of metrics it is already in use
-        // const metricsData = await getAllMetrics();
-        // setMetrics(
-        //   metricsData.data.map((metric) => ({
-        //     value: metric.id,
+        const metricsData = await getAllMetrics();
+        setFilterMetrics(
+          metricsData.data.map((metric) => ({
+            value: metric.id,
+            label: metric.name,
+          }))
+        );
+        //get all sections
+        const sectionsData = await getAllSections();
+        // Create a Map to store unique names with their corresponding section_id
+        const uniqueSectionsMap = new Map();
+
+        // Loop through the sectionsData to populate the Map
+        sectionsData.data.forEach((metric) => {
+          if (!uniqueSectionsMap.has(metric.name)) {
+            uniqueSectionsMap.set(metric.name, metric.section_id);
+          }
+        });
+
+        // Convert the Map to an array of unique sections and set the state
+        setFilterSection(
+          Array.from(uniqueSectionsMap).map(([name, section_id]) => ({
+            value: section_id,
+            label: name,
+          }))
+        );
+        // setFilterSection(
+        //   sectionsData.data.map((metric) => ({
+        //     value: metric.section_id,
         //     label: metric.name,
         //   }))
         // );
@@ -562,6 +613,7 @@ export default function Analytics() {
     if (projectDetails?.is_benchmark_saved) {
       fetchComparedValue(projectId);
       fetchDQScoreValue(projectId);
+      setDQScoreLoading(true)
     }
   }, [projectDetails?.is_benchmark_saved])
 
@@ -581,6 +633,28 @@ export default function Analytics() {
     if (selectedOptions.length > 0) {
       try {
         const platformsFiltered = selectedOptions.map((option) => option.value)
+      }catch (error) {
+        console.error("Error fetching platforms:", error);
+      }
+    }
+  };
+
+  const handleSelectedSection = async (selectedOptions) => {
+    setSelectedFilterSection(selectedOptions);
+    if (selectedOptions.length > 0) {
+      try {
+        const sectionFiltered = selectedOptions.map((option) => option.value)
+      }catch (error) {
+        console.error("Error fetching platforms:", error);
+      }
+    }
+  };
+
+  const handleSelectedMetrics = async (selectedOptions) => {
+    setSelectedFilterMetrics(selectedOptions);
+    if (selectedOptions.length > 0) {
+      try {
+        const metricsFiltered = selectedOptions.map((option) => option.value)
       }catch (error) {
         console.error("Error fetching platforms:", error);
       }
@@ -674,14 +748,19 @@ export default function Analytics() {
     });
   };
 
-
+  const checkAllMetricsCheckboxSelected = () => {
+    console.log(metrics, 'cmmmcmmcmmcmcmmcmmc')
+    if (metrics.length > 0) {
+      return metrics.every(item => item.isOverallChecked || item.isCategoryBasedChecked);
+    }
+    return false;
+  };
 
   const tabs = [
     {
       label: "Weights and Benchmark",
       content: (
         <div>
-          {/* <TableComponent data={AMData} columns={columnsMetrics} /> */}
           <AnalyticsTable
             projectDetails={projectDetails}
             checkStates={checkStates}
@@ -699,7 +778,7 @@ export default function Analytics() {
                 <ButtonComponent
                   btnClass={"btn-primary"}
                   btnName={"Save Weights"}
-                  disabled={projectDetails?.is_benchmark_saved}
+                  disabled={projectDetails?.is_benchmark_saved || !checkAllMetricsCheckboxSelected()}
                   onClick={saveWeights}
                 />
               </div>
@@ -714,7 +793,7 @@ export default function Analytics() {
       disabled: "disabled",
       content: (
         <div>
-          <ScoreCard dqScoreValue={dqScoreValue} />
+          <ScoreCard dqScoreValue={dqScoreValue} dqScoreLoading={dqScoreLoading}/>
           {/* <ScoreCard dqScoreValue={dqScoreValue.filter((item) => item.includes(handleCategoryChange))} /> */}
         </div>
       ),
@@ -727,16 +806,6 @@ export default function Analytics() {
         </div>
       ),
     },
-
-    // TODO: Overall and Category will checkboxes
-    // Either overall checkbox can be clicked or Category
-    // If Overall is checked then one Benchmark value will be visible
-    // If Category is checked then it will be distributed in multiple columns based on category length and will show benchmark values
-    // Benchmark value is not editable
-    // Weights section will have input field.
-
-    // Once we save this data then DQ score will be generated and the other views will be displayed.
-    // Benchmarks value will be dependent on -> Categories -> then selected brands -> then actual Values
     {
       label: "KPI Scores",
       content: (
@@ -746,44 +815,7 @@ export default function Analytics() {
           getColor={getColor}
           getColorScore={getColorScore}
         />
-        // <div>
-        //   <Table
-        //     responsive
-        //     striped
-        //     bordered
-        //     className="insights-table"
-        //     id="wrapper2"
-        //   >
-        //     <tbody>
-        //       {keysToDisplay.map((key, index) => (
-        //         <tr key={index}>
-        //           <td className={`col-3 ${colorCode}`}>{key}</td>
-        //           {AMData.map((data, i) => (
-        //             <td key={i}>
-        //               <OverlayTrigger
-        //                 key="top"
-        //                 placement="top"
-        //                 overlay={
-        //                   <Tooltip id="top">
-        //                     {getColor(
-        //                       Number(data[key]).toFixed(2),
-        //                       [60, 70, 80]
-        //                     )}
-        //                   </Tooltip>
-        //                 }
-        //               >
-        //                 {getColor(Number(data[key]).toFixed(2), [60, 70, 80])}
-        //               </OverlayTrigger>
-        //             </td>
-        //           ))}
-        //         </tr>
-        //       ))}
-        //     </tbody>
-        //   </Table>
-        //   <div className="pagination-container">
-        //     <PaginationComponent />
-        //   </div>
-        // </div>
+       
       ),
     },
     {
@@ -815,18 +847,33 @@ export default function Analytics() {
           <Table responsive striped bordered className="insights-table">
             <thead>
               <tr>
+                <th>Section</th>
                 <th>Platform</th>
                 <th>Metric</th>
-                {uniqueComparisonBrandName?.map(brand => (
-                        <th key={brand}>{brand}</th>
-                    ))}
+                  {uniqueComparisonBrandName?.sort((a, b) => a.localeCompare(b)).map(brand => (
+                      <th key={brand}>{brand}</th>
+                  ))}
+                  {/* {uniqueComparisonBrandName?.map(brand => (
+                    <th key={brand}>{brand}</th>
+                  ))} */}
               </tr>
             </thead>
             <tbody>
                 {normalizedValue?.map((row, index) => (
                     <tr key={index}>
+                        <td><span
+                          style={{
+                            display: 'inline-block',
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            backgroundColor: getColor(row?.sectionName),
+                            marginRight: '5px',
+                          }}
+                        
+                        ></span>{row?.sectionName}</td>
                         <td>{row?.platformName}</td>
-                        <td>{row?.metricName}</td>
+                        <td><div className="metric-name">{row?.metricName} <FaInfo className="info-icon" /></div></td>
                         {uniqueComparisonBrandName?.map(brand => (
                             <td key={brand}>{row[brand] || "-"}</td>
                         ))}
@@ -853,7 +900,7 @@ export default function Analytics() {
       disabled: "disabled",
       content: (
         <div>
-          <SuperThemes />
+          <SuperThemes metrics={metrics} normalizedDQScoreValue={normalizedValue}/>
         </div>
       ),
     },
@@ -882,14 +929,7 @@ export default function Analytics() {
                     onChange={handleFilterCategory}
                     placeholder="Select Categories"
                   />
-                  
-                  {/* <select name="category" className="Select-input">
-                    <option value="Select Metrics">All </option>
-                    <option value="Beauty">Beauty</option>
-                    <option value="Foods">Foods</option>
-                    <option value="haircare">Hair Care</option>
-                    <option value="malegrooming">Male Grooming</option>
-                  </select> */}
+                
                   <div className="export-btn">
                     <ButtonComponent
                       disabled
@@ -903,56 +943,28 @@ export default function Analytics() {
           </div>
           <div className="row">
             <div className="col-12">
-              {/* <div className="filter-btn">
-                  <div className="filter-table-btn">
-                    
-                  </div>
-                </div> */}
+               
               <div className="filter-options mb-3">
               
-                <select name="category" className="Select-input">
-                  <option value="Select Metrics">All </option>
-                  <option value="ecom">Ecom</option>
-                  <option value="Social">Social</option>
-                  <option value="Paid">Paid</option>
-                  <option value="brand-perf">Brand Perf</option>
-                </select>
                 <MultiSelectDropdown
-                    options={filterPlatforms}
-                    selectedValues={selectedfilterPlatforms}
-                    onChange={handleSelectedPlatforms}
-                    placeholder="Select Platforms"
-                  />
-                {/* <select name="category" className="Select-input">
-                  <option value="Select Metrics">All </option>
-                  <option value="ecom">Amazon</option>
-                  <option value="Social">Amazon - Search Campaigns </option>
-                  <option value="Organic">Flipkart PLA Campaigns</option>
-                  <option value="Paid">Big Basket Campaigns</option>
-                  <option value="Brand Performance">Blinkit Campaigns</option>
-                  <option value="Brand Performance">Nykaa Campaigns</option>
-                  <option value="Brand Performance">Myntraa Campaigns</option>
-                  <option value="Brand Performance">SEO</option>
-                  <option value="Brand Performance">
-                    Facebook, Twitter, Instagram
-                  </option>
-                  <option value="Brand Performance">
-                    Gadwords, Facebook, DV360
-                  </option>
-                  <option value="Brand Performance">Google Analytics</option>
-                  <option value="Brand Performance">
-                    Page Speed Insights
-                  </option>
-                  <option value="Brand Performance">SEOptimer</option>
-                </select> */}
-                <select name="category" className="Select-input">
-                  <option value="Select Metrics">All</option>
-                  <option value="ecom">Ecom</option>
-                  <option value="Social">Social</option>
-                  <option value="Organic">Organic</option>
-                  <option value="Paid">Paid</option>
-                  <option value="Brand Performance">Brand Performance</option>
-                </select>
+                  options={filterSection}
+                  selectedValues={selectedFilterSection}
+                  onChange={handleSelectedSection}
+                  placeholder="Select Section"
+                />
+                <MultiSelectDropdown
+                  options={filterPlatforms}
+                  selectedValues={selectedfilterPlatforms}
+                  onChange={handleSelectedPlatforms}
+                  placeholder="Select Platforms"
+                />
+                <MultiSelectDropdown
+                  options={filterMetrics}
+                  selectedValues={selectedFilterMetrics}
+                  onChange={handleSelectedMetrics}
+                  placeholder="Select Metrics"
+                />
+                 
               </div>
             </div>
             <div className="col-12">

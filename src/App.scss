@@ -24,7 +24,8 @@ table thead {
   @include secondaryFontBold();
   border-radius: 8px 8px 0 0;
 } 
-table tr td {
+table tr td, 
+table tr th {
   text-align: center;
 }
 fieldset,

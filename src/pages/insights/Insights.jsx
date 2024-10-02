@@ -130,7 +130,7 @@ export default function Insights() {
     if (selectedProjects?.length > 0) {
       const selectedProjectsOptions = selectedProjects?.map((cg) => cg?.value);
       const requestedPayload = {
-        project_ids: selectedProjectsOptions,
+        project_ids: ['95', '96'],
       };
       console.log(requestedPayload, 'requestedPayload');
 

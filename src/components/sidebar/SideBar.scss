@@ -37,6 +37,9 @@
   font-size: 36px;
   color: $text-color;
 }
+.sidenav-icon.active {
+  color: $text-danger;
+}
 .sidenav-icon-img {
   width: 36px;
   height: 36px;

@@ -22,6 +22,8 @@
     border: 1px solid rgba(0, 0, 0, 15%);
     text-transform: uppercase;
     list-style: none;
+    cursor: pointer;
+    &:hover,
     &:active,
     &.active {
       color: $white;
@@ -32,6 +34,17 @@
 .healthcard-heading {
   display: flex;
   justify-content: space-between;
+}
+.clearBtn {
+  background-color: transparent;
+  border: none;
+  color: #333;
+  &:hover,
+  &:active,
+  &.active {
+    background-color: $primary-color;
+    color: $white;
+  }
 }
 
 @media (max-width:767px) {

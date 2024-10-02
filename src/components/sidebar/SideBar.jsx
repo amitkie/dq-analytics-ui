@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { FaHome } from "react-icons/fa";
@@ -25,7 +25,21 @@ export default function SideBar() {
   const [activeMenu, setActiveMenu] = useState("");
   const { userInfo, projectInfo , isHamburgerOpen, isMobileView } = useSelector((state) => state.user);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const location = useLocation(); // Get the current location
+  const [menuActive, setMenuActive] = useState(location.pathname);
 
+  // Helper function to check if a menu item is active
+  useEffect(() => {
+    setMenuActive(location.pathname);
+  }, [location.pathname]);
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
+  const analyticsPath = projectInfo.project && projectInfo?.project?.length > 0
+    ? `/analytics/${projectInfo.project[0].id}` 
+    : undefined;
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,7 +67,7 @@ export default function SideBar() {
     localStorage.setItem("activeMenu", menu);
   };
 
-  const Link = ({ id, children, title, to }) => (
+  const Link = ({ id, children, title, to , className }) => (
     <OverlayTrigger
       placement={"right"}
       overlay={
@@ -73,9 +87,9 @@ export default function SideBar() {
           onClick={() => handleMenuActive("home")}
         >
           <Link to={"/home"} title="Home" id="m-1">
-            <IoHomeOutline className="sidenav-icon" />
+            <IoHomeOutline className={`sidenav-icon ${isActive('/home') ? 'active' : ''}`} />
           </Link>
-          <Link to={"/home"}>
+          <Link to={"/home"} >
             <span className="mob-menu">Home</span>
           </Link>
         </li>
@@ -86,7 +100,7 @@ export default function SideBar() {
           <Link to={"/workspace"} title="Workspace" id="m-2">
             <img
               src={
-                activeMenu === "workspace" ? WorkSpaceIconActive : WorkSpaceIcon
+                isActive('/workspace') ? WorkSpaceIconActive : WorkSpaceIcon
               }
               className="sidenav-icon-img"
               alt="workspace"
@@ -100,18 +114,7 @@ export default function SideBar() {
           className={`side-nav ${activeMenu === "analytics" ? "active" : ""}`}
           onClick={() => handleMenuActive("analytics")}
         >
-          {/* <Link 
-          // to={`/analytics/${projectInfo?.project[0].id}`} 
-          title="Analytics" id="m-3">
-            <img
-              src={
-                activeMenu === "analytics" ? AnalyticsIconActive : AnalyticsIcon
-              }
-              className="sidenav-icon-img"
-              alt="Analytics"
-            />
-          </Link> */}
-                <Link
+          <Link
           to={
             projectInfo.project && projectInfo?.project?.length > 0
               ? `/analytics/${projectInfo?.project[0].id}`
@@ -127,7 +130,7 @@ export default function SideBar() {
         >
           <img
             src={
-              activeMenu === "analytics" ? AnalyticsIconActive : AnalyticsIcon
+              menuActive === analyticsPath ? AnalyticsIconActive  : AnalyticsIcon 
             }
             className="sidenav-icon-img"
             alt="Analytics"
@@ -153,7 +156,7 @@ export default function SideBar() {
           <Link to={"/healthcard"} title="Health Card" id="m-4">
             <img
               src={
-                activeMenu === "healthcard"
+                isActive('/healthcard')
                   ? HealthCardIconActive
                   : HealthCardIcon
               }
@@ -171,7 +174,7 @@ export default function SideBar() {
         >
           <Link to={"/insights"} title="Insights" id="m-5">
             <img
-              src={activeMenu === "insights" ? InsightIconActive : InsightIcon}
+              src={isActive('/insights') ? InsightIconActive : InsightIcon}
               className="sidenav-icon-img"
               alt="Insights"
             />
@@ -187,7 +190,7 @@ export default function SideBar() {
           <Link to={"/settings"} title="Settings" id="m-6">
             <img
               src={
-                activeMenu === "settings" ? SettingsIconActive : SettingsIcon
+                isActive('/settings') ? SettingsIconActive : SettingsIcon
               }
               className="sidenav-icon-img"
               alt="Settings"
@@ -203,7 +206,7 @@ export default function SideBar() {
         >
           <Link to={"/about"} title="About Tool" id="m-7">
             <img
-              src={activeMenu === "about" ? AboutIconActive : AboutIcon}
+              src={isActive('/about') ? AboutIconActive : AboutIcon}
               className="sidenav-icon-img"
               alt="About Tool"
             />
@@ -217,9 +220,9 @@ export default function SideBar() {
           onClick={() => handleMenuActive("help")}
         >
           <Link to={"/help"} title="Help" id="m-7">
-            <IoIosHelpCircleOutline size={48} color="black" />
+            <IoIosHelpCircleOutline size={48} color="black"  className={`sidenav-icon ${isActive('/help') ? 'active' : ''}`} />
           </Link>
-          <Link  to={"/help"}>
+          <Link to={"/help"}>
             <span className="mob-menu">Help</span>
           </Link>
         </li>

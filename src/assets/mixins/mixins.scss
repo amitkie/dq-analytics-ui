@@ -20,3 +20,12 @@
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
+
+@mixin boxSubTitle() {
+  @include secondaryFontBold;
+  font-size: 1rem;
+  color: $text-color;
+  line-height: 1.2;
+  margin-bottom: .875rem;
+  display: flex;
+}

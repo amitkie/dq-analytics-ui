@@ -15,7 +15,7 @@ const ComparisionView = ({ compareNormalizeValue, projectDetails }) => {
   const totalPages = Math.ceil(totalBrands / itemsPerPage);
 
   // Use brandsToDisplay for the table content
-  const brandsToDisplay = projectDetails?.brands.slice(
+  const brandsToDisplay = projectDetails?.brands?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );

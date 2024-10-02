@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import DateRangePicker from "react-bootstrap-daterangepicker";
-import SideBar from "../../components/sidebar/SideBar";
 import Modal from "react-bootstrap/Modal";
 import ButtonComponent from "../../common/button/button";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -24,6 +23,15 @@ import { createProject, getProjecName } from "../../services/projectService";
 import { useSelector } from "react-redux";
 import { formatDate } from "../../utils/dateFormatter";
 import { useNavigate } from "react-router-dom";
+import { FaArrowDownShortWide } from "react-icons/fa6";
+import { FaArrowUpWideShort } from "react-icons/fa6";
+import { FaArrowUp19 } from "react-icons/fa6";
+import { FaArrowDown91 } from "react-icons/fa6";
+import { HiArrowsUpDown } from "react-icons/hi2";
+
+
+
+
 
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
@@ -51,11 +59,48 @@ export default function WorkSpace() {
   const { userInfo, projectInfo } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
+  const [sortColumn, setSortcolumn] = useState({ key: null, direction: "asc" });
+
   const [dateRange, setDateRange] = useState({
     startDate: "04/01/2024",
     endDate: "06/15/2024",
   });
 
+  //Sort table column
+  const handleSortingChange = (key) => {
+    let direction = "asc";
+    if (sortColumn.key === key && sortColumn.direction === "asc") {
+      direction = "desc";
+    }
+    setSortcolumn({ key, direction });
+  };
+
+  // Function to sort the project data
+  const sortedProjects = React.useMemo(() => {
+    let sortedData = [...(projectInfo?.project || [])];
+    if (sortColumn.key) {
+      sortedData.sort((a, b) => {
+        if (sortColumn.direction === "asc") {
+          return a[sortColumn.key] > b[sortColumn.key] ? 1 : -1;
+        }
+        return a[sortColumn.key] < b[sortColumn.key] ? 1 : -1;
+      });
+      
+    }
+    return sortedData;
+  }, [projectInfo, sortColumn]);
+
+  // Function to render sorting icons based on sorting state
+  const renderSortIcon = (key) => {
+    const icons = {
+      project_name: sortColumn.direction === "asc" ? <FaArrowDownShortWide /> : <FaArrowUpWideShort />,   
+      categoryNames: sortColumn.direction === "asc" ? <FaArrowDownShortWide /> : <FaArrowUpWideShort />,   
+      brandNames: sortColumn.direction === "asc" ? <FaArrowUp19 /> : <FaArrowDown91 />,   
+      start_date: sortColumn.direction === "asc" ? <HiArrowsUpDown /> : <HiArrowsUpDown />,      
+      frequencyNames: sortColumn.direction === "asc" ? <FaArrowDownShortWide /> : <FaArrowUpWideShort />,  
+    };
+    return <span>{icons[key]}</span>;
+  };
   // Function to handle date range changes
   const handleDateRangeChange = (event) => {
     console.log(event);
@@ -75,6 +120,8 @@ export default function WorkSpace() {
     const fetchData = async () => {
       try {
         const categoriesData = await getAllCategories();
+        categoriesData.data = categoriesData?.data?.filter((cg) => cg?.name !== 'Hair Care')
+        console.log(categoriesData,'categoriesData')
         setCategories(
           categoriesData.data.map((cat) => ({
             value: cat.id,
@@ -383,29 +430,34 @@ export default function WorkSpace() {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Project Name</th>
-                  <th>Category</th>
-                  <th>Date Range</th>
-                  <th>Frequency</th>
-                  <th>Last modified on</th>
+                  <th onClick={() => handleSortingChange("project_name")}><span className="table-heading">Project Name {renderSortIcon("project_name")}</span></th>
+                  <th onClick={() => handleSortingChange("categoryNames")}><span className="table-heading">Category {renderSortIcon("categoryNames")}</span></th>
+                  <th onClick={() => handleSortingChange("brandNames")}><span className="table-heading">No. of Brands {renderSortIcon("brandNames")}</span></th>
+                  <th onClick={() => handleSortingChange("start_date")}>
+                    <span className="table-heading">
+                      Date Range {renderSortIcon("start_date")}
+                    </span></th>
+                  <th onClick={() => handleSortingChange("frequencyNames")}>
+                    <span className="table-heading">
+                      Frequency {renderSortIcon("frequencyNames")}
+                    </span>
+                  </th>
+                  <th onClick={() => handleSortingChange("updatedAt")}><span className="table-heading">Last modified on {renderSortIcon("updatedAt")}</span></th>
                 </tr>
               </thead>
               <tbody>
-                {projectInfo?.project?.map((item, ind) => (
+                {sortedProjects?.map((item, ind) => (
                   <tr key={item.id}>
                     <td>{ind + 1}</td>
                     <td
                       onClick={() => handleProjectClick(item.id)}
-                      style={{
-                        cursor: "pointer",
-                        color: "blue",
-                        textDecoration: "underline",
-                      }}
+                     className="tdLink"
                     >
                       {item?.project_name}
                     </td>
                     <td>{item?.categoryNames?.join(", ")}</td>
-                    <td>{formatDate(item?.updatedAt)}</td>
+                    <td>{item?.brandNames?.length}</td>
+                    <td>{formatDate(item?.start_date)} - {formatDate(item?.end_date)}</td>
                     <td>{item?.frequencyNames?.join(", ")}</td>
                     <td>{formatDate(item?.updatedAt)}</td>
                   </tr>
