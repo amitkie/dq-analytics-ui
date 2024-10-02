@@ -318,60 +318,148 @@ export default function Analytics() {
 
   const handleSelectAll = async (e, type) => {
     const isChecked = e.target.checked;
-
-    const updatedMetrics = await Promise.all(
-      metrics.map(async (metric) => {
-        // If the checkbox is checked, make the API call
-        if (isChecked) {
-          const analysis_type =
-            type === "overall" ? "Overall" : projectDetails?.categories;
-          const reqPayload = {
-            platform: metric?.platform?.name,
-            metrics: metric?.metric_name,
-            brand: projectDetails?.brands,
-            analysis_type: analysis_type,
-            start_date: projectDetails?.start_date,
-            end_date: projectDetails?.end_date,
-          };
-
-          try {
-            const benchmarks = await getBenchamarkValues(reqPayload);
-
-            if (type === "overall") {
+    
+    const batchSize = 10;
+    let updatedMetrics = [];
+  
+    // Function to process metrics in batches
+    const processBatch = async (batch) => {
+      const results = await Promise.all(
+        batch.map(async (metric) => {
+          if (isChecked) {
+            const analysis_type =
+              type === "overall" ? "Overall" : projectDetails?.categories;
+            const reqPayload = {
+              platform: metric?.platform?.name,
+              metrics: metric?.metric_name,
+              brand: projectDetails?.brands,
+              analysis_type: analysis_type,
+              start_date: projectDetails?.start_date,
+              end_date: projectDetails?.end_date,
+            };
+  
+            try {
+              const benchmarks = await getBenchamarkValues(reqPayload);
+              if (type === "overall") {
+                return {
+                  ...metric,
+                  isOverallChecked: true,
+                  isCategoryBasedChecked: false,
+                  benchmark: benchmarks.results,
+                  error: false, // No error on success
+                };
+              } else if (type === "categoryBased") {
+                return {
+                  ...metric,
+                  isCategoryBasedChecked: true,
+                  isOverallChecked: false,
+                  benchmark: benchmarks.results,
+                  error: false, // No error on success
+                };
+              }
+            } catch (error) {
+              console.error("Error in fetching benchmark values:", error);
+              // Return metric with an error flag to indicate failure
               return {
                 ...metric,
-                isOverallChecked: true,
-                isCategoryBasedChecked: false,
-                benchmark: benchmarks.results,
-              };
-            } else if (type === "categoryBased") {
-              return {
-                ...metric,
-                isCategoryBasedChecked: true,
-                isOverallChecked: false,
-                benchmark: benchmarks.results,
-                isLoading: false,
+                error: true, // Mark error as true
               };
             }
-          } catch (error) {
-            console.error("Error in fetching benchmark values:", error);
+          } else {
+            return {
+              ...metric,
+              isOverallChecked: type === "overall" ? false : metric.isOverallChecked,
+              isCategoryBasedChecked: type === "categoryBased" ? false : metric.isCategoryBasedChecked,
+              benchmark: null,
+              isLoading: false,
+              error: false, // Reset error on unchecked
+            };
           }
-        } else {
-          // If the checkbox is unchecked, reset the values
-          return {
-            ...metric,
-            isOverallChecked: type === "overall" ? false : metric.isOverallChecked,
-            isCategoryBasedChecked:
-              type === "categoryBased" ? false : metric.isCategoryBasedChecked,
-            benchmark: null,
-            isLoading: false,
-          };
-        }
-      })
-    );
-
+        })
+      );
+      return results;
+    };
+  
+    // Process metrics in chunks of 10
+    for (let i = 0; i < metrics.length; i += batchSize) {
+      const batch = metrics.slice(i, i + batchSize);
+      const batchResults = await processBatch(batch);
+      updatedMetrics = [...updatedMetrics, ...batchResults];
+    }
+  
     setMetrics(updatedMetrics);
   };
+  
+
+  // const handleSelectAll = async (e, type) => {
+  //   const isChecked = e.target.checked;
+  
+  //   const batchSize = 10; // Set the batch size to 10
+  //   let updatedMetrics = [];
+  
+  //   // Function to process metrics in batches
+  //   const processBatch = async (batch) => {
+  //     const results = await Promise.all(
+  //       batch.map(async (metric) => {
+  //         if (isChecked) {
+  //           const analysis_type =
+  //             type === "overall" ? "Overall" : projectDetails?.categories;
+  //           const reqPayload = {
+  //             platform: metric?.platform?.name,
+  //             metrics: metric?.metric_name,
+  //             brand: projectDetails?.brands,
+  //             analysis_type: analysis_type,
+  //             start_date: projectDetails?.start_date,
+  //             end_date: projectDetails?.end_date,
+  //           };
+  
+  //           try {
+  //             const benchmarks = await getBenchamarkValues(reqPayload);
+  
+  //             if (type === "overall") {
+  //               return {
+  //                 ...metric,
+  //                 isOverallChecked: true,
+  //                 isCategoryBasedChecked: false,
+  //                 benchmark: benchmarks.results,
+  //               };
+  //             } else if (type === "categoryBased") {
+  //               return {
+  //                 ...metric,
+  //                 isCategoryBasedChecked: true,
+  //                 isOverallChecked: false,
+  //                 benchmark: benchmarks.results,
+  //                 isLoading: false,
+  //               };
+  //             }
+  //           } catch (error) {
+  //             console.error("Error in fetching benchmark values:", error);
+  //           }
+  //         } else {
+  //           return {
+  //             ...metric,
+  //             isOverallChecked: type === "overall" ? false : metric.isOverallChecked,
+  //             isCategoryBasedChecked:
+  //               type === "categoryBased" ? false : metric.isCategoryBasedChecked,
+  //             benchmark: null,
+  //             isLoading: false,
+  //           };
+  //         }
+  //       })
+  //     );
+  //     return results;
+  //   };
+  
+  //   // Process metrics in chunks of 10
+  //   for (let i = 0; i < metrics.length; i += batchSize) {
+  //     const batch = metrics.slice(i, i + batchSize);
+  //     const batchResults = await processBatch(batch);
+  //     updatedMetrics = [...updatedMetrics, ...batchResults];
+  //   }
+  
+  //   setMetrics(updatedMetrics);
+  // };
+  
 
 
 

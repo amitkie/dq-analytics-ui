@@ -19,6 +19,42 @@ export const createProject = async (data) => {
     throw error;
   }
 };
+export const updateProject = async (id,data) => {
+  try {
+    const response = await axios.patch(
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${id}`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const frequenciesData = response.data;
+
+    return frequenciesData;
+  } catch (error) {
+    console.error("Error in login:", error);
+    throw error;
+  }
+};
+export const deleteProject = async (id) => {
+  try {
+    const response = await axios.delete(
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${id}`);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const frequenciesData = response.data;
+
+    return frequenciesData;
+  } catch (error) {
+    console.error("Error in login:", error);
+    throw error;
+  }
+};
 export const getProjecName = async (data) => {
   try {
     const response = await axios.get(

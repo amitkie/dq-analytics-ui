@@ -19,7 +19,7 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./workSpace.scss";
-import { createProject, getProjecName } from "../../services/projectService";
+import { createProject, deleteProject, getProjecName, updateProject } from "../../services/projectService";
 import { useSelector } from "react-redux";
 import { formatDate } from "../../utils/dateFormatter";
 import { useNavigate } from "react-router-dom";
@@ -28,10 +28,9 @@ import { FaArrowUpWideShort } from "react-icons/fa6";
 import { FaArrowUp19 } from "react-icons/fa6";
 import { FaArrowDown91 } from "react-icons/fa6";
 import { HiArrowsUpDown } from "react-icons/hi2";
-
-
-
-
+import { MdOutlineEdit } from "react-icons/md";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { VscGoToFile } from "react-icons/vsc";
 
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
@@ -58,7 +57,7 @@ export default function WorkSpace() {
   const handleShow = () => setShow(true);
   const { userInfo, projectInfo } = useSelector((state) => state.user);
   const navigate = useNavigate();
-
+ 
   const [sortColumn, setSortcolumn] = useState({ key: null, direction: "asc" });
 
   const [dateRange, setDateRange] = useState({
@@ -167,6 +166,28 @@ export default function WorkSpace() {
 
     fetchData();
   }, []);
+
+  const deleteProjectDetails = async (id) => {
+    try {
+      const project = await deleteProject(id);
+      if(project){
+        alert("Project Deleted Successfully.")
+      }
+    } catch (error) {
+      
+    }
+  }
+
+  const updateProjectDetails = async (id, data) => {
+    try {
+      const project = await updateProject(id, data);
+      if(project){
+        alert("Project Deleted Successfully.")
+      }
+    } catch (error) {
+      
+    }
+  }
 
   const handleCategoryChange = async (selectedOptions) => {
     setSelectedCategories(selectedOptions);
@@ -443,6 +464,7 @@ export default function WorkSpace() {
                     </span>
                   </th>
                   <th onClick={() => handleSortingChange("updatedAt")}><span className="table-heading">Last modified on {renderSortIcon("updatedAt")}</span></th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -460,6 +482,13 @@ export default function WorkSpace() {
                     <td>{formatDate(item?.start_date)} - {formatDate(item?.end_date)}</td>
                     <td>{item?.frequencyNames?.join(", ")}</td>
                     <td>{formatDate(item?.updatedAt)}</td>
+                    <td>
+                      <div className="actionITems">
+                        <MdOutlineEdit onClick={() => updateProjectDetails(item.id, item)} className="action-item-icon" title="Edit"/>
+                        <FaRegTrashCan onClick={() => deleteProjectDetails(item.id)} className="action-item-icon" title="Delete"/>
+                        <VscGoToFile className="action-item-icon" title="Go to Insights"/>
+                      </div>
+                    </td>
                   </tr>
                 ))}
                 {/* Add more rows as needed */}

@@ -7,32 +7,62 @@ import "./GraphicalView.scss";
 function ScoreCard() {
   return (
     <div className="row">
-      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
         <div className="chart-box">
           <BarChart />
         </div>
       </div>
-      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-4">
-        <div className="chart-box">
-          <AreaChart />
-        </div>
-      </div>
-      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-4">
-        <div className="chart-box">
-          <AreaChart />
-        </div>
-      </div>
-      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
         <div className="chart-box">
           <BarChart />
         </div>
       </div>
-      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+        <div className="chart-box">
+          <BarChart />
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+        <div className="chart-box">
+          <BarChart />
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+        <div className="chart-box">
+          <BarChart />
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+        <div className="chart-box">
+          <BarChart />
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+        <div className="chart-box">
+          <BarChart />
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
         <div className="chart-box">
           <AreaChart />
         </div>
       </div>
-      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+        <div className="chart-box">
+          <AreaChart />
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+        <div className="chart-box">
+          <BarChart />
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+        <div className="chart-box">
+          <AreaChart />
+        </div>
+      </div>
+      <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
         <div className="chart-box">
           <AreaChart />
         </div>

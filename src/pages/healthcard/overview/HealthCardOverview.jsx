@@ -162,30 +162,42 @@ export default function HealthCardOverview() {
     }
   }
   const handleExport = () => {
-    const workbook = XLSX.utils.book_new();
-  
-    // Check if healthCardData and its properties are defined and format them correctly
     const ecomData = healthCardData && healthCardData?.results["Ecom"];
     const paidData = healthCardData && healthCardData?.results["Paid"];
-  
-    // Check if data exists before proceeding with conversion
-    if (ecomData && ecomData.length) {
-      const worksheet1 = XLSX.utils.aoa_to_sheet(formatToAOA(ecomData));
-      XLSX.utils.book_append_sheet(workbook, worksheet1, "Sheet1");
-    } else {
-      console.error("Ecom data is undefined or empty.");
+    const socialData = healthCardData && healthCardData?.results["Social"];
+    const brandPerfData =
+      healthCardData && healthCardData?.results["Brand Perf"];
+
+    if (ecomData) {
+      generateExcel(ecomData);
     }
-    console.log('worksheet1', ecomData, paidData);
-    
-    if (paidData && paidData.length) {
-      const worksheet2 = XLSX.utils.aoa_to_sheet(formatToAOA(paidData));
-      XLSX.utils.book_append_sheet(workbook, worksheet2, "Sheet2");
-    } else {
-      console.error("Paid data is undefined or empty.");
+  };
+
+  const generateExcel = (data) => {
+    const workbook = XLSX.utils.book_new(); // Create a new workbook
+
+    // Iterate over each key (representing a table)
+    for (const tableName in data) {
+      if (data.hasOwnProperty(tableName)) {
+        const tableData = data[tableName];
+
+        // Convert the data into an array format suitable for Excel (Metric Name, Normalized Value)
+        const sheetData = [["Metric Name", "Normalized Value"]]; // Header row
+
+        for (const metric in tableData) {
+          if (tableData.hasOwnProperty(metric)) {
+            sheetData.push([metric, tableData[metric]]);
+          }
+        }
+
+        // Create a new worksheet for each table
+        const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+        XLSX.utils.book_append_sheet(workbook, worksheet, tableName); // Append sheet to workbook
+      }
     }
-  
-    // Export the workbook
-    XLSX.writeFile(workbook, "HealthCardOverview.xlsx");
+
+    // Write the Excel file to disk
+    XLSX.writeFile(workbook, "CampaignData.xlsx");
   };
   
   // Helper function to format data into array of arrays (AOA) format

@@ -72,6 +72,7 @@ const AnalyticsTable = ({
                 type="checkbox"
                 checked={item.isOverallChecked || false}
                 className="c-pointer"
+                style={item?.error ? { borderColor: 'red', borderWidth: '2px' } : {}}
                 onChange={(e) => handleCheckboxChange(e, item, "overall")}
               />
             </td>
@@ -80,6 +81,7 @@ const AnalyticsTable = ({
                 type="checkbox"
                 className="c-pointer"
                 checked={item.isCategoryBasedChecked || false}
+                style={item?.error ? { borderColor: 'red', borderWidth: '2px' } : {}}
                 onChange={(e) => handleCheckboxChange(e, item, "categoryBased")}
               />
             </td>
