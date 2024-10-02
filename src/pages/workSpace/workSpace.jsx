@@ -20,7 +20,7 @@ import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelec
 
 import "./workSpace.scss";
 import { createProject, deleteProject, getProjecName, updateProject } from "../../services/projectService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { formatDate } from "../../utils/dateFormatter";
 import { useNavigate } from "react-router-dom";
 import { FaArrowDownShortWide } from "react-icons/fa6";
@@ -31,6 +31,7 @@ import { HiArrowsUpDown } from "react-icons/hi2";
 import { MdOutlineEdit } from "react-icons/md";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { VscGoToFile } from "react-icons/vsc";
+import { getProjectInfoRequest } from "../../features/user/userSlice";
 
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
@@ -65,6 +66,22 @@ export default function WorkSpace() {
     endDate: "06/15/2024",
   });
 
+  const [editProjectId, setEditProjectId] = useState(null);
+const [editedProjectName, setEditedProjectName] = useState("");
+
+const handleEditClick = (id, currentName) => {
+  setEditProjectId(id);
+  setEditedProjectName(currentName);
+};
+
+const handleEditProjectName = (id) => {
+  // Logic to save the updated project name
+  // Example: Call an API or update state
+  updateProjectDetails(id, { project_name: editedProjectName });
+  setEditProjectId(null); // Exit edit mode
+};
+
+  const dispatch = useDispatch()
   //Sort table column
   const handleSortingChange = (key) => {
     let direction = "asc";
@@ -172,6 +189,7 @@ export default function WorkSpace() {
       const project = await deleteProject(id);
       if(project){
         alert("Project Deleted Successfully.")
+        dispatch(getProjectInfoRequest(userInfo?.user?.id));
       }
     } catch (error) {
       
@@ -179,6 +197,7 @@ export default function WorkSpace() {
   }
 
   const updateProjectDetails = async (id, data) => {
+    console.log(id, data , 'xxxxxxxxx')
     try {
       const project = await updateProject(id, data);
       if(project){
@@ -471,12 +490,28 @@ export default function WorkSpace() {
                 {sortedProjects?.map((item, ind) => (
                   <tr key={item.id}>
                     <td>{ind + 1}</td>
-                    <td
+                    {/* <td
                       onClick={() => handleProjectClick(item.id)}
                      className="tdLink"
                     >
                       {item?.project_name}
+                    </td> */}
+
+                    <td className="tdLink">
+                      {editProjectId === item.id ? (
+                        <>
+                        <input
+                          type="text"
+                          value={editedProjectName}
+                          onChange={(e) => setEditedProjectName(e.target.value)}
+                        />
+                        <button onClick={() => handleEditProjectName(item.id)}>Update</button>
+                        </>
+                      ) : (
+                      <span onClick={() => handleProjectClick(item.id)}>{item?.project_name}</span>
+                      )}
                     </td>
+
                     <td>{item?.categoryNames?.join(", ")}</td>
                     <td>{item?.brandNames?.length}</td>
                     <td>{formatDate(item?.start_date)} - {formatDate(item?.end_date)}</td>
@@ -484,7 +519,7 @@ export default function WorkSpace() {
                     <td>{formatDate(item?.updatedAt)}</td>
                     <td>
                       <div className="actionITems">
-                        <MdOutlineEdit onClick={() => updateProjectDetails(item.id, item)} className="action-item-icon" title="Edit"/>
+                        <MdOutlineEdit onClick={() => handleEditClick(item.id, item?.project_name)} className="action-item-icon" title="Edit"/>
                         <FaRegTrashCan onClick={() => deleteProjectDetails(item.id)} className="action-item-icon" title="Delete"/>
                         <VscGoToFile className="action-item-icon" title="Go to Insights"/>
                       </div>
