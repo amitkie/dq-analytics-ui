@@ -120,12 +120,12 @@ function SuperThemes({ metrics, normalizedValue }) {
                     onChange={handlePlatformChange}
                     placeholder="Select Platforms"
                   />
-                  <MultiSelectDropdown
+                  {/* <MultiSelectDropdown
                     options={uniqueMetricsBasedOnProjectId}
                     selectedValues={uniqueSelectedMetricsBasedOnProjectId}
                     onChange={handleMetricChange}
                     placeholder="Select Metrics"
-                  />
+                  /> */}
                   <ButtonComponent
                     btnClass={"btn-primary next-btn"}
                     btnIconAfter={<LiaArrowRightSolid />}

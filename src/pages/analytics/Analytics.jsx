@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
@@ -24,6 +24,9 @@ import {
   saveMetricsOfProject,
   getNormalizedValues,
   getDQScore,
+  removeMetricFromProject,
+  getKPIScoreValues,
+  createUserProjectDQScore,
 } from "../../services/projectService";
 import {
   getAllBrands,
@@ -34,6 +37,7 @@ import {
   getAllFrequencies,
   getAllCategoriesByBrandIds,
   getAllMetricsByPlatformId,
+  getAllMetricsDefinition,
 } from "../../services/userService";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import { createProject } from "../../services/projectService";
@@ -42,6 +46,8 @@ import AnalyticsTable from "./AnalyticsTable";
 import KPITable from "./KPITable";
 import { useParams } from "react-router-dom";
 import { FaInfo } from "react-icons/fa";
+import * as XLSX from "xlsx";
+import ModalComponent from "../../components/Modal/ModalComponent";
 
 
 
@@ -49,6 +55,7 @@ export default function Analytics() {
   const [projectIds, setProjectIds] = useState(1);
   const [projectDetails, setProjectDetails] = useState({});
   const [metrics, setMetrics] = useState([]);
+  const [kpiData, setKpiData] = useState([]);
   const data = getData();
   const AMData = getAMData();
   const metricData = getMetricData();
@@ -59,8 +66,6 @@ export default function Analytics() {
   const [loading, setLoading] = useState(false);
   const [dqScoreLoading, setDQScoreLoading] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [checkStates, setCheckStates] = useState({});
   const [weights, setWeights] = useState({});
   const [totalWeights, setTotalWeights] = useState(100);
@@ -85,6 +90,8 @@ export default function Analytics() {
 
   const [filterMetrics, setFilterMetrics] = useState([]);
   const [selectedFilterMetrics, setSelectedFilterMetrics] = useState([]);
+  
+  const [metricsDesc, setMetricsDesc] = useState([]);
 
 
   const columns = [
@@ -462,10 +469,8 @@ export default function Analytics() {
   
 
 
-
-
   const handleWeightChange = (metricId, value) => {
-
+  
     const newWeights = { ...weights, [metricId]: Number(value) };
 
     const totalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
@@ -501,6 +506,12 @@ export default function Analytics() {
     try {
       const response = await getProjectDetailsByProjectId(id);
       setProjectDetails(response?.project);
+      if(response?.project?.is_benchmark_saved){
+        fetchComparedValue(projectId);
+        fetchDQScoreValue(projectId);
+        setDQScoreLoading(true);
+        fetchKPIScores();
+      }
       setMetrics(() => {
         if (response?.project?.metrics && response?.project?.metrics?.length > 0) {
 
@@ -558,7 +569,7 @@ export default function Analytics() {
       const transformedData = {};
   
       data?.forEach(item => {
-          const {sectionName, platformName, metricName, brandName, normalized } = item;
+          const {sectionName, platformName, metricName, brandName, normalized, benchmarkValue, percentile } = item;
   
 
         // Initialize section level
@@ -580,7 +591,11 @@ export default function Analytics() {
             };
         }
   
-          transformedData[sectionName][platformName][metricName].brands[brandName] = normalized;
+          transformedData[sectionName][platformName][metricName].brands[brandName] = {
+            normalized,
+            benchmarkValue,
+            percentile
+          };
       });
   
       const result = [];
@@ -623,12 +638,98 @@ export default function Analytics() {
     }
   }
 
+  const removeMetricsFromDB = async(metricid,metricname) => {
+   try {
+     const response = await removeMetricFromProject(projectId, metricid);
+     if(response){
+       
+      alert(`${metricname} removed successfully!!`)
+      fetchProjectDetails(projectId);
+     }
+    
+   } catch (error) {
+    alert(`Failed to remove ${metricname}!!`)
+   }
+  }
+  const fetchKPIScores = async () => {
+  
+    const data = {
+      platform: Array.from(new Set(metrics?.map((metric) => metric.platform?.name))) ,
+      metrics: Array.from(new Set( metrics?.map((metric) => metric.metric_name))),
+      brand: projectDetails?.brands,
+      analysis_type: "Overall",
+      start_date: projectDetails?.start_date,
+      end_date: projectDetails?.end_date,
+    };
+  
+    try {
+      const kpiScores = await getKPIScoreValues(data);
+      console.log(kpiScores,'kpiScores')
+      if(kpiScores){
+        setKpiData(kpiScores?.results || []);
+      }
+    } catch (error) {
+      console.error("Error fetching KPI scores:", error);
+      // setError("Failed to load KPI scores"); 
+    } finally {
+      // setLoading(false); 
+    }
+  };
+
+  const saveUserProjectDQScore = async () => {
+    console.log('setComparisonData', comparisonData);
+    console.log('setDQScoreValue', dqScoreValue);
+    try {
+      const data = constructDQScorePayload(dqScoreValue,comparisonData);
+      const projectDQScore = await createUserProjectDQScore(data);
+      if(projectDQScore){
+        console.log(projectDQScore);
+        alert("DQ Score is saved in DB.")
+        
+      }
+    } catch (error) {
+      alert("Failed to save DQ score in DB.")
+    }
+  }
+
+  const constructDQScorePayload = (dqScoreBasedOnBrandName, benchmarkValue) => {
+    const payload = [];
+
+    dqScoreBasedOnBrandName.forEach(dqScore => {
+        // Find matching benchmark data for the brand
+        const brandBenchmarks = benchmarkValue?.filter(benchmark => benchmark?.brandName === dqScore?.Brand_Name);
+
+        // For each section in the benchmark value, create a payload object
+        brandBenchmarks.forEach(benchmark => {
+            const scoreData = {
+                user_id: userInfo?.user?.id, 
+                project_id: benchmark.project_id,
+                brand_id: benchmark.brand_ids,
+                brand_name: dqScore.Brand_Name,
+                section_name: benchmark.sectionName,
+                section_id: benchmark.sectionid,
+                category_id: benchmark.categoryid,
+                category_name: benchmark.categoryName,
+                dq: dqScore.Overall_Final_Score,
+                ecom_dq: dqScore.Ecom,
+                social_dq: dqScore.Social,
+                paid_dq: dqScore.Paid,
+                brand_perf_dq: dqScore["Brand Perf"]
+            };
+
+            payload.push(scoreData);
+        });
+    });
+
+    return payload;
+};
+
+
   useEffect(() => {
 
     if (projectId) {
       setProjectIds(projectId);
       fetchProjectDetails(projectId);
-
     }
 
     const fetchData = async () => {
@@ -663,6 +764,7 @@ export default function Analytics() {
             label: metric.name,
           }))
         );
+        
         //get all sections
         const sectionsData = await getAllSections();
         // Create a Map to store unique names with their corresponding section_id
@@ -698,12 +800,30 @@ export default function Analytics() {
   }, [projectId]);
 
   useEffect(() => {
-    if (projectDetails?.is_benchmark_saved) {
-      fetchComparedValue(projectId);
-      fetchDQScoreValue(projectId);
-      setDQScoreLoading(true)
-    }
-  }, [projectDetails?.is_benchmark_saved])
+     fetchMetricsDefinition();
+  }, [])
+
+  // Function to call the API and set the state
+      const fetchMetricsDefinition = async (platformName) => {
+        try {
+
+          const selectedPlatform = setFilterPlatforms.find(
+            (platform) => platform.name === platformName // Match platformName
+          );
+          const metricsDescData = await getAllMetricsDefinition(selectedPlatform); // Pass the platform name here
+
+          // Map the response data to the desired format
+          setMetricsDesc(
+            metricsDescData.map((metricDet) => ({
+              value: metricDet.id,    // Map the 'id' to 'value'
+              label: metricDet.name,  // Map the 'name' to 'label'
+            }))
+          );
+          console.log('metricsDescData', metricsDescData)
+        } catch (error) {
+          console.error('Error while fetching or mapping metrics data:', error);
+        }
+      };
 
   const handleFilterCategory = async (selectedOptions) => {
     setSelectedFilterCategories(selectedOptions);
@@ -750,32 +870,65 @@ export default function Analytics() {
   };
 
 
+  // const saveWeights = async () => {
+  //   const saveMetricsPayload = generateApiPayload(metrics);
+  //   console.log('saveMetricsPayload', saveMetricsPayload)
+
+  //   try {
+  //     const response = await saveMetricsOfProject(saveMetricsPayload);
+  //     if (response) {
+  //       if (response.status == 'success') {
+  //         // dispatch(showAlert({ variant: 'success', message: 'Weights saved successfully' }));
+  //         alert('Weights saved successfully!');
+  //         fetchProjectDetails(projectId);
+  //         fetchComparedValue(projectId);
+  //         fetchDQScoreValue(projectId);
+  //         fetchKPIScores();
+  //         saveUserProjectDQScore();
+  //         console.log("saveWeights", response)
+  //       }
+  //     }
+
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 400 && error.response.data.message === 'Project Benchmark has already been saved, you cannot create another instance.') {
+  //       alert('Error: Project Benchmark has already been added, you cannot create another instance.');
+  //     } else {
+  //       alert('An error occurred!');
+  //     }
+  //   }
+
+  // };
+
   const saveWeights = async () => {
     const saveMetricsPayload = generateApiPayload(metrics);
-    console.log('saveMetricsPayload', saveMetricsPayload)
-
+    console.log('saveMetricsPayload', saveMetricsPayload);
+  
     try {
       const response = await saveMetricsOfProject(saveMetricsPayload);
-      if (response) {
-        if (response.status == 'success') {
-          // dispatch(showAlert({ variant: 'success', message: 'Weights saved successfully' }));
-          alert('Weights saved successfully!');
-          fetchProjectDetails(projectId);
-          fetchComparedValue(projectId);
-          fetchDQScoreValue(projectId);
-          console.log("saveWeights", response)
+      if (response && response.status === 'success') {
+        alert('Weights saved successfully!');
+          const data = await fetchProjectDetails(projectId);
+          console.log(data)
+  
+        if(comparisonData.length > 0 && dqScoreValue.length > 0){
+          saveUserProjectDQScore();
         }
+  
+        console.log("saveWeights", response);
       }
-
     } catch (error) {
-      if (error.response && error.response.status === 400 && error.response.data.message === 'Project Benchmark has already been saved, you cannot create another instance.') {
+      if (
+        error.response &&
+        error.response.status === 400 &&
+        error.response.data.message === 'Project Benchmark has already been saved, you cannot create another instance.'
+      ) {
         alert('Error: Project Benchmark has already been added, you cannot create another instance.');
       } else {
         alert('An error occurred!');
       }
     }
-
   };
+  
 
   const generateApiPayload = (metrics) => {
     const project_id = projectId;   // Example project ID
@@ -844,6 +997,41 @@ export default function Analytics() {
     return false;
   };
 
+  const handleExportAnalytics = () => {
+    const dqScoreData = dqScoreValue;
+    const kpiData = metrics;
+    const comparisionData = normalizedValue;
+    if (dqScoreData.length > 0 || kpiData.length > 0 || comparisionData.length > 0) {
+      generateExcel(dqScoreData, kpiData, comparisionData);
+    }
+  };
+
+  const generateExcel = (dqScoreData, kpiData, comparisionData) => {
+    const workbook = XLSX.utils.book_new(); // Create a new workbook
+
+    // 2. Convert data to a worksheet
+    const worksheet1 = XLSX.utils.json_to_sheet(dqScoreData);
+    const worksheet2 = XLSX.utils.json_to_sheet(kpiData);
+    const worksheet3 = XLSX.utils.json_to_sheet(comparisionData);
+
+    // 3. Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet1, "DQ Score")
+    XLSX.utils.book_append_sheet(workbook, worksheet2, "KPI Score")
+    XLSX.utils.book_append_sheet(workbook, worksheet3, "Comparision View")
+
+    // Write the Excel file to disk
+    XLSX.writeFile(workbook, "Analytics.xlsx");
+  };
+  
+  // Helper function to format data into array of arrays (AOA) format
+  const formatToAOA = (data) => {
+    // If data is already in the correct format, return it as is.
+    // Otherwise, you may need to transform the object into an array of arrays.
+    return Array.isArray(data) ? data : Object.entries(data);
+  };
+
+
+ 
   const tabs = [
     {
       label: "Weights and Benchmark",
@@ -858,6 +1046,7 @@ export default function Analytics() {
             handleCheckboxChange={handleCheckboxChange}
             handleSelectAll={handleSelectAll}
             handleWeightChange={handleWeightChange}
+            removeMetricsFromDB={removeMetricsFromDB}
             isBenchmarkSaved={projectDetails?.is_benchmark_saved}
           />
           <div className="row">
@@ -898,6 +1087,7 @@ export default function Analytics() {
       label: "KPI Scores",
       content: (
         <KPITable
+          kpiData={kpiData}
           metrics={metrics}
           projectDetails={projectDetails}
           getColor={getColor}
@@ -960,10 +1150,15 @@ export default function Analytics() {
                           }}
                         
                         ></span>{row?.sectionName}</td>
-                        <td>{row?.platformName}</td>
+                        <td>{row?.platformName} </td>
                         <td><div className="metric-name">{row?.metricName} <FaInfo className="info-icon" /></div></td>
+                        {/* {row} */}
                         {uniqueComparisonBrandName?.map(brand => (
-                            <td key={brand}>{row[brand] || "-"}</td>
+                            <td  key={brand} 
+                            title={`Benchmark Value: ${row[brand]?.benchmarkValue || 'N/A'}\nPercentile: ${row[brand]?.percentile || 'N/A'}`}
+                            >
+                              {row[brand]?.normalized || "-"}
+                            </td>
                         ))}
                     </tr>
                 ))}
@@ -1020,9 +1215,10 @@ export default function Analytics() {
                 
                   <div className="export-btn">
                     <ButtonComponent
-                      disabled
+                      // disabled
                       btnClass={"btn-primary export-excel-btn"}
                       btnName={"Export as Excel"}
+                      onClick={handleExportAnalytics}
                     />
                   </div>
                 </div>
@@ -1102,6 +1298,7 @@ export default function Analytics() {
           />
         </Modal.Footer>
       </Modal> */}
+       
     </>
   );
 }

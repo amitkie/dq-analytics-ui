@@ -1,5 +1,7 @@
 // src/features/user/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+const initialActiveMenu = localStorage.getItem('activeMenu') || '';
+
 const userInfo = localStorage.getItem('userInfo');
 let token = null;
 
@@ -20,6 +22,7 @@ const initialState = {
   error: null,
   isHamburgerOpen: false,
   isMobileView: false,
+  activeMenu: initialActiveMenu,
 };
 
 const userSlice = createSlice({
@@ -77,10 +80,15 @@ const userSlice = createSlice({
     },
     getMobileRequest(state, action) {
       state.isMobileView = action.payload;
-    }
+    },
+    setActiveMenu: (state, action) => {
+      state.activeMenu = action.payload;
+      // Also update localStorage when Redux state is updated
+      localStorage.setItem('activeMenu', action.payload);
+    },
   },
 });
 
-export const { loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoRequest, getProjectInfoSuccess, getProjectInfoFailure, getHamburgerRequest, getMobileRequest } =
+export const { loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoRequest, getProjectInfoSuccess, getProjectInfoFailure, getHamburgerRequest, getMobileRequest, setActiveMenu } =
   userSlice.actions;
 export default userSlice.reducer;

@@ -19,7 +19,7 @@ export const createProject = async (data) => {
     throw error;
   }
 };
-export const updateProject = async (id,data) => {
+export const updateProject = async (id, data) => {
   try {
     const response = await axios.patch(
       `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${id}`,
@@ -81,7 +81,7 @@ export const saveMetricsOfProject = async (data) => {
       data
     );
 
-    console.log("saveWeights",response)
+    console.log("saveWeights", response)
 
     if (response?.status !== 200) {
       throw new Error("Network response was not ok");
@@ -115,7 +115,6 @@ export const getProjectDetailsByProjectId = async (projectId) => {
   }
 };
 export const getProjectDetailsByUserId = async (userId) => {
-  // This APi will give the project lists
   try {
     const response = await axios.get(
       `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/get-project-by-user/?user_id=${userId}`
@@ -134,25 +133,23 @@ export const getProjectDetailsByUserId = async (userId) => {
   }
 };
 
-export const getProjectListsByFilter = async ( frequencyId, categoryIds) => {
+export const getProjectListsByFilter = async (frequencyId, categoryIds) => {
   try {
-    // Build the URL with frequencyId and dynamically add categoryIds
     let url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects-by-id?frequency_id=${frequencyId}`;
     console.log(categoryIds, 'categoryIds')
 
-    if(categoryIds?.length > 0){
+    if (categoryIds?.length > 0) {
 
       categoryIds?.forEach((categoryId, index) => {
         url += `&category_id[${index}]=${categoryId}`;
       });
-  
-      // Make the GET request
+
       const response = await axios.get(url);
-  
+
       if (response.status !== 200) {
         throw new Error("Network response was not ok");
       }
-  
+
       const projectData = response.data;
       return projectData;
     }
@@ -307,13 +304,62 @@ export const getBrandImages = async (data) => {
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
-    
+
     const imageUrl = URL.createObjectURL(response.data);
-    console.log('imageUrl',imageUrl)
-    return imageUrl; 
+    console.log('imageUrl', imageUrl)
+    return imageUrl;
   } catch (error) {
     console.error("Error in fetching :", error);
     throw error;
   }
 };
+export const getBrandDetailsData = async (data) => {
+  try {
+    const url = `https://dndrvx80-8016.inc1.devtunnels.ms/brands/${data}`;
+    const response = await axios.get(url);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data); 
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error; 
+  }
+};
+export const removeMetricFromProject = async (projectId, metricId) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/remove-metric/${projectId}/metrics/${metricId}`;
+    const response = await axios.delete(url);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data); 
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error; 
+  }
+};
+export const createUserProjectDQScore = async (data) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/create-user-project-dq-score`;
+    const response = await axios.post(url, data);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data); 
+    return response.data; 
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error; 
+  }
+};
+
 

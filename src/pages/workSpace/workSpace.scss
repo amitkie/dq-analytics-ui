@@ -100,7 +100,7 @@ select.form-control-select {
   background-repeat: no-repeat;
   display: flex;
   width: 100%;
-  max-width: 350px;
+  max-width: 250px;
   border-radius: 8px;
   border:1px solid #ddd;
   padding: 12px;
@@ -116,21 +116,7 @@ select.form-control-select:focus {
   font-weight: 700;
 }
 
-.actionITems {
-  position: relative;
-  display: flex;
-  flex-flow: row wrap;
-  gap: .5rem;
-  .action-item-icon {
-    cursor: pointer;
-    font-size: 22px;
-    color: $text-color;
-    padding: 3px;
-    &:hover {
-      color: $text-danger;
-    }
-  }
-}
+
 
 @media (max-width:767px) {
   .workspace-container {

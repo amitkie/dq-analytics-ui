@@ -32,6 +32,7 @@ import { MdOutlineEdit } from "react-icons/md";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { VscGoToFile } from "react-icons/vsc";
 import { getProjectInfoRequest } from "../../features/user/userSlice";
+import ModalComponent from "../../components/Modal/ModalComponent";
 
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
@@ -59,6 +60,11 @@ export default function WorkSpace() {
   const { userInfo, projectInfo } = useSelector((state) => state.user);
   const navigate = useNavigate();
  
+  const [showAlert, setShowAlert] = useState(true);
+  const handleDeleteClose = () => setShowAlert(false);
+  const handleDeleteShow = () => setShowAlert(true);
+
+  console.log("handleDeleteShow", handleDeleteShow)
   const [sortColumn, setSortcolumn] = useState({ key: null, direction: "asc" });
 
   const [dateRange, setDateRange] = useState({
@@ -334,10 +340,12 @@ const handleEditProjectName = (id) => {
       dateRange.startDate && dateRange.endDate
     );
   };
-  
+
+
 
   return (
     <>
+      
       <div className="col-12">
         <div className="workspace-container">
           <h2 className="page-title mt-4 ml-3">Workspace</h2>
@@ -521,7 +529,20 @@ const handleEditProjectName = (id) => {
                       <div className="actionITems">
                         <MdOutlineEdit onClick={() => handleEditClick(item.id, item?.project_name)} className="action-item-icon" title="Edit"/>
                         <FaRegTrashCan onClick={() => deleteProjectDetails(item.id)} className="action-item-icon" title="Delete"/>
-                        <VscGoToFile className="action-item-icon" title="Go to Insights"/>
+                        <VscGoToFile className="action-item-icon" title="Go to Insights" onClick={handleDeleteShow}/>
+                        {/* {showAlert && (
+                          <ModalComponent
+                            ModalHeading={"Delete Confirmation"}
+                            ModalContent={"Are you sure you want to delete this Project? <br /> This action cannot be undone."}
+                            SecondaryBtnName={"Close"}
+                            PrimaryBtnName={"Delete"}
+                            onClose={handleDeleteClose}  // This function will close the modal
+                            onConfirm={() => {
+                              deleteProjectDetails(item.id); // Perform delete action
+                              handleDeleteClose(); // Close modal after deleting
+                            }}  // Perform delete on confirmation
+                          />
+                        )} */}
                       </div>
                     </td>
                   </tr>
@@ -529,6 +550,17 @@ const handleEditProjectName = (id) => {
                 {/* Add more rows as needed */}
               </tbody>
             </Table>
+            <ModalComponent
+                            ModalHeading={"Delete Confirmation"}
+                            ModalContent={"Are you sure you want to delete this Project? <br /> This action cannot be undone."}
+                            SecondaryBtnName={"Close"}
+                            PrimaryBtnName={"Delete"}
+                            onClose={handleDeleteClose}  // This function will close the modal
+                            onConfirm={() => {
+                              deleteProjectDetails(); // Perform delete action
+                              handleDeleteClose(); // Close modal after deleting
+                            }}  // Perform delete on confirmation
+                          />
           </div>
         </div>
       </div>

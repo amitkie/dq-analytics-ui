@@ -35,54 +35,15 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
         { name: 'Livon', value: 87 },
         { name: 'Lakme', value: 65 },
       ];
-    const tabs = [
-        {
-          label: "DQ Score",
-          content: (
-            <Table responsive striped bordered>
-                <thead>
-                    <tr>
-                        <th>Metrics</th>
-                        <th>Weights</th>
-                        <th>normalized</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Net sentiment</td>
-                        <td>76</td>
-                        <td>50</td>
-                    </tr>
-                    <tr>
-                        <td>Engagement</td>
-                        <td>76</td>
-                        <td>50</td>
-                    </tr>
-                    <tr>
-                        <td>Organic rank</td>
-                        <td>76</td>
-                        <td>50</td>
-                    </tr>
-                    <tr>
-                        <td>Net sentiment</td>
-                        <td>76</td>
-                        <td>50</td>
-                    </tr>
-                    <tr>
-                        <td>Engagement</td>
-                        <td>76</td>
-                        <td>50</td>
-                    </tr>
-                </tbody>
-            </Table> 
-          ),
-        },
+    const tabsBest = [
+        
         {
           label: "Ecom",
           content: (
             <Table responsive striped bordered>
                 <thead>
                     <tr>
+                        <th>Platform</th>
                         <th>Metrics</th>
                         <th>Weights</th>
                         <th>normalized</th>
@@ -90,26 +51,31 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
                 </thead>
                 <tbody>
                     <tr>
+                      <td>Amazon</td>
                         <td>Net sentiment</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                      <td>Amazon</td>
                         <td>Engagement</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                      <td>Amazon</td>
                         <td>Organic rank</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                      <td>Amazon</td>
                         <td>Net sentiment</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                      <td>Amazon</td>
                         <td>Engagement</td>
                         <td>76</td>
                         <td>50</td>
@@ -124,6 +90,7 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
             <Table responsive striped bordered>
                 <thead>
                     <tr>
+                        <th>Platform</th>
                         <th>Metrics</th>
                         <th>Weights</th>
                         <th>normalized</th>
@@ -131,26 +98,31 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
                 </thead>
                 <tbody>
                     <tr>
+                      <td>Amazon</td>
                         <td>Net sentiment</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                      <td>Amazon</td>
                         <td>Engagement</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                      <td>Amazon</td>
                         <td>Organic rank</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                      <td>Amazon</td>
                         <td>Net sentiment</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                      <td>Amazon</td>
                         <td>Engagement</td>
                         <td>76</td>
                         <td>50</td>
@@ -165,6 +137,7 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
             <Table responsive striped bordered>
                 <thead>
                     <tr>
+                      <th>Platform</th>
                         <th>Metrics</th>
                         <th>Weights</th>
                         <th>normalized</th>
@@ -172,26 +145,31 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
                 </thead>
                 <tbody>
                     <tr>
+                        <td></td>
                         <td>Net sentiment</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                        <td></td>
                         <td>Engagement</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                        <td></td>
                         <td>Organic rank</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                        <td></td>
                         <td>Net sentiment</td>
                         <td>76</td>
                         <td>50</td>
                     </tr>
                     <tr>
+                        <td></td>
                         <td>Engagement</td>
                         <td>76</td>
                         <td>50</td>
@@ -206,6 +184,7 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
             <Table responsive striped bordered>
                 <thead>
                     <tr>
+                        <th>Section</th>
                         <th>Metrics</th>
                         <th>Weights</th>
                         <th>normalized</th>
@@ -213,35 +192,396 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Net sentiment</td>
-                        <td>76</td>
-                        <td>50</td>
+                      <td></td>
+                      <td>Net sentiment</td>
+                      <td>76</td>
+                      <td>50</td>
                     </tr>
                     <tr>
-                        <td>Engagement</td>
-                        <td>76</td>
-                        <td>50</td>
+                      <td></td>
+                      <td>Engagement</td>
+                      <td>76</td>
+                      <td>50</td>
                     </tr>
                     <tr>
-                        <td>Organic rank</td>
-                        <td>76</td>
-                        <td>50</td>
+                      <td></td>
+                      <td>Organic rank</td>
+                      <td>76</td>
+                      <td>50</td>
                     </tr>
                     <tr>
-                        <td>Net sentiment</td>
-                        <td>76</td>
-                        <td>50</td>
+                      <td></td>
+                      <td>Net sentiment</td>
+                      <td>76</td>
+                      <td>50</td>
                     </tr>
                     <tr>
-                        <td>Engagement</td>
-                        <td>76</td>
-                        <td>50</td>
+                      <td></td>
+                      <td>Engagement</td>
+                      <td>76</td>
+                      <td>50</td>
                     </tr>
                 </tbody>
             </Table> 
           ),
         },
-      ];
+    ];
+    const tabsWorst = [
+      {
+        label: "Ecom",
+        content: (
+          <Table responsive striped bordered>
+              <thead>
+                  <tr>
+                      <th>Platform</th>
+                      <th>Metrics</th>
+                      <th>Weights</th>
+                      <th>normalized</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Net sentiment</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Engagement</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Organic rank</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Net sentiment</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Engagement</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+              </tbody>
+          </Table> 
+        ),
+      },
+      {
+        label: "Social ",
+        content: (
+          <Table responsive striped bordered>
+              <thead>
+                  <tr>
+                      <th>Platform</th>
+                      <th>Metrics</th>
+                      <th>Weights</th>
+                      <th>normalized</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Net sentiment</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Engagement</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Organic rank</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Net sentiment</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                    <td>Amazon</td>
+                      <td>Engagement</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+              </tbody>
+          </Table> 
+        ),
+      },
+      {
+        label: "Paid",
+        content: (
+          <Table responsive striped bordered>
+              <thead>
+                  <tr>
+                    <th>Platform</th>
+                      <th>Metrics</th>
+                      <th>Weights</th>
+                      <th>normalized</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td></td>
+                      <td>Net sentiment</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                      <td></td>
+                      <td>Engagement</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                      <td></td>
+                      <td>Organic rank</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                      <td></td>
+                      <td>Net sentiment</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+                  <tr>
+                      <td></td>
+                      <td>Engagement</td>
+                      <td>76</td>
+                      <td>50</td>
+                  </tr>
+              </tbody>
+          </Table> 
+        ),
+      },
+      {
+        label: "Brand Perf",
+        content: (
+          <Table responsive striped bordered>
+              <thead>
+                  <tr>
+                      <th>Section</th>
+                      <th>Metrics</th>
+                      <th>Weights</th>
+                      <th>normalized</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                    <td></td>
+                    <td>Net sentiment</td>
+                    <td>76</td>
+                    <td>50</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>Engagement</td>
+                    <td>76</td>
+                    <td>50</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>Organic rank</td>
+                    <td>76</td>
+                    <td>50</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>Net sentiment</td>
+                    <td>76</td>
+                    <td>50</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>Engagement</td>
+                    <td>76</td>
+                    <td>50</td>
+                  </tr>
+              </tbody>
+          </Table> 
+        ),
+      },
+    ];
+
+    const tabsSummary = [
+      {
+        label: "Sectional Summary",
+        content: (
+          <Table responsive striped bordered>
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Section Name</th>
+                    <th>total Weight</th>
+                    <th>Brands above you</th>
+                    <th>Brands above you</th>
+                    <th>average normalised Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Ecom</td>
+                    <td>50</td>
+                    <td>Livon</td>
+                    <td>Lakme</td>
+                    <td>75</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Social</td>
+                    <td>50</td>
+                    <td> </td>
+                    <td>Lakme</td>
+                    <td>75</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Paid</td>
+                    <td>50</td>
+                    <td>Wow</td>
+                    <td>Lakme</td>
+                    <td>75</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Brand Perf</td>
+                    <td>50</td>
+                    <td>Wow</td>
+                    <td>Lakme</td>
+                    <td>75</td>
+                </tr>
+            </tbody>
+        </Table> 
+        ),
+      },
+      {
+        label: "Platform Summary ",
+        content: (
+          <Table responsive striped bordered>
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Section Name</th>
+                    <th>Platform Name</th>
+                    <th>total Weight</th>
+                    <th>Brands above you</th>
+                    <th>Brands above you</th>
+                    <th>average normalised Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Ecom</td>
+                    <td>Amazon</td>
+                    <td>50</td>
+                    <td>Livon</td>
+                    <td>Lakme</td>
+                    <td>75</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Social</td>
+                    <td>Facebook</td>
+                    <td>50</td>
+                    <td> </td>
+                    <td>Lakme</td>
+                    <td>75</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Paid</td>
+                    <td>DV360</td>
+                    <td>50</td>
+                    <td>Wow</td>
+                    <td>Lakme</td>
+                    <td>75</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Brand Perf</td>
+                    <td>Page Speed insights</td>
+                    <td>50</td>
+                    <td>Wow</td>
+                    <td>Lakme</td>
+                    <td>75</td>
+                </tr>
+            </tbody>
+        </Table>
+        ),
+      },
+      {
+        label: "Metric Summary",
+        content: (
+          <Table responsive striped bordered>
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Section Name</th>
+                    <th>Platform Name</th>
+                    <th>Metric Name</th>
+                    <th>total Weight</th>
+                    <th>Brands above you</th>
+                    <th>Brands above you</th>
+                    <th>average normalised Score</th>
+                    <th>Benchmark Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Ecom</td>
+                  <td>Amazon</td>
+                  <td>Engagement</td>
+                  <td>50</td>
+                  <td>72.5</td>
+                  <td>39.5</td>
+                  <td>75</td>
+                  <td>75</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Ecom</td>
+                  <td>Amazon</td>
+                  <td>Impressions</td>
+                  <td>39.5</td>
+                  <td>75</td>
+                  <td>72.5</td>
+                  <td>39.5</td>
+                  <td>75</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Ecom</td>
+                  <td>Amazon</td>
+                  <td>Clicks</td>
+                  <td>39.5</td>
+                  <td>75</td>
+                  <td>72.5</td>
+                  <td>39.5</td>
+                  <td>75</td>
+                </tr>
+            </tbody>
+        </Table>
+        ),
+      },
+      
+    ];
 
   return (
     <div className="col-12">
@@ -432,7 +772,7 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
                                 <td>75</td>
                             </tr>
                             <tr>
-                                <td>75th percentile category value</td>
+                                <td>50th percentile category value</td>
                                 <td>76</td>
                                 <td>50</td>
                                 <td>72.5</td>
@@ -447,6 +787,7 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
                                 <td>39.5</td>
                                 <td>75</td>
                             </tr>
+                          
                         </tbody>
                     </Table>
                 </div>
@@ -457,7 +798,7 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
                         <span className="box-sub-title">Best performing metrics</span>
                         <TabComponent
                              isBenchmarkDataSaved={true}
-                            tabs={tabs}
+                            tabs={tabsBest}
                             className="custom-tabs performance-tab"
                         />
                     </div>
@@ -465,7 +806,7 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
                         <span className="box-sub-title">Worst performing metrics</span>
                         <TabComponent
                              isBenchmarkDataSaved={true}
-                            tabs={tabs}
+                            tabs={tabsWorst}
                             className="custom-tabs performance-tab"
                         />
                     </div>
@@ -473,146 +814,14 @@ const HealthCardReport = ({brandDetailData, brandImages}) => {
               </div>
               <div className="summary-container">
                 <span className="section-title mb-3">Reports</span>
-                <span className="box-sub-title">Sectional Summary</span>
-                    <Table responsive striped bordered>
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>Section Name</th>
-                                <th>total Weight</th>
-                                <th>Brands above you</th>
-                                <th>Brands above you</th>
-                                <th>average normalised Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Avg Scores (Competition Brands)</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>75th percentile category value</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>75th percentile category value</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                        </tbody>
-                    </Table>
+                <TabComponent
+                  isBenchmarkDataSaved={true}
+                  tabs={tabsSummary}
+                  className="custom-tabs performance-tab"
+                />
+                    
               </div>
-              <div className="summary-container">
-                <span className="section-title mb-3">Reports</span>
-                <span className="box-sub-title">Platform Summary</span>
-                    <Table responsive striped bordered>
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>Section Name</th>
-                                <th>Platform Name</th>
-                                <th>total Weight</th>
-                                <th>Brands above you</th>
-                                <th>Brands above you</th>
-                                <th>average normalised Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Avg Scores (Competition Brands)</td>
-                                <td>76</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>75th percentile category value</td>
-                                <td>76</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>75th percentile category value</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                        </tbody>
-                    </Table>
-              </div>
-              <div className="summary-container">
-                <span className="section-title mb-3">Reports</span>
-                <span className="box-sub-title">Metric Summary</span>
-                    <Table responsive striped bordered>
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>Section Name</th>
-                                <th>Platform Name</th>
-                                <th>Metric Name</th>
-                                <th>total Weight</th>
-                                <th>Brands above you</th>
-                                <th>Brands above you</th>
-                                <th>average normalised Score</th>
-                                <th>Benchmark Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Avg Scores (Competition Brands)</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>75th percentile category value</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>75th percentile category value</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                        </tbody>
-                    </Table>
-              </div>
+              
           </div>
 
         </div>

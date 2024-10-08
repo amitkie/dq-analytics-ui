@@ -18,7 +18,7 @@ export default function InputComponent(props) {
     setIsDirty(true);
   };
 
-  const inputClassNames = `form-control ${isDirty ? classNames : ''}`;
+  const inputClassNames = `form-control login-input-form ${isDirty ? classNames : ''}`;
 
   return (
     <div className={containerClass}>

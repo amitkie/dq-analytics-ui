@@ -1,18 +1,21 @@
 import { Table } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import PaginationComponent from "../../common/Pagination/PaginationComponent";
-import { getKPIScoreValues } from "../../services/projectService";
+import { getKPIScoreValues, getBrandImages } from "../../services/projectService";
+import { useParams } from "react-router-dom";
 
-const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
+
+const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [kpiData, setKpiData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); 
-
   const itemsPerPage = 10;
-
+  const { brand } = useParams();
   const totalBrands = projectDetails?.brands?.length || 0;
   const totalPages = Math.ceil(totalBrands / itemsPerPage);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [brandLogo, setBrandLogo] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const brandsToDisplay = projectDetails?.brands?.slice(
     (currentPage - 1) * itemsPerPage,
@@ -23,35 +26,64 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
     setCurrentPage(pageNumber);
   };
 
-  const fetchKPIScores = async () => {
-    setLoading(true); 
-    setError(null);  
+  // const fetchKPIScores = async () => {
+  //   setLoading(true); 
+  //   setError(null);  
   
-    const data = {
-      platform: Array.from(new Set(metrics?.map((metric) => metric.platform?.name))) ,
-      metrics: Array.from(new Set( metrics?.map((metric) => metric.metric_name))),
-      brand: projectDetails?.brands,
-      analysis_type: "Overall",
-      start_date: projectDetails?.start_date,
-      end_date: projectDetails?.end_date,
-    };
+  //   const data = {
+  //     platform: Array.from(new Set(metrics?.map((metric) => metric.platform?.name))) ,
+  //     metrics: Array.from(new Set( metrics?.map((metric) => metric.metric_name))),
+  //     brand: projectDetails?.brands,
+  //     analysis_type: "Overall",
+  //     start_date: projectDetails?.start_date,
+  //     end_date: projectDetails?.end_date,
+  //   };
   
-    try {
-      const kpiScores = await getKPIScoreValues(data);
-      setKpiData(kpiScores?.results || []);
-    } catch (error) {
-      console.error("Error fetching KPI scores:", error);
-      setError("Failed to load KPI scores"); 
-    } finally {
-      setLoading(false); 
-    }
-  };
+  //   try {
+  //     const kpiScores = await getKPIScoreValues(data);
+  //     setKpiData(kpiScores?.results || []);
+  //   } catch (error) {
+  //     console.error("Error fetching KPI scores:", error);
+  //     setError("Failed to load KPI scores"); 
+  //   } finally {
+  //     setLoading(false); 
+  //   }
+  // };
  
 
-  useEffect(() => {
-    fetchKPIScores();
-  }, []);
+  // useEffect(() => {
+  //   fetchKPIScores();
+  // }, []);
 
+  useEffect(() => {
+    fetchBrandLogo();
+  }, [brand]);
+
+  const fetchBrandLogo = async () => {
+    setLoading(true);
+    setError(null);
+    const sliceSize = 1;
+    const brandUrl = brandsToDisplay.map(brand => {
+      return brand;  
+    });
+
+    console.log(brandUrl, "brandUrl")
+    try {
+      const brandLogoDetails = await getBrandImages(brandsToDisplay.map(brand =>  brand));
+  
+      if (brandLogoDetails) {
+        setBrandLogo(brandLogoDetails);
+        console.log("brandLogoDetails", brandLogoDetails);
+      } else {
+        setError("No Data Found");
+      }
+    } catch (error) {
+      setError("Error fetching brand images.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderTableBody = () => {
     if (!kpiData || kpiData?.length === 0) {
@@ -82,22 +114,14 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
         
         ></span>
           {metric?.section?.name}
-          {console.log(metric?.section?.name, 'metric?.platform.section')}
+          {console.log(metric?.section?.name, 'metric?.section.name')}
           </td>
         <td>
         <span
-          style={{
-            display: 'inline-block',
-            width: '10px',
-            height: '10px',
-            borderRadius: '50%',
-            backgroundColor: getColor(metric?.section?.name),
-            marginRight: '5px',
-          }}
         
         ></span>
           {metric?.platform?.name}
-          {console.log(metric?.section?.name, 'metric?.platform.section')}
+          {console.log(metric?.platform?.name, 'metric?.platform.name')}
           </td>
         <td>{metric?.metric_name}</td>
         {brandsToDisplay?.map((brand, brandIndex) => {
@@ -109,15 +133,12 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore }) => {
           );
 
           const color = getColor(resultData?.section);
-          console.log(color, "xxxxxxxxxxxxxxxx", resultData)
 
           return (
             <td key={brandIndex}>
-              
-              {/* {resultData?.result !== null ? resultData?.result : "N/A"} */}
 
               <span
-                title={`Metric: ${resultData?.metricName || 'N/A'}\nBenchmark: ${resultData?.benchmarkValue || 'N/A'}`}
+                title={`Benchmark Value: ${resultData?.benchmarkValue || 'N/A'}\nPercentile: ${resultData?.percentile || 'N/A'}`}
                 style={{ color: getColorScore(Number(resultData?.result).toFixed(2), [60, 70, 80]) }}
               >
               {resultData?.result !== null ? getColorScore(Number(resultData?.result).toFixed(2), [60, 70, 80]) : "N/A"}

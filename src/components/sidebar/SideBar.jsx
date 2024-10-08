@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
@@ -17,25 +18,35 @@ import InsightIconActive from "../../assets/images/insightActive.png";
 import SettingsIconActive from "../../assets/images/settingsActive.png";
 import AboutIconActive from "../../assets/images/aboutActive.png";
 import { IoIosHelpCircleOutline } from "react-icons/io";
-
+import { setActiveMenu } from "../../features/user/userSlice";
 import "./SideBar.scss";
-import { useSelector } from "react-redux";
+
 
 export default function SideBar() {
-  const [activeMenu, setActiveMenu] = useState("");
-  const { userInfo, projectInfo , isHamburgerOpen, isMobileView } = useSelector((state) => state.user);
+  // const [activeMenu, setActiveMenu] = useState("");
+  const { userInfo, projectInfo , isHamburgerOpen, isMobileView, activeMenu} = useSelector((state) => state.user);
+  // const activeMenu = useSelector((state) => state.user?.activeMenu);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const location = useLocation(); // Get the current location
   const [menuActive, setMenuActive] = useState(location.pathname);
-
+  const dispatch = useDispatch();
   // Helper function to check if a menu item is active
-  useEffect(() => {
-    setMenuActive(location.pathname);
-  }, [location.pathname]);
 
-  const isActive = (path) => {
-    return location.pathname === path;
-  };
+  useEffect(() => {
+    const currentPath = location.pathname.split("/")[1]; // Get the first part of the URL
+    if (currentPath && currentPath !== activeMenu) {
+      dispatch(setActiveMenu(currentPath)); // Update Redux store
+      localStorage.setItem("activeMenu", currentPath); // Save to localStorage
+    }
+  }, [location.pathname, activeMenu, dispatch]);
+
+  // useEffect(() => {
+  //   setMenuActive(location.pathname);
+  // }, [location.pathname]);
+
+  // const isActive = (path) => {
+  //   return location.pathname === path;
+  // };
 
   const analyticsPath = projectInfo.project && projectInfo?.project?.length > 0
     ? `/analytics/${projectInfo.project[0].id}` 
@@ -55,17 +66,31 @@ export default function SideBar() {
     };
   }, [isMobile])
 
-  useEffect(() => {
-    const savedActiveMenu = localStorage.getItem("activeMenu");
-    if (savedActiveMenu) {
-      setActiveMenu(savedActiveMenu);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const savedActiveMenu = localStorage.getItem("activeMenu");
+  //   if (savedActiveMenu) {
+  //     setActiveMenu(savedActiveMenu);
+  //   }
+  // }, []);
 
-  const handleMenuActive = (menu) => {
-    setActiveMenu(menu);
-    localStorage.setItem("activeMenu", menu);
+  const handleMenuActive = (menuPath) => {
+    dispatch(setActiveMenu(menuPath)); // Update Redux state
+    localStorage.setItem("activeMenu", menuPath); // Store active menu in localStorage
   };
+
+  // Check for changes in route and set the active menu when component mounts
+  useEffect(() => {
+    const storedMenu = localStorage.getItem('activeMenu');
+    if (storedMenu) {
+      dispatch(setActiveMenu(storedMenu)); // Set active menu from localStorage if available
+    }
+  }, [dispatch]); // Only run once on mount
+
+  const isActive = (path) => activeMenu === path;
+  // const handleMenuActive = (menu) => {
+  //   setActiveMenu(menu);
+  //   localStorage.setItem("activeMenu", menu);
+  // };
 
   const Link = ({ id, children, title, to , className }) => (
     <OverlayTrigger
@@ -85,9 +110,9 @@ export default function SideBar() {
         <li
           className={`side-nav ${activeMenu === "home" ? "active" : ""}`}
           onClick={() => handleMenuActive("home")}
-        >
+          >
           <Link to={"/home"} title="Home" id="m-1">
-            <IoHomeOutline className={`sidenav-icon ${isActive('/home') ? 'active' : ''}`} />
+            <IoHomeOutline className={`sidenav-icon ${activeMenu === 'home' ? 'active' : ''}`} />
           </Link>
           <Link to={"/home"} >
             <span className="mob-menu">Home</span>
@@ -100,7 +125,7 @@ export default function SideBar() {
           <Link to={"/workspace"} title="Workspace" id="m-2">
             <img
               src={
-                isActive('/workspace') ? WorkSpaceIconActive : WorkSpaceIcon
+                activeMenu === "workspace" ? WorkSpaceIconActive : WorkSpaceIcon
               }
               className="sidenav-icon-img"
               alt="workspace"
@@ -130,7 +155,7 @@ export default function SideBar() {
         >
           <img
             src={
-              menuActive === analyticsPath ? AnalyticsIconActive  : AnalyticsIcon 
+              activeMenu === "analytics"? AnalyticsIconActive  : AnalyticsIcon 
             }
             className="sidenav-icon-img"
             alt="Analytics"
@@ -156,7 +181,7 @@ export default function SideBar() {
           <Link to={"/healthcard"} title="Health Card" id="m-4">
             <img
               src={
-                isActive('/healthcard')
+                (activeMenu === "healthcard" || activeMenu === "healthcardOverview")
                   ? HealthCardIconActive
                   : HealthCardIcon
               }
@@ -174,7 +199,7 @@ export default function SideBar() {
         >
           <Link to={"/insights"} title="Insights" id="m-5">
             <img
-              src={isActive('/insights') ? InsightIconActive : InsightIcon}
+              src={activeMenu === "insights" ? InsightIconActive : InsightIcon}
               className="sidenav-icon-img"
               alt="Insights"
             />
@@ -190,7 +215,7 @@ export default function SideBar() {
           <Link to={"/settings"} title="Settings" id="m-6">
             <img
               src={
-                isActive('/settings') ? SettingsIconActive : SettingsIcon
+                activeMenu === "settings" ? SettingsIconActive : SettingsIcon
               }
               className="sidenav-icon-img"
               alt="Settings"
@@ -206,7 +231,7 @@ export default function SideBar() {
         >
           <Link to={"/about"} title="About Tool" id="m-7">
             <img
-              src={isActive('/about') ? AboutIconActive : AboutIcon}
+              src={activeMenu === "about" ? AboutIconActive : AboutIcon}
               className="sidenav-icon-img"
               alt="About Tool"
             />
@@ -220,7 +245,7 @@ export default function SideBar() {
           onClick={() => handleMenuActive("help")}
         >
           <Link to={"/help"} title="Help" id="m-7">
-            <IoIosHelpCircleOutline size={48} color="black"  className={`sidenav-icon ${isActive('/help') ? 'active' : ''}`} />
+            <IoIosHelpCircleOutline size={48} color="black"  className={`sidenav-icon ${activeMenu === "help" ? 'active' : ''}`} />
           </Link>
           <Link to={"/help"}>
             <span className="mob-menu">Help</span>

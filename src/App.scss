@@ -86,12 +86,15 @@ input[type="checkbox"] {
 .form-control {
   border: 1px solid #e0e3e8;
   width: 100%;
-  max-width: 358px;
+  max-width: 250px;
   height: 48px;
   border-radius: 6px;
   font-size: 14px;
   line-height: 22px;
   padding: 10px 12px;
+}
+.form-control.login-input-form {
+  max-width: 380px;
 }
 .form-select {
   width: 100%;
@@ -393,4 +396,19 @@ Table thead {
   border-radius: 50%;
   top: 15%;
   left: 0;
+}
+.actionITems {
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: .5rem;
+  .action-item-icon {
+    cursor: pointer;
+    font-size: 22px;
+    color: $text-color;
+    padding: 3px;
+    &:hover {
+      color: $text-danger;
+    }
+  }
 }

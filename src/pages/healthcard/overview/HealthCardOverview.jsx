@@ -19,7 +19,7 @@ import PaidMedia from "../../../components/paidMedia/PaidMedia";
 import MediaEcom from "../../../components/MediaEcom/MediaEcom";
 import MediaOffPlatform from "../../../components/MediaOffPlatform/MediaOffPlatform";
 import SocialMedia from "../../../components/SocialMedia/SocialMedia";
-import { getHealthCardDetails, getBrandData, getBrandImages } from "../../../services/projectService";
+import { getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData } from "../../../services/projectService";
 import BrandPerformance from "../../../components/BrandPerformance/BrandPerformance";
 import { useParams } from "react-router-dom";
 
@@ -30,6 +30,7 @@ export default function HealthCardOverview() {
   const [error, setError] = useState(null);
   const [brandDetailData, setBrandDetailData] = useState([]);
   const [brandImages, setBrandImages] = useState([]);
+  const [brandCategoryDetails, setBrandCategoryDetails] = useState([]);
 
 
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ export default function HealthCardOverview() {
     fetchHealthCardData();
     fetchBrandScoreDetails();
     fetchBrandImages();
+    fetchBrandDetails();
   }, [brand]);
 
   const fetchHealthCardData = async () => {
@@ -112,6 +114,26 @@ export default function HealthCardOverview() {
       setLoading(false);
     }
   };
+  const fetchBrandDetails = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const brandCatDetails = await getBrandDetailsData(brand);
+  
+      if (brandCatDetails) {
+        setBrandCategoryDetails(brandCatDetails);
+        console.log("brandCatDetails", brandCatDetails);
+      } else {
+        setError("No Data Found");
+      }
+    } catch (error) {
+      setError("Error fetching brand data.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const tabColors = ['#C1DED3', '#A6CCE0', '#DFE9DE', '#FCFAFB', '#E2E3EF']
   const tabs = [
@@ -168,18 +190,18 @@ export default function HealthCardOverview() {
     const brandPerfData =
       healthCardData && healthCardData?.results["Brand Perf"];
 
-    if (ecomData) {
-      generateExcel(ecomData);
+    if (ecomData || paidData || socialData || brandPerfData) {
+      generateExcel(ecomData, paidData, socialData, brandPerfData);
     }
   };
 
-  const generateExcel = (data) => {
+  const generateExcel = (ecomData, paidData, socialData, brandPerfData) => {
     const workbook = XLSX.utils.book_new(); // Create a new workbook
 
     // Iterate over each key (representing a table)
-    for (const tableName in data) {
-      if (data.hasOwnProperty(tableName)) {
-        const tableData = data[tableName];
+    for (const tableName in ecomData) {
+      if (ecomData.hasOwnProperty(tableName)) {
+        const tableData = ecomData[tableName];
 
         // Convert the data into an array format suitable for Excel (Metric Name, Normalized Value)
         const sheetData = [["Metric Name", "Normalized Value"]]; // Header row
@@ -195,11 +217,99 @@ export default function HealthCardOverview() {
         XLSX.utils.book_append_sheet(workbook, worksheet, tableName); // Append sheet to workbook
       }
     }
+    for (const tableName in paidData) {
+      if (paidData.hasOwnProperty(tableName)) {
+        const tableData = paidData[tableName];
+
+        // Convert the data into an array format suitable for Excel (Metric Name, Normalized Value)
+        const sheetData = [["Metric Name", "Normalized Value"]]; // Header row
+
+        for (const metric in tableData) {
+          if (tableData.hasOwnProperty(metric)) {
+            sheetData.push([metric, tableData[metric]]);
+          }
+        }
+
+        // Create a new worksheet for each table
+        const worksheet1 = XLSX.utils.aoa_to_sheet(sheetData);
+        XLSX.utils.book_append_sheet(workbook, worksheet1, tableName); // Append sheet to workbook
+      }
+    }
+    for (const tableName in socialData) {
+      if (socialData.hasOwnProperty(tableName)) {
+        const tableData = socialData[tableName];
+
+        // Convert the data into an array format suitable for Excel (Metric Name, Normalized Value)
+        const sheetData = [["Metric Name", "Normalized Value"]]; // Header row
+
+        for (const metric in tableData) {
+          if (tableData.hasOwnProperty(metric)) {
+            sheetData.push([metric, tableData[metric]]);
+          }
+        }
+
+        // Create a new worksheet for each table
+        const worksheet2 = XLSX.utils.aoa_to_sheet(sheetData);
+        XLSX.utils.book_append_sheet(workbook, worksheet2, tableName); // Append sheet to workbook
+      }
+    }
+    for (const tableName in brandPerfData) {
+      if (brandPerfData.hasOwnProperty(tableName)) {
+        const tableData = brandPerfData[tableName];
+
+        // Convert the data into an array format suitable for Excel (Metric Name, Normalized Value)
+        const sheetData = [["Metric Name", "Normalized Value"]]; // Header row
+
+        for (const metric in tableData) {
+          if (tableData.hasOwnProperty(metric)) {
+            sheetData.push([metric, tableData[metric]]);
+          }
+        }
+
+        // Create a new worksheet for each table
+        const worksheet3 = XLSX.utils.aoa_to_sheet(sheetData);
+        XLSX.utils.book_append_sheet(workbook, worksheet3, tableName); // Append sheet to workbook
+      }
+    }
 
     // Write the Excel file to disk
     XLSX.writeFile(workbook, "CampaignData.xlsx");
   };
+  // const generateExcel = (ecomData, paidData, socialData, brandPerfData) => {
+  //   const workbook = XLSX.utils.book_new(); // Create a new workbook
   
+  //   // Helper function to convert a dataset into a sheet
+  //   const createSheetData = (data, sheetName) => {
+  //     const sheetData = [["Metric Name", "Normalized Value"]]; // Define header row
+  
+  //     // Iterate over the data to fill the sheet
+  //     for (const metric in data) {
+  //       if (data.hasOwnProperty(metric)) {
+  //         sheetData.push([metric, data[metric]]);
+  //       }
+  //     }
+  
+  //     // Create worksheet and append to the workbook
+  //     const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+  //     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName); // Append sheet to workbook
+  //   };
+  
+  //   // Create a sheet for ecomData
+  //   createSheetData(ecomData, "Ecom Data");
+  
+  //   // Create a sheet for paidData
+  //   createSheetData(paidData, "Paid Data");
+  
+  //   // Create a sheet for socialData
+  //   createSheetData(socialData, "Social Data");
+  
+  //   // Create a sheet for brandPerfData
+  //   createSheetData(brandPerfData, "Brand Performance");
+  
+  //   // Write the Excel file to disk
+  //   XLSX.writeFile(workbook, "CampaignData.xlsx");
+  // };
+
   // Helper function to format data into array of arrays (AOA) format
   const formatToAOA = (data) => {
     // If data is already in the correct format, return it as is.
@@ -218,7 +328,7 @@ export default function HealthCardOverview() {
               <ButtonComponent
                 // disabled
                 btnClass={"btn-primary"}
-                btnName={"Health Card Report"}
+                btnName={"DQ mini Report"}
                 onClick={handleReportClick}
               />
               <ButtonComponent
@@ -253,9 +363,15 @@ export default function HealthCardOverview() {
             <div className="brand-header">
             <span className="section-title">Brand Overview</span>
             <div className="competitor">
-              <span className="competitor-title">Competitor List</span>
-              <ul className="competitor-list">
-                <li>{brand}</li>
+              <span className="competitor-title">Competitor List:</span>
+              <ul className="comptetitor-item">
+                {brandCategoryDetails?.competitors?.map((comp, index) => (
+                  <li key={index}>
+                    <span class="brand-list">{comp.brand}</span>
+                    {/* <p>Category: {comp.category}</p>
+                    <p>Sub-Category: {comp.sub_category}</p> */}
+                  </li>
+                ))}
               </ul>
             </div>
             </div>
@@ -267,8 +383,9 @@ export default function HealthCardOverview() {
                   alt="Brand Logo"
                 />
                 <div className="score-details">
-                  <div className="brand-title">{brandDetailData?.map(item => item.Brand_Name)}</div>
-                  <span className="brand-subtitle">Tea</span>
+                  <div className="brand-title">{brandCategoryDetails?.main_brand?.brand}</div>
+                  <span className="brand-subtitle">{brandCategoryDetails?.main_brand?.category}</span>
+                  <span className="brand-subcategory">{brandCategoryDetails?.main_brand?.sub_category}</span>
                 </div>
               </div>
               <div className="score-list">
@@ -391,7 +508,6 @@ export default function HealthCardOverview() {
                 </div>
                 <span className="loader-text">Loading...</span>
               </div>
-              // <div className="no-data-found">No data found</div>
             ) : (
               <TabComponent
                 isBenchmarkDataSaved={true}

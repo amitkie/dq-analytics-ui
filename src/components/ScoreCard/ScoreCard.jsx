@@ -8,17 +8,43 @@ function ScoreCard({dqScoreValue, dqScoreLoading=false}) {
   return (
     <div className="row">
       <div className="col-12">
-        <div className="project-filter">
-          <div className="range-filter">
-            <span>DQ score Range:</span>
-            <Form.Range />
+        <div className="dq-header">
+           
+            <ul className="score-box">
+              <li>
+                <span className="scoreTitle">DQ Score</span>
+                <span className="scoreValue">80</span>
+              </li>
+              <li>
+                <span className="scoreTitle">Ecom DQ Score</span>
+                <span className="scoreValue">80</span>
+              </li>
+              <li>
+                <span className="scoreTitle">Social DQ Score</span>
+                <span className="scoreValue">80</span>
+              </li>
+              <li>
+                <span className="scoreTitle">Paid DQ Score</span>
+                <span className="scoreValue">80</span>
+              </li>
+              <li>
+                <span className="scoreTitle">Brand Perf</span>
+                <span className="scoreValue">80</span>
+              </li>
+            </ul>
+           
+          <div className="project-filter">
+            <div className="range-filter">
+              <span>DQ score Range:</span>
+              <Form.Range />
+            </div>
+            <select name="category" className="Select-input">
+              <option value="beauty">Beauty</option>
+              <option value="haircare">Hair care</option>
+              <option value="baby">Baby</option>
+              <option value="mansGrooming">Male Grooming</option>
+            </select>
           </div>
-          <select name="category" className="Select-input">
-            <option value="beauty">Beauty</option>
-            <option value="haircare">Hair care</option>
-            <option value="baby">Baby</option>
-            <option value="mansGrooming">Male Grooming</option>
-          </select>
         </div>
       </div>
       <div className="col-md-12 col-lg-6 mb-md-4 mt-md-4">

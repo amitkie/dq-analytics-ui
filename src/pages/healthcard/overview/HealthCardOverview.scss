@@ -91,9 +91,15 @@
   @include secondaryFont();
   font-size: 0.875rem;
   color: rgba($color: #333333, $alpha: 0.6);
-  line-height: 2;
+  line-height: 1;
   white-space: nowrap;
-  margin-bottom: 0.5rem;
+  margin-bottom: 4px;
+}
+.brand-subcategory {
+  @include secondaryFont();
+  font-size: 0.75rem;
+  color: rgba($color: #333333, $alpha: 0.6);
+  line-height: 1;
 }
 .tab-container {
   @include boxWithShadow();
@@ -270,7 +276,6 @@
       font-size: 16px;
     }
     .competitor-list {
-      @include secondaryFontBold();
       list-style-type: none;
       display: flex;
       padding: 0;
@@ -278,8 +283,37 @@
       gap: .75rem;
       align-items: baseline;
       justify-content: flex-start;
-      font-size: 16px;
+    }
+  }
+}
+.comptetitor-item {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: start;
+  li{
+    position: relative;
+    .brand-list {
+      @include secondaryFontBold();
+      font-size: 14px;
       font-weight: 700;
+      position: relative;
+    }
+    &:before {
+      content: "";
+      width: 1px;
+      height: 16px;
+      background-color: #333;
+      position: absolute;
+      top: 4px;
+      right: -4px;
+    }
+    &:last-child::before{
+      content: '';
+      display: none; 
     }
   }
 }

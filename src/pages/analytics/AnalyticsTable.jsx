@@ -1,5 +1,8 @@
 import { Table } from "react-bootstrap";
+import React, { useState } from "react";
 import "./AnalyticsTable.scss";
+import { IoMdRemoveCircleOutline } from "react-icons/io";
+import { IoMdAddCircleOutline } from "react-icons/io";
 
 const AnalyticsTable = ({
   isBenchmarkSaved = false,
@@ -10,16 +13,34 @@ const AnalyticsTable = ({
   checkStates,
   weights,
   handleSelectAll,
-  totalWeights
+  totalWeights,
+  removeMetricsFromDB
 }) => {
-
+  const [metricsData, setMetricsData] = useState(metrics);
+  const [addRow, setAddRow] = useState([])
+    
+  // Function to add a new row
+  const handleAddRow = () => {
+    const newMetric = {
+      metric_id: Date.now(),  // Unique ID (can use any unique generator, e.g. UUID)
+      section: { name: "New Section" },
+      platform: { name: "New Platform" },
+      metric_name: "New Metric",
+      isOverallChecked: false,
+      isCategoryBasedChecked: false,
+      benchmark: [{ category: "New Category", value: 0 }],
+      isLoading: false,
+    };
+    setAddRow([...metrics, newMetric]);
+  };
   return (
+    
     <Table responsive striped bordered>
       <thead>
         <tr>
           <th className="col-1">Section</th>
           <th className="col-1">Platform</th>
-          <th className="col-4">Metric list</th>
+          <th className="col-3">Metric list</th>
           <th className="col-1">Category</th>
           <th className="col-1">Weights ({totalWeights})</th>
           <th className="col-1">
@@ -43,6 +64,7 @@ const AnalyticsTable = ({
           </div>
           </th>
           <th className="col-2">Benchmarks</th>
+          <th  className="col-1">Action</th>
         </tr>
       </thead>
       {!isBenchmarkSaved ? (<tbody>
@@ -146,7 +168,12 @@ const AnalyticsTable = ({
                 "NA"
               )}
             </td>
-
+              <td>
+                <div className="actionITems">
+                  <IoMdRemoveCircleOutline className="action-item-icon" onClick={() => removeMetricsFromDB(item.metric_id, item.metric_name)} title="Remove Metric data"/>
+                  <IoMdAddCircleOutline className="action-item-icon" title="Add Metric data" onClick={handleAddRow} />
+                </div>
+              </td>
           </tr>
         ))}
       </tbody>) : (
@@ -156,6 +183,97 @@ const AnalyticsTable = ({
           </td>
         </tr>
       )}
+      {/* <tr>
+        <td>
+           <MultiSelectDropdown
+              options={platforms}
+              selectedValues={selectedPlatforms}
+              onChange={handlePlatformChange}
+              placeholder="Select Sections"
+            />
+          </td>
+        <td>
+           <MultiSelectDropdown
+              options={platforms}
+              selectedValues={selectedPlatforms}
+              onChange={handlePlatformChange}
+              placeholder="Select Platforms"
+            />
+          </td>
+          <td>
+            <MultiSelectDropdown
+              options={metrics}
+              selectedValues={selectedMetrics}
+              onChange={handleMetricsChange}
+              placeholder="Select Metrics"
+              isDisabled={isMetricsDisabled}
+            />
+          </td>
+          <td>
+            <MultiSelectDropdown
+              options={categories}
+              selectedValues={selectedCategories}
+              onChange={handleCategoryChange}
+              placeholder="Select Categories"
+            />
+          </td>
+          <td>
+            <input type="number" />
+          </td>
+          <td>
+              <input
+                type="checkbox"
+                checked={item.isOverallChecked || false}
+                className="c-pointer"
+                style={item?.error ? { borderColor: 'red', borderWidth: '2px' } : {}}
+                onChange={(e) => handleCheckboxChange(e, item, "overall")}
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                className="c-pointer"
+                checked={item.isCategoryBasedChecked || false}
+                style={item?.error ? { borderColor: 'red', borderWidth: '2px' } : {}}
+                onChange={(e) => handleCheckboxChange(e, item, "categoryBased")}
+              />
+            </td>
+            <td>
+              {item?.isLoading ? (
+                <div className="loader-container-sm">
+                  <div className="loader-sm"></div>
+                  <span className="loader-text">Loading...</span>
+                </div>
+              ) : item.isCategoryBasedChecked ? (
+                <Table responsive>
+                  <tbody>
+                    {item.benchmark.map(({ category, value }, index) => (
+                      <tr key={index}>
+                        <td><strong>{category}</strong></td>
+                        <td>
+                          {isNaN(Number(value)) ? "NA" : Number(value).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              ) : item.isOverallChecked ? (
+                <>
+                  {isNaN(Number(item.benchmark[0]?.value))
+                    ? "NA"
+                    : Number(item.benchmark[0]?.value).toFixed(2)}
+                </>
+              ) : (
+                "NA"
+              )}
+            </td>
+              <td>
+                <div className="actionITems">
+                  <IoMdRemoveCircleOutline className="action-item-icon" onClick={() => handleRemoveRow(item.metric_id)} title="Remove Metric data"/>
+                  <IoMdAddCircleOutline className="action-item-icon" title="Add Metric data" onClick={handleAddRow} />
+                </div>
+              </td>
+        </tr> */}
     </Table>
   );
 };

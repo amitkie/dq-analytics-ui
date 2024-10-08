@@ -13,17 +13,20 @@ class BarChart extends Component {
           redrawOnWindowResize: true,
         },
         dataLabels: {
-          
-          position: 'top',
+          offsetX: 35,
+          style: {
+            fontSize: '12px',
+            colors: ["#304758"]
+          }
         },
         plotOptions: {
           bar: {
             borderRadius: 1,
             borderRadiusApplication: "end",
             horizontal: true,
-          },
-          dataLabels: {
-            position: 'top',
+            dataLabels: {
+              position: 'top',
+            },
           },
         },
         grid: {

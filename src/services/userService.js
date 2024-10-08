@@ -234,3 +234,20 @@ export const getUserAndPaymentInfo = async (id) => {
     throw error;
   }
 };
+export const getAllMetricsDefinition = async (platformName) => {
+  try {
+    const url = `https://dndrvx80-8014.inc1.devtunnels.ms/definition/?platform_name=${platformName}`;
+    const response = await axios.get(url);
+
+    // Check if response is OK
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Metric Data:', response.data); // Log only the response data
+    return response.data; // Return the response data directly
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error; // Re-throw the error so it can be handled by the calling code
+  }
+};
