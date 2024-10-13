@@ -14,7 +14,7 @@ const AnalyticsTable = ({
   totalWeights,
   removeMetricsFromDB,
   selectedSections = [],
-  selectedPlatforms = [], 
+  selectedPlatforms = [],
   selectedMetrics = [],
 }) => {
   const [expandedSections, setExpandedSections] = useState([]);
@@ -38,18 +38,13 @@ const AnalyticsTable = ({
     );
   };
 
-  console.log(selectedMetrics, 'selekihihuhguguguguguugu');
   // Filter metrics based on selected sections, platforms, and metrics
   const filteredMetrics = metrics.filter((metric) => {
-    console.log(metric, 'chhhhhh')
     const sectionMatch = selectedSections.length === 0 || selectedSections.some(section => section.value === metric.section.id);
     const platformMatch = selectedPlatforms.length === 0 || selectedPlatforms.some(platform => platform.value === metric.platform.id);
     const metricMatch = selectedMetrics.length === 0 || selectedMetrics.some(mc => mc.value === metric.metric_id);
-    console.log(metricMatch, 'dyufyufuyf')
     return sectionMatch && platformMatch && metricMatch;
   });
-
-  console.log(filteredMetrics, 'filteredMetrics-----------')
 
   // Group filtered metrics by section and platform
   const groupedMetrics = filteredMetrics.reduce((acc, metric) => {
@@ -60,6 +55,31 @@ const AnalyticsTable = ({
     return acc;
   }, {});
 
+  // Calculate total weight for each section
+  const sectionWeights = Object.keys(groupedMetrics).reduce((acc, sectionName) => {
+    const sectionWeight = Object.keys(groupedMetrics[sectionName]).reduce((total, platformName) => {
+      const platformWeight = groupedMetrics[sectionName][platformName].reduce(
+        (sum, item) => sum + (weights[item.metric_id] || 0),
+        0
+      );
+      return total + platformWeight;
+    }, 0);
+    acc[sectionName] = sectionWeight;
+    return acc;
+  }, {});
+
+  // Calculate total weight for each platform under each section
+  const platformWeights = Object.keys(groupedMetrics).reduce((acc, sectionName) => {
+    acc[sectionName] = {};
+    Object.keys(groupedMetrics[sectionName]).forEach((platformName) => {
+      const platformWeight = groupedMetrics[sectionName][platformName].reduce(
+        (sum, item) => sum + (weights[item.metric_id] || 0),
+        0
+      );
+      acc[sectionName][platformName] = platformWeight;
+    });
+    return acc;
+  }, {});
 
   return (
     <Table responsive striped bordered className="accordion-table">
@@ -68,7 +88,7 @@ const AnalyticsTable = ({
           <th className="col-3">Section</th>
           <th className="col-2">Platform</th>
           <th className="col-1">Metric List</th>
-          <th className="col-1">Weights ({totalWeights})</th>
+          <th className="col-1">Weights <span style={{ backgroundColor: 'lightgrey' }} class="badge badge-pill badge-light">{totalWeights} </span></th>
           <th className="col-1">Overall</th>
           <th className="col-1">Category Based</th>
           <th className="col-2">Benchmarks</th>
@@ -82,7 +102,9 @@ const AnalyticsTable = ({
             <tr key={sectionName} className="section-row">
               <td>
                 <div className="section-header" onClick={() => toggleSection(sectionName)}>
-                  <h5>{sectionName}</h5>
+                  <div className="">
+                    <b>{sectionName}</b>  <span style={{ backgroundColor: 'lightgrey' }} class="badge badge-pill badge-light">{sectionWeights[sectionName]?.toFixed(2)}</span>
+                  </div>
                   <Button variant="link">
                     {expandedSections.includes(sectionName) ? <AiOutlineMinus /> : <AiOutlinePlus />}
                   </Button>
@@ -91,17 +113,17 @@ const AnalyticsTable = ({
               <td colSpan={7}></td>
             </tr>
 
-            {/* Section Content */}
             {expandedSections.includes(sectionName) && (
               <>
                 {Object.keys(groupedMetrics[sectionName]).map((platformName) => (
                   <>
-                    {/* Platform Row */}
                     <tr key={platformName} className="platform-row">
                       <td></td>
                       <td>
                         <div className="platform-header" onClick={() => togglePlatform(platformName)}>
-                          <h6>{platformName}</h6>
+                          <div className="">
+                            <b>{platformName}</b>  <span style={{ backgroundColor: 'lightgrey' }} class="badge badge-pill badge-light">{platformWeights[sectionName][platformName]?.toFixed(2)}</span>
+                          </div>
                           <Button variant="link">
                             {expandedPlatforms.includes(platformName) ? <AiOutlineMinus /> : <AiOutlinePlus />}
                           </Button>
@@ -110,7 +132,6 @@ const AnalyticsTable = ({
                       <td colSpan={6}></td>
                     </tr>
 
-                    {/* Platform Content */}
                     {expandedPlatforms.includes(platformName) &&
                       groupedMetrics[sectionName][platformName].map((item) => (
                         <tr key={item.metric_id} className="metric-row">
@@ -192,6 +213,3 @@ const AnalyticsTable = ({
 };
 
 export default AnalyticsTable;
-
-
-

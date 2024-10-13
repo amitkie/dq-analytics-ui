@@ -1193,12 +1193,12 @@ export default function Analytics() {
                 </div>
 
                 <div className="export-btn-container gap-3">
-                  <MultiSelectDropdown
+                  {/* <MultiSelectDropdown
                     options={filterCategories}
                     selectedValues={selectedFilterCategories}
                     onChange={handleFilterCategory}
                     placeholder="Select Categories"
-                  />
+                  /> */}
 
                   <div className="export-btn">
                     <ButtonComponent
