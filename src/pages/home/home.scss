@@ -17,6 +17,8 @@
   display: flex;
   height: calc(100vh - 100px);
   padding: 1rem 0;
+  max-height: 700px;
+    max-width: 600px;
 }
 .menu-home {
   background-color: $primary-color;
@@ -39,6 +41,7 @@
     font-size: 86px;
     color: $white;
   }
+  
   & div {
     background-color: $white;
   }
@@ -96,6 +99,10 @@
 }
 .circle-menu {
   position: absolute;
+}
+.help-menu-icon {
+  font-size: 60px;
+  color: $white;
 }
 .user-activity {
   display: flex;

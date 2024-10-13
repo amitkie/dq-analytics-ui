@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import ButtonComponent from "../../common/button/button";
  
 
-function ModalComponent(ModalHeading,ModalContent,SecondaryBtnName,PrimaryBtnName,onClose,onConfirm) {
+function ModalComponent(ModalHeading,ModalContent,SecondaryBtnName,PrimaryBtnName,onClose,onConfirm,show, setShow) {
   // const [show, setShow] = useState(true);
 
   // const handleClose = () => setShow(false);
@@ -12,7 +12,7 @@ function ModalComponent(ModalHeading,ModalContent,SecondaryBtnName,PrimaryBtnNam
   return (
     <>
 
-      <Modal>
+      <Modal show={show}>
         <Modal.Header closeButton>
           <Modal.Title>{ModalHeading}</Modal.Title>
         </Modal.Header>

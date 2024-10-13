@@ -328,7 +328,7 @@ export default function HealthCardOverview() {
               <ButtonComponent
                 // disabled
                 btnClass={"btn-primary"}
-                btnName={"DQ mini Report"}
+                btnName={"DQ Brand Report"}
                 onClick={handleReportClick}
               />
               <ButtonComponent
@@ -384,8 +384,8 @@ export default function HealthCardOverview() {
                 />
                 <div className="score-details">
                   <div className="brand-title">{brandCategoryDetails?.main_brand?.brand}</div>
-                  <span className="brand-subtitle">{brandCategoryDetails?.main_brand?.category}</span>
-                  <span className="brand-subcategory">{brandCategoryDetails?.main_brand?.sub_category}</span>
+                  <span className="brand-subtitle">Category: {brandCategoryDetails?.main_brand?.category}</span>
+                  <span className="brand-subcategory">Sub Category: {brandCategoryDetails?.main_brand?.sub_category}</span>
                 </div>
               </div>
               <div className="score-list">

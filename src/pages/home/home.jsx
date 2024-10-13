@@ -17,6 +17,9 @@ import HealthCardIcon from "../../assets/images/health-card-nav.png";
 import InsightIcon from "../../assets/images/insight-nav.png";
 import SettingsIcon from "../../assets/images/settings-nav.png";
 import AboutIcon from "../../assets/images/aboutTool-nav.png";
+import { IoIosHelpCircleOutline } from "react-icons/io";
+import { TfiHelpAlt } from "react-icons/tfi";
+
 
 import "./home.scss";
 import WorkSpace from "../workSpace/workSpace";
@@ -44,17 +47,17 @@ const Home = () => {
     // Initial call to set the layout based on the current window size
     handleResize();
   
-    const halfCircleDegrees = 220; // Adjust the degrees for half-circle
+    const halfCircleDegrees = 210; // Adjust the degrees for half-circle
   
     for (let i = 0, l = items.length; i < l; i++) {
       const angle =
         -0.5 * Math.PI - ((halfCircleDegrees / 180) * i * Math.PI) / l;
       const leftValue = isMobile
         ? (17 - 50 * Math.cos(angle)).toFixed(4) + "%"
-        : (17 - 40 * Math.cos(angle)).toFixed(4) + "%";
+        : (17 - 45 * Math.cos(angle)).toFixed(4) + "%";
       const topValue = isMobile
         ? (25 + 25 * Math.sin(angle)).toFixed(4) + "%"
-        : (35 + 35 * Math.sin(angle)).toFixed(4) + "%";
+        : (35 + 40 * Math.sin(angle)).toFixed(4) + "%";
   
       items[i].style.left = leftValue;
       items[i].style.top = topValue;
@@ -149,10 +152,10 @@ const Home = () => {
               </p>
             </div>
             <div className="recent-activity mt-5">
-              <TabComponent tabs={tabs} className="home-tabs" />
+              <TabComponent isBenchmarkDataSaved={true} tabs={tabs} className="home-tabs" />
             </div>
           </div>
-          <div className="col-sm-12 col-md-12 col-lg-6 order-sm-first order-md-first order-lg-last mt-5">
+          <div className="col-sm-12 col-md-12 col-lg-6 order-sm-first order-md-first order-lg-last mt-4">
             <div className="main-nav">
               <div className="menu-home">
                 <IoHomeOutline className="menu-icon" />
@@ -163,7 +166,7 @@ const Home = () => {
                 <Link
                   to={"/workspace"}
                   className="menu-list-nav"
-                  title="Create new DQ Sheet, access older DQ Sheet"
+                  title="Create new DC Sheet, Access older DC Sheet"
                 >
                   <img
                     src={WorkSpaceIcon}
@@ -192,7 +195,7 @@ const Home = () => {
                   <Link
                     to={`/analytics/${projectInfo?.project[0].id}`}
                     className="menu-list-nav"
-                    title="View the last opened or newly created DQ Sheet"
+                    title="View the last opened or newly created DC Sheet"
                   >
                     <img
                       src={AnalyticsIcon}
@@ -236,7 +239,7 @@ const Home = () => {
                 <Link
                   to={"/insights"}
                   className="menu-list-nav"
-                  title="Select multiple already generated DQ Sheets for insights"
+                  title="Select multiple already generated DC Sheets for insights"
                 >
                   <img
                     src={InsightIcon}
@@ -272,6 +275,17 @@ const Home = () => {
                     alt="About Tool"
                   />
                   <span className="menu-text">About Tool</span>
+                </Link>
+              </div>
+              <div className="circle-menu">
+                <Link
+                  to={"/help"}
+                  className="menu-list-nav"
+                  title="Help"
+                >
+                  <TfiHelpAlt className="help-menu-icon" />
+                  
+                  <span className="menu-text">Help</span>
                 </Link>
               </div>
             </div>

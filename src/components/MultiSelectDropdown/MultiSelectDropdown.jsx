@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import "./MultiSelectDropdown.css"; // Make sure to include styling
 import { IoMdClose } from "react-icons/io";
@@ -12,6 +12,7 @@ const MultiSelectDropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const dropdownRef = useRef(null); // Reference for the dropdown component
 
   const handleToggle = () => setIsOpen(!isOpen);
   const handleSelect = (option) => {
@@ -41,8 +42,27 @@ const MultiSelectDropdown = ({
     option.label.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Close dropdown on outside click
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  // Add event listener to close dropdown on outside click
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="multi-select-dropdown">
+    <div className="multi-select-dropdown" ref={dropdownRef}>
       <div className="select-header" onClick={handleToggle}>
         <span className="selection-container">
           {selectedValues.length > 0

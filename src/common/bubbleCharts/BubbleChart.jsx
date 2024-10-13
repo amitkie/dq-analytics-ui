@@ -74,7 +74,6 @@
 //     };
 
 //     function calculateTheDiameter(data) {
-//       // console.log(data / 100);
 //       return data / 100;
 //     }
 //     const series = [

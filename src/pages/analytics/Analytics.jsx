@@ -38,6 +38,7 @@ import {
   getAllCategoriesByBrandIds,
   getAllMetricsByPlatformId,
   getAllMetricsDefinition,
+  getAllPlatformsBySectionIds,
 } from "../../services/userService";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import { createProject } from "../../services/projectService";
@@ -90,7 +91,7 @@ export default function Analytics() {
 
   const [filterMetrics, setFilterMetrics] = useState([]);
   const [selectedFilterMetrics, setSelectedFilterMetrics] = useState([]);
-  
+
   const [metricsDesc, setMetricsDesc] = useState([]);
 
 
@@ -325,10 +326,10 @@ export default function Analytics() {
 
   const handleSelectAll = async (e, type) => {
     const isChecked = e.target.checked;
-    
+
     const batchSize = 10;
     let updatedMetrics = [];
-  
+
     // Function to process metrics in batches
     const processBatch = async (batch) => {
       const results = await Promise.all(
@@ -344,7 +345,7 @@ export default function Analytics() {
               start_date: projectDetails?.start_date,
               end_date: projectDetails?.end_date,
             };
-  
+
             try {
               const benchmarks = await getBenchamarkValues(reqPayload);
               if (type === "overall") {
@@ -386,24 +387,24 @@ export default function Analytics() {
       );
       return results;
     };
-  
+
     // Process metrics in chunks of 10
     for (let i = 0; i < metrics.length; i += batchSize) {
       const batch = metrics.slice(i, i + batchSize);
       const batchResults = await processBatch(batch);
       updatedMetrics = [...updatedMetrics, ...batchResults];
     }
-  
+
     setMetrics(updatedMetrics);
   };
-  
+
 
   // const handleSelectAll = async (e, type) => {
   //   const isChecked = e.target.checked;
-  
+
   //   const batchSize = 10; // Set the batch size to 10
   //   let updatedMetrics = [];
-  
+
   //   // Function to process metrics in batches
   //   const processBatch = async (batch) => {
   //     const results = await Promise.all(
@@ -419,10 +420,10 @@ export default function Analytics() {
   //             start_date: projectDetails?.start_date,
   //             end_date: projectDetails?.end_date,
   //           };
-  
+
   //           try {
   //             const benchmarks = await getBenchamarkValues(reqPayload);
-  
+
   //             if (type === "overall") {
   //               return {
   //                 ...metric,
@@ -456,21 +457,21 @@ export default function Analytics() {
   //     );
   //     return results;
   //   };
-  
+
   //   // Process metrics in chunks of 10
   //   for (let i = 0; i < metrics.length; i += batchSize) {
   //     const batch = metrics.slice(i, i + batchSize);
   //     const batchResults = await processBatch(batch);
   //     updatedMetrics = [...updatedMetrics, ...batchResults];
   //   }
-  
+
   //   setMetrics(updatedMetrics);
   // };
-  
+
 
 
   const handleWeightChange = (metricId, value) => {
-  
+
     const newWeights = { ...weights, [metricId]: Number(value) };
 
     const totalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
@@ -506,12 +507,11 @@ export default function Analytics() {
     try {
       const response = await getProjectDetailsByProjectId(id);
       setProjectDetails(response?.project);
-      if(response?.project?.is_benchmark_saved){
-        fetchComparedValue(projectId);
-        fetchDQScoreValue(projectId);
-        setDQScoreLoading(true);
-        fetchKPIScores();
-      }
+      const { uniqueCategoriesArray, uniqueSectionsArray, uniquePlatformsArray, uniqueMetricsArray } = extractUniqueValues(response?.project?.metrics);
+      setFilterCategories(uniqueCategoriesArray);
+      setFilterSection(uniqueSectionsArray);
+      setFilterPlatforms(uniquePlatformsArray);
+      setFilterMetrics(uniqueMetricsArray)
       setMetrics(() => {
         if (response?.project?.metrics && response?.project?.metrics?.length > 0) {
 
@@ -534,6 +534,19 @@ export default function Analytics() {
           return acc;
         }, {}) || {}
       );
+      if (response?.project?.is_benchmark_saved) {
+        const compareNormalizeValue = await fetchComparedValue(id);
+        const dqScoreValueResponse = await fetchDQScoreValue(id);
+        if (compareNormalizeValue && dqScoreValueResponse) {
+          setComparisonData(compareNormalizeValue);
+          setDQScoreValue(dqScoreValueResponse);
+        }
+        setDQScoreLoading(true);
+        fetchKPIScores();
+
+        return { compareNormalizeValue, dqScoreValueResponse }
+      }
+
     } catch (error) {
       console.error("Error fetching project details:", error);
     }
@@ -548,16 +561,16 @@ export default function Analytics() {
 
     try {
       const compareNormalizeValue = await getNormalizedValues(requestPayload);
-      console.log(compareNormalizeValue, 'compareNormalizeValue')
       if (compareNormalizeValue) {
 
         setComparisonData(compareNormalizeValue)
         const uniqueData = transformComparisonViewApiData(compareNormalizeValue);
-        console.log('uniqueData',uniqueData )
         const uniqueComparisonBrandNames = Array.from(new Set(compareNormalizeValue.map(item => item.brandName)));
         setUniqueComparisonBrandName(uniqueComparisonBrandNames);
         setNormalizedValue(uniqueData);
       }
+
+      return compareNormalizeValue;
 
     } catch (error) {
       console.error("Error in Fetching Data:", error);
@@ -566,57 +579,57 @@ export default function Analytics() {
 
   const transformComparisonViewApiData = (data) => {
 
-      const transformedData = {};
-  
-      data?.forEach(item => {
-          const {sectionName, platformName, metricName, brandName, normalized, benchmarkValue, percentile } = item;
-  
+    const transformedData = {};
 
-        // Initialize section level
-        if (!transformedData[sectionName]) {
-            transformedData[sectionName] = {};
-        }
+    data?.forEach(item => {
+      const { sectionName, platformName, metricName, brandName, normalized, benchmarkValue, percentile } = item;
 
-        // Initialize platform level under the section
-        if (!transformedData[sectionName][platformName]) {
-            transformedData[sectionName][platformName] = {};
-        }
 
-        // Initialize metric level under the platform
-        if (!transformedData[sectionName][platformName][metricName]) {
-            transformedData[sectionName][platformName][metricName] = {
-                platformName: platformName,
-                metricName: metricName,
-                brands: {}
-            };
-        }
-  
-          transformedData[sectionName][platformName][metricName].brands[brandName] = {
-            normalized,
-            benchmarkValue,
-            percentile
+      // Initialize section level
+      if (!transformedData[sectionName]) {
+        transformedData[sectionName] = {};
+      }
+
+      // Initialize platform level under the section
+      if (!transformedData[sectionName][platformName]) {
+        transformedData[sectionName][platformName] = {};
+      }
+
+      // Initialize metric level under the platform
+      if (!transformedData[sectionName][platformName][metricName]) {
+        transformedData[sectionName][platformName][metricName] = {
+          platformName: platformName,
+          metricName: metricName,
+          brands: {}
+        };
+      }
+
+      transformedData[sectionName][platformName][metricName].brands[brandName] = {
+        normalized,
+        benchmarkValue,
+        percentile
+      };
+    });
+
+    const result = [];
+    // Iterate over sections, platforms, and metrics to build the final result
+    Object.keys(transformedData).forEach(section => {
+      Object.keys(transformedData[section]).forEach(platform => {
+        Object.keys(transformedData[section][platform]).forEach(metric => {
+          const row = {
+            sectionName: section,
+            platformName: platform,
+            metricName: metric,
+            ...transformedData[section][platform][metric].brands
           };
+          result.push(row);
+        });
       });
-  
-      const result = [];
-      // Iterate over sections, platforms, and metrics to build the final result
-        Object.keys(transformedData).forEach(section => {
-          Object.keys(transformedData[section]).forEach(platform => {
-              Object.keys(transformedData[section][platform]).forEach(metric => {
-                  const row = {
-                      sectionName: section,
-                      platformName: platform,
-                      metricName: metric,
-                      ...transformedData[section][platform][metric].brands
-                  };
-                  result.push(row);
-              });
-          });
-      });
-  
-      return result;
+    });
+
+    return result;
   };
-  
+
 
   async function fetchDQScoreValue(id) {
     const project_id = id;
@@ -627,45 +640,44 @@ export default function Analytics() {
 
     try {
       const dqScoreValueResponse = await getDQScore(requestPayload);
-      if(dqScoreValueResponse){
-        console.log("DQ SCORE______", dqScoreValueResponse);
+      if (dqScoreValueResponse) {
         setDQScoreLoading(false);
         setDQScoreValue(dqScoreValueResponse?.data);
       }
+      return dqScoreValueResponse?.data;
     } catch (error) {
       setDQScoreLoading(false);
       console.error("Error in Fetching Data:", error);
     }
   }
 
-  const removeMetricsFromDB = async(metricid,metricname) => {
-   try {
-     const response = await removeMetricFromProject(projectId, metricid);
-     if(response){
-       
-      alert(`${metricname} removed successfully!!`)
-      fetchProjectDetails(projectId);
-     }
-    
-   } catch (error) {
-    alert(`Failed to remove ${metricname}!!`)
-   }
+  const removeMetricsFromDB = async (metricid, metricname) => {
+    try {
+      const response = await removeMetricFromProject(projectId, metricid);
+      if (response) {
+
+        alert(`${metricname} removed successfully!!`)
+        fetchProjectDetails(projectId);
+      }
+
+    } catch (error) {
+      alert(`Failed to remove ${metricname}!!`)
+    }
   }
   const fetchKPIScores = async () => {
-  
+
     const data = {
-      platform: Array.from(new Set(metrics?.map((metric) => metric.platform?.name))) ,
-      metrics: Array.from(new Set( metrics?.map((metric) => metric.metric_name))),
+      platform: Array.from(new Set(metrics?.map((metric) => metric.platform?.name))),
+      metrics: Array.from(new Set(metrics?.map((metric) => metric.metric_name))),
       brand: projectDetails?.brands,
       analysis_type: "Overall",
       start_date: projectDetails?.start_date,
       end_date: projectDetails?.end_date,
     };
-  
+
     try {
       const kpiScores = await getKPIScoreValues(data);
-      console.log(kpiScores,'kpiScores')
-      if(kpiScores){
+      if (kpiScores) {
         setKpiData(kpiScores?.results || []);
       }
     } catch (error) {
@@ -676,16 +688,14 @@ export default function Analytics() {
     }
   };
 
-  const saveUserProjectDQScore = async () => {
-    console.log('setComparisonData', comparisonData);
-    console.log('setDQScoreValue', dqScoreValue);
+  const saveUserProjectDQScore = async (cmpData, dqVal) => {
+
     try {
-      const data = constructDQScorePayload(dqScoreValue,comparisonData);
+      const data = constructDQScorePayload(dqVal, cmpData);
       const projectDQScore = await createUserProjectDQScore(data);
-      if(projectDQScore){
-        console.log(projectDQScore);
+      if (projectDQScore) {
         alert("DQ Score is saved in DB.")
-        
+
       }
     } catch (error) {
       alert("Failed to save DQ score in DB.")
@@ -696,33 +706,33 @@ export default function Analytics() {
     const payload = [];
 
     dqScoreBasedOnBrandName.forEach(dqScore => {
-        // Find matching benchmark data for the brand
-        const brandBenchmarks = benchmarkValue?.filter(benchmark => benchmark?.brandName === dqScore?.Brand_Name);
+      // Find matching benchmark data for the brand
+      const brandBenchmarks = benchmarkValue?.filter(benchmark => benchmark?.brandName === dqScore?.Brand_Name);
 
-        // For each section in the benchmark value, create a payload object
-        brandBenchmarks.forEach(benchmark => {
-            const scoreData = {
-                user_id: userInfo?.user?.id, 
-                project_id: benchmark.project_id,
-                brand_id: benchmark.brand_ids,
-                brand_name: dqScore.Brand_Name,
-                section_name: benchmark.sectionName,
-                section_id: benchmark.sectionid,
-                category_id: benchmark.categoryid,
-                category_name: benchmark.categoryName,
-                dq: dqScore.Overall_Final_Score,
-                ecom_dq: dqScore.Ecom,
-                social_dq: dqScore.Social,
-                paid_dq: dqScore.Paid,
-                brand_perf_dq: dqScore["Brand Perf"]
-            };
+      // For each section in the benchmark value, create a payload object
+      brandBenchmarks.forEach(benchmark => {
+        const scoreData = {
+          user_id: userInfo?.user?.id,
+          project_id: benchmark.project_id,
+          brand_id: benchmark.brand_ids,
+          brand_name: dqScore.Brand_Name,
+          section_name: benchmark.sectionName,
+          section_id: benchmark.sectionid,
+          category_id: benchmark.categoryid,
+          category_name: benchmark.categoryName,
+          dq: dqScore.Overall_Final_Score,
+          ecom_dq: dqScore.Ecom,
+          social_dq: dqScore.Social,
+          paid_dq: dqScore.Paid,
+          brand_perf_dq: dqScore["Brand Perf"]
+        };
 
-            payload.push(scoreData);
-        });
+        payload.push(scoreData);
+      });
     });
 
     return payload;
-};
+  };
 
 
   useEffect(() => {
@@ -732,98 +742,55 @@ export default function Analytics() {
       fetchProjectDetails(projectId);
     }
 
-    const fetchData = async () => {
-      try {
-        const categoriesData = await getAllCategories();
-        setFilterCategories(
-          categoriesData.data.map((cat) => ({
-            value: cat.id,
-            label: cat.name,
-          }))
-        );
-
-        const platformsData = await getAllPlatforms();
-        setFilterPlatforms(
-          platformsData.data.map((platform) => ({
-            value: platform.id,
-            label: platform.name,
-          }))
-        );
-        // const frequenciesData = await getAllFrequencies();
-        // setFrequencies(
-        //   frequenciesData.data.map((freq) => ({
-        //     value: freq.id,
-        //     label: freq.name,
-        //   }))
-        // );
-        // Change the Name of metrics it is already in use
-        const metricsData = await getAllMetrics();
-        setFilterMetrics(
-          metricsData.data.map((metric) => ({
-            value: metric.id,
-            label: metric.name,
-          }))
-        );
-        
-        //get all sections
-        const sectionsData = await getAllSections();
-        // Create a Map to store unique names with their corresponding section_id
-        const uniqueSectionsMap = new Map();
-
-        // Loop through the sectionsData to populate the Map
-        sectionsData.data.forEach((metric) => {
-          if (!uniqueSectionsMap.has(metric.name)) {
-            uniqueSectionsMap.set(metric.name, metric.section_id);
-          }
-        });
-
-        // Convert the Map to an array of unique sections and set the state
-        setFilterSection(
-          Array.from(uniqueSectionsMap).map(([name, section_id]) => ({
-            value: section_id,
-            label: name,
-          }))
-        );
-        // setFilterSection(
-        //   sectionsData.data.map((metric) => ({
-        //     value: metric.section_id,
-        //     label: metric.name,
-        //   }))
-        // );
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-
   }, [projectId]);
 
-  useEffect(() => {
-     fetchMetricsDefinition();
-  }, [])
+  function extractUniqueValues(data) {
+    const sectionsArray = data?.map(metric => ({
+      value: metric?.section?.id,
+      label: metric?.section?.name
+    }));
 
-  // Function to call the API and set the state
-      const fetchMetricsDefinition = async (platformName) => {
-        try {
+    const platformsArray = data?.map(metric => ({
+      value: metric?.platform?.id,
+      label: metric?.platform?.name
+    }));
 
-          const selectedPlatform = setFilterPlatforms.find(
-            (platform) => platform.name === platformName // Match platformName
-          );
-          const metricsDescData = await getAllMetricsDefinition(selectedPlatform); // Pass the platform name here
+    const categoriesArray = data?.flatMap(metric =>
+      metric.categories.map(category => ({
+        value: category?.id,
+        label: category?.name
+      }))
+    );
 
-          // Map the response data to the desired format
-          setMetricsDesc(
-            metricsDescData.map((metricDet) => ({
-              value: metricDet.id,    // Map the 'id' to 'value'
-              label: metricDet.name,  // Map the 'name' to 'label'
-            }))
-          );
-          console.log('metricsDescData', metricsDescData)
-        } catch (error) {
-          console.error('Error while fetching or mapping metrics data:', error);
-        }
-      };
+    const metricsArray = data?.map(metric => ({
+      value: metric?.metric_id,
+      label: metric?.metric_name
+    }));
+
+    const uniqueSectionsArray = [...new Map(sectionsArray?.map(item => [item.label, item])).values()];
+    const uniquePlatformsArray = [...new Map(platformsArray?.map(item => [item.label, item])).values()];
+    const uniqueCategoriesArray = [...new Map(categoriesArray?.map(item => [item.label, item])).values()];
+    const uniqueMetricsArray = [...new Map(metricsArray?.map(item => [item.label, item])).values()];
+
+    return {
+      uniqueSectionsArray: uniqueSectionsArray,
+      uniquePlatformsArray: uniquePlatformsArray,
+      uniqueCategoriesArray: uniqueCategoriesArray,
+      uniqueMetricsArray: uniqueMetricsArray
+    };
+
+  }
+
+  const fetchMetricsDefinition = async (metric_name, platform_name) => {
+    try {
+      const metricsDescData = await getAllMetricsDefinition(metric_name, platform_name); // Pass the platform name here
+      if (metricsDescData) {
+        setMetricsDesc(metricsDescData?.definition)
+      }
+    } catch (error) {
+      console.error('Error while fetching or mapping metrics data:', error);
+    }
+  };
 
   const handleFilterCategory = async (selectedOptions) => {
     setSelectedFilterCategories(selectedOptions);
@@ -836,43 +803,73 @@ export default function Analytics() {
     }
   };
 
-  const handleSelectedPlatforms = async (selectedOptions) => {
-    setSelectedFilterPlatforms(selectedOptions);
-    if (selectedOptions.length > 0) {
-      try {
-        const platformsFiltered = selectedOptions.map((option) => option.value)
-      }catch (error) {
-        console.error("Error fetching platforms:", error);
-      }
-    }
-  };
-
   const handleSelectedSection = async (selectedOptions) => {
-    setSelectedFilterSection(selectedOptions);
-    if (selectedOptions.length > 0) {
-      try {
-        const sectionFiltered = selectedOptions.map((option) => option.value)
-      }catch (error) {
-        console.error("Error fetching platforms:", error);
-      }
+    try {
+      setSelectedFilterSection(selectedOptions);
+
+      const existingValues = selectedOptions.map((option) => option.value);
+  
+      const platformsIDs = await getAllPlatformsBySectionIds(existingValues);
+  
+      const filteredPlatforms = platformsIDs?.data 
+        .map(sec => ({
+          value: sec.platformId,
+          label: sec.platformName,
+        }));
+  
+      setFilterPlatforms(prevPlatforms => {  
+        return [
+          ...filteredPlatforms 
+        ];
+      });
+  
+  
+    } catch (error) {
+      console.error("Error fetching sections:", error);
     }
   };
 
-  const handleSelectedMetrics = async (selectedOptions) => {
-    setSelectedFilterMetrics(selectedOptions);
-    if (selectedOptions.length > 0) {
-      try {
-        const metricsFiltered = selectedOptions.map((option) => option.value)
-      }catch (error) {
-        console.error("Error fetching platforms:", error);
-      }
+  const handleSelectedPlatforms = async (selectedOptions) => {
+    try {
+      setSelectedFilterPlatforms(selectedOptions);
+
+      const existingValues = selectedOptions.map((option) => option.value);
+  
+      const metricsData = await getAllMetricsByPlatformId(existingValues);
+  
+      const filteredMetrics = metricsData?.data 
+        .map(metric => ({
+          value: metric.id,
+          label: metric.name,
+        }));
+  
+      setFilterMetrics(prevFilteredMetrics => {  
+        return [
+          ...filteredMetrics 
+        ];
+      });
+  
+  
+    } catch (error) {
+      console.error("Error fetching sections:", error);
     }
   };
+  
+  
+  const handleSelectedMetrics = async (selectedOptions) => {
+    try {
+      const existingValues = selectedOptions.map((option) => option.value);
+      setSelectedFilterMetrics(selectedOptions)
+    
+    } catch (error) {
+      console.error("Error fetching metrics:", error);
+    }
+  };
+  
 
 
   // const saveWeights = async () => {
   //   const saveMetricsPayload = generateApiPayload(metrics);
-  //   console.log('saveMetricsPayload', saveMetricsPayload)
 
   //   try {
   //     const response = await saveMetricsOfProject(saveMetricsPayload);
@@ -885,7 +882,6 @@ export default function Analytics() {
   //         fetchDQScoreValue(projectId);
   //         fetchKPIScores();
   //         saveUserProjectDQScore();
-  //         console.log("saveWeights", response)
   //       }
   //     }
 
@@ -901,20 +897,17 @@ export default function Analytics() {
 
   const saveWeights = async () => {
     const saveMetricsPayload = generateApiPayload(metrics);
-    console.log('saveMetricsPayload', saveMetricsPayload);
-  
+
     try {
       const response = await saveMetricsOfProject(saveMetricsPayload);
       if (response && response.status === 'success') {
         alert('Weights saved successfully!');
-          const data = await fetchProjectDetails(projectId);
-          console.log(data)
-  
-        if(comparisonData.length > 0 && dqScoreValue.length > 0){
-          saveUserProjectDQScore();
+        const data = await fetchProjectDetails(projectId);
+        if (data?.compareNormalizeValue?.length > 0 && data?.dqScoreValueResponse.length > 0) {
+          // Only save the user project DQ score if both conditions are met
+          await saveUserProjectDQScore(data?.compareNormalizeValue, data?.dqScoreValueResponse);
         }
-  
-        console.log("saveWeights", response);
+
       }
     } catch (error) {
       if (
@@ -928,26 +921,20 @@ export default function Analytics() {
       }
     }
   };
-  
+
 
   const generateApiPayload = (metrics) => {
-    const project_id = projectId;   // Example project ID
+    const project_id = projectId;  
 
     return metrics?.map(metric => {
       const categoryIds = metric?.categories?.map(category => category?.id) || [];
 
-      // Iterate over categories and match the benchmark data
       const benchmarkData = metric?.categories?.map(category => {
-        // Find the benchmark that matches the current category
+       
         const matchedBenchmark = metric?.benchmark?.find(bm =>
           bm?.categories?.includes(category?.name) || bm?.category === "Overall"
-        ) || {};  // Handle missing benchmark
+        ) || {}; 
 
-        console.log(matchedBenchmark, 'matchedBenchmark 1')
-        console.log(matchedBenchmark?.actualValue?.[metric?.brands?.[0]?.name], 'matchedBenchmark 2')
-        console.log(matchedBenchmark?.actualValue, 'matchedBenchmark 3')
-
-        // Check if the metric is marked as "Overall" or "Category Based"
         if (metric?.isOverallChecked) {
           return {
             categoryId: category?.id,
@@ -990,7 +977,6 @@ export default function Analytics() {
   };
 
   const checkAllMetricsCheckboxSelected = () => {
-    console.log(metrics, 'cmmmcmmcmmcmcmmcmmc')
     if (metrics.length > 0) {
       return metrics.every(item => item.isOverallChecked || item.isCategoryBasedChecked);
     }
@@ -1007,31 +993,25 @@ export default function Analytics() {
   };
 
   const generateExcel = (dqScoreData, kpiData, comparisionData) => {
-    const workbook = XLSX.utils.book_new(); // Create a new workbook
+    const workbook = XLSX.utils.book_new(); 
 
-    // 2. Convert data to a worksheet
     const worksheet1 = XLSX.utils.json_to_sheet(dqScoreData);
     const worksheet2 = XLSX.utils.json_to_sheet(kpiData);
     const worksheet3 = XLSX.utils.json_to_sheet(comparisionData);
 
-    // 3. Append the worksheet to the workbook
     XLSX.utils.book_append_sheet(workbook, worksheet1, "DQ Score")
     XLSX.utils.book_append_sheet(workbook, worksheet2, "KPI Score")
     XLSX.utils.book_append_sheet(workbook, worksheet3, "Comparision View")
 
-    // Write the Excel file to disk
     XLSX.writeFile(workbook, "Analytics.xlsx");
   };
-  
-  // Helper function to format data into array of arrays (AOA) format
+
   const formatToAOA = (data) => {
-    // If data is already in the correct format, return it as is.
-    // Otherwise, you may need to transform the object into an array of arrays.
     return Array.isArray(data) ? data : Object.entries(data);
   };
 
 
- 
+
   const tabs = [
     {
       label: "Weights and Benchmark",
@@ -1048,6 +1028,9 @@ export default function Analytics() {
             handleWeightChange={handleWeightChange}
             removeMetricsFromDB={removeMetricsFromDB}
             isBenchmarkSaved={projectDetails?.is_benchmark_saved}
+            selectedSections={selectedFilterSection}
+            selectedPlatforms={selectedfilterPlatforms}
+            selectedMetrics={selectedFilterMetrics}
           />
           <div className="row">
             <div className="col12">
@@ -1070,7 +1053,7 @@ export default function Analytics() {
       disabled: "disabled",
       content: (
         <div>
-          <ScoreCard dqScoreValue={dqScoreValue} dqScoreLoading={dqScoreLoading}/>
+          <ScoreCard dqScoreValue={dqScoreValue} dqScoreLoading={dqScoreLoading} />
           {/* <ScoreCard dqScoreValue={dqScoreValue.filter((item) => item.includes(handleCategoryChange))} /> */}
         </div>
       ),
@@ -1093,7 +1076,7 @@ export default function Analytics() {
           getColor={getColor}
           getColorScore={getColorScore}
         />
-       
+
       ),
     },
     {
@@ -1122,48 +1105,52 @@ export default function Analytics() {
             <li> Brand Pref</li>
           </ul>
           {normalizedValue?.length > 0 ? (
-          <Table responsive striped bordered className="insights-table">
-            <thead>
-              <tr>
-                <th>Section</th>
-                <th>Platform</th>
-                <th>Metric</th>
+            <Table responsive striped bordered className="insights-table">
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Platform</th>
+                  <th>Metric</th>
                   {uniqueComparisonBrandName?.sort((a, b) => a.localeCompare(b)).map(brand => (
-                      <th key={brand}>{brand}</th>
+                    <th key={brand}>{brand}</th>
                   ))}
                   {/* {uniqueComparisonBrandName?.map(brand => (
                     <th key={brand}>{brand}</th>
                   ))} */}
-              </tr>
-            </thead>
-            <tbody>
+                </tr>
+              </thead>
+              <tbody>
                 {normalizedValue?.map((row, index) => (
-                    <tr key={index}>
-                        <td><span
-                          style={{
-                            display: 'inline-block',
-                            width: '10px',
-                            height: '10px',
-                            borderRadius: '50%',
-                            backgroundColor: getColor(row?.sectionName),
-                            marginRight: '5px',
-                          }}
-                        
-                        ></span>{row?.sectionName}</td>
-                        <td>{row?.platformName} </td>
-                        <td><div className="metric-name">{row?.metricName} <FaInfo className="info-icon" /></div></td>
-                        {/* {row} */}
-                        {uniqueComparisonBrandName?.map(brand => (
-                            <td  key={brand} 
-                            title={`Benchmark Value: ${row[brand]?.benchmarkValue || 'N/A'}\nPercentile: ${row[brand]?.percentile || 'N/A'}`}
-                            >
-                              {row[brand]?.normalized || "-"}
-                            </td>
-                        ))}
-                    </tr>
+                  <tr key={index}>
+                    <td><span
+                      style={{
+                        display: 'inline-block',
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        backgroundColor: getColor(row?.sectionName),
+                        marginRight: '5px',
+                      }}
+
+                    ></span>{row?.sectionName}</td>
+                    <td>{row?.platformName} </td>
+                    <td><div className="metric-name">{row?.metricName}
+                      <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricName, row?.platformName)} />
+                      <span>{metricsDesc}</span>
+                    </div>
+                    </td>
+                    {/* {row} */}
+                    {uniqueComparisonBrandName?.map(brand => (
+                      <td key={brand}
+                        title={`Benchmark Value: ${row[brand]?.benchmarkValue || 'N/A'}\nPercentile: ${row[brand]?.percentile || 'N/A'}`}
+                      >
+                        {row[brand]?.normalized || "-"}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-            </tbody>
-          </Table>
+              </tbody>
+            </Table>
           ) : (
             <div className="loader-container-sm">
               <div className="loader-sm"></div>
@@ -1183,7 +1170,7 @@ export default function Analytics() {
       disabled: "disabled",
       content: (
         <div>
-          <SuperThemes metrics={metrics} normalizedDQScoreValue={normalizedValue}/>
+          <SuperThemes metrics={metrics} normalizedDQScoreValue={normalizedValue} />
         </div>
       ),
     },
@@ -1212,7 +1199,7 @@ export default function Analytics() {
                     onChange={handleFilterCategory}
                     placeholder="Select Categories"
                   />
-                
+
                   <div className="export-btn">
                     <ButtonComponent
                       // disabled
@@ -1227,9 +1214,9 @@ export default function Analytics() {
           </div>
           <div className="row">
             <div className="col-12">
-               
+
               <div className="filter-options mb-3">
-              
+
                 <MultiSelectDropdown
                   options={filterSection}
                   selectedValues={selectedFilterSection}
@@ -1248,7 +1235,7 @@ export default function Analytics() {
                   onChange={handleSelectedMetrics}
                   placeholder="Select Metrics"
                 />
-                 
+
               </div>
             </div>
             <div className="col-12">
@@ -1298,7 +1285,7 @@ export default function Analytics() {
           />
         </Modal.Footer>
       </Modal> */}
-       
+
     </>
   );
 }

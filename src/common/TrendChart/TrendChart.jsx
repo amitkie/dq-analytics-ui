@@ -89,7 +89,6 @@
 //     };
 
 //     function calculateTheDiameter(data) {
-//       console.log(data / 100);
 //       return data / 100;
 //     }
 //     const series = [
@@ -156,7 +155,6 @@
 //     const seriesData = allBrands.map(brand => {
 //       const brandData = dqScoreValue.filter(item => item.Brand_Name === brand);
 
-//       console.log(brandData, "brandData");
 
 //       // Prepare data for Ecom/Brand Perf/Perf/DQ based on chartType
 //       let data;
@@ -177,14 +175,12 @@
 //           data = [];
 //       }
 
-//       console.log(data, "data");
 
 //       return {
 //         name: brand,
 //         data: data,
 //       };
 //     });
-//     console.log('series', seriesData);
 
 //     this.state = {
 //       options: {

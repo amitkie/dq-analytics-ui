@@ -18,9 +18,9 @@ const TabComponent = ({ tabs, className, disabled, tabColors=[], isBenchmarkData
         {tabs.map((tab, index) => (
           <li key={index} className={activeTab === index ? "active" : ""}>
             <button 
-            // className={index !== 0 && !isBenchmarkDataSaved ? "disabled-tab" : ""} 
+             className={index !== 0 && !isBenchmarkDataSaved ? "disabled-tab" : ""} 
              onClick={() => handleTabChange(index)}
-              // disabled={index !== 0 && !isBenchmarkDataSaved}
+             disabled={index !== 0 && !isBenchmarkDataSaved}
               >
               {tab.label}
             </button>

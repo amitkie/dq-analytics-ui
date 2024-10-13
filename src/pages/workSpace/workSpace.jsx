@@ -9,11 +9,13 @@ import Table from "react-bootstrap/Table";
 import {
   getAllBrands,
   getAllCategories,
+  getAllSections,
   getAllPlatforms,
   getAllMetrics,
   getAllFrequencies,
   getAllCategoriesByBrandIds,
   getAllMetricsByPlatformId,
+  getAllPlatformsBySectionIds,
 } from "../../services/userService";
 
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
@@ -37,12 +39,14 @@ import ModalComponent from "../../components/Modal/ModalComponent";
 export default function WorkSpace() {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [sections, setSections] = useState([]);
   const [platforms, setPlatforms] = useState([]);
   const [metrics, setMetrics] = useState([]);
   const [frequencies, setFrequencies] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+  const [selectedSections, setSelectedSections] = useState([]);
   const [selectedMetrics, setSelectedMetrics] = useState([]);
   const [selectedFrequencies, setSelectedFrequencies] = useState([]);
   const [isBrandsDisabled, setIsBrandsDisabled] = useState(true);
@@ -159,6 +163,18 @@ const handleEditProjectName = (id) => {
           }))
         );
 
+        const sectionsData = await getAllSections();
+        const uniqueSections = sectionsData.data.filter(
+          (section, index, self) => 
+            index === self.findIndex((s) => s.name === section.name)
+        );
+        setSections(
+          uniqueSections.map((section) => ({
+            value: section.id,
+            label: section.name,
+          }))
+        );
+
         const platformsData = await getAllPlatforms();
         setPlatforms(
           platformsData.data.map((platform) => ({
@@ -192,6 +208,7 @@ const handleEditProjectName = (id) => {
 
   const deleteProjectDetails = async (id) => {
     try {
+      setShowAlert(true);
       const project = await deleteProject(id);
       if(project){
         alert("Project Deleted Successfully.")
@@ -226,6 +243,25 @@ const handleEditProjectName = (id) => {
           brandsData.data.map((brand) => ({
             value: brand.id,
             label: brand.name,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    }
+  };
+
+  const handleSectionChange = async (selectedOptions) => {
+    setSelectedSections(selectedOptions);
+    if (selectedOptions.length > 0) {
+      try {
+        const sectionIDs = selectedOptions.map((option) => option.value);
+        const platformsIDs = await getAllPlatformsBySectionIds(sectionIDs);
+        console.log(platformsIDs, 'platformsIDs')
+        setPlatforms(
+          platformsIDs.data.map((sec) => ({
+            value: sec.platformId,
+            label: sec.platformName,
           }))
         );
       } catch (error) {
@@ -383,8 +419,8 @@ const handleEditProjectName = (id) => {
 
               <div className="select-options-container">
                 <small>*All fields are mandatory</small>
-                <div className="row mb-4 g-4">
-                  <div className="col-lg-4 col-md-6">
+                <div className="row mb-4 g-4 ws-container">
+                  <div className="col-lg-4 col-md-6 ws-select">
                     <MultiSelectDropdown
                       options={categories}
                       selectedValues={selectedCategories}
@@ -392,7 +428,7 @@ const handleEditProjectName = (id) => {
                       placeholder="Select Categories"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6">
+                  <div className="col-lg-4 col-md-6 ws-select">
                     <MultiSelectDropdown
                       options={brands}
                       selectedValues={selectedBrands}
@@ -401,7 +437,15 @@ const handleEditProjectName = (id) => {
                       isDisabled={isBrandsDisabled}
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6">
+                  <div className="col-lg-4 col-md-6 ws-select">
+                    <MultiSelectDropdown
+                      options={sections}
+                      selectedValues={selectedSections}
+                      onChange={handleSectionChange}
+                      placeholder="Select Section"
+                    />
+                  </div>
+                  <div className="col-lg-4 col-md-6 ws-select">
                     <MultiSelectDropdown
                       options={platforms}
                       selectedValues={selectedPlatforms}
@@ -409,7 +453,7 @@ const handleEditProjectName = (id) => {
                       placeholder="Select Platforms"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6">
+                  <div className="col-lg-4 col-md-6 ws-select">
                     <MultiSelectDropdown
                       options={metrics}
                       selectedValues={selectedMetrics}
@@ -418,19 +462,21 @@ const handleEditProjectName = (id) => {
                       isDisabled={isMetricsDisabled}
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6">
-                  <select 
-                    className="form-control-select" 
-                    onChange={handleFrequenciesChange} 
-                    selectedValues={selectedFrequencies}
-                  >
-                    <option value="">Select Frequencies</option>
-                    {frequencies?.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="col-lg-4 col-md-6 ws-select">
+                    <div className="select-frequency">
+                      <select 
+                        className="form-control-select" 
+                        onChange={handleFrequenciesChange} 
+                        selectedValues={selectedFrequencies}
+                      >
+                        <option value="">Select Frequencies</option>
+                        {frequencies?.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     {/* <MultiSelectDropdown
                       options={frequencies}
                       selectedValues={selectedFrequencies}
@@ -438,24 +484,80 @@ const handleEditProjectName = (id) => {
                       placeholder="Select Frequencies"
                     /> */}
                   </div>
-                  <div className="col-lg-4 col-md-6">
-                    <DateRangePicker
-                      
-                      initialSettings={{
-                        startDate: dateRange.startDate,
-                        endDate: dateRange.endDate,
-                         
-                      }}
-                      onApply={(e, picker) => handleDateRangeChange(picker)}
-                    >
-                      <input
-                        type="text"
-                        className="form-control col-4"
-                        placeholder="Select date"
-                      />
-                    </DateRangePicker>
+                  <div className="col-lg-4 col-md-6 ws-select">
+                    <div className="select-date">
+                      <DateRangePicker
+                        
+                        initialSettings={{
+                          startDate: dateRange.startDate,
+                          endDate: dateRange.endDate,
+                          
+                        }}
+                        onApply={(e, picker) => handleDateRangeChange(picker)}
+                      >
+                        <input
+                          type="text"
+                          className="form-control col-4"
+                          placeholder="Select date"
+                        />
+                      </DateRangePicker>
+                    </div>
                   </div>
 
+                </div>
+                <div className="row">
+                  <div className="col-12 ">
+                    <div className="result-container">
+
+                      <span className="selection-Details">Selected Options Details</span>
+                      <div className="selected-item-container">
+                        <div className="selected-list-items">
+                          <h5>Category</h5>
+                          <ul>
+                            {selectedCategories.map((category) => (
+                              <li key={category.value}>{category.label}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="selected-list-items">
+                          <h5>Brands</h5>
+                          {/* <ul>
+                            {selectedBrands.map((category) => (
+                              <li key={category.value}>{category.label}</li>
+                            ))}
+                          </ul> */}
+                          <p>{selectedBrands.length > 0 ? selectedBrands.length : " "}</p>
+                        </div>
+                        <div className="selected-list-items">
+                          <h5>Sections</h5>
+                          <ul>
+                            {selectedSections.map((category) => (
+                              <li key={category.value}>{category.label}</li>
+                            ))}
+                          </ul>
+                          {/* <p>{selectedSections.length > 0 ? selectedSections.length : " "}</p> */}
+                        </div>
+                        <div className="selected-list-items">
+                          <h5>Platforms</h5>
+                          {/* <ul>
+                            {selectedPlatforms.map((category) => (
+                              <li key={category.value}>{category.label}</li>
+                            ))}
+                          </ul> */}
+                          <p>{selectedPlatforms.length > 0 ? selectedPlatforms.length : " "}</p>
+                        </div>
+                        <div className="selected-list-items">
+                          <h5>Metrics</h5>
+                          {/* <ul>
+                            {selectedMetrics.map((category) => (
+                              <li key={category.value}>{category.label}</li>
+                            ))}
+                          </ul> */}
+                          <p>{selectedMetrics.length > 0 ? selectedMetrics.length : " "}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Modal.Body>
@@ -530,7 +632,7 @@ const handleEditProjectName = (id) => {
                         <MdOutlineEdit onClick={() => handleEditClick(item.id, item?.project_name)} className="action-item-icon" title="Edit"/>
                         <FaRegTrashCan onClick={() => deleteProjectDetails(item.id)} className="action-item-icon" title="Delete"/>
                         <VscGoToFile className="action-item-icon" title="Go to Insights" onClick={handleDeleteShow}/>
-                        {/* {showAlert && (
+                        {showAlert && (
                           <ModalComponent
                             ModalHeading={"Delete Confirmation"}
                             ModalContent={"Are you sure you want to delete this Project? <br /> This action cannot be undone."}
@@ -542,7 +644,7 @@ const handleEditProjectName = (id) => {
                               handleDeleteClose(); // Close modal after deleting
                             }}  // Perform delete on confirmation
                           />
-                        )} */}
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -550,17 +652,19 @@ const handleEditProjectName = (id) => {
                 {/* Add more rows as needed */}
               </tbody>
             </Table>
-            <ModalComponent
+            {/* <ModalComponent
                             ModalHeading={"Delete Confirmation"}
                             ModalContent={"Are you sure you want to delete this Project? <br /> This action cannot be undone."}
                             SecondaryBtnName={"Close"}
                             PrimaryBtnName={"Delete"}
+                            setShow={setShowAlert}
+                            show={showAlert}
                             onClose={handleDeleteClose}  // This function will close the modal
                             onConfirm={() => {
                               deleteProjectDetails(); // Perform delete action
                               handleDeleteClose(); // Close modal after deleting
                             }}  // Perform delete on confirmation
-                          />
+                          /> */}
           </div>
         </div>
       </div>

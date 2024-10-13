@@ -164,7 +164,7 @@ export const getBenchamarkValues = async (data) => {
 
   try {
     const response = await axios.post(
-      `https://dndrvx80-8011.inc1.devtunnels.ms/process_metric/`,
+      `https://hzz4tlcw-8016.inc1.devtunnels.ms/process_metric/`,
       data
     );
 
@@ -184,7 +184,7 @@ export const getBenchamarkValues = async (data) => {
 export const getKPIScoreValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://dndrvx80-8000.inc1.devtunnels.ms/analytics_metric/`,
+      `https://hzz4tlcw-8018.inc1.devtunnels.ms/analytics_metric/`,
       data
     );
 
@@ -203,7 +203,7 @@ export const getKPIScoreValues = async (data) => {
 export const getHealthCardDetails = async (data) => {
   try {
     const response = await axios.post(
-      `https://dndrvx80-8002.inc1.devtunnels.ms/health_card/`,
+      `https://hzz4tlcw-8017.inc1.devtunnels.ms/health_card/`,
       data
     );
 
@@ -223,7 +223,7 @@ export const getHealthCardDetails = async (data) => {
 export const getNormalizedValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8004.inc1.devtunnels.ms/normalized_value`,
+      `https://hzz4tlcw-8002.inc1.devtunnels.ms/normalized_value`,
       data
     );
 
@@ -242,7 +242,7 @@ export const getNormalizedValues = async (data) => {
 export const getDQScore = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8008.inc1.devtunnels.ms/get_data`,
+      `https://hzz4tlcw-8004.inc1.devtunnels.ms/get_data`,
       data
     );
 
@@ -261,7 +261,7 @@ export const getDQScore = async (data) => {
 export const getDQScoreMultipleProjects = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8014.inc1.devtunnels.ms/get_multi_data`,
+      `https://hzz4tlcw-8006.inc1.devtunnels.ms/get_multi_data`,
       data
     );
 
@@ -280,7 +280,7 @@ export const getDQScoreMultipleProjects = async (data) => {
 export const getBrandData = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8012.inc1.devtunnels.ms/get_brand_data`,
+      `https://hzz4tlcw-8008.inc1.devtunnels.ms/get_brand_data`,
       data
     );
 
@@ -299,7 +299,7 @@ export const getBrandData = async (data) => {
 export const getBrandImages = async (data) => {
   try {
 
-    let url = `https://dndrvx80-8013.inc1.devtunnels.ms/brand-images/${data}`;
+    let url = `https://hzz4tlcw-8019.inc1.devtunnels.ms/brand-images/${data}`;
     const response = await axios.get(url, { responseType: 'blob' });
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -315,7 +315,7 @@ export const getBrandImages = async (data) => {
 };
 export const getBrandDetailsData = async (data) => {
   try {
-    const url = `https://dndrvx80-8016.inc1.devtunnels.ms/brands/${data}`;
+    const url = `https://hzz4tlcw-8022.inc1.devtunnels.ms/brands/${data}`;
     const response = await axios.get(url);
 
     if (response.status !== 200) {

@@ -55,28 +55,27 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
   //   fetchKPIScores();
   // }, []);
 
-  useEffect(() => {
-    fetchBrandLogo();
-  }, [brand]);
+  // useEffect(() => {
+  //   fetchBrandLogo();
+  // }, [brand]);
 
   const fetchBrandLogo = async () => {
     setLoading(true);
     setError(null);
-    const sliceSize = 1;
-    const brandUrl = brandsToDisplay.map(brand => {
-      return brand;  
-    });
-
-    console.log(brandUrl, "brandUrl")
-    try {
-      const brandLogoDetails = await getBrandImages(brandsToDisplay.map(brand =>  brand));
   
-      if (brandLogoDetails) {
-        setBrandLogo(brandLogoDetails);
-        console.log("brandLogoDetails", brandLogoDetails);
-      } else {
-        setError("No Data Found");
-      }
+    try {
+    let arra = []
+    let newBrandLogoArray = brandsToDisplay.map(async (brand) => {
+        const brandLogoDetails = await getBrandImages(brand);
+        if (brandLogoDetails) {
+          arra.push(brandLogoDetails)
+          console.log("brandLogoDetails", brandLogoDetails);
+        } else {
+          setError("No Data Found");
+        }
+        return {brandName:brand, arra};
+      }) 
+      setBrandLogo(newBrandLogoArray);
     } catch (error) {
       setError("Error fetching brand images.");
       console.error(error);
@@ -84,6 +83,12 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
       setLoading(false);
     }
   };
+
+  const fetchImageOfBrand = async(brand) => {
+    const brandLogoDetails = await getBrandImages(brand);
+    console.log(brandLogoDetails, 'brandLogoDetails')
+    return brandLogoDetails;
+  }
 
   const renderTableBody = () => {
     if (!kpiData || kpiData?.length === 0) {
@@ -171,7 +176,9 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
             <th>Platform</th>
             <th>Metrics</th>
             {brandsToDisplay.sort((a, b) => a.localeCompare(b)).map((brandItem, index) => (
-              <th key={index}>{brandItem}</th>
+              <th key={index}> 
+              {/* <img src={fetchImageOfBrand(brandItem)}></img>  */}
+              {brandItem}</th>
             ))}
           </tr>
         </thead>

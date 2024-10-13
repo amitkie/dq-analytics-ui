@@ -177,6 +177,25 @@ export const getAllMetricsByPlatformId = async (platform_ids) => {
   }
 };
 
+export const getAllPlatformsBySectionIds = async (section_ids) => {
+  try {
+    const response = await axios.post(
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/master/get-all-platforms-by-section-id`, {section_ids}
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const metricsData = response.data;
+
+    return metricsData;
+  } catch (error) {
+    console.error("Error in login:", error);
+    throw error;
+  }
+};
+
 export const getAllBenchmarks = async () => {
   try {
     const response = await axios.get(
@@ -234,9 +253,9 @@ export const getUserAndPaymentInfo = async (id) => {
     throw error;
   }
 };
-export const getAllMetricsDefinition = async (platformName) => {
+export const getAllMetricsDefinition = async (metricName, platformName ) => {
   try {
-    const url = `https://dndrvx80-8014.inc1.devtunnels.ms/definition/?platform_name=${platformName}`;
+    const url = `https://hzz4tlcw-8021.inc1.devtunnels.ms/definition/?platform_name=${platformName}&metric_name=${metricName}`;
     const response = await axios.get(url);
 
     // Check if response is OK
