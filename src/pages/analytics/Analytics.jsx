@@ -540,9 +540,9 @@ export default function Analytics() {
         if (compareNormalizeValue && dqScoreValueResponse) {
           setComparisonData(compareNormalizeValue);
           setDQScoreValue(dqScoreValueResponse);
+          setDQScoreLoading(true);
+          fetchKPIScores(response?.project, response?.project?.metrics);
         }
-        setDQScoreLoading(true);
-        fetchKPIScores();
 
         return { compareNormalizeValue, dqScoreValueResponse }
       }
@@ -664,15 +664,16 @@ export default function Analytics() {
       alert(`Failed to remove ${metricname}!!`)
     }
   }
-  const fetchKPIScores = async () => {
-
+  const fetchKPIScores = async (projectdata, metricdata) => {
+    console.log(metrics, "checking metrics while setting kpi")
+    console.log(projectDetails, "checking metrics while setting kpi")
     const data = {
-      platform: Array.from(new Set(metrics?.map((metric) => metric.platform?.name))),
-      metrics: Array.from(new Set(metrics?.map((metric) => metric.metric_name))),
-      brand: projectDetails?.brands,
+      platform: Array.from(new Set(metricdata?.map((metric) => metric.platform?.name))),
+      metrics: Array.from(new Set(metricdata?.map((metric) => metric.metric_name))),
+      brand: projectdata?.brands,
       analysis_type: "Overall",
-      start_date: projectDetails?.start_date,
-      end_date: projectDetails?.end_date,
+      start_date: projectdata?.start_date,
+      end_date: projectdata?.end_date,
     };
 
     try {
@@ -985,7 +986,7 @@ export default function Analytics() {
 
   const handleExportAnalytics = () => {
     const dqScoreData = dqScoreValue;
-    const kpiData = metrics;
+    const kpiData = kpiData;
     const comparisionData = normalizedValue;
     if (dqScoreData.length > 0 || kpiData.length > 0 || comparisionData.length > 0) {
       generateExcel(dqScoreData, kpiData, comparisionData);
