@@ -2,8 +2,9 @@ import { Table } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import { getKPIScoreValues, getBrandImages } from "../../services/projectService";
+import { getAllMetricsDefinition } from "../../services/userService";
 import { useParams } from "react-router-dom";
-
+import { FaInfo } from "react-icons/fa";
 
 const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +17,9 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
   const [error, setError] = useState(null);
   const [brandLogo, setBrandLogo] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [showSelectedMetricDesc, setShowSelectedMetricDesc] = useState(null);
+  const [showMetricsDesc, setShowMetricsDesc] = useState([]);
 
   const brandsToDisplay = projectDetails?.brands?.slice(
     (currentPage - 1) * itemsPerPage,
@@ -90,6 +94,24 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
     return brandLogoDetails;
   }
 
+  const fetchMetricsDefinition = async (metric_name, platform_name) => {
+    try {
+      if (showSelectedMetricDesc === metric_name) {
+        setShowSelectedMetricDesc(null);  
+        setShowMetricsDesc('');  
+      } else {
+         const metricsDescData = await getAllMetricsDefinition(metric_name, platform_name);
+        if (metricsDescData) {
+          setShowMetricsDesc(metricsDescData?.definition);
+          setShowSelectedMetricDesc(metric_name); // Set the clicked metric as selected
+        }
+      }
+     
+    } catch (error) {
+      console.error('Error while fetching or mapping metrics data:', error);
+    }
+  };
+
   const renderTableBody = () => {
     if (!kpiData || kpiData?.length === 0) {
       return (
@@ -119,16 +141,22 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
         
         ></span>
           {metric?.section?.name}
-          {console.log(metric?.section?.name, 'metric?.section.name')}
+          {console.log( "backgroundColor: ", getColor(metric?.section?.name))}
           </td>
         <td>
-        <span
-        
-        ></span>
           {metric?.platform?.name}
-          {console.log(metric?.platform?.name, 'metric?.platform.name')}
           </td>
-        <td>{metric?.metric_name}</td>
+        <td>
+          <div className="metric-name">{metric?.metric_name}
+            <div className="metric-info">
+              <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(metric?.metric_name, metric?.platform?.name)} />
+              {showSelectedMetricDesc === metric?.metric_name && (
+                <span className="metric-desc">{showMetricsDesc}</span>
+              )}
+            </div>
+          </div>
+        </td>
+
         {brandsToDisplay?.map((brand, brandIndex) => {
           const resultData = kpiData?.find(
             (data) =>
@@ -158,10 +186,10 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
   return (
     <div>
       <ul class="legend">
-        <li> Ecom</li>
-        <li> Social</li>
-        <li> Paid</li>
-        <li> Brand Pref</li>
+        <li> Marketplace</li>
+        <li> Digital Spends</li>
+        <li> Socialwatch</li>
+        <li> Organic Performance</li>
       </ul>
       <Table
         responsive

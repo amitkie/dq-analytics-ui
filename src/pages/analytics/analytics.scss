@@ -24,6 +24,13 @@
   gap: 1rem;
   padding-top: 1rem;
 }
+.table-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+  gap: 10px;
+}
 .form-control.weights-input {
   width: 120px;
 }
@@ -52,6 +59,11 @@
   display: flex;
   align-items: center; 
   justify-content: center;
+  position: relative;
+}
+.metric-info {
+  display: flex;
+  position: relative;
 }
 .info-icon {
   display: flex;
@@ -65,7 +77,29 @@
   color: $primary-color;
   margin: 0 6px;
   cursor: pointer;
+  position: relative;
 }
+
+.metric-desc {
+  position: absolute;
+  display: block;
+  width: 250px;
+  padding: 8px 12px;
+  @include boxWithShadow();
+  top: 0;
+  left: 30px;
+  font-size: 13px;
+  color: #888;
+}
+
+.brand-category {
+  @include secondaryFont();
+  display: block;
+  font-size: 12px;
+  color: #999;
+  line-height: 1;
+}
+
 @media (max-width:767px) {
   .analytics-filter {
     flex-direction: column;

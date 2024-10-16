@@ -12,13 +12,35 @@ import { GiMultipleTargets } from "react-icons/gi";
 import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import HealthCardScore from "./HealthCardScore.jsx";
+import {getTop5Data, getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData, getProjectDetailsByUserId} from "../../services/projectService";
 
 import "./overview/HealthCardOverview.scss";
 import "./HealthCardReport.scss";
 
 const HealthCardReport = ({brandDetailData, brandImages}) => {
 
-
+  // const fetchBrandScoreDetails = async () => {
+  //   setLoading(true);
+  //   setError(null)
+  //   const requestPayload = {
+  //     "brand_name": brand,
+  //     "project_ids":["208"]
+  //   }  
+  //   try{
+  //     const brandScoreDetails = await getBrandData(requestPayload);
+  //     if(brandScoreDetails) {
+  //       setBrandDetailData(brandScoreDetails?.data)
+  //       console.log("brandScoreDetails", brandScoreDetails);
+  //     } else {
+  //       setError("No Data Found")
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching Brand Score data:", error);
+  //     setError("No data found"); // Set error message if API call fails
+  //   } finally {
+  //     setLoading(false); // End loading
+  //   }
+  // }
     function getColorScore(value, thresholds) {
         if (typeof value === "string") {
           return <span style={{ color: "#252627" }}>{value}</span>;

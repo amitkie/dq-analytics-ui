@@ -7,8 +7,14 @@ import { FaTimes } from "react-icons/fa";
 
 import "./SuperThemes.scss";
 import MultiSelectDropdown from "../MultiSelectDropdown/MultiSelectDropdown";
+import {
+  saveMetricGroup,
+  getMetricGroupNames,
+  saveMetricsThemeGroup,
+  getMetricThemeGroupNames
+} from "../../services/projectService";
 
-function SuperThemes({ metrics, normalizedValue }) {
+function SuperThemes({ metrics, normalizedValue, projectId }) {
   const [field, setField] = useState([]);
   const languages = [
     "Average ratings",
@@ -23,17 +29,26 @@ function SuperThemes({ metrics, normalizedValue }) {
     "CPC",
     "Purchases",
   ];
-  console.log(metrics, "metricsData");
-  console.log(normalizedValue, 'normalizedValue')
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [metricGroupName, setMetricGroupName] = useState("");
+  const [metricThemeGroupName, setMetricThemeGroupName] = useState("");
+
 
   const [uniqueSectionsBasedOnProjectId, setUniqueSectionsBasedOnProjectId] = useState([]);
   const [uniqueSelectedSectionsBasedOnProjectId, setSelectedUniqueSectionsBasedOnProjectId] = useState([]);
   const [uniquePlatformsBasedOnProjectId, setUniquePlatformsBasedOnProjectId] = useState([]);
   const [uniqueSelectedPlatformsBasedOnProjectId, setSelectedUniquePlatformsBasedOnProjectId] = useState([]);
+
   const [uniqueMetricsBasedOnProjectId, setUniqueMetricsBasedOnProjectId] = useState([]);
   const [uniqueSelectedMetricsBasedOnProjectId, setUniqueSelectedMetricsBasedOnProjectId] = useState([]);
+
+  const [uniqueMetricsBasedOnProjectThemeId, setUniqueMetricsBasedOnProjectThemeId] = useState([]);
+  const [uniqueSelectedMetricsThemeBasedOnProjectId, setUniqueSelectedMetricsThemeBasedOnProjectId] = useState([]);
+
+  const [metricAndMetricGroupId, setMetricAndMetricGroupId] = useState([]);
+  const [selectedMetricAndMetricGroupId, setSelectedMetricAndMetricGroupId] = useState([]);
+  const [metricThemeData, setMetricThemeData] = useState([]);
 
   useEffect(() => {
     if (metrics) {
@@ -69,7 +84,15 @@ function SuperThemes({ metrics, normalizedValue }) {
           return { label: mc.metric_name, value: mc.metric_id }
         })
       )
-
+      setUniqueMetricsBasedOnProjectThemeId(
+        () => metrics?.map((mc) => {
+          return { label: mc.metric_name, value: mc.metric_id }
+        })
+      )
+    }
+    if (projectId) {
+      fetchMetricGroupNames();
+      fetchMetricThemeGroupNames();
     }
 
 
@@ -84,6 +107,16 @@ function SuperThemes({ metrics, normalizedValue }) {
   const handleMetricChange = (selectedOptions) => {
     setUniqueSelectedMetricsBasedOnProjectId(selectedOptions)
   }
+  const handleMetricThemeChange = (selectedOptions) => {
+    setUniqueSelectedMetricsThemeBasedOnProjectId(selectedOptions)
+  }
+  const handleGroupMetricChange = (selectedOptions) => {
+    setSelectedMetricAndMetricGroupId(selectedOptions)
+  }
+  const handleMetricThemeGroupNameChange = (e) => {
+    setMetricThemeGroupName(e.target.value)
+  }
+
   const toggleLang = (option) => {
     if (selectedLanguages.includes(option)) {
       setSelectedLanguages(selectedLanguages.filter((item) => item !== option));
@@ -99,6 +132,84 @@ function SuperThemes({ metrics, normalizedValue }) {
   const handleDropdownToggle = (isOpen) => {
     setIsDropdownOpen(isOpen);
   };
+
+  const fetchMetricGroupNames = async () => {
+    try {
+      const metricGroupNamesResponse = await getMetricGroupNames(projectId);
+
+      if (metricGroupNamesResponse) {
+        console.log(metricGroupNamesResponse, 'metricGroupNamesResponse');
+
+        // Correctly map the values and labels and set the state
+        const metricGroups = metricGroupNamesResponse?.data?.map(gp => ({
+          value: gp?.id,
+          label: gp?.name
+        }));
+
+        // Set the metric groups in the state
+        setMetricAndMetricGroupId(metricGroups);
+      }
+    } catch (err) {
+      console.error('Error fetching metric group names:', err);
+    }
+  };
+  const fetchMetricThemeGroupNames = async () => {
+    try {
+      const metricGroupNamesResponse = await getMetricThemeGroupNames(projectId);
+
+      if (metricGroupNamesResponse) {
+        console.log(metricGroupNamesResponse, 'metricGroupNamesResponse');
+        setMetricThemeData(metricGroupNamesResponse?.data)
+      }
+    } catch (err) {
+      console.error('Error fetching metric group names:', err);
+    }
+  };
+
+
+  const saveMetricGroups = async () => {
+    const reqPayload = {
+      project_id: projectId,
+      metric_ids: uniqueSelectedMetricsBasedOnProjectId.map(mc => mc.value),
+      name: metricGroupName
+    }
+    console.log(reqPayload)
+    try {
+      const metricData = await saveMetricGroup(reqPayload);
+      if (metricData) {
+        console.log(metricData);
+        fetchMetricGroupNames();
+      }
+    } catch (err) {
+
+    }
+  }
+  const saveMetricsThemeGroups = async () => {
+    console.log(selectedMetricAndMetricGroupId)
+    const reqPayload = {
+      project_id: projectId,
+      metric_ids: uniqueSelectedMetricsThemeBasedOnProjectId?.map(mc => mc.value),
+      name: metricThemeGroupName,
+      metric_group_ids: selectedMetricAndMetricGroupId?.map(mgi => mgi?.value)
+
+    }
+    console.log(reqPayload)
+    try {
+      const metricData = await saveMetricsThemeGroup(reqPayload);
+      if (metricData) {
+        console.log(metricData);
+        fetchMetricGroupNames();
+      }
+    } catch (err) {
+
+    }
+  }
+
+  const handleMetricGroupNameChange = (e) => {
+    setMetricGroupName(e.target.value)
+  }
+
+
   return (
     <>
       <div className="row g-0">
@@ -141,23 +252,36 @@ function SuperThemes({ metrics, normalizedValue }) {
                 <fieldset>
                   <legend>Create Super Theme Group</legend>
                   <div class="theme-content">
-                    <label for="exampleFormControlInput1" class="form-label">
-                      Select Metrics/Group from list
+                    <label htmlFor="exampleFormControlInput1" class="form-label">
+                      Select Metrics from list
                     </label>
                     <MultiSelectDropdown
                       options={uniqueMetricsBasedOnProjectId}
-                      selectedValues={uniqueSelectedMetricsBasedOnProjectId}
-                      onChange={handleMetricChange}
+                      selectedValues={uniqueSelectedMetricsThemeBasedOnProjectId}
+                      onChange={handleMetricThemeChange}
                       placeholder="Select Metrics"
                     />
                   </div>
                   <div class="theme-content">
-                    <label for="exampleFormControlInput1" class="form-label">
+                    <label htmlFor="exampleFormControlInput1" class="form-label">
+                      Select Metrics Group from list
+                    </label>
+                    <MultiSelectDropdown
+                      options={metricAndMetricGroupId}
+                      selectedValues={selectedMetricAndMetricGroupId}
+                      onChange={handleGroupMetricChange}
+                      placeholder="Select Metrics Group"
+                    />
+                  </div>
+                  <div class="theme-content">
+                    <label htmlFor="exampleFormControlInput1" class="form-label">
                       Super Themes Group name
                     </label>
                     <input
-                      type="email"
+                      type="text"
                       class="form-control"
+                      value={metricThemeGroupName}
+                      onChange={handleMetricThemeGroupNameChange}
                       id="exampleFormControlInput1"
                       placeholder="CTR, ACOS, Purchases etc"
                     />
@@ -165,6 +289,7 @@ function SuperThemes({ metrics, normalizedValue }) {
                   <div class="theme-content">
                     <ButtonComponent
                       btnClass={"btn-primary"}
+                      onClick={saveMetricsThemeGroups}
                       btnName={"Save"}
                     />
                   </div>
@@ -176,8 +301,8 @@ function SuperThemes({ metrics, normalizedValue }) {
                 <fieldset>
                   <legend>Create Metric Group</legend>
                   <div class="theme-content">
-                    <label for="exampleFormControlInput1" class="form-label">
-                      Select Metrics/Group from list
+                    <label htmlFor="exampleFormControlInput1" class="form-label">
+                      Select Metrics from list
                     </label>
                     {/* <Dropdown
                       show={isDropdownOpen}
@@ -213,18 +338,20 @@ function SuperThemes({ metrics, normalizedValue }) {
                     </Dropdown> */}
 
                     <MultiSelectDropdown
-                      options={uniqueMetricsBasedOnProjectId}
+                      options={uniqueMetricsBasedOnProjectThemeId}
                       selectedValues={uniqueSelectedMetricsBasedOnProjectId}
                       onChange={handleMetricChange}
                       placeholder="Select Metrics"
                     />
                   </div>
                   <div class="theme-content">
-                    <label for="exampleFormControlInput1" class="form-label">
-                      Super Themes Group name
+                    <label htmlFor="exampleFormControlInput1" class="form-label">
+                      Metric Group name
                     </label>
                     <input
-                      type="email"
+                      type="text"
+                      value={metricGroupName}
+                      onChange={(e) => handleMetricGroupNameChange(e)}
                       class="form-control"
                       id="exampleFormControlInput1"
                       placeholder="CTR, ACOS, Purchases etc"
@@ -233,6 +360,7 @@ function SuperThemes({ metrics, normalizedValue }) {
                   <div class="theme-content">
                     <ButtonComponent
                       btnClass={"btn-primary"}
+                      onClick={saveMetricGroups}
                       btnName={"Save"}
                     />
                   </div>

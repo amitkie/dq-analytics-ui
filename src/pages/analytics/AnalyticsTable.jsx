@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { IoMdRemoveCircleOutline, IoMdAddCircleOutline } from "react-icons/io";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import ButtonComponent from "../../common/button/button";
+
+ import "./AnalyticsTable.scss";
 
 const AnalyticsTable = ({
   metrics = [],
@@ -82,6 +85,8 @@ const AnalyticsTable = ({
   }, {});
 
   return (
+    <>
+    
     <Table responsive striped bordered className="accordion-table">
       <thead>
         <tr>
@@ -209,6 +214,7 @@ const AnalyticsTable = ({
         ))}
       </tbody>
     </Table>
+    </>
   );
 };
 

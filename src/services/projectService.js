@@ -164,7 +164,7 @@ export const getBenchamarkValues = async (data) => {
 
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8016.inc1.devtunnels.ms/process_metric/`,
+      `https://hrsbjqs8-8024.inc1.devtunnels.ms/process_metric/`,
       data
     );
 
@@ -184,7 +184,7 @@ export const getBenchamarkValues = async (data) => {
 export const getKPIScoreValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8018.inc1.devtunnels.ms/analytics_metric/`,
+      `https://hrsbjqs8-8018.inc1.devtunnels.ms/analytics_metric/`,
       data
     );
 
@@ -203,7 +203,7 @@ export const getKPIScoreValues = async (data) => {
 export const getHealthCardDetails = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8017.inc1.devtunnels.ms/health_card/`,
+      `https://hrsbjqs8-8017.inc1.devtunnels.ms/health_card/`,
       data
     );
 
@@ -299,7 +299,7 @@ export const getBrandData = async (data) => {
 export const getBrandImages = async (data) => {
   try {
 
-    let url = `https://hzz4tlcw-8019.inc1.devtunnels.ms/brand-images/${data}`;
+    let url = `https://hrsbjqs8-8019.inc1.devtunnels.ms/brand-images/${data}`;
     const response = await axios.get(url, { responseType: 'blob' });
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -315,18 +315,18 @@ export const getBrandImages = async (data) => {
 };
 export const getBrandDetailsData = async (data) => {
   try {
-    const url = `https://hzz4tlcw-8022.inc1.devtunnels.ms/brands/${data}`;
+    const url = `https://hrsbjqs8-8022.inc1.devtunnels.ms/brands/${data}`;
     const response = await axios.get(url);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data); 
-    return response.data; 
+    console.log('Brand Details Data:', response.data);
+    return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
-    throw error; 
+    throw error;
   }
 };
 export const removeMetricFromProject = async (projectId, metricId) => {
@@ -338,11 +338,11 @@ export const removeMetricFromProject = async (projectId, metricId) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data); 
-    return response.data; 
+    console.log('Brand Details Data:', response.data);
+    return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
-    throw error; 
+    throw error;
   }
 };
 export const createUserProjectDQScore = async (data) => {
@@ -354,11 +354,100 @@ export const createUserProjectDQScore = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data); 
-    return response.data; 
+    console.log('Brand Details Data:', response.data);
+    return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
-    throw error; 
+    throw error;
+  }
+};
+
+export const saveMetricGroup = async (data) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-groups`;
+    const response = await axios.post(url, data);
+
+    if (response.status !== 201) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error;
+  }
+};
+
+
+export const getMetricGroupNames = async (projectId) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-groups/${projectId}`;
+    const response = await axios.get(url);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error;
+  }
+};
+
+export const saveMetricsThemeGroup = async (data) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-theme-groups`;
+    const response = await axios.post(url, data);
+
+    if (response.status !== 201) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error;
+  }
+};
+
+export const getMetricThemeGroupNames = async (projectId) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${projectId}`;
+    const response = await axios.get(url);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error;
+  }
+};
+
+export const getTop5Data = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hrsbjqs8-8023.inc1.devtunnels.ms/top_5/`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getTopFiveData = response.data;
+    console.log('getTopFiveData', getTopFiveData)
+    return getTopFiveData;
+  } catch (error) {
+    console.error("Error in fetching Top 5 data:", error);
+    throw error;
   }
 };
 

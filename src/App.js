@@ -1,4 +1,5 @@
 import { RouterProvider } from "react-router-dom";
+import 'zone.js';
 import router from "./routes/routes";
 import "/node_modules/bootstrap/dist/css/bootstrap.css";
 import "./assets/fonts/DroidSans-Bold-webfont.ttf";

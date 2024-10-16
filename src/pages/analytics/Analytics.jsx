@@ -43,6 +43,8 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import { createProject } from "../../services/projectService";
 import "./analytics.scss";
+import "./AnalyticsTable.scss";
+
 import AnalyticsTable from "./AnalyticsTable";
 import KPITable from "./KPITable";
 import { useParams } from "react-router-dom";
@@ -92,8 +94,10 @@ export default function Analytics() {
   const [filterMetrics, setFilterMetrics] = useState([]);
   const [selectedFilterMetrics, setSelectedFilterMetrics] = useState([]);
 
+  const [selectedMetricDesc, setSelectedMetricDesc] = useState(null);
   const [metricsDesc, setMetricsDesc] = useState([]);
 
+  const [brandCategoryMap, setBrandCategoryMap] = useState({})
 
   const columns = [
     {
@@ -134,13 +138,13 @@ export default function Analytics() {
 
   const getColor = (section) => {
     switch (section) {
-      case "Ecom":
+      case "Marketplace":
         return "#2A61DD";
-      case "Paid":
-        return "##279E70";
-      case "Social":
+      case "Digital Spends":
+        return "#279E70";
+      case "Socialwatch":
         return "#FF9800";
-      case "Brand Perf":
+      case "Organic Performance":
         return "#C82519";
       default:
         return "#000000";
@@ -561,13 +565,19 @@ export default function Analytics() {
 
     try {
       const compareNormalizeValue = await getNormalizedValues(requestPayload);
-      if (compareNormalizeValue) {
 
+      if (compareNormalizeValue) {
         setComparisonData(compareNormalizeValue)
+
         const uniqueData = transformComparisonViewApiData(compareNormalizeValue);
         const uniqueComparisonBrandNames = Array.from(new Set(compareNormalizeValue.map(item => item.brandName)));
+        const brandCategoryMap = compareNormalizeValue.reduce((acc, item) => {
+          acc[item.brandName] = item.categoryName;
+          return acc;
+        }, {});
         setUniqueComparisonBrandName(uniqueComparisonBrandNames);
         setNormalizedValue(uniqueData);
+        setBrandCategoryMap(brandCategoryMap);
       }
 
       return compareNormalizeValue;
@@ -784,10 +794,21 @@ export default function Analytics() {
 
   const fetchMetricsDefinition = async (metric_name, platform_name) => {
     try {
-      const metricsDescData = await getAllMetricsDefinition(metric_name, platform_name); // Pass the platform name here
-      if (metricsDescData) {
-        setMetricsDesc(metricsDescData?.definition)
+      if (selectedMetricDesc === metric_name) {
+        setSelectedMetricDesc(null);
+        setMetricsDesc('');
+      } else {
+        const metricsDescData = await getAllMetricsDefinition(metric_name, platform_name);
+        if (metricsDescData) {
+          setMetricsDesc(metricsDescData?.definition);
+          setSelectedMetricDesc(metric_name); // Set the clicked metric as selected
+        }
       }
+      // const metricsDescData = await getAllMetricsDefinition(metric_name, platform_name); // Pass the platform name here
+      // if (metricsDescData) {
+      //   setMetricsDesc(metricsDescData?.definition)
+      //   setSelectedMetricDesc(metric_name); 
+      // }
     } catch (error) {
       console.error('Error while fetching or mapping metrics data:', error);
     }
@@ -809,22 +830,22 @@ export default function Analytics() {
       setSelectedFilterSection(selectedOptions);
 
       const existingValues = selectedOptions.map((option) => option.value);
-  
+
       const platformsIDs = await getAllPlatformsBySectionIds(existingValues);
-  
-      const filteredPlatforms = platformsIDs?.data 
+
+      const filteredPlatforms = platformsIDs?.data
         .map(sec => ({
           value: sec.platformId,
           label: sec.platformName,
         }));
-  
-      setFilterPlatforms(prevPlatforms => {  
+
+      setFilterPlatforms(prevPlatforms => {
         return [
-          ...filteredPlatforms 
+          ...filteredPlatforms
         ];
       });
-  
-  
+
+
     } catch (error) {
       console.error("Error fetching sections:", error);
     }
@@ -835,36 +856,59 @@ export default function Analytics() {
       setSelectedFilterPlatforms(selectedOptions);
 
       const existingValues = selectedOptions.map((option) => option.value);
-  
+
       const metricsData = await getAllMetricsByPlatformId(existingValues);
-  
-      const filteredMetrics = metricsData?.data 
+
+      const filteredMetrics = metricsData?.data
         .map(metric => ({
           value: metric.id,
           label: metric.name,
         }));
-  
-      setFilterMetrics(prevFilteredMetrics => {  
+
+      setFilterMetrics(prevFilteredMetrics => {
         return [
-          ...filteredMetrics 
+          ...filteredMetrics
         ];
       });
-  
-  
+
+
     } catch (error) {
       console.error("Error fetching sections:", error);
     }
   };
-  
-  
+
+
   const handleSelectedMetrics = async (selectedOptions) => {
     try {
       const existingValues = selectedOptions.map((option) => option.value);
       setSelectedFilterMetrics(selectedOptions)
-    
+
     } catch (error) {
       console.error("Error fetching metrics:", error);
     }
+  };
+
+  const setWeightsValueToZero = () => {
+    const updatedWeights = metrics.reduce((acc, metric) => {
+      acc[metric.metric_id] = 0;
+      return acc;
+    }, {});
+    
+    setWeights(updatedWeights);
+    setTotalWeights(0);
+  };
+  
+  const resetWeightsValue = () => {
+    const defaultWeight = 100 / metrics.length;
+    const updatedWeights = metrics.reduce((acc, metric) => {
+      acc[metric.metric_id] = defaultWeight;
+      return acc;
+    }, {});
+  
+    const totalWeight = Object.values(updatedWeights).reduce((acc, curr) => acc + curr, 0);
+    
+    setWeights(updatedWeights);
+    setTotalWeights(totalWeight);
   };
   
 
@@ -925,16 +969,16 @@ export default function Analytics() {
 
 
   const generateApiPayload = (metrics) => {
-    const project_id = projectId;  
+    const project_id = projectId;
 
     return metrics?.map(metric => {
       const categoryIds = metric?.categories?.map(category => category?.id) || [];
 
       const benchmarkData = metric?.categories?.map(category => {
-       
+
         const matchedBenchmark = metric?.benchmark?.find(bm =>
           bm?.categories?.includes(category?.name) || bm?.category === "Overall"
-        ) || {}; 
+        ) || {};
 
         if (metric?.isOverallChecked) {
           return {
@@ -984,40 +1028,122 @@ export default function Analytics() {
     return false;
   };
 
+  // const handleExportAnalytics = () => {
+  //   const dqScoreData = dqScoreValue;
+  //   const kpiScoresData = kpiData;
+  //   const comparisionScoreData = normalizedValue;
+  //   console.log("kpiScoresData", kpiScoresData);
+  //   if (dqScoreData.length > 0 || kpiScoresData.length > 0 || comparisionScoreData.length > 0) {
+  //     generateExcel(dqScoreData, kpiScoresData, comparisionScoreData);
+  //   }
+  // };
+
+  // const generateExcel = (dqScoreData, kpiScoresData, comparisionScoreData) => {
+  //   const workbook = XLSX.utils.book_new(); 
+
+  //   const worksheet1 = XLSX.utils.json_to_sheet(dqScoreData);
+  //   const worksheet2 = XLSX.utils.json_to_sheet(kpiScoresData);
+  //   const worksheet3 = XLSX.utils.json_to_sheet(comparisionScoreData);
+
+  //   XLSX.utils.book_append_sheet(workbook, worksheet1, "DQ Score")
+  //   XLSX.utils.book_append_sheet(workbook, worksheet2, "KPI Score")
+  //   XLSX.utils.book_append_sheet(workbook, worksheet3, "Comparision View")
+
+  //   XLSX.writeFile(workbook, "Analytics.xlsx");
+  // };
+
+  // const formatToAOA = (data) => {
+  //   return Array.isArray(data) ? data : Object.entries(data);
+  // };
+
   const handleExportAnalytics = () => {
-    const dqScoreData = dqScoreValue;
-    const kpiData = kpiData;
-    const comparisionData = normalizedValue;
-    if (dqScoreData.length > 0 || kpiData.length > 0 || comparisionData.length > 0) {
-      generateExcel(dqScoreData, kpiData, comparisionData);
+    const dqScoreData = dqScoreValue; // Data for DQ Score
+    const kpiScoresData = kpiData; // Data for KPI Scores
+    const comparisonScoreData = normalizedValue; // Data for Comparison Scores
+
+
+    console.log('comparisonScoreData', comparisonScoreData);
+    // Restructure data to have metrics, platform, and section as rows and brands as column headers
+    // const dqStructuredData = restructureDataForBrandAsHeader(dqScoreData);
+    const kpiStructuredData = restructureDataForBrandAsHeader(kpiScoresData);
+    // const comparisonStructuredData = restructureDataForBrandAsHeader(comparisonScoreData);
+
+    // Check if any data exists before generating the Excel file
+    if (dqScoreData.length > 0 || kpiStructuredData.length > 0 || comparisonScoreData.length > 0) {
+      generateExcel(dqScoreData, kpiStructuredData, comparisonScoreData);
     }
   };
 
-  const generateExcel = (dqScoreData, kpiData, comparisionData) => {
-    const workbook = XLSX.utils.book_new(); 
+  // Function to restructure data with brands as column headers and other keys as row headers
+  const restructureDataForBrandAsHeader = (data) => {
+    if (!data || data.length === 0) return [];
 
-    const worksheet1 = XLSX.utils.json_to_sheet(dqScoreData);
-    const worksheet2 = XLSX.utils.json_to_sheet(kpiData);
-    const worksheet3 = XLSX.utils.json_to_sheet(comparisionData);
+    // Get unique metrics, platforms, and sections to form row headers
+    const rowHeaders = Array.from(new Set(data.map(item => `${item.section}-${item.platform}-${item.metric}`)));
 
-    XLSX.utils.book_append_sheet(workbook, worksheet1, "DQ Score")
-    XLSX.utils.book_append_sheet(workbook, worksheet2, "KPI Score")
-    XLSX.utils.book_append_sheet(workbook, worksheet3, "Comparision View")
+    // Get unique brand names for column headers
+    const brands = Array.from(new Set(data.map(item => item.brand)));
 
+    // Initialize the table with row headers and empty brand columns
+    const structuredData = rowHeaders.map(header => {
+      const [section, platform, metric] = header.split('-');
+      return [section, platform, metric, ...brands.map(() => '')]; // Empty cells for each brand initially
+    });
+
+    // Populate the brand-specific values for each row header
+    data.forEach(item => {
+      const rowIndex = rowHeaders.indexOf(`${item.section}-${item.platform}-${item.metric}`);
+      const brandIndex = brands.indexOf(item.brand);
+
+      // Check if rowIndex or brandIndex is not found
+      if (rowIndex === -1) {
+        console.error(`Row header not found for: ${item.section}-${item.platform}-${item.metric}`);
+        return; // Skip this item if the header is not found
+      }
+
+      if (brandIndex === -1) {
+        console.error(`Brand not found for: ${item.brand}`);
+        return; // Skip this item if the brand is not found
+      }
+
+      structuredData[rowIndex][3 + brandIndex] = item.result; // Fill in the result for the brand
+    });
+
+    // Prepend headers to the data (Section, Platform, Metric, followed by brands)
+    return [['Section', 'Platform', 'Metric', ...brands], ...structuredData];
+  };
+
+
+  const generateExcel = (dqScoreData, kpiStructuredData, comparisonScoreData) => {
+    const workbook = XLSX.utils.book_new();
+
+    // Create worksheets for each dataset
+    const dqWorksheet = XLSX.utils.json_to_sheet(dqScoreData);
+    const kpiWorksheet = XLSX.utils.aoa_to_sheet(kpiStructuredData);
+    const comparisonWorksheet = XLSX.utils.json_to_sheet(comparisonScoreData);
+
+    // Append worksheets to the workbook
+    XLSX.utils.book_append_sheet(workbook, dqWorksheet, "DQ Score");
+    XLSX.utils.book_append_sheet(workbook, kpiWorksheet, "KPI Score");
+    XLSX.utils.book_append_sheet(workbook, comparisonWorksheet, "Comparison View");
+
+    // Write the workbook to a file
     XLSX.writeFile(workbook, "Analytics.xlsx");
   };
-
-  const formatToAOA = (data) => {
-    return Array.isArray(data) ? data : Object.entries(data);
-  };
-
-
 
   const tabs = [
     {
       label: "Weights and Benchmark",
       content: (
         <div>
+          <div className="row">
+            <div className="col12">
+              <div className="table-buttons">
+                <ButtonComponent btnClass={"btn-secondary"} btnName={"Set weights as 0"} onClick={setWeightsValueToZero} />
+                <ButtonComponent btnClass={"btn-secondary"} btnName={"Reset"} onClick={resetWeightsValue} />
+              </div>
+            </div>
+          </div>
           <AnalyticsTable
             projectDetails={projectDetails}
             checkStates={checkStates}
@@ -1100,10 +1226,10 @@ export default function Analytics() {
             </select>
           </div>
           <ul class="legend">
-            <li> Ecom</li>
-            <li> Social</li>
-            <li> Paid</li>
-            <li> Brand Pref</li>
+            <li> Marketplace</li>
+            <li> Digital Spends</li>
+            <li> Socialwatch</li>
+            <li> Organic Performance</li>
           </ul>
           {normalizedValue?.length > 0 ? (
             <Table responsive striped bordered className="insights-table">
@@ -1113,7 +1239,9 @@ export default function Analytics() {
                   <th>Platform</th>
                   <th>Metric</th>
                   {uniqueComparisonBrandName?.sort((a, b) => a.localeCompare(b)).map(brand => (
-                    <th key={brand}>{brand}</th>
+                    <th key={brand}>{brand}
+                      <span className="brand-category">{brandCategoryMap[brand]} </span>
+                    </th>
                   ))}
                   {/* {uniqueComparisonBrandName?.map(brand => (
                     <th key={brand}>{brand}</th>
@@ -1135,10 +1263,15 @@ export default function Analytics() {
 
                     ></span>{row?.sectionName}</td>
                     <td>{row?.platformName} </td>
-                    <td><div className="metric-name">{row?.metricName}
-                      <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricName, row?.platformName)} />
-                      <span>{metricsDesc}</span>
-                    </div>
+                    <td>
+                      <div className="metric-name">{row?.metricName}
+                        <div className="metric-info">
+                          <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricName, row?.platformName)} />
+                          {selectedMetricDesc === row?.metricName && (
+                            <span className="metric-desc">{metricsDesc}</span>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     {/* {row} */}
                     {uniqueComparisonBrandName?.map(brand => (
@@ -1171,7 +1304,7 @@ export default function Analytics() {
       disabled: "disabled",
       content: (
         <div>
-          <SuperThemes metrics={metrics} normalizedDQScoreValue={normalizedValue} />
+          <SuperThemes metrics={metrics} normalizedDQScoreValue={normalizedValue} projectId={projectId} />
         </div>
       ),
     },
