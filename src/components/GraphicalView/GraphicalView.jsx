@@ -1,43 +1,76 @@
+
 // import React, { useState, useEffect } from "react";
 // import BarChart from "../../common/BarChart/BarChart";
-// import AreaChart from "../../common/AreaChart/AreaChart";
-
-
 // import { getWeights } from "../../services/projectService";
 // import "./GraphicalView.scss";
 
-// function ScoreCard({getColor, projectId}) {
+// function ScoreCard({ getColor, projectId }) {
+//   const [weightInfo, setWeightInfo] = useState([]);
+//   const [chartsData, setChartsData] = useState([]);
+//   const [currentSection, setCurrentSection] = useState(null); // State for current graph section
 
-//   const [weightInfo,setWeightInfo] = useState([])
-
-//   const handleGraphData = (type) => {
-
-//   }
-
-//   const fetchWeightsData = async(projectid) => {
-//     try{
-//      const weightData = await getWeights(projectid);
-//      console.log(weightData)
-//      if(weightData){
-//       setWeightInfo(weightData);
-//      }
-//     }catch(err){
-
+//   const fetchWeightsData = async (projectid) => {
+//     try {
+//       const weightData = await getWeights(projectid);
+//       console.log(weightData);
+//       if (weightData) {
+//         setWeightInfo(weightData);
+//       }
+//     } catch (err) {
+//       console.error(err);
 //     }
-//   }
+//   };
 
 //   useEffect(() => {
-//     fetchWeightsData(projectId)
-//   },[projectId])
+//     fetchWeightsData(projectId);
+//   }, [projectId]);
 
+//   useEffect(() => {
+//     const processChartsData = () => {
+//       const sortedMetrics = weightInfo
+//         .filter((metric) => metric.weights !== null)
+//         .sort((a, b) => b.weights - a.weights)
+//         .slice(0, 12)
+//         .map((metric) => ({
+//           name: metric.metricName,
+//           weight: metric.weights !== null ? metric.weights : 0,
+//           section: metric.sectionName,
+//           platform: metric.platformName,
+//         }));
 
+//       setChartsData(sortedMetrics);
+//     };
+
+//     if (weightInfo.length > 0) {
+//       processChartsData();
+//     }
+//   }, [weightInfo]);
+
+//   const handleGraphData = (type) => {
+//     setCurrentSection(type); // Set the current section based on the button clicked
+//   };
+
+//   // Filter chartsData based on the selected section
+//   const filteredChartsData = currentSection
+//     ? chartsData.filter((data) => data.section === currentSection)
+//     : chartsData; // Show all data if no section is selected
+
+//   // Prepare an array of empty charts to ensure 12 are always displayed
+//   const emptyCharts = [...Array(12 - filteredChartsData.length)].map((_, index) => ({
+//     name: "",
+//     weight: 0,
+//     section: "",
+//     platform: "",
+//   }));
+
+//   // Combine filtered data with empty charts to always show 12 charts
+//   const displayChartsData = [...filteredChartsData, ...emptyCharts];
 
 //   return (
-
 //     <div className="row">
 //       <div className="d-flex gap-2 my-2">
-//         <button className="new-btn-mkc">
-//           <div onClick={() => handleGraphData('Marketplace')} >
+//         <button className="new-btn-mkc" onClick={() => handleGraphData('Marketplace')}>
+//           <div>
 //             <span
 //               style={{
 //                 display: 'inline-block',
@@ -47,13 +80,12 @@
 //                 backgroundColor: getColor('Marketplace'),
 //                 marginRight: '5px',
 //               }}
-
 //             ></span>
 //             <span>Marketplace</span>
 //           </div>
 //         </button>
-//         <button className="new-btn-ds">
-//           <div onClick={() => handleGraphData('Digital Spends')} >
+//         <button className="new-btn-ds" onClick={() => handleGraphData('Digital Spends')}>
+//           <div>
 //             <span
 //               style={{
 //                 display: 'inline-block',
@@ -63,13 +95,12 @@
 //                 backgroundColor: getColor('Digital Spends'),
 //                 marginRight: '5px',
 //               }}
-
 //             ></span>
 //             <span>Digital Spends</span>
 //           </div>
 //         </button>
-//         <button className="new-btn-sc">
-//           <div onClick={() => handleGraphData('Socialwatch')} >
+//         <button className="new-btn-sc" onClick={() => handleGraphData('Socialwatch')}>
+//           <div>
 //             <span
 //               style={{
 //                 display: 'inline-block',
@@ -79,13 +110,12 @@
 //                 backgroundColor: getColor('Socialwatch'),
 //                 marginRight: '5px',
 //               }}
-
 //             ></span>
 //             <span>Socialwatch</span>
 //           </div>
 //         </button>
-//         <button className="new-btn-op">
-//           <div onClick={() => handleGraphData('Organic Performance')} >
+//         <button className="new-btn-op" onClick={() => handleGraphData('Organic Performance')}>
+//           <div>
 //             <span
 //               style={{
 //                 display: 'inline-block',
@@ -95,85 +125,34 @@
 //                 backgroundColor: getColor('Organic Performance'),
 //                 marginRight: '5px',
 //               }}
-
 //             ></span>
 //             <span>Organice Performance</span>
 //           </div>
 //         </button>
-
 //       </div>
 
-//       {/* Once user selects then the related metrics should show up */}
-//       {/* In Each graph there will be only one metric to be shown */}
-
-
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <BarChart />
+//       {/* Render 12 BarCharts */}
+//       {displayChartsData.map((chartData, index) => (
+//         <div key={index} className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+//           <div className="chart-box">
+//             <b>Platform</b> {chartData.platform && <h6>{chartData.platform}</h6>} {/* Display platform name */}
+//             <b>Metric</b> {chartData.name && <h6>{chartData.name}</h6>} {/* Display platform name */}
+//             <BarChart
+//               series={[{ name: chartData.name, data: [chartData.weight] }]} // Pass the series correctly
+//               categories={[chartData.name]} // Pass categories based on chartData
+//               xAxisRange={[0, 100]} // Set x-axis range from 0 to 100
+//               noDataText="No data available" // Display when no data is available
+//               showDataLabels // New prop to show metric names on bars
+//             />
+//           </div>
 //         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <BarChart />
-//         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <BarChart />
-//         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <BarChart />
-//         </div>
-//       </div>
-
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <BarChart />
-//         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <BarChart />
-//         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <BarChart />
-//         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <AreaChart />
-//         </div>
-//       </div>
-
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <AreaChart />
-//         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <BarChart />
-//         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <AreaChart />
-//         </div>
-//       </div>
-//       <div className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
-//         <div className="chart-box">
-//           <AreaChart />
-//         </div>
-//       </div>
+//       ))}
 //     </div>
 //   );
 // }
 
 // export default ScoreCard;
+
 import React, { useState, useEffect } from "react";
 import BarChart from "../../common/BarChart/BarChart";
 import { getWeights } from "../../services/projectService";
@@ -301,7 +280,7 @@ function ScoreCard({ getColor, projectId }) {
                 marginRight: '5px',
               }}
             ></span>
-            <span>Organice Performance</span>
+            <span>Organic Performance</span>
           </div>
         </button>
       </div>
@@ -310,7 +289,8 @@ function ScoreCard({ getColor, projectId }) {
       {displayChartsData.map((chartData, index) => (
         <div key={index} className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
           <div className="chart-box">
-            {chartData.platform && <h6>{chartData.platform}</h6>} {/* Display platform name */}
+            <b>Platform</b> {chartData.platform && <h6>{chartData.platform}</h6>} {/* Display platform name */}
+            <b>Metric</b> {chartData.name && <h6>{chartData.name}</h6>} {/* Display metric name */}
             <BarChart
               series={[{ name: chartData.name, data: [chartData.weight] }]} // Pass the series correctly
               categories={[chartData.name]} // Pass categories based on chartData
@@ -326,5 +306,6 @@ function ScoreCard({ getColor, projectId }) {
 }
 
 export default ScoreCard;
+
 
 
