@@ -93,9 +93,28 @@ const AnalyticsTable = ({
           <th className="col-3">Section</th>
           <th className="col-2">Platform</th>
           <th className="col-1">Metric List</th>
-          <th className="col-1">Weights <span style={{ backgroundColor: 'lightgrey' }} class="badge badge-pill badge-light">{totalWeights} </span></th>
-          <th className="col-1">Overall</th>
-          <th className="col-1">Category Based</th>
+          <th className="col-1">Weights <span style={{ backgroundColor: 'lightgrey' }} class="badge badge-pill badge-light">{totalWeights.toFixed(2)} </span></th>
+          <th className="col-1">
+            <div className="checkbox-header">
+              <span>Overall</span> 
+              <input
+                  type="checkbox"
+                  onChange={(e) => handleSelectAll(e, "overall")}
+                  className="c-pointer"
+              />
+            </div>
+          </th>
+          <th className="col-1">
+            
+            <div className="checkbox-header">
+              <span>Category Based</span> 
+              <input
+                  type="checkbox"
+                  onChange={(e) => handleSelectAll(e, "categoryBased")}
+                  className="c-pointer"
+              />
+            </div>
+          </th>
           <th className="col-2">Benchmarks</th>
           <th className="col-1">Add/Remove Metrics</th>
         </tr>
@@ -146,7 +165,7 @@ const AnalyticsTable = ({
                           <td>
                             <input
                               type="number"
-                              value={weights[item?.metric_id]?.toFixed(2)}
+                              value={weights[item?.metric_id]}
                               onChange={(e) =>
                                 handleWeightChange(item?.metric_id, parseFloat(e.target.value))
                               }
@@ -196,14 +215,14 @@ const AnalyticsTable = ({
                               "NA"
                             )}
                           </td>
-                          <td>
+                          {/* <td>
                             <IoMdRemoveCircleOutline
                               className="action-item-icon"
                               onClick={() => removeMetricsFromDB(item.metric_id, item.metric_name)}
                               title="Remove Metric data"
                             />
                             <IoMdAddCircleOutline className="action-item-icon" title="Add Metric data" />
-                          </td>
+                          </td> */}
                         </tr>
                       ))}
                   </>

@@ -164,8 +164,7 @@ export const getBenchamarkValues = async (data) => {
 
   try {
     const response = await axios.post(
-      `https://hrsbjqs8-8024.inc1.devtunnels.ms/process_metric/`,
-      data
+      `https://m594bmgj-8017.inc1.devtunnels.ms/process_metric/`, data
     );
 
     if (response.status !== 200) {
@@ -184,8 +183,7 @@ export const getBenchamarkValues = async (data) => {
 export const getKPIScoreValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://hrsbjqs8-8018.inc1.devtunnels.ms/analytics_metric/`,
-      data
+      `https://m594bmgj-8025.inc1.devtunnels.ms/analytics_metric/`, data
     );
 
     if (response.status !== 200) {
@@ -299,7 +297,8 @@ export const getBrandData = async (data) => {
 export const getBrandImages = async (data) => {
   try {
 
-    let url = `https://hrsbjqs8-8019.inc1.devtunnels.ms/brand-images/${data}`;
+    let url = `http://127.0.0.1:8018/brand-images/${data}`;
+    // let url = `https://hrsbjqs8-8019.inc1.devtunnels.ms/brand-images/${data}`;
     const response = await axios.get(url, { responseType: 'blob' });
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -350,7 +349,7 @@ export const createUserProjectDQScore = async (data) => {
     const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/create-user-project-dq-score`;
     const response = await axios.post(url, data);
 
-    if (response.status !== 200) {
+    if (response.status !== 201) {
       throw new Error("Network response was not ok");
     }
 
@@ -368,6 +367,23 @@ export const saveMetricGroup = async (data) => {
     const response = await axios.post(url, data);
 
     if (response.status !== 201) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error;
+  }
+};
+
+export const getWeights = async (projectId) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/get-weights-by-project/${projectId}`;
+    const response = await axios.get(url);
+
+    if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
 

@@ -15,7 +15,7 @@ import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import SuperThemes from "../../components/SuperThemes/SuperThemes";
 import { getData } from "../../services/q3";
 import { getAMData } from "../../services/Quarter-actual-metric-data";
-import { getMetricData } from "../../services/metrics";
+import { getMetricListData } from "../../services/metricList";
 import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 import { getSection } from "../../services/section-platform-metrics";
 import {
@@ -61,9 +61,16 @@ export default function Analytics() {
   const [kpiData, setKpiData] = useState([]);
   const data = getData();
   const AMData = getAMData();
-  const metricData = getMetricData();
+  const metricData = getMetricListData();
   const normalizedData = getNormalizedData();
   const { projectId } = useParams();
+
+  const [sectionsList, setSectionsList] = useState([]);
+  const [platformsList, setPlatformsList] = useState([]);
+  const [addMetricList, setAddMetricList] = useState([]);
+  const [selectedSectionsList, setSelectedSectionsList] = useState([]);
+  const [selectedPlatformsList, setSelectedPlatformsList] = useState([]);
+  const [selectedAddMetricList, setAddSelectedMetricList] = useState([]);
 
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -115,6 +122,15 @@ export default function Analytics() {
     { header: "Paid Marketing DQ Score", accessor: "Paid Marketing DQ Score" },
     { header: "Organic DQ", accessor: "Organic DQ" },
   ];
+
+  const handleClose = () => {
+    setShow(prevShow => !prevShow);
+  };
+  const handleShowModal = () => {
+    setShow(true);
+  };
+
+
 
   const columnsMetrics = Object.keys(AMData[0] || []).map((key) => ({
     Header: key,
@@ -168,91 +184,6 @@ export default function Analytics() {
     colorCode = "";
   }
 
-  // const handleCheckboxChange = async (event, metric, type) => {
-  //   const analysis_type =
-  //     type == "overall" ? "Overall" : projectDetails?.categories;
-  //   const reqPayload = {
-  //     platform: metric?.platform?.name,
-  //     // platform: metric?.platform?.name,
-  //     metrics: metric?.metric_name,
-  //     brand: projectDetails?.brands,
-  //     // brand:"PureSense",
-  //     analysis_type: analysis_type,
-  //     start_date: projectDetails?.start_date,
-  //     end_date: projectDetails?.end_date,
-  //   };
-
-  //   try {
-  //     const benchmarks = await getBenchamarkValues(reqPayload);
-  //     setMetrics((prev) => {
-  //       return prev.map((ele) => {
-  //         if (type === "overall") {
-  //           if (ele.metric_id === metric.metric_id) {
-  //             ele.isOverallChecked = !ele.isOverallChecked;
-  //             ele.isCategoryBasedChecked = false;
-  //             ele.benchmark = benchmarks.results;
-  //           }
-  //         }
-  //         if (type === "categoryBased") {
-  //           if (ele.metric_id === metric.metric_id) {
-  //             ele.isCategoryBasedChecked = !ele.isCategoryBasedChecked;
-  //             ele.isOverallChecked = false;
-  //             ele.benchmark = benchmarks.results;
-  //           }
-  //         }
-  //         return ele;
-  //       });
-  //     });
-  //   } catch (error) {
-  //     console.error("Error in fetching benchmark values:", error);
-  //   }
-  // };
-
-  // const handleSelectAll = async (e, type) => {
-  //   const isChecked = e.target.checked;
-
-  //   const updatedMetrics = await Promise.all(
-  //     metrics?.map(async (metric) => {
-  //       const analysis_type =
-  //         type === "overall" ? "Overall" : projectDetails?.categories;
-  //       const reqPayload = {
-  //         platform: metric?.platform?.name,
-  //         metrics: metric?.metric_name,
-  //         brand: projectDetails?.brands,
-  //         analysis_type: analysis_type,
-  //         start_date: projectDetails?.start_date,
-  //         end_date: projectDetails?.end_date,
-  //       };
-
-  //       try {
-  //         const benchmarks = await getBenchamarkValues(reqPayload);
-
-  //         // Update the metric state based on type (overall or categoryBased)
-  //         if (type === "overall") {
-  //           return {
-  //             ...metric,
-  //             isOverallChecked: isChecked,
-  //             isCategoryBasedChecked: !isChecked, // Uncheck the category-based checkbox
-  //             benchmark: benchmarks.results,
-  //           };
-  //         } else if (type === "categoryBased") {
-  //           return {
-  //             ...metric,
-  //             isCategoryBasedChecked: isChecked,
-  //             isOverallChecked: !isChecked, // Uncheck the overall checkbox
-  //             benchmark: benchmarks.results,
-  //           };
-  //         }
-  //       } catch (error) {
-  //         console.error("Error in fetching benchmark values:", error);
-  //       }
-  //       return metric;
-  //     })
-  //   );
-  //   setMetrics(updatedMetrics);
-  // };
-
-  // Edge Case Handling
   const handleCheckboxChange = async (event, metric, type) => {
     const isChecked = event.target.checked;
     setMetrics((prev) =>
@@ -334,7 +265,6 @@ export default function Analytics() {
     const batchSize = 10;
     let updatedMetrics = [];
 
-    // Function to process metrics in batches
     const processBatch = async (batch) => {
       const results = await Promise.all(
         batch.map(async (metric) => {
@@ -392,91 +322,21 @@ export default function Analytics() {
       return results;
     };
 
-    // Process metrics in chunks of 10
     for (let i = 0; i < metrics.length; i += batchSize) {
       const batch = metrics.slice(i, i + batchSize);
       const batchResults = await processBatch(batch);
       updatedMetrics = [...updatedMetrics, ...batchResults];
     }
 
+    console.log(updatedMetrics, 'updatedMetrics')
+    console.log(checkAllMetricsCheckboxSelected())
     setMetrics(updatedMetrics);
   };
 
-
-  // const handleSelectAll = async (e, type) => {
-  //   const isChecked = e.target.checked;
-
-  //   const batchSize = 10; // Set the batch size to 10
-  //   let updatedMetrics = [];
-
-  //   // Function to process metrics in batches
-  //   const processBatch = async (batch) => {
-  //     const results = await Promise.all(
-  //       batch.map(async (metric) => {
-  //         if (isChecked) {
-  //           const analysis_type =
-  //             type === "overall" ? "Overall" : projectDetails?.categories;
-  //           const reqPayload = {
-  //             platform: metric?.platform?.name,
-  //             metrics: metric?.metric_name,
-  //             brand: projectDetails?.brands,
-  //             analysis_type: analysis_type,
-  //             start_date: projectDetails?.start_date,
-  //             end_date: projectDetails?.end_date,
-  //           };
-
-  //           try {
-  //             const benchmarks = await getBenchamarkValues(reqPayload);
-
-  //             if (type === "overall") {
-  //               return {
-  //                 ...metric,
-  //                 isOverallChecked: true,
-  //                 isCategoryBasedChecked: false,
-  //                 benchmark: benchmarks.results,
-  //               };
-  //             } else if (type === "categoryBased") {
-  //               return {
-  //                 ...metric,
-  //                 isCategoryBasedChecked: true,
-  //                 isOverallChecked: false,
-  //                 benchmark: benchmarks.results,
-  //                 isLoading: false,
-  //               };
-  //             }
-  //           } catch (error) {
-  //             console.error("Error in fetching benchmark values:", error);
-  //           }
-  //         } else {
-  //           return {
-  //             ...metric,
-  //             isOverallChecked: type === "overall" ? false : metric.isOverallChecked,
-  //             isCategoryBasedChecked:
-  //               type === "categoryBased" ? false : metric.isCategoryBasedChecked,
-  //             benchmark: null,
-  //             isLoading: false,
-  //           };
-  //         }
-  //       })
-  //     );
-  //     return results;
-  //   };
-
-  //   // Process metrics in chunks of 10
-  //   for (let i = 0; i < metrics.length; i += batchSize) {
-  //     const batch = metrics.slice(i, i + batchSize);
-  //     const batchResults = await processBatch(batch);
-  //     updatedMetrics = [...updatedMetrics, ...batchResults];
-  //   }
-
-  //   setMetrics(updatedMetrics);
-  // };
-
-
-
   const handleWeightChange = (metricId, value) => {
+    const numericValue = isNaN(Number(value)) ? 0 : Number(value);
 
-    const newWeights = { ...weights, [metricId]: Number(value) };
+    const newWeights = { ...weights, [metricId]: numericValue };
 
     const totalWeight = Object.values(newWeights).reduce((acc, curr) => acc + curr, 0);
 
@@ -495,6 +355,7 @@ export default function Analytics() {
     setWeights(newWeights);
     setTotalWeights(totalWeight);
   };
+
 
   const validateTotalWeights = (newWeights) => {
     const totalWeight = Object.values(newWeights).reduce(
@@ -893,52 +754,24 @@ export default function Analytics() {
       acc[metric.metric_id] = 0;
       return acc;
     }, {});
-    
+
     setWeights(updatedWeights);
     setTotalWeights(0);
   };
-  
+
   const resetWeightsValue = () => {
     const defaultWeight = 100 / metrics.length;
     const updatedWeights = metrics.reduce((acc, metric) => {
       acc[metric.metric_id] = defaultWeight;
       return acc;
     }, {});
-  
+
     const totalWeight = Object.values(updatedWeights).reduce((acc, curr) => acc + curr, 0);
-    
+
     setWeights(updatedWeights);
     setTotalWeights(totalWeight);
   };
-  
 
-
-  // const saveWeights = async () => {
-  //   const saveMetricsPayload = generateApiPayload(metrics);
-
-  //   try {
-  //     const response = await saveMetricsOfProject(saveMetricsPayload);
-  //     if (response) {
-  //       if (response.status == 'success') {
-  //         // dispatch(showAlert({ variant: 'success', message: 'Weights saved successfully' }));
-  //         alert('Weights saved successfully!');
-  //         fetchProjectDetails(projectId);
-  //         fetchComparedValue(projectId);
-  //         fetchDQScoreValue(projectId);
-  //         fetchKPIScores();
-  //         saveUserProjectDQScore();
-  //       }
-  //     }
-
-  //   } catch (error) {
-  //     if (error.response && error.response.status === 400 && error.response.data.message === 'Project Benchmark has already been saved, you cannot create another instance.') {
-  //       alert('Error: Project Benchmark has already been added, you cannot create another instance.');
-  //     } else {
-  //       alert('An error occurred!');
-  //     }
-  //   }
-
-  // };
 
   const saveWeights = async () => {
     const saveMetricsPayload = generateApiPayload(metrics);
@@ -949,7 +782,6 @@ export default function Analytics() {
         alert('Weights saved successfully!');
         const data = await fetchProjectDetails(projectId);
         if (data?.compareNormalizeValue?.length > 0 && data?.dqScoreValueResponse.length > 0) {
-          // Only save the user project DQ score if both conditions are met
           await saveUserProjectDQScore(data?.compareNormalizeValue, data?.dqScoreValueResponse);
         }
 
@@ -1057,24 +889,16 @@ export default function Analytics() {
   // };
 
   const handleExportAnalytics = () => {
-    const dqScoreData = dqScoreValue; // Data for DQ Score
-    const kpiScoresData = kpiData; // Data for KPI Scores
-    const comparisonScoreData = normalizedValue; // Data for Comparison Scores
+    const dqScoreData = dqScoreValue;
+    const kpiScoresData = kpiData;
+    const comparisonScoreData = normalizedValue;
 
-
-    console.log('comparisonScoreData', comparisonScoreData);
-    // Restructure data to have metrics, platform, and section as rows and brands as column headers
-    // const dqStructuredData = restructureDataForBrandAsHeader(dqScoreData);
     const kpiStructuredData = restructureDataForBrandAsHeader(kpiScoresData);
-    // const comparisonStructuredData = restructureDataForBrandAsHeader(comparisonScoreData);
 
-    // Check if any data exists before generating the Excel file
     if (dqScoreData.length > 0 || kpiStructuredData.length > 0 || comparisonScoreData.length > 0) {
       generateExcel(dqScoreData, kpiStructuredData, comparisonScoreData);
     }
   };
-
-  // Function to restructure data with brands as column headers and other keys as row headers
   const restructureDataForBrandAsHeader = (data) => {
     if (!data || data.length === 0) return [];
 
@@ -1117,18 +941,57 @@ export default function Analytics() {
   const generateExcel = (dqScoreData, kpiStructuredData, comparisonScoreData) => {
     const workbook = XLSX.utils.book_new();
 
-    // Create worksheets for each dataset
     const dqWorksheet = XLSX.utils.json_to_sheet(dqScoreData);
     const kpiWorksheet = XLSX.utils.aoa_to_sheet(kpiStructuredData);
     const comparisonWorksheet = XLSX.utils.json_to_sheet(comparisonScoreData);
 
-    // Append worksheets to the workbook
     XLSX.utils.book_append_sheet(workbook, dqWorksheet, "DQ Score");
     XLSX.utils.book_append_sheet(workbook, kpiWorksheet, "KPI Score");
     XLSX.utils.book_append_sheet(workbook, comparisonWorksheet, "Comparison View");
 
-    // Write the workbook to a file
     XLSX.writeFile(workbook, "Analytics.xlsx");
+  };
+
+
+  const handleAddSection = async (selectedOptions) => {
+    setSelectedSectionsList(selectedOptions);
+    if (selectedOptions.length > 0) {
+      try {
+        const sectionIDs = selectedOptions.map((option) => option.value);
+        const platformsIDs = await getAllPlatformsBySectionIds(sectionIDs);
+        console.log(platformsIDs, 'platformsIDs')
+        setPlatformsList(
+          platformsIDs.data.map((sec) => ({
+            value: sec.platformId,
+            label: sec.platformName,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    }
+  };
+
+  const handleAddPlatform = async (selectedOptions) => {
+    setSelectedPlatformsList(selectedOptions);
+
+    if (selectedOptions.length > 0) {
+      try {
+        const platformIds = selectedOptions.map((option) => option.value);
+        const metricsData = await getAllMetricsByPlatformId(platformIds);
+        setAddMetricList(
+          metricsData.data.map((metric) => ({
+            value: metric.id,
+            label: metric.name,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching metrics:", error);
+      }
+    }
+  };
+  const handleAddMetric = (selectedOptions) => {
+    setAddSelectedMetricList(selectedOptions);
   };
 
   const tabs = [
@@ -1141,6 +1004,7 @@ export default function Analytics() {
               <div className="table-buttons">
                 <ButtonComponent btnClass={"btn-secondary"} btnName={"Set weights as 0"} onClick={setWeightsValueToZero} />
                 <ButtonComponent btnClass={"btn-secondary"} btnName={"Reset"} onClick={resetWeightsValue} />
+                <ButtonComponent btnClass={"btn-secondary"} btnName={"Add Metric"} onClick={handleShowModal} />
               </div>
             </div>
           </div>
@@ -1168,6 +1032,7 @@ export default function Analytics() {
                   disabled={projectDetails?.is_benchmark_saved || !checkAllMetricsCheckboxSelected()}
                   onClick={saveWeights}
                 />
+
               </div>
             </div>
           </div>
@@ -1181,7 +1046,6 @@ export default function Analytics() {
       content: (
         <div>
           <ScoreCard dqScoreValue={dqScoreValue} dqScoreLoading={dqScoreLoading} />
-          {/* <ScoreCard dqScoreValue={dqScoreValue.filter((item) => item.includes(handleCategoryChange))} /> */}
         </div>
       ),
     },
@@ -1189,7 +1053,7 @@ export default function Analytics() {
       label: "Graphical view",
       content: (
         <div>
-          <GraphicalView />
+          <GraphicalView getColor={getColor} projectId={projectId} />
         </div>
       ),
     },
@@ -1243,9 +1107,6 @@ export default function Analytics() {
                       <span className="brand-category">{brandCategoryMap[brand]} </span>
                     </th>
                   ))}
-                  {/* {uniqueComparisonBrandName?.map(brand => (
-                    <th key={brand}>{brand}</th>
-                  ))} */}
                 </tr>
               </thead>
               <tbody>
@@ -1327,16 +1188,8 @@ export default function Analytics() {
                 </div>
 
                 <div className="export-btn-container gap-3">
-                  {/* <MultiSelectDropdown
-                    options={filterCategories}
-                    selectedValues={selectedFilterCategories}
-                    onChange={handleFilterCategory}
-                    placeholder="Select Categories"
-                  /> */}
-
                   <div className="export-btn">
                     <ButtonComponent
-                      // disabled
                       btnClass={"btn-primary export-excel-btn"}
                       btnName={"Export as Excel"}
                       onClick={handleExportAnalytics}
@@ -1376,23 +1229,9 @@ export default function Analytics() {
               <TabComponent tabs={tabs} isBenchmarkDataSaved={projectDetails?.is_benchmark_saved} className="analytics-tabs" />
             </div>
           </div>
-
-          {/* <div className="project-table-data mt-5">
-              <TableComponent />
-            </div> */}
-          {/* <div className="footer-button">
-              <ButtonComponent
-                btnClass={"btn-outline-secondary"}
-                btnName={"Back"}
-              />
-              <ButtonComponent
-                btnClass={"btn-primary"}
-                btnName={"Go to Analytics"}
-              />
-            </div> */}
         </div>
       </div>
-      {/* <Modal
+      <Modal
         size="xl"
         aria-labelledby="contained-modal-title-vcenter"
         centered
@@ -1401,10 +1240,37 @@ export default function Analytics() {
         className="modal-height"
       >
         <Modal.Header closeButton>
-          <Modal.Title>Create Super Themes</Modal.Title>
+          <Modal.Title>Add Metrics</Modal.Title>
         </Modal.Header>
         <Modal.Body className="pb-5">
-          <SuperThemes />
+          <div className="row">
+            <div className="col-lg-4 col-md-6 ws-select">
+              <MultiSelectDropdown
+                options={sectionsList}
+                selectedValues={selectedSectionsList}
+                onChange={handleAddSection}
+                placeholder="Select Section"
+              />
+            </div>
+            <div className="col-lg-4 col-md-6 ws-select">
+              <MultiSelectDropdown
+                options={platformsList}
+                selectedValues={selectedPlatformsList}
+                onChange={handleAddPlatform}
+                placeholder="Select Platforms"
+              />
+            </div>
+            <div className="col-lg-4 col-md-6 ws-select">
+              <MultiSelectDropdown
+                options={addMetricList}
+                selectedValues={selectedAddMetricList}
+                onChange={handleAddMetric}
+                placeholder="Select Metrics"
+
+              />
+
+            </div>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <ButtonComponent
@@ -1418,7 +1284,7 @@ export default function Analytics() {
             onClick={handleClose}
           />
         </Modal.Footer>
-      </Modal> */}
+      </Modal>
 
     </>
   );

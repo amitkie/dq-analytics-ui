@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Chart from "react-apexcharts";
-
 import "./BarChart.scss";
 
 class BarChart extends Component {
@@ -36,16 +35,10 @@ class BarChart extends Component {
           show: false,
         },
         xaxis: {
-          categories: [
-            "Himalaya",
-            "Lux",
-            "Palmolive",
-            "Parachute",
-            "Pears",
-            "Vaseline",
-            "Bajaj",
-            "Dabur",
-          ],
+          categories: props.categories,
+          labels: {
+            formatter: (value) => value.toFixed(0), // Formatting x-axis labels
+          },
         },
         yaxis: {
           title: {
@@ -55,36 +48,16 @@ class BarChart extends Component {
           max: 100,
         },
       },
-      series: [
-        {
-          name: "DQ Scores",
-          data: [
-            69.61, 58.72, 49.34, 50.23, 64.68,
-            61.17, 69.84, 69.39,
-          ],
-        },
-      ],
     };
   }
 
   render() {
+    const { series } = this.props; // Series data passed as props
+
     return (
-      <div className="app">
-        <div className="row">
-          <div className="mixed-chart">
-            <select name="Metrics" className="Select-filter-metrics">
-              <option value="Select Metrics">Select Metrics</option>
-              <option value="haircare">Ecom</option>
-              <option value="baby">Social</option>
-              <option value="mansGrooming">Paid</option>
-            </select>
-            <Chart
-              options={this.state.options}
-              series={this.state.series}
-              type="bar"
-            />
-          </div>
-        </div>
+      <div className="bar-chart">
+        <Chart options={this.state.options} series={series} type="bar" />
+        {series.length === 0 && <div>{this.props.noDataText}</div>} {/* Show no data message */}
       </div>
     );
   }

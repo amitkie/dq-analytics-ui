@@ -7,3 +7,43 @@
   width: 100%;
   overflow: hidden;
 }
+.new-btn-mkc{
+  outline: none;
+  border: none;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px;
+    background: lightblue;
+}
+.new-btn-ds{
+  outline: none;
+  border: none;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px;
+    background: lightgreen;
+}
+.new-btn-sc{
+  outline: none;
+  border: none;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px;
+    background: lightyellow;
+}
+.new-btn-op{
+  outline: none;
+  border: none;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px;
+    background: lightcoral;
+}
