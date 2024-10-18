@@ -13,6 +13,7 @@ import {
   saveMetricsThemeGroup,
   getMetricThemeGroupNames
 } from "../../services/projectService";
+import MetricThemeGroupList from "./MetricThemeGroupList";
 
 function SuperThemes({ metrics, normalizedValue, projectId }) {
   const [field, setField] = useState([]);
@@ -33,6 +34,8 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [metricGroupName, setMetricGroupName] = useState("");
   const [metricThemeGroupName, setMetricThemeGroupName] = useState("");
+  const [metricGroupData, setMetricGroupData] = useState([]);
+  const [metricThemeGroupData, setMetricThemeGroupData] = useState([]);
 
 
   const [uniqueSectionsBasedOnProjectId, setUniqueSectionsBasedOnProjectId] = useState([]);
@@ -48,7 +51,6 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
 
   const [metricAndMetricGroupId, setMetricAndMetricGroupId] = useState([]);
   const [selectedMetricAndMetricGroupId, setSelectedMetricAndMetricGroupId] = useState([]);
-  const [metricThemeData, setMetricThemeData] = useState([]);
 
   useEffect(() => {
     if (metrics) {
@@ -136,19 +138,21 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
   const fetchMetricGroupNames = async () => {
     try {
       const metricGroupNamesResponse = await getMetricGroupNames(projectId);
-
+      
+      
       if (metricGroupNamesResponse) {
         console.log(metricGroupNamesResponse, 'metricGroupNamesResponse');
-
+        setMetricGroupData(metricGroupNamesResponse?.data)
         // Correctly map the values and labels and set the state
         const metricGroups = metricGroupNamesResponse?.data?.map(gp => ({
           value: gp?.id,
           label: gp?.name
         }));
-
+        
         // Set the metric groups in the state
         setMetricAndMetricGroupId(metricGroups);
       }
+      
     } catch (err) {
       console.error('Error fetching metric group names:', err);
     }
@@ -159,7 +163,7 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
 
       if (metricGroupNamesResponse) {
         console.log(metricGroupNamesResponse, 'metricGroupNamesResponse');
-        setMetricThemeData(metricGroupNamesResponse?.data)
+        setMetricThemeGroupData(metricGroupNamesResponse?.data)
       }
     } catch (err) {
       console.error('Error fetching metric group names:', err);
@@ -209,6 +213,30 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
     setMetricGroupName(e.target.value)
   }
 
+  const transformResponseToPayload = (data, project_id) => {
+    const payload = {
+      project_id: project_id,
+      theme_buckets: []
+    };
+  
+    data.forEach((group) => {
+      const themeBucket = {
+        theme_bucket_id: group.id, 
+        group_metric_id: [group.id], 
+        single_metric_id: group.metric_ids.map(id => parseInt(id)) 
+      };
+  
+      payload.theme_buckets.push(themeBucket)
+    });
+  
+    return payload;
+  }
+
+ const getDetails = () => {
+   const reqPayload = transformResponseToPayload(metricThemeGroupData, projectId);
+   console.log(reqPayload, "payload")
+  }
+
 
   return (
     <>
@@ -231,12 +259,6 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
                     onChange={handlePlatformChange}
                     placeholder="Select Platforms"
                   />
-                  {/* <MultiSelectDropdown
-                    options={uniqueMetricsBasedOnProjectId}
-                    selectedValues={uniqueSelectedMetricsBasedOnProjectId}
-                    onChange={handleMetricChange}
-                    placeholder="Select Metrics"
-                  /> */}
                   <ButtonComponent
                     btnClass={"btn-primary next-btn"}
                     btnIconAfter={<LiaArrowRightSolid />}
@@ -289,6 +311,7 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
                   <div class="theme-content">
                     <ButtonComponent
                       btnClass={"btn-primary"}
+                      disabled={uniqueSelectedMetricsThemeBasedOnProjectId?.length < 1 || !metricThemeGroupName}
                       onClick={saveMetricsThemeGroups}
                       btnName={"Save"}
                     />
@@ -360,6 +383,7 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
                   <div class="theme-content">
                     <ButtonComponent
                       btnClass={"btn-primary"}
+                      disabled={uniqueSelectedMetricsBasedOnProjectId?.length < 1 || !metricGroupName}
                       onClick={saveMetricGroups}
                       btnName={"Save"}
                     />
@@ -375,6 +399,8 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
                     <strong>Selected Options:</strong>
                     <div className="d-flex flex-column">
                       <div className="selected-languages">
+
+                       <MetricThemeGroupList removeMetric={removeLanguage} metricThemeGroups={metricThemeGroupData}/>
                         {selectedLanguages.map((language, index) => (
                           <div key={index} className="selected-metrics">
                             <p style={{ marginRight: "10px" }}>{language}</p>
@@ -414,6 +440,7 @@ function SuperThemes({ metrics, normalizedValue, projectId }) {
                 <ButtonComponent
                   btnClass={"btn-primary w-25"}
                   btnName={"Save"}
+                  onClick={getDetails}
                 />
               </div>
             </div>
