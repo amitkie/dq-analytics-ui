@@ -7,43 +7,36 @@
   width: 100%;
   overflow: hidden;
 }
-.new-btn-mkc{
+.new-btn-graphic {
   outline: none;
   border: none;
   display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    padding: 5px;
-    background: lightblue;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  padding: 6px 16px;
 }
-.new-btn-ds{
-  outline: none;
-  border: none;
+.mkc {background-color: #dfe4f0;}
+.ds {background-color: #e1f1eb;}
+.sc {background-color: #f3ede5;}
+.op {background-color: #f0e2e1;}
+
+.chart-heading {
   display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    padding: 5px;
-    background: lightgreen;
-}
-.new-btn-sc{
-  outline: none;
-  border: none;
-  display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    padding: 5px;
-    background: lightyellow;
-}
-.new-btn-op{
-  outline: none;
-  border: none;
-  display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    padding: 5px;
-    background: lightcoral;
+  flex-direction: column;
+  .chart-result{
+    display: flex;
+    gap: .25rem;
+    align-items: baseline;
+    .item-title {
+      @include secondaryFontBold();
+      color: $text-color;
+      display: flex;
+      .item-title {
+        @include secondaryFont();
+        color: $text-color;
+        display: flex;
+      }
+    }
+  }
 }

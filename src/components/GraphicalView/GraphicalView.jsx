@@ -222,8 +222,8 @@ function ScoreCard({ getColor, projectId }) {
 
   return (
     <div className="row">
-      <div className="d-flex gap-2 my-2">
-        <button className="new-btn-mkc" onClick={() => handleGraphData('Marketplace')}>
+      <div className="d-flex gap-2 mt-2 mb-3">
+        <button className="new-btn-graphic mkc" onClick={() => handleGraphData('Marketplace')}>
           <div>
             <span
               style={{
@@ -238,7 +238,7 @@ function ScoreCard({ getColor, projectId }) {
             <span>Marketplace</span>
           </div>
         </button>
-        <button className="new-btn-ds" onClick={() => handleGraphData('Digital Spends')}>
+        <button className="new-btn-graphic ds" onClick={() => handleGraphData('Digital Spends')}>
           <div>
             <span
               style={{
@@ -253,7 +253,7 @@ function ScoreCard({ getColor, projectId }) {
             <span>Digital Spends</span>
           </div>
         </button>
-        <button className="new-btn-sc" onClick={() => handleGraphData('Socialwatch')}>
+        <button className="new-btn-graphic sc" onClick={() => handleGraphData('Socialwatch')}>
           <div>
             <span
               style={{
@@ -268,7 +268,7 @@ function ScoreCard({ getColor, projectId }) {
             <span>Socialwatch</span>
           </div>
         </button>
-        <button className="new-btn-op" onClick={() => handleGraphData('Organic Performance')}>
+        <button className="new-btn-graphic op" onClick={() => handleGraphData('Organic Performance')}>
           <div>
             <span
               style={{
@@ -289,8 +289,18 @@ function ScoreCard({ getColor, projectId }) {
       {displayChartsData.map((chartData, index) => (
         <div key={index} className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
           <div className="chart-box">
-            <b>Platform</b> {chartData.platform && <h6>{chartData.platform}</h6>} {/* Display platform name */}
-            <b>Metric</b> {chartData.name && <h6>{chartData.name}</h6>} {/* Display metric name */}
+            <div className="chart-heading">
+              <div className="chart-result">
+                <span className="item-title">Platform:</span>
+                {chartData.platform && <span className="item-result">{chartData.platform}</span>}
+              </div>
+              <div className="chart-result">
+                <span className="item-title">Metric:</span>
+                {chartData.name &&  <span className="item-result">{chartData.name}</span>}
+              </div>  
+            </div>
+             
+              {/* Display metric name */}
             <BarChart
               series={[{ name: chartData.name, data: [chartData.weight] }]} // Pass the series correctly
               categories={[chartData.name]} // Pass categories based on chartData
