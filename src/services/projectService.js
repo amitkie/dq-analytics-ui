@@ -447,6 +447,23 @@ export const getMetricThemeGroupNames = async (projectId) => {
   }
 };
 
+export const getProjectsByDateRangeForUser = async (data) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/get-project-by-date-range-for-user`;
+    const response = await axios.post(url, data);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error;
+  }
+};
+
 export const getTop5Data = async (data) => {
   try {
     const response = await axios.post(

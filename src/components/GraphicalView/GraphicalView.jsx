@@ -286,7 +286,7 @@ function ScoreCard({ getColor, projectId }) {
       </div>
 
       {/* Render 12 BarCharts */}
-      {displayChartsData.map((chartData, index) => (
+      {displayChartsData?.map((chartData, index) => (
         <div key={index} className="col-sm-12 col-md-6 col-lg-6 col-xl-3">
           <div className="chart-box">
             <div className="chart-heading">

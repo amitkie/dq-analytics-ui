@@ -20,10 +20,11 @@ import PaidMedia from "../../../components/paidMedia/PaidMedia";
 import MediaEcom from "../../../components/MediaEcom/MediaEcom";
 import MediaOffPlatform from "../../../components/MediaOffPlatform/MediaOffPlatform";
 import SocialMedia from "../../../components/SocialMedia/SocialMedia";
-import { getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData, getProjectDetailsByUserId } from "../../../services/projectService";
+import { getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData, getProjectDetailsByUserId, getProjectsByDateRangeForUser } from "../../../services/projectService";
 import BrandPerformance from "../../../components/BrandPerformance/BrandPerformance";
 import { useParams } from "react-router-dom";
 import MultiSelectDropdown from "../../../components/MultiSelectDropdown/MultiSelectDropdown";
+import { Form } from "react-bootstrap";
 
 
 
@@ -40,12 +41,52 @@ export default function HealthCardOverview() {
   const [selectedFilterProject, setSelectedFilterProject] = useState([]);
   const { userInfo, projectInfo } = useSelector((state) => state.user);
 
+  const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
+  const [selectedValue, setSelectedValue] = useState("");
+
+  const handleFrequencyChange = (frequency) => {
+    setSelectedFrequency(frequency);
+    setSelectedValue(""); 
+  };
+
+  const handleSelectionChange = (e) => {
+    const value = e.target.value;
+    console.log(value, selectedFrequency)
+    const payload = {
+      user_id: userInfo?.user?.id,
+      filter: {
+        type: selectedFrequency,
+        value: value
+      }
+    }
+    fetchProjectDetails(payload)
+    console.log(payload)
+
+    setSelectedValue(value);
+  };
+
+  const fetchProjectDetails = async(reqPayload) => {
+    try{
+      const projectResponse = await getProjectsByDateRangeForUser(reqPayload);
+
+      const projects = projectResponse?.projects?.map((project) => ({
+        value: project.id,          
+        label: project.project_name, 
+      }));
+  
+      setFilterProject(projects);
+    }catch(err){
+          console.error("Error fetching projects:", error);
+    }
+  }
+
+
   const navigate = useNavigate();
 
   const handleReportClick = () => {
     navigate('/healthcardreport');
   };
-  const handleCompetitorBrands= (comp)   => {
+  const handleCompetitorBrands = (comp) => {
     navigate(`/healthcardOverview/${comp.brand}`);
   };
 
@@ -86,11 +127,11 @@ export default function HealthCardOverview() {
     setError(null)
     const requestPayload = {
       "brand_name": brand,
-      "project_ids":["208"]
-    }  
-    try{
+      "project_ids": ["208"]
+    }
+    try {
       const brandScoreDetails = await getBrandData(requestPayload);
-      if(brandScoreDetails) {
+      if (brandScoreDetails) {
         setBrandDetailData(brandScoreDetails?.data)
         console.log("brandScoreDetails", brandScoreDetails);
       } else {
@@ -110,7 +151,7 @@ export default function HealthCardOverview() {
     setBrandImages([]);
     try {
       const brandImageDetails = await getBrandImages(brand);
-  
+
       if (brandImageDetails) {
         setBrandImages(brandImageDetails);
         console.log("brandImageDetails", brandImageDetails);
@@ -131,7 +172,7 @@ export default function HealthCardOverview() {
     setBrandCategoryDetails([]);
     try {
       const brandCatDetails = await getBrandDetailsData(brand);
-  
+
       if (brandCatDetails) {
         setBrandCategoryDetails(brandCatDetails);
         console.log("brandCatDetails", brandCatDetails);
@@ -146,32 +187,9 @@ export default function HealthCardOverview() {
     }
   };
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      if (userInfo?.user?.id) {
-        try {
-          // Fetch project details by user ID
-          const projectResponse = await getProjectDetailsByUserId(userInfo.user.id);
-          
-          // Assuming projectResponse is an object containing a "project" array
-          const projects = projectResponse.project.map((project) => ({
-            value: project.id,           // Map project id to value
-            label: project.project_name, // Map project_name to label
-          }));
-
-          setFilterProject(projects); // Update state with mapped project options
-        } catch (error) {
-          console.error("Error fetching projects:", error);
-        }
-      }
-    };
-
-    fetchProjects();
-  }, [userInfo]); // Run this effect when userInfo changes
-
   const handleSelectedProjects = (selectedOptions) => {
     setSelectedFilterProject(selectedOptions);
-     
+
   };
   // const handleSelectedProjects = async (selectedOptions) => {
   //   setSelectedFilterProject(selectedOptions);
@@ -335,43 +353,40 @@ export default function HealthCardOverview() {
   };
   // const generateExcel = (ecomData, paidData, socialData, brandPerfData) => {
   //   const workbook = XLSX.utils.book_new(); // Create a new workbook
-  
+
   //   // Helper function to convert a dataset into a sheet
   //   const createSheetData = (data, sheetName) => {
   //     const sheetData = [["Metric Name", "Normalized Value"]]; // Define header row
-  
+
   //     // Iterate over the data to fill the sheet
   //     for (const metric in data) {
   //       if (data.hasOwnProperty(metric)) {
   //         sheetData.push([metric, data[metric]]);
   //       }
   //     }
-  
+
   //     // Create worksheet and append to the workbook
   //     const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
   //     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName); // Append sheet to workbook
   //   };
-  
+
   //   // Create a sheet for ecomData
   //   createSheetData(ecomData, "Ecom Data");
-  
+
   //   // Create a sheet for paidData
   //   createSheetData(paidData, "Paid Data");
-  
+
   //   // Create a sheet for socialData
   //   createSheetData(socialData, "Social Data");
-  
+
   //   // Create a sheet for brandPerfData
   //   createSheetData(brandPerfData, "Brand Performance");
-  
+
   //   // Write the Excel file to disk
   //   XLSX.writeFile(workbook, "CampaignData.xlsx");
   // };
 
-  // Helper function to format data into array of arrays (AOA) format
   const formatToAOA = (data) => {
-    // If data is already in the correct format, return it as is.
-    // Otherwise, you may need to transform the object into an array of arrays.
     return Array.isArray(data) ? data : Object.entries(data);
   };
 
@@ -394,43 +409,93 @@ export default function HealthCardOverview() {
                 btnName={"Export as Excel"}
                 onClick={handleExport}
               />
+
               <ButtonGroup aria-label="Select Frequency">
-                <Button className="group-btn" variant="outline-secondary">
+                <Button
+                  className="group-btn"
+                  variant={selectedFrequency === "Monthly" ? "primary" : "outline-secondary"}
+                  onClick={() => handleFrequencyChange("Monthly")}
+                >
                   Monthly
                 </Button>
-                <Button className="group-btn" variant="primary">
+                <Button
+                  className="group-btn"
+                  variant={selectedFrequency === "Quarterly" ? "primary" : "outline-secondary"}
+                  onClick={() => handleFrequencyChange("Quarterly")}
+                >
                   Quarterly
                 </Button>
               </ButtonGroup>
-              <select name="filter" className="filter-input">
-                <option value="Filter">Filter</option>
-                <option value="Alphabet">Alphabet</option>
-                <option value="Number">Number</option>
-                <option value="Percentage">Percentage</option>
-              </select>
-              <MultiSelectDropdown
-                  options={filterProject}
-                  selectedValues={selectedFilterProject}
-                  onChange={handleSelectedProjects}
-                  placeholder="Select files"
-                />
+
+              {selectedFrequency === "Monthly" && (
+                <Form.Select
+                  name="Months"
+                  className="filter-input mt-3"
+                  value={selectedValue}
+                  onChange={handleSelectionChange} // Trigger API call on selection
+                >
+                  <option value="">Select a Month</option>
+                  <option value="Jan">Jan</option>
+                  <option value="Feb">Feb</option>
+                  <option value="Mar">Mar</option>
+                  <option value="Apr">Apr</option>
+                  <option value="May">May</option>
+                  <option value="Jun">Jun</option>
+                  <option value="Jul">Jul</option>
+                  <option value="Aug">Aug</option>
+                  <option value="Sep">Sep</option>
+                  <option value="Oct">Oct</option>
+                  <option value="Nov">Nov</option>
+                  <option value="Dec">Dec</option>
+                </Form.Select>
+              )}
+
+              {selectedFrequency === "Quarterly" && (
+                <Form.Select
+                  name="Quarters"
+                  className="filter-input mt-3"
+                  value={selectedValue}
+                  onChange={handleSelectionChange} // Trigger API call on selection
+                >
+                  <option value="">Select a Quarter</option>
+                  <option value="JFM">JFM</option>
+                  <option value="AMJ">AMJ</option>
+                  <option value="JAS">JAS</option>
+                  <option value="OND">OND</option>
+                </Form.Select>
+              )}
+
+              <Form.Select
+                name="Project Name"
+                className="filter-input mt-3"
+                value={selectedValue}
+                onChange={handleSelectedProjects}
+              >
+                <option value="">Select a Project</option>
+
+                {filterProject.map((project, index) => (
+                  <option key={index} value={project.value}>
+                    {project.label}
+                  </option>
+                ))}
+              </Form.Select>
             </div>
           </div>
           <div className="brand-overview">
             <div className="brand-header">
-            <span className="section-title">Brand Overview</span>
-            <div className="competitor">
-              <span className="competitor-title">Competitor List:</span>
-              <ul className="comptetitor-item">
-                {brandCategoryDetails?.competitors?.map((comp, index) => (
-                  <li key={index}>
-                    <span class="brand-list" onClick={() => handleCompetitorBrands(comp)}>{comp.brand}</span>
-                    {/* <p>Category: {comp.category}</p>
+              <span className="section-title">Brand Overview</span>
+              <div className="competitor">
+                <span className="competitor-title">Competitor List:</span>
+                <ul className="comptetitor-item">
+                  {brandCategoryDetails?.competitors?.map((comp, index) => (
+                    <li key={index}>
+                      <span class="brand-list" onClick={() => handleCompetitorBrands(comp)}>{comp.brand}</span>
+                      {/* <p>Category: {comp.category}</p>
                     <p>Sub-Category: {comp.sub_category}</p> */}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
             <div className="brand-dqscores">
               <div className="score-list">
@@ -451,9 +516,9 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => 
+                    {brandDetailData.map(item =>
                       getColorScore((parseFloat(item.Overall_Final_Score) || 0).toFixed(2), 70.3)
-                  )}
+                    )}
                   </div>
                   <span className="brand-subtitle">DQ Score</span>
                   <OverlayTrigger
@@ -473,15 +538,15 @@ export default function HealthCardOverview() {
                   <MdOutlineStackedLineChart />
                 </div>
                 <div className="score-details">
-                  <div className="brand-title"> 
-                  {brandDetailData.map(item => 
+                  <div className="brand-title">
+                    {brandDetailData.map(item =>
                       getColorScore(
-                          item.Ecom != null && !isNaN(parseFloat(item.Ecom)) 
-                              ? parseFloat(item.Ecom).toFixed(2) 
-                              : 0, 
-                          40.0
+                        item.Ecom != null && !isNaN(parseFloat(item.Ecom))
+                          ? parseFloat(item.Ecom).toFixed(2)
+                          : 0,
+                        40.0
                       )
-                  )}
+                    )}
                   </div>
                   <span className="brand-subtitle">Ecom DQ Score</span>
                   <OverlayTrigger
@@ -502,14 +567,14 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => 
-                    getColorScore(
-                        item.social != null && !isNaN(parseFloat(item.social)) 
-                            ? parseFloat(item.social).toFixed(2) 
-                            : 0, 
+                    {brandDetailData.map(item =>
+                      getColorScore(
+                        item.social != null && !isNaN(parseFloat(item.social))
+                          ? parseFloat(item.social).toFixed(2)
+                          : 0,
                         60.5
-                    )
-                  )}
+                      )
+                    )}
                   </div>
                   <span className="brand-subtitle">Social DQ Score</span>
                   <OverlayTrigger
@@ -530,14 +595,14 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => 
-                    getColorScore(
-                        item.Paid != null && !isNaN(parseFloat(item.Paid)) 
-                            ? parseFloat(item.Paid).toFixed(2) 
-                            : 0, 
+                    {brandDetailData.map(item =>
+                      getColorScore(
+                        item.Paid != null && !isNaN(parseFloat(item.Paid))
+                          ? parseFloat(item.Paid).toFixed(2)
+                          : 0,
                         60.5
-                    )
-                  )}
+                      )
+                    )}
                   </div>
                   <span className="brand-subtitle">Paid DQ Score</span>
                   <OverlayTrigger
@@ -558,15 +623,15 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                  {brandDetailData.map(item => 
-                    getColorScore(
-                        item.Brand_Perf != null && !isNaN(parseFloat(item.Brand_Perf)) 
-                            ? parseFloat(item.Brand_Perf).toFixed(2) 
-                            : 0, 
+                    {brandDetailData.map(item =>
+                      getColorScore(
+                        item.Brand_Perf != null && !isNaN(parseFloat(item.Brand_Perf))
+                          ? parseFloat(item.Brand_Perf).toFixed(2)
+                          : 0,
                         60.5
-                    )
-                  )}
-                  {/* {brandDetailData.map(item => getColorScore((item.Brand_Perf).toFixed(2), 50))} */}
+                      )
+                    )}
+                    {/* {brandDetailData.map(item => getColorScore((item.Brand_Perf).toFixed(2), 50))} */}
                   </div>
                   <span className="brand-subtitle">Brand Perf DQ Score</span>
                   <OverlayTrigger
