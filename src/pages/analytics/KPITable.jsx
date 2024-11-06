@@ -5,6 +5,7 @@ import { getKPIScoreValues, getBrandImages } from "../../services/projectService
 import { getAllMetricsDefinition } from "../../services/userService";
 import { useParams } from "react-router-dom";
 import { FaInfo } from "react-icons/fa";
+import "./KPITable.scss";
 
 const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -116,19 +117,19 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
     if (!kpiData || kpiData?.length === 0) {
       return (
         <tr>
-          <td colSpan={brandsToDisplay?.length + 2}>
+          <td colSpan={brandsToDisplay?.length + 3} style={{width:'100%'}}>
             <div className="loader-container-sm">
               <div className="loader-sm"></div>
               <span className="loader-text">Loading...</span>
             </div>
           </td>
-        </tr>
+        </tr> 
       );
     }
 
     return metrics?.map((metric, metricIndex) => (
       <tr key={metricIndex}>
-        <td>
+        <td className="sticky-col" style={{ width: '100px' }}>
         <span
           style={{
             display: 'inline-block',
@@ -143,10 +144,10 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
           {metric?.section?.name}
           {console.log( "backgroundColor: ", getColor(metric?.section?.name))}
           </td>
-        <td>
+        <td className="sticky-col" style={{ width: '100px' }}>
           {metric?.platform?.name}
           </td>
-        <td>
+        <td className="sticky-col" style={{ width: '150px' }}>
           <div className="metric-name">{metric?.metric_name}
             <div className="metric-info">
               <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(metric?.metric_name, metric?.platform?.name)} />
@@ -168,13 +169,12 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
           const color = getColor(resultData?.section);
 
           return (
-            <td key={brandIndex}>
+            <td key={brandIndex} style={{ width: '100px' }}>
 
               <span
                 title={`Benchmark Value: ${resultData?.benchmarkValue || 'N/A'}\nPercentile: ${resultData?.percentile || 'N/A'}`}
-                style={{ color: getColorScore(Number(resultData?.result).toFixed(2), [60, 70, 80]) }}
               >
-              {resultData?.result !== null ? getColorScore(Number(resultData?.result).toFixed(2), [60, 70, 80]) : "N/A"}
+              {resultData?.result !== null ? (Number(resultData?.result).toFixed(2)) : "N/A"}
               </span>
             </td>
           );
@@ -195,19 +195,38 @@ const KPITable = ({ getColor, metrics, projectDetails, getColorScore, kpiData= [
         responsive
         striped
         bordered
-        className="insights-table"
+        className="insights-table kpi-table"
         id="wrapper2"
       >
         <thead>
           <tr>
-            <th>Section</th>
-            <th>Platform</th>
-            <th>Metrics</th>
-            {brandsToDisplay.sort((a, b) => a.localeCompare(b)).map((brandItem, index) => (
-              <th key={index}> 
-              {/* <img src={fetchImageOfBrand(brandItem)}></img>  */}
-              {brandItem}</th>
-            ))}
+            <th className="sticky-col" style={{ width: '100px' }}>Section</th>
+            <th className="sticky-col" style={{ width: '100px' }}>Platform</th>
+            <th className="sticky-col" style={{ width: '150px' }}>Metrics</th>
+            {/* {brandsToDisplay.sort((a, b) => a.localeCompare(b)).map((brandItem, index) => (
+              <th key={index} style={{ width: '100px' }}> 
+                {brandItem}
+                
+              </th>
+            ))} */}
+            {brandsToDisplay.sort((a, b) => a.localeCompare(b)).map((brandItem, index) => {
+              const kpiItem = kpiData.find(kpi => kpi.brand === brandItem);
+              return (
+                <th key={index} style={{ width: '100px' }}> 
+                  
+                  <span>{brandItem}</span>
+                   
+                  {kpiItem ? (
+                    <>
+                      <span className="brand-category">{kpiItem.category}</span>
+                      {/* <div className="brand-category">{kpiItem.sub_category}</div> */}
+                    </>
+                  ) : (
+                    <span className="brand-category">Loading...</span>
+                  )}
+                </th>
+              );
+            })} 
           </tr>
         </thead>
         <tbody>{renderTableBody()}</tbody>

@@ -33,7 +33,7 @@ import { HiArrowsUpDown } from "react-icons/hi2";
 import { MdOutlineEdit } from "react-icons/md";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { VscGoToFile } from "react-icons/vsc";
-import { getProjectInfoRequest } from "../../features/user/userSlice";
+import { getProjectInfoRequest, getRecentProjectRequest } from "../../features/user/userSlice";
 import ModalComponent from "../../components/Modal/ModalComponent";
 
 export default function WorkSpace() {
@@ -127,7 +127,7 @@ const handleEditProjectName = (id) => {
     };
     return <span>{icons[key]}</span>;
   };
-  // Function to handle date range changes
+  // Function to handle date range changesF
   const handleDateRangeChange = (event) => {
     console.log(event);
     
@@ -224,7 +224,7 @@ const handleEditProjectName = (id) => {
     try {
       const project = await updateProject(id, data);
       if(project){
-        alert("Project Deleted Successfully.")
+        alert("Project Name Updated Successfully.")
       }
     } catch (error) {
       
@@ -324,6 +324,8 @@ const handleEditProjectName = (id) => {
   };
 
   const handleProjectClick = (id) => {
+     dispatch(getRecentProjectRequest(id));
+     console.log("Dispatched project ID:", id);
     navigate(`/analytics/${id}`);
   };
 
@@ -579,7 +581,7 @@ const handleEditProjectName = (id) => {
             <Table responsive striped bordered>
               <thead>
                 <tr>
-                  <th>#</th>
+                  <th className="table-heading">S.No</th>
                   <th onClick={() => handleSortingChange("project_name")}><span className="table-heading">Project Name {renderSortIcon("project_name")}</span></th>
                   <th onClick={() => handleSortingChange("categoryNames")}><span className="table-heading">Category {renderSortIcon("categoryNames")}</span></th>
                   <th onClick={() => handleSortingChange("brandNames")}><span className="table-heading">No. of Brands {renderSortIcon("brandNames")}</span></th>
@@ -612,10 +614,12 @@ const handleEditProjectName = (id) => {
                         <>
                         <input
                           type="text"
+                          className="form-control"
                           value={editedProjectName}
                           onChange={(e) => setEditedProjectName(e.target.value)}
                         />
-                        <button onClick={() => handleEditProjectName(item.id)}>Update</button>
+                        <button className="update-btn"
+                         onClick={() => handleEditProjectName(item.id)}>Update</button>
                         </>
                       ) : (
                       <span onClick={() => handleProjectClick(item.id)}>{item?.project_name}</span>

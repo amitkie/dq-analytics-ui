@@ -3,35 +3,108 @@ import TableComponent from "../../components/tableComponent/TableComponent";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import { gethealthCardData } from "../../services/HealthCard";
 import { getAllBrands, getAllCategories } from "../../services/userService";
-
+import { useSelector } from "react-redux";
+import { getProjectDetailsByUserId } from "../../services/projectService";
 import "./HealthCard.scss";
 
 export default function HealthCard() {
-  const data = gethealthCardData();
+  // const { userInfo, projectInfo } = useSelector((state) => state.user);
+  const data = gethealthCardData; 
+ 
   const [filteredData, setFilteredData] = useState(data);
   const [alphabetFilter, setAlphabetFilter] = useState("");
-  const alphabets = "abcdefghijklmnopqrstuvwxyz".split("");
-
   const [filterCategory, setFilterCategory] = useState([]);
   const [selectedFilterCategory, setSelectedFilterCategory] = useState([]);
-  
+  const alphabets = "abcdefghijklmnopqrstuvwxyz".split("");
+  const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [healthCardDetails, setHealthCardDetails] = useState({});
+
+  const fetchHealthCardData = async () => {
+    setLoading(true); // Start loading
+    setError(null); // Reset error state
+     
+    try {
+      const healthCardData = await getProjectDetailsByUserId(1);
+      if (healthCardData) {
+        setHealthCardDetails(healthCardData?.project);
+        
+      } else {
+        setError("No data found");
+      }
+    } catch (error) {
+      console.error("Error fetching health card data:", error);
+      setError("No data found"); // Set error message if API call fails
+    } finally {
+      setLoading(false); // End loading
+    }
+  };
+
   useEffect(() => {
     fetchAllBrands();
     fetchAllCategories();
-     
-    if (alphabetFilter  === "") {
-      setFilteredData(data);
-    } else {
-      setFilteredData(data.filter(item => item.Brands?.toLowerCase().startsWith(alphabetFilter.toLowerCase())));
-      // const results = data.filter(item => {
-      //   if(selectedFilterCategory && alphabetFilter) {
-      //     item.category_id !== selectedFilterCategory
-      //   }
-      // })
-    }
-    
-  }, [alphabetFilter, data]);
+    fetchHealthCardData();
+;  }, []);
 
+ 
+ 
+  // const selectedProject = healthCardDetails?.find((item) => item.id === selectedProjectId);
+ 
+  // const projectName = selectedProject ? selectedProject?.project_name : 'Project not found';
+ 
+    console.log('healthCardDetails', healthCardDetails)
+  useEffect(() => {
+    let filtered = data;
+
+    // Clear alphabet filter when category is selected
+    if (selectedFilterCategory.length > 0) {
+      setAlphabetFilter(""); // Clear alphabet filter when a category is selected
+    }
+
+    // Alphabet filter
+    if (alphabetFilter !== "") {
+      filtered = filtered.filter((item) =>
+        item.Brands?.toLowerCase().startsWith(alphabetFilter.toLowerCase())
+      );
+    }
+
+    // Category filter
+    if (selectedFilterCategory.length > 0) {
+      const selectedCategoryNames = selectedFilterCategory.map((option) => option.label);
+      filtered = filtered.filter((item) => {
+        const itemCategory = item.Category ? item.Category : "";
+        return selectedCategoryNames.includes(itemCategory);
+      });
+    }
+
+    setFilteredData(filtered);
+  }, [alphabetFilter, selectedFilterCategory, data]);
+
+  // useEffect(() => {
+  //   fetchAllBrands();
+  //   fetchAllCategories();
+  
+  //   let filtered = data;
+ 
+  //   if (alphabetFilter !== "") {
+  //     filtered = filtered.filter((item) =>
+  //       item.Brands?.toLowerCase().startsWith(alphabetFilter.toLowerCase())
+  //     );
+  //   }
+  
+  //   // Category filter (filter by category names)
+  //   if (selectedFilterCategory.length > 0) {
+  //     const selectedCategoryNames = selectedFilterCategory.map((option) => option.label);
+  //     filtered = filtered.filter((item) => {
+  //       const itemCategory = item.Category ? item.Category : "";
+  //       return selectedCategoryNames.includes(itemCategory);
+  //     });
+  //   }
+
+  //   setFilteredData(filtered);
+  // }, [alphabetFilter, selectedFilterCategory, data]);
+    
   const fetchAllBrands = async() => {
     try {
       const brandsData = await getAllBrands();
@@ -58,16 +131,9 @@ export default function HealthCard() {
     setAlphabetFilter(alphabet);
   };
 
-  const handleCategoryFilter = async (selectedOptions) => {
+  const handleCategoryFilter = (selectedOptions) => {
+    console.log("Selected Options:", selectedOptions); // Log selected options
     setSelectedFilterCategory(selectedOptions);
-    if (selectedOptions.length > 0) {
-      try {
-        const categoryIds = selectedOptions.map((option) => option.value);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    }
-    
   };
 
 

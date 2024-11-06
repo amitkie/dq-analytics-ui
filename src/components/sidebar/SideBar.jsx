@@ -181,7 +181,7 @@ export default function SideBar() {
           <Link to={"/healthcard"} title="Health Card" id="m-4">
             <img
               src={
-                (activeMenu === "healthcard" || activeMenu === "healthcardOverview")
+                (activeMenu === "healthcard" || activeMenu === "healthcardOverview" || activeMenu === "healthcardreport")
                   ? HealthCardIconActive
                   : HealthCardIcon
               }

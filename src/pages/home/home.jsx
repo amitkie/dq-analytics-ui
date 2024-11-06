@@ -28,7 +28,7 @@ import { useSelector } from "react-redux";
 const Home = () => {
   const { userInfo, projectInfo } = useSelector((state) => state.user);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  const navigate = useNavigate();
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -67,7 +67,9 @@ const Home = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [isMobile]);
-
+  const handleProjectClicks = (id) => {
+    navigate(`/analytics/${id}`);
+  };
 
   const tabs = [
     {
@@ -75,13 +77,13 @@ const Home = () => {
       content: (
         <div className="user-menu">
           {projectInfo?.project?.length > 0 ? (
-            projectInfo.project.map((item) => (
+            projectInfo.project.slice(0, 10).map((item) => (
               <div key={item.id} className="user-activity">
                 <p>
                   Last activity on: <b>{formatDate(item.updatedAt)}</b>
                 </p>
                 <p>
-                  Project Name: <b>{item.project_name}</b>
+                  Project Name: <span className="btn-text" onClick={() => handleProjectClicks(item.id)}>{item.project_name}</span>
                 </p>
               </div>
             ))
@@ -108,12 +110,12 @@ const Home = () => {
               </p>
               <p>
                 Project Name:{" "}
-                <b>
+                <span className="btn-text" onClick={() => handleProjectClicks( projectInfo?.project[0].id)}>
                   {
                     projectInfo?.project[0]
                       .project_name
                   }
-                </b>
+                </span>
               </p>
             </div>
           ) : (

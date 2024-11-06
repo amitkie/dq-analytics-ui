@@ -1,13 +1,47 @@
 @import "../../assets/mixins/mixins.scss";
-.chart-group {
+// .chart-group {
+//   display: flex;
+//   flex-wrap: wrap;
+//   gap: 1rem;
+//   width: 100%;
+// }
+// .chart-list {
+//   flex: 1 1 auto;
+//   @include boxWithShadow();
+//   width: calc(50% - 1rem);
+//     &:nth-child(5) {
+//       align-self: flex-start;
+//       width: calc(100% - 1rem);
+//     }
+// }
+.chart-container {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.left-side {
   display: flex;
   flex-flow: row wrap;
   gap: 1rem;
+  .chart-list {
+    @include boxWithShadow();
+    width: calc(50% - 1rem);
+    padding: 10px;
+    box-sizing: border-box;
+  }
 }
-.chart-list {
-  @include boxWithShadow();
-  width: calc(50% - 1rem);
+
+.right-side {
+  display: flex;
+  align-items: flex-start;
+  .chart-list {
+    @include boxWithShadow();
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
 }
+
 .dq-score-bubble {
   @include boxWithShadow();
   width: 100%;
@@ -47,7 +81,7 @@
   margin: 0;
   list-style-type: none;
   li {
-    width: 125px;
+    width: 110px;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
@@ -55,37 +89,46 @@
     padding: 4px 8px;
     border-radius: 4px;
    &:nth-child(1) {
-    background-color: #C1DED3;
-    border: 1px solid #91b1a5;
+    background-color: #BE7CE2;
+    border: 1px solid #BE7CE2;
    }
    &:nth-child(2) {
-    background-color: #d8e6ed;
-    border: 1px solid #c0ccd2;
+    background-color: #0d47a0;
+    border: 1px solid #0d47a0;
    }
    &:nth-child(3) {
-    background-color: #DFE9DE;
-    border: 1px solid #c6d0c5;
+    background-color: #FF9800;
+    border: 1px solid #FF9800;
    }
    &:nth-child(4) {
-    background-color: #dad2ea;
-    border: 1px solid #bdb6cb;
+    background-color: #279E70;
+    border: 1px solid #279E70;
    }
    &:nth-child(5) {
-    background-color: #E2E3EF;
-    border: 1px solid #c4c5cf;
+    background-color: #C82519;
+    border: 1px solid #C82519;
    }
    .scoreTitle {
     @include secondaryFont();
-    color: #333;
+    color: #FFF;
     display: block;
-    text-align: center
+    text-align: center;
+    line-height: 1;
+    padding-bottom: 4px;
    }
    .scoreValue {
     @include secondaryFontBold();
-    color: #121314;
+    color: #FFF;
     display: block;
     text-align: center;
+    line-height: 1;
    }
+  }
+}
+.brand-select-option.w-160 {
+  width: 160px;
+  .multi-select-dropdown {
+    width: 160px;
   }
 }
 @media (max-width:768px) {
@@ -111,12 +154,19 @@
 
 .brand-option {
   display: flex;
-}
-
-.brand-select-option {
-  display: flex;
-  width: 160px;
-}
-.brand-select-option .Select-input {
-  width: 160px;
+  gap: .5rem;
+  align-items: center;
+  .brand-select-option {
+    display: flex;
+    width: 160px;
+    .brand-select-input {
+      width: 160px;
+      display: flex;
+      appearance: auto;
+      padding: 4px 12px 4px 6px;
+      border: 1px solid $text-color;
+      border-radius: 6px;
+      height: 44px;
+    }
+  }
 }

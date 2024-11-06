@@ -233,6 +233,7 @@ function ScoreCard({ getColor, projectId }) {
                 borderRadius: '50%',
                 backgroundColor: getColor('Marketplace'),
                 marginRight: '5px',
+                border:'1px solid #fff',
               }}
             ></span>
             <span>Marketplace</span>
@@ -248,6 +249,7 @@ function ScoreCard({ getColor, projectId }) {
                 borderRadius: '50%',
                 backgroundColor: getColor('Digital Spends'),
                 marginRight: '5px',
+                border:'1px solid #fff',
               }}
             ></span>
             <span>Digital Spends</span>
@@ -263,6 +265,7 @@ function ScoreCard({ getColor, projectId }) {
                 borderRadius: '50%',
                 backgroundColor: getColor('Socialwatch'),
                 marginRight: '5px',
+                border:'1px solid #fff',
               }}
             ></span>
             <span>Socialwatch</span>
@@ -278,6 +281,7 @@ function ScoreCard({ getColor, projectId }) {
                 borderRadius: '50%',
                 backgroundColor: getColor('Organic Performance'),
                 marginRight: '5px',
+                border:'1px solid #fff',
               }}
             ></span>
             <span>Organic Performance</span>

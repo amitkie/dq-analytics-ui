@@ -44,6 +44,11 @@ export default function HealthCardOverview() {
   const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
   const [selectedValue, setSelectedValue] = useState("");
 
+  const [currentProjectId, setCurrentProjectId] = useState([]);
+  const [projectName, setProjectName] = useState([]);
+  const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
+
+  
   const handleFrequencyChange = (frequency) => {
     setSelectedFrequency(frequency);
     setSelectedValue(""); 
@@ -68,34 +73,78 @@ export default function HealthCardOverview() {
   const fetchProjectDetails = async(reqPayload) => {
     try{
       const projectResponse = await getProjectsByDateRangeForUser(reqPayload);
-
       const projects = projectResponse?.projects?.map((project) => ({
         value: project.id,          
         label: project.project_name, 
       }));
-  
+       
       setFilterProject(projects);
+
     }catch(err){
           console.error("Error fetching projects:", error);
     }
   }
-
+ 
+   
 
   const navigate = useNavigate();
-
   const handleReportClick = () => {
-    navigate('/healthcardreport');
+    
+    if (brandDetailData && brandImages && brandCategoryDetails) {
+      navigate(`/healthcardreport/${brand}`, {
+        state: {
+          brandDetailData: brandDetailData,
+          brandImages: brandImages,
+          brandCategoryDetails: brandCategoryDetails,
+          loading: loading,
+          error: error,
+         
+        }
+      });
+      
+    } else {
+      alert("Data is not ready yet. Please wait until all data is loaded.");
+      console.error("Required data is missing");
+    }
+     
   };
+  
   const handleCompetitorBrands = (comp) => {
     navigate(`/healthcardOverview/${comp.brand}`);
   };
 
   useEffect(() => {
+    const fetchCurrentProjectDetails = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const currentProjectData = await getProjectDetailsByUserId(userInfo?.user?.id);
+        const currentProject = currentProjectData?.project?.[0];
+         
+        if (currentProject) {
+          setCurrentProjectId(currentProject.id);  
+        } else {
+          setError("No Data Found")
+        }
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+        setError("No data found"); // Set error message if API call fails
+      } finally {
+        setLoading(false); // End loading
+      }
+    }
+    fetchCurrentProjectDetails();
+  }, [userInfo?.user?.id]);
+
+  useEffect(() => {
     fetchHealthCardData();
-    fetchBrandScoreDetails();
     fetchBrandImages();
     fetchBrandDetails();
-  }, [brand]);
+    if (currentProjectId) {
+      fetchBrandScoreDetails(); // Fetch brand score details whenever currentProjectId is updated
+    }
+  }, [brand, currentProjectId]);
 
   const fetchHealthCardData = async () => {
     setLoading(true); // Start loading
@@ -121,14 +170,17 @@ export default function HealthCardOverview() {
       setLoading(false); // End loading
     }
   };
-
+ 
+  
+ console.log('currentProjectId', currentProjectId);
   const fetchBrandScoreDetails = async () => {
     setLoading(true);
     setError(null)
     const requestPayload = {
       "brand_name": brand,
-      "project_ids": ["208"]
+      "project_ids": [selectedProjectId],
     }
+    
     try {
       const brandScoreDetails = await getBrandData(requestPayload);
       if (brandScoreDetails) {
@@ -398,7 +450,7 @@ export default function HealthCardOverview() {
             <h2 className="page-title mt-4 ml-3">Health Card</h2>
             <div className="filter-section">
               <ButtonComponent
-                // disabled
+                disabled={!brandDetailData || !brandImages || !brandCategoryDetails}
                 btnClass={"btn-primary"}
                 btnName={"DQ Brand Report"}
                 onClick={handleReportClick}
@@ -507,7 +559,7 @@ export default function HealthCardOverview() {
                 <div className="score-details">
                   <div className="brand-title">{brandCategoryDetails?.main_brand?.brand}</div>
                   <span className="brand-subtitle">Category: {brandCategoryDetails?.main_brand?.category}</span>
-                  <span className="brand-subcategory">Sub Category: {brandCategoryDetails?.main_brand?.sub_category}</span>
+                  <span className="brand-subcategory">Sub Category: <span className="brand-subcategory-list">{brandCategoryDetails?.main_brand?.sub_category}</span></span>
                 </div>
               </div>
               <div className="score-list">
@@ -516,8 +568,15 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {brandDetailData.map(item =>
-                      getColorScore((parseFloat(item.Overall_Final_Score) || 0).toFixed(2), 70.3)
+                    {loading ? (
+                      <div className="loader-container-sm">
+                        <div className="loader-sm"></div>
+                        <span className="loader-text">Loading...</span>
+                      </div>
+                    ) :(
+                      brandDetailData.map(item =>
+                        getColorScore((parseFloat(item.Overall_Final_Score) || 0).toFixed(2), 70.3)
+                      )
                     )}
                   </div>
                   <span className="brand-subtitle">DQ Score</span>
@@ -539,14 +598,23 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {brandDetailData.map(item =>
-                      getColorScore(
-                        item.Ecom != null && !isNaN(parseFloat(item.Ecom))
-                          ? parseFloat(item.Ecom).toFixed(2)
-                          : 0,
-                        40.0
+                  {loading ? (
+                      <div className="loader-container-sm h-auto">
+                        <div className="loader-sm"></div>
+                        <span className="loader-text">Loading...</span>
+                      </div>
+                    ) : (
+                    brandDetailData.map(item =>
+                        getColorScore(
+                          item.Marketplace != null && !isNaN(parseFloat(item.Marketplace))
+                            ? parseFloat(item.Marketplace).toFixed(2)
+                            : 0,
+                          40.0
+                        )
                       )
-                    )}
+                    )
+                    
+                    }
                   </div>
                   <span className="brand-subtitle">Ecom DQ Score</span>
                   <OverlayTrigger
@@ -567,13 +635,20 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {brandDetailData.map(item =>
+                  {loading ? (
+                      <div className="loader-container-sm h-auto">
+                        <div className="loader-sm"></div>
+                        <span className="loader-text">Loading...</span>
+                      </div>
+                    ) :(
+                    brandDetailData.map(item =>
                       getColorScore(
-                        item.social != null && !isNaN(parseFloat(item.social))
-                          ? parseFloat(item.social).toFixed(2)
+                        item.Socialwatch != null && !isNaN(parseFloat(item.Socialwatch))
+                          ? parseFloat(item.Socialwatch).toFixed(2)
                           : 0,
                         60.5
                       )
+                    )
                     )}
                   </div>
                   <span className="brand-subtitle">Social DQ Score</span>
@@ -595,13 +670,20 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {brandDetailData.map(item =>
+                  {loading ? (
+                      <div className="loader-container-sm h-auto">
+                        <div className="loader-sm"></div>
+                        <span className="loader-text">Loading...</span>
+                      </div>
+                    ) :(
+                    brandDetailData.map(item =>
                       getColorScore(
-                        item.Paid != null && !isNaN(parseFloat(item.Paid))
-                          ? parseFloat(item.Paid).toFixed(2)
+                        item['Digital Spends'] != null && !isNaN(parseFloat(item['Digital Spends']))
+                          ? parseFloat(item['Digital Spends']).toFixed(2)
                           : 0,
                         60.5
                       )
+                    )
                     )}
                   </div>
                   <span className="brand-subtitle">Paid DQ Score</span>
@@ -623,15 +705,20 @@ export default function HealthCardOverview() {
                 </div>
                 <div className="score-details">
                   <div className="brand-title">
-                    {brandDetailData.map(item =>
-                      getColorScore(
-                        item.Brand_Perf != null && !isNaN(parseFloat(item.Brand_Perf))
-                          ? parseFloat(item.Brand_Perf).toFixed(2)
-                          : 0,
-                        60.5
-                      )
-                    )}
-                    {/* {brandDetailData.map(item => getColorScore((item.Brand_Perf).toFixed(2), 50))} */}
+                    {loading ? (
+                      <div className="loader-container-sm h-auto">
+                        <div className="loader-sm"></div>
+                        <span className="loader-text">Loading...</span>
+                      </div>
+                    ) : (brandDetailData.map(item =>
+                        getColorScore(
+                          item['Organic Performance'] != null && !isNaN(parseFloat(item['Organic Performance']))
+                            ? parseFloat(item['Organic Performance']).toFixed(2)
+                            : 0,
+                          60.5
+                        )
+                      ))
+                    }                     
                   </div>
                   <span className="brand-subtitle">Brand Perf DQ Score</span>
                   <OverlayTrigger

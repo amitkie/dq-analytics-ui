@@ -1,188 +1,254 @@
-import React , {useState, useEffect}from "react";
-import BubbleChart from "../../common/bubbleCharts/BubbleChart";
+import React, { useState, useEffect } from "react";
 import TrendChart from "../../common/TrendChart/TrendChart";
 import Form from "react-bootstrap/Form";
-import "./ScoreCard.scss";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
+import "./ScoreCard.scss";
 
-function ScoreCard({dqScoreValue, dqScoreLoading=false}) {
-
+function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
   const [brandDQ, setBrandDQ] = useState([]);
   const [selectedBrandDQ, setSelectedBrandDQ] = useState([]);
-
   const [categoryDQ, setCategoryDQ] = useState([]);
   const [SelectedCategoryDQ, setSelectedCategoryDQ] = useState([]);
+  const [scoreRange, setScoreRange] = useState([0, 100]);
+  const [filteredDQScoreValue, setFilteredDQScoreValue] = useState([]);
+
+
+  const handleRangeChange = (e) => {
+    const value = Number(e.target.value);
+    setScoreRange([0, value]);
+  };
 
   useEffect(() => {
-    const fetchData = () => {
-      if (!dqScoreValue) {
-        console.log("dqScoreValue is not set yet.");
-        return;
-      }
-
+    if (dqScoreValue) {
       const brandsData = dqScoreValue.map((brand, index) => ({
-        value: index, // or use brand.Brand_Name if unique
+        value: index,
         label: brand.Brand_Name,
       }));
       setBrandDQ(brandsData);
-      console.log("brandsData", brandsData);
-    };
-
-    fetchData();
+    }
   }, [dqScoreValue]);
 
   const handleBrandDQChange = (event) => {
-    const selectedValue = event.target.value;
-    setSelectedBrandDQ(selectedValue);
-    console.log("Selected brand index:", selectedValue);
+    setSelectedBrandDQ(event.target.value);
   };
 
-  const selectedBrandData = selectedBrandDQ ? dqScoreValue[selectedBrandDQ] : null;
-  
-  const handleCategoryDQChange = () => {
-    console.log('category')
-  }
+  const selectedBrandData =
+    selectedBrandDQ !== "" && dqScoreValue[selectedBrandDQ]
+      ? dqScoreValue[selectedBrandDQ]
+      : null;
 
+  const getFilteredData = () => {
+    const [ , maxScore] = scoreRange;
+  
+    const rdata = dqScoreValue.filter((data) => {
+      return (
+        data.Overall_Final_Score <= maxScore ||
+        data.Marketplace <= maxScore ||
+        data.Socialwatch <= maxScore ||
+        data["Digital Spends"] <= maxScore ||
+        data["Organic Performance"] <= maxScore
+      );
+    });
+    console.log(rdata, 'rdata')
+        return rdata;
+  };
+
+  // const filteredDQScoreValue = getFilteredData();
+  useEffect(() => {
+    const updatedData = getFilteredData();
+    setFilteredDQScoreValue(updatedData);
+    console.log(updatedData, "updatedData")
+  }, [scoreRange, dqScoreValue]);
+
+
+  const chartTypes = [
+    { type: "Marketplace", title: "Marketplace DQ Score", colorFill: "#0d47a0" },
+    { type: "Socialwatch", title: "Socialwatch DQ Score", colorFill: "#FF9800"},
+    { type: "Digital Spends", title: "Digital Spends DQ Score", colorFill: "#279E70"},
+    { type: "Organic Performance", title: "Organic Performance DQ Score", colorFill: "#C82519"},
+    { type: "Overall_Final_Score", title: "Overall DQ Score", colorFill: "#BE7CE2"},
+  ];
 
   return (
     <div className="row">
       <div className="col-12">
         <div className="dq-header">
-            <div className="brand-option">
-              <div className="brand-select-option">
-                {/* <MultiSelectDropdown
-                  options={brandDQ}
-                  selectedValues={selectedBrandDQ}
-                  onChange={handleBrandDQChange}
-                  placeholder="Select Brands"
-                /> */}
-                <select onChange={handleBrandDQChange} value={selectedBrandDQ} className="select-input">
-                  <option value="">Select Brand</option>
-                  {brandDQ.map((brand) => (
-                    <option key={brand.value} value={brand.value}>
-                      {brand.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {selectedBrandData ? (
+          <div className="brand-option">
+            <div className="brand-select-option">
+              <select
+                onChange={handleBrandDQChange}
+                value={selectedBrandDQ}
+                className="brand-select-input"
+              >
+                <option value="">Select Brand</option>
+                {brandDQ.map((brand) => (
+                  <option key={brand.value} value={brand.value}>
+                    {brand.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedBrandData ? (
               <ul className="score-box">
-                {/* <li>
-                  <span className="scoreTitle">Brand: {selectedBrandData.Brand_Name}</span>
-                </li> */}
                 <li>
                   <span className="scoreTitle">DQ Score</span>
-                  <span className="scoreValue">{selectedBrandData.Overall_Final_Score.toFixed(2)}</span>
+                  <span className="scoreValue">
+                    {selectedBrandData.Overall_Final_Score?.toFixed(2)}
+                  </span>
                 </li>
                 <li>
                   <span className="scoreTitle">Marketplace</span>
-                  <span className="scoreValue">{selectedBrandData.Marketplace}</span>
+                  <span className="scoreValue">
+                    {selectedBrandData.Marketplace?.toFixed(2)}
+                  </span>
                 </li>
                 <li>
                   <span className="scoreTitle">Socialwatch</span>
-                  <span className="scoreValue">{selectedBrandData.Socialwatch}</span>
+                  <span className="scoreValue">
+                    {selectedBrandData.Socialwatch?.toFixed(2)}
+                  </span>
                 </li>
                 <li>
                   <span className="scoreTitle">Digital Spends</span>
-                  <span className="scoreValue">{selectedBrandData["Digital Spends"]}</span>
+                  <span className="scoreValue">
+                    {selectedBrandData["Digital Spends"]?.toFixed(2)}
+                  </span>
                 </li>
                 <li>
-                  <span className="scoreTitle">Organic Performance</span>
-                  <span className="scoreValue">{selectedBrandData["Organic Performance"]}</span>
+                  <span className="scoreTitle">Organic Perf</span>
+                  <span className="scoreValue">
+                    {selectedBrandData["Organic Performance"]?.toFixed(2)}
+                  </span>
                 </li>
               </ul>
             ) : (
-              <p>No brand selected</p>
+              <p className="score-box mb-0">
+                Select Brand to see DQ scores
+              </p>
             )}
-            </div>
-           
+          </div>
+
           <div className="project-filter">
             <div className="range-filter">
-              <span>DQ score Range:</span>
-              <Form.Range />
+              <span>DQ Score Range: {scoreRange[0]} - {scoreRange[1]}</span>
+              <Form.Range
+                min={0}
+                max={100}
+                value={scoreRange[1]}
+                onChange={handleRangeChange}
+              />
             </div>
-            <div className="brand-select-option">
+            <div className="brand-select-option w-160">
               <MultiSelectDropdown
                 options={categoryDQ}
                 selectedValues={SelectedCategoryDQ}
-                onChange={handleCategoryDQChange}
+                onChange={() => console.log("category")}
                 placeholder="Select Category"
               />
             </div>
           </div>
         </div>
       </div>
-      <div className="col-md-12 col-lg-6 mb-md-4 mt-md-4">
+
+      {/* <div className="col-md-12 col-lg-6 mb-md-4 mt-md-4">
         <div className="chart-group">
-          <div className="chart-list">
-            {
-            !dqScoreLoading ? 
-            <TrendChart dqScoreValue={dqScoreValue} chartType="Ecom" />
-            : (<div className="loader-container-sm">
-              <div className="loader-sm"></div>
-              <span className="loader-text">Loading, Please Wait</span>
-            </div>)  
-           }
-            <span className="graph-title">Ecom DQ Score</span>
-          </div>
-          <div className="chart-list">
-            {
-              !dqScoreLoading ? 
-              <TrendChart dqScoreValue={dqScoreValue} chartType="Social" />
-              : (
+          {chartTypes.map(({ type, title }) => (
+            <div className="chart-list" key={type}>
+              {!dqScoreLoading && dqScoreValue.length > 0 ? (
+                <TrendChart dqScoreValue={filteredDQScoreValue} chartType={type} />
+              ) : (
                 <div className="loader-container-sm">
-              <div className="loader-sm"></div>
-              <span className="loader-text">Loading, Please Wait</span>
+                  <div className="loader-sm"></div>
+                  <span className="loader-text">Loading, Please Wait</span>
+                </div>
+              )}
+              <span className="graph-title">{title}</span>
             </div>
-              )
-            }
-            <span className="graph-title">Social DQ Score</span>
-          </div>
-          <div className="chart-list">
-            {
-              !dqScoreLoading ? 
-              <TrendChart dqScoreValue={dqScoreValue} chartType="Paid" />
-              : (
+          ))}
+        </div>
+      </div> */}
+
+      <div className="col-md-12 col-lg-12 mb-md-4 mt-md-4">
+        {/* <div className="chart-group">
+          {chartTypes.map(({ type, title, colorFill }) => (
+            <div className="chart-list" key={type}>
+              {dqScoreLoading ? (
                 <div className="loader-container-sm">
-                <div className="loader-sm"></div>
-                <span className="loader-text">Loading, Please Wait</span>
+                  <div className="loader-sm"></div>
+                  <span className="loader-text">Loading, Please Wait</span>
+                </div>
+              ) : filteredDQScoreValue.some((data) => data[type] !== undefined) ? (
+                <TrendChart 
+                  dqScoreValue={filteredDQScoreValue}
+                  chartType={type}
+                  scoreRange={scoreRange}
+                  colorFill={colorFill}
+                  />
+              ) : (
+                <span className="no-data-text">No Data Found</span>
+              )}
+              <span className="graph-title">{title}</span>
+            </div>
+          ))}
+        </div> */}
+        <div className="chart-container">
+          <div className="left-side">
+            {chartTypes.slice(0, 4).map(({ type, title, colorFill }) => (
+              <div className="chart-list" key={type}>
+                {dqScoreLoading ? (
+                  <div className="loader-container-sm">
+                    <div className="loader-sm"></div>
+                    <span className="loader-text">Loading, Please Wait</span>
+                  </div>
+                ) : filteredDQScoreValue.some((data) => data[type] !== undefined) ? (
+                  <TrendChart 
+                    dqScoreValue={filteredDQScoreValue}
+                    chartType={type}
+                    scoreRange={scoreRange}
+                    colorFill={colorFill}
+                  />
+                ) : (
+                  <span className="no-data-text">No Data Found</span>
+                )}
+                <span className="graph-title">{title}</span>
               </div>
-              )
-            }
-            <span className="graph-title">Paid DQ Score</span>
+            ))}
           </div>
-          <div className="chart-list">
-            {
-              !dqScoreLoading ? 
-              <TrendChart dqScoreValue={dqScoreValue} chartType="Brand Perf" />
-              : (
-                <div className="loader-container-sm">
-                <div className="loader-sm"></div>
-                <span className="loader-text">Loading, Please Wait</span>
+
+          <div className="right-side">
+            {chartTypes[4] && (
+              <div className="chart-list" key={chartTypes[4].type}>
+                {dqScoreLoading ? (
+                  <div className="loader-container-sm">
+                    <div className="loader-sm"></div>
+                    <span className="loader-text">Loading, Please Wait</span>
+                  </div>
+                ) : filteredDQScoreValue.some((data) => data[chartTypes[4].type] !== undefined) ? (
+                  <TrendChart 
+                    dqScoreValue={filteredDQScoreValue}
+                    chartType={chartTypes[4].type}
+                    scoreRange={scoreRange}
+                    setScoreRange={setScoreRange}
+                    colorFill={chartTypes[4].colorFill}
+                  />
+                ) : (
+                  <span className="no-data-text">No Data Found</span>
+                )}
+                <span className="graph-title">{chartTypes[4].title}</span>
               </div>
-              )
-            }
-            <span className="graph-title">Brand Perf DQ Score</span>
+            )}
           </div>
         </div>
       </div>
-      <div className="col-md-12 col-lg-6 mb-md-4">
-        <div className="dq-score-bubble">
-          {
-            !dqScoreLoading ? 
-            <TrendChart dqScoreValue={dqScoreValue} chartType="Overall_Final_Score" />
-            : (
-              <div className="loader-container-sm">
-              <div className="loader-sm"></div>
-              <span className="loader-text">Loading, Please Wait</span>
-            </div>
-            )
-          }
-          <span className="graph-title">DQ Score</span>
-        </div>
-      </div>
+
     </div>
   );
 }
 
 export default ScoreCard;
+
+
+
+
+
+

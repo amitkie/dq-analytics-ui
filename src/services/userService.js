@@ -255,7 +255,7 @@ export const getUserAndPaymentInfo = async (id) => {
 };
 export const getAllMetricsDefinition = async (metricName, platformName ) => {
   try {
-    const url = `https://hrsbjqs8-8021.inc1.devtunnels.ms/definition/?platform_name=${platformName}&metric_name=${metricName}`;
+    const url = `https://m594bmgj-8018.inc1.devtunnels.ms/definition/?platform_name=${platformName}&metric_name=${metricName}`;
     const response = await axios.get(url);
 
     // Check if response is OK

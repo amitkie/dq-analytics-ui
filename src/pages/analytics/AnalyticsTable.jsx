@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
 import { IoMdRemoveCircleOutline, IoMdAddCircleOutline } from "react-icons/io";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
@@ -16,13 +16,14 @@ const AnalyticsTable = ({
   handleSelectAll,
   totalWeights,
   removeMetricsFromDB,
+  isLoading,
   selectedSections = [],
   selectedPlatforms = [],
   selectedMetrics = [],
 }) => {
   const [expandedSections, setExpandedSections] = useState([]);
   const [expandedPlatforms, setExpandedPlatforms] = useState([]);
-
+   
   // Toggle section expansion
   const toggleSection = (sectionId) => {
     setExpandedSections((prev) =>
@@ -40,7 +41,12 @@ const AnalyticsTable = ({
         : [...prev, platformId]
     );
   };
-
+  useEffect(() => {
+    console.log("Updated metrics:", metrics);
+    console.log("isLoading:", metrics.some(metric => metric.isLoading));
+  }, [metrics]);
+  
+  
   // Filter metrics based on selected sections, platforms, and metrics
   const filteredMetrics = metrics.filter((metric) => {
     const sectionMatch = selectedSections.length === 0 || selectedSections.some(section => section.value === metric.section.id);
@@ -192,7 +198,7 @@ const AnalyticsTable = ({
                             />
                           </td>
                           <td>
-                            {item.isCategoryBasedChecked ? (
+                          {item.isCategoryBasedChecked ? (
                               <Table responsive>
                                 <tbody>
                                   {item.benchmark.map(({ category, value }, index) => (
@@ -203,6 +209,7 @@ const AnalyticsTable = ({
                                       <td>{isNaN(Number(value)) ? "NA" : Number(value).toFixed(2)}</td>
                                     </tr>
                                   ))}
+                                 
                                 </tbody>
                               </Table>
                             ) : item.isOverallChecked ? (
@@ -213,7 +220,48 @@ const AnalyticsTable = ({
                               </>
                             ) : (
                               "NA"
-                            )}
+                            )} 
+
+                            {/* {item.isCategoryBasedChecked ? (
+                              <Table responsive>
+                                <tbody>
+                                  {isLoading ? (
+                                    <tr>
+                                      <td colSpan="2">
+                                        <div className="loader-container-sm">
+                                          <div className="loader-sm"></div>
+                                          <span className="loader-text">Loading...</span>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  ) : (
+                                    item.benchmark.map(({ category, value }, index) => (
+                                      <tr key={index}>
+                                        <td>
+                                          <strong>{category}</strong>
+                                        </td>
+                                        <td>{isNaN(Number(value)) ? "NA" : Number(value).toFixed(2)}</td>
+                                      </tr>
+                                    ))
+                                  )}
+                                </tbody>
+                              </Table>
+                            ) : item.isOverallChecked ? (
+                              <>
+                                {isLoading ? (
+                                  <div className="loader-container-sm">
+                                    <div className="loader-sm"></div>
+                                    <span className="loader-text">Loading...</span>
+                                  </div>
+                                ) : isNaN(Number(item.benchmark[0]?.value)) ? (
+                                  "NA"
+                                ) : (
+                                  Number(item.benchmark[0]?.value).toFixed(2)
+                                )}
+                              </>
+                            ) : (
+                              "NA"
+                            )} */}
                           </td>
                           {/* <td>
                             <IoMdRemoveCircleOutline

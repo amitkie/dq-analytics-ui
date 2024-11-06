@@ -41,10 +41,12 @@ legend {
   height: 100%;
   display: block;
   padding: 0.5rem;
+  overflow: hidden;
   & fieldset {
     height: 100%;
     width: 100%;
     display: block;
+    position: relative;
   }
 }
 .theme-content {
@@ -84,15 +86,130 @@ legend {
 .selected-languages {
   display: flex;
   flex-direction: column;
-  max-height: 250px;
+  height: 100%;
+  max-height: 330px;
   overflow-y: scroll;
 }
 .selected-metrics {
   display: flex;
-  gap: 0.5rem;
+  flex-direction: column;
   align-items: baseline;
   justify-content: space-between;
-  padding-right: 0.5rem;
+  margin: 0;
+  list-style-type: disc;
+  list-style-position: inside;
+}
+.metric-group-expanded {
+  display: block;
+  background: #fff;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  margin: 8px 2px;
+  border-radius: 20px 20px 8px 8px;
+  transition: all .2s ease-in;
+  padding-bottom: 8px;
+}
+.metric-group-collapsed {
+  display: block;
+  margin: 8px 2px;
+  border-radius:  20px 20px 8px 8px;
+  box-shadow: none;
+  background: transparent;
+  transition: all .3s ease-out;
+}
+
+.metric-list {
+  @include secondaryFont();
+  line-height: 1.5;
+  color: #333;
+  font-size: 13px;
+  list-style: decimal;
+}
+.group-name{
+  font-size: 14px;
+  line-height: 1.2;
+  color: $text-color;
+}
+.group-name-heading {
+  @include secondaryFontBold();
+  font-size: .875rem;
+  color: $primary-color;
+  margin-bottom: 2px;
+}
+.action-items {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.expand-details {
+  color: $primary-color;
+  line-height: 1;
+  padding: 4px;
+  display: block;
+  width: 32px;
+  height: 32px;
+  aspect-ratio: 1;
+  cursor: pointer;
+}
+.theme-btn-collapsed {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid $input-stroke;
+  padding: 4px 12px 4px 16px;
+  border-radius: 20px;
+  background-color: #fff;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  transition: all .35s ease-in-out;
+  align-items: center;
+}
+.theme-btn-expanded {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding:4px 12px 4px 16px;
+  transition: all .5s ease-in-out;
+}
+
+.metrics-list {
+  display: block;
+  padding-left: 12px;
+}
+
+.theme-status-overflow {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.75);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.loader-container span{
+  position: relative;
+}
+.loader-container span:before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -38px;
+  width: 32px;
+  height: 32px;
+  aspect-ratio: 1;
+  border: 4px solid #e5e6e7;
+  border-radius: 50%;
+  border-top-color: $primary-color;
+  animation: loading 2s linear infinite;
+}
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.group-td:even {
+  background-color: $white;
 }
 
 @media (max-width: 1179px) {

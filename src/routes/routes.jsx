@@ -77,7 +77,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/healthcardreport",
+    path: "/healthcardreport/:brand",
     element: (
       <Layout>
         <HealthCardReport />

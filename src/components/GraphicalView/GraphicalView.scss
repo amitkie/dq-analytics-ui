@@ -8,6 +8,7 @@
   overflow: hidden;
 }
 .new-btn-graphic {
+  @include secondaryFontBold();
   outline: none;
   border: none;
   display: flex;
@@ -15,11 +16,44 @@
   align-items: center;
   border-radius: 6px;
   padding: 6px 16px;
+  transition: all .3s ease-in-out;
 }
-.mkc {background-color: #dfe4f0;}
-.ds {background-color: #e1f1eb;}
-.sc {background-color: #f3ede5;}
-.op {background-color: #f0e2e1;}
+.mkc {
+  background-color: #e4e8f2;
+  border: 1px solid #2A61DD;
+  color: #2A61DD;
+  &:hover {
+    background-color: #2A61DD;
+    color: $white;    
+  }
+}
+.ds {
+  background-color: #ebfaf4;
+  border: 1px solid #279E70;
+  color: #279E70;
+  &:hover {
+    background-color: #279E70;
+    color: $white;    
+  }
+}
+.sc {
+  background-color: #fffaf2;
+  border: 1px solid #FF9800;
+  color: #FF9800;
+  &:hover {
+    background-color: #FF9800;
+    color: $white;    
+  }
+}
+.op {
+  background-color: #f3e7e7;
+  border: 1px solid #C82519;
+  color: #C82519;
+  &:hover {
+    background-color: #C82519;
+    color: $white;    
+  }
+}
 
 .chart-heading {
   display: flex;
@@ -32,11 +66,15 @@
       @include secondaryFontBold();
       color: $text-color;
       display: flex;
-      .item-title {
-        @include secondaryFont();
-        color: $text-color;
-        display: flex;
-      }
+      font-size: 12px;
+      line-height: 1.25;
+    }
+    .item-result {
+      @include secondaryFont();
+      color: rgba(0,0,0,.6);
+      display: flex;
+      font-size: 12px;
+      line-height: 1.25;
     }
   }
 }

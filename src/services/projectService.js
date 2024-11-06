@@ -21,7 +21,7 @@ export const createProject = async (data) => {
 };
 export const updateProject = async (id, data) => {
   try {
-    const response = await axios.patch(
+    const response = await axios.put(
       `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${id}`,
       data
     );
@@ -164,7 +164,7 @@ export const getBenchamarkValues = async (data) => {
 
   try {
     const response = await axios.post(
-      `https://m594bmgj-8017.inc1.devtunnels.ms/process_metric/`, data
+      `https://m594bmgj-8027.inc1.devtunnels.ms/process_metric/`, data
     );
 
     if (response.status !== 200) {
@@ -180,28 +180,84 @@ export const getBenchamarkValues = async (data) => {
     throw error;
   }
 };
+
 export const getKPIScoreValues = async (data) => {
   try {
     const response = await axios.post(
       `https://m594bmgj-8025.inc1.devtunnels.ms/analytics_metric/`, data
     );
-
+  
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
 
     const frequenciesData = response.data;
-
+    console.log('frequenciesData', frequenciesData);
     return frequenciesData;
   } catch (error) {
     console.error("Error in fetching benchmark:", error);
     throw error;
   }
 };
+export const getWeightsOfSuperTheme = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8001.inc1.devtunnels.ms/weight_sum`, data
+    );
+  
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const frequenciesData = response.data;
+    console.log('frequenciesData', frequenciesData);
+    return frequenciesData;
+  } catch (error) {
+    console.error("Error in fetching benchmark:", error);
+    throw error;
+  }
+};
+export const getWeightsOfGroupNormalised = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8005.inc1.devtunnels.ms/theme_normalised`, data
+    );
+  
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const frequenciesData = response.data;
+    console.log('frequenciesData', frequenciesData);
+    return frequenciesData;
+  } catch (error) {
+    console.error("Error in fetching benchmark:", error);
+    throw error;
+  }
+};
+export const getWeightsOfMetricGroup = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8003.inc1.devtunnels.ms/group_normalised`, data
+    );
+  
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const frequenciesData = response.data;
+    console.log('frequenciesData', frequenciesData);
+    return frequenciesData;
+  } catch (error) {
+    console.error("Error in fetching benchmark:", error);
+    throw error;
+  }
+};
+
 export const getHealthCardDetails = async (data) => {
   try {
     const response = await axios.post(
-      `https://hrsbjqs8-8017.inc1.devtunnels.ms/health_card/`,
+      `https://m594bmgj-8017.inc1.devtunnels.ms/health_card/`,
       data
     );
 
@@ -221,7 +277,7 @@ export const getHealthCardDetails = async (data) => {
 export const getNormalizedValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8002.inc1.devtunnels.ms/normalized_value`,
+      `https://m594bmgj-8003.inc1.devtunnels.ms/normalized_value`,
       data
     );
 
@@ -240,7 +296,7 @@ export const getNormalizedValues = async (data) => {
 export const getDQScore = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8004.inc1.devtunnels.ms/get_data`,
+      `https://m594bmgj-8000.inc1.devtunnels.ms/get_data`,
       data
     );
 
@@ -259,7 +315,7 @@ export const getDQScore = async (data) => {
 export const getDQScoreMultipleProjects = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8006.inc1.devtunnels.ms/get_multi_data`,
+      `https://m594bmgj-8006.inc1.devtunnels.ms/get_multi_data`,
       data
     );
 
@@ -278,7 +334,7 @@ export const getDQScoreMultipleProjects = async (data) => {
 export const getBrandData = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8008.inc1.devtunnels.ms/get_brand_data`,
+      `https://m594bmgj-8001.inc1.devtunnels.ms/get_brand_data`,
       data
     );
 
@@ -297,7 +353,7 @@ export const getBrandData = async (data) => {
 export const getBrandImages = async (data) => {
   try {
 
-    let url = `http://127.0.0.1:8018/brand-images/${data}`;
+    let url = `https://m594bmgj-8018.inc1.devtunnels.ms/brand-images/${data}`;
     // let url = `https://hrsbjqs8-8019.inc1.devtunnels.ms/brand-images/${data}`;
     const response = await axios.get(url, { responseType: 'blob' });
     if (response.status !== 200) {
@@ -314,7 +370,7 @@ export const getBrandImages = async (data) => {
 };
 export const getBrandDetailsData = async (data) => {
   try {
-    const url = `https://hrsbjqs8-8022.inc1.devtunnels.ms/brands/${data}`;
+    const url = `https://m594bmgj-8018.inc1.devtunnels.ms/brands/${data}`;
     const response = await axios.get(url);
 
     if (response.status !== 200) {
@@ -446,6 +502,22 @@ export const getMetricThemeGroupNames = async (projectId) => {
     throw error;
   }
 };
+export const deleteSuperTheem = async (superThemeId, projectId) => {
+  try {
+    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${superThemeId}?project_id=${projectId}`;
+    const response = await axios.get(url);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    console.log('Brand Details Data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
+    throw error;
+  }
+};
 
 export const getProjectsByDateRangeForUser = async (data) => {
   try {
@@ -467,7 +539,7 @@ export const getProjectsByDateRangeForUser = async (data) => {
 export const getTop5Data = async (data) => {
   try {
     const response = await axios.post(
-      `https://hrsbjqs8-8023.inc1.devtunnels.ms/top_5/`,
+      `https://m594bmgj-8018.inc1.devtunnels.ms/top_5/`,
       data
     );
 

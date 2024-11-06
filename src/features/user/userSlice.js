@@ -23,6 +23,7 @@ const initialState = {
   isHamburgerOpen: false,
   isMobileView: false,
   activeMenu: initialActiveMenu,
+  recentlyUsedProjectId:localStorage.getItem('recentProjectId') || null, 
 };
 
 const userSlice = createSlice({
@@ -81,6 +82,10 @@ const userSlice = createSlice({
     getMobileRequest(state, action) {
       state.isMobileView = action.payload;
     },
+    getRecentProjectRequest(state, action) {
+      state.recentlyUsedProjectId = action.payload;
+      localStorage.setItem('recentProjectId', action.payload);
+    },
     setActiveMenu: (state, action) => {
       state.activeMenu = action.payload;
       // Also update localStorage when Redux state is updated
@@ -89,6 +94,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoRequest, getProjectInfoSuccess, getProjectInfoFailure, getHamburgerRequest, getMobileRequest, setActiveMenu } =
+export const { loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoRequest, getProjectInfoSuccess, getProjectInfoFailure, getHamburgerRequest, getMobileRequest, getRecentProjectRequest, setActiveMenu } =
   userSlice.actions;
 export default userSlice.reducer;

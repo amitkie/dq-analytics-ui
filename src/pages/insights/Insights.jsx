@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import Form from "react-bootstrap/Form";
 import ButtonComponent from "../../common/button/button";
@@ -19,7 +20,7 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./Insights.scss";
-import { getProjectListsByFilter, getDQScoreMultipleProjects } from "../../services/projectService";
+import { getProjectListsByFilter, getDQScoreMultipleProjects, getProjectsByDateRangeForUser } from "../../services/projectService";
 
 export default function Insights() {
   const data = getData();
@@ -27,11 +28,15 @@ export default function Insights() {
   const [categories, setCategories] = useState([]);
   const [frequencies, setFrequencies] = useState([]);
   const [projects, setProjects] = useState([]);
+  const { userInfo, projectInfo } = useSelector((state) => state.user);
+
 
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedFrequencies, setSelectedFrequencies] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [insightsDQScore, setInsightsDQScore] = useState([]);
+  const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
+  const [selectedValue, setSelectedValue] = useState();
   const [loading, setLoading] = useState(false);
 
 
@@ -108,7 +113,22 @@ export default function Insights() {
   const handleFrequenciesChange = (selectedOptions) => {
     console.log(selectedOptions?.target?.value, 'selectedOptions')
     setSelectedFrequencies(selectedOptions?.target?.value);
+    console.log(selectedOptions?.target?.value, 'cxxxxxx')
+    let freq = "Monthly"
+    switch (parseInt(selectedOptions?.target?.value, 10)) {
+      case 1:
+        freq = "Monthly"
+        break;
+      case 2:
+        freq = "Quarterly"
+        break;
+      default:
+        break;
+    }
+    console.log(freq, "frerere")
+    setSelectedFrequency(freq)
   };
+
 
   const handleCategoryChanges = (selectedOptions) => {
     // const categoryOptions = selectedOptions?.map((cg) => cg?.value);  
@@ -127,10 +147,11 @@ export default function Insights() {
 
   const fetchDQScoresBasedOnFilter = async () => {
     setLoading(true);
+
     if (selectedProjects?.length > 0) {
       const selectedProjectsOptions = selectedProjects?.map((cg) => cg?.value);
       const requestedPayload = {
-        project_ids: ['95', '96'],
+        project_ids: selectedProjects.map((prj) => prj.value),
       };
       console.log(requestedPayload, 'requestedPayload');
 
@@ -145,6 +166,39 @@ export default function Insights() {
       console.log(insightsDQScoreData?.data, 'insightsDQScore');
     }
   };
+
+  const handleSelectionChange = (e) => {
+    const value = e.target.value;
+    console.log(value, selectedFrequency)
+    const payload = {
+      user_id: userInfo?.user?.id,
+      filter: {
+        type: selectedFrequency,
+        value: value
+      }
+    }
+    fetchProjectDetails(payload)
+    console.log(payload)
+
+    setSelectedValue(value);
+  };
+
+  const fetchProjectDetails = async (reqPayload) => {
+    try {
+      const projectResponse = await getProjectsByDateRangeForUser(reqPayload);
+      const projects = projectResponse?.projects?.map((project) => ({
+        value: project.id,
+        label: project.project_name,
+      }));
+
+      setProjects(projects);
+
+    } catch (err) {
+      console.error("Error fetching projects:", err);
+    }
+  }
+
+
   useEffect(() => {
     console.log(insightsDQScore, 'Updated insightsDQScore');
   }, [insightsDQScore]);
@@ -171,7 +225,7 @@ export default function Insights() {
   ];
   const keys = Array.from(new Set(normalizedData.flatMap(Object.keys)));
   const keysToDisplay = keys?.slice(2);
-  // console.log("tableData", data);
+
   const tabs = [
     {
       label: "Score Comparison",
@@ -192,7 +246,7 @@ export default function Insights() {
                 </select>
               </div>
             </div>
-            <div className="col-12">
+            {/* <div className="col-12">
               <div className="scores-charts">
                 <span className="chart-title">DQ Score</span>
                 {loading ? (
@@ -210,14 +264,14 @@ export default function Insights() {
 
             <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
-                <span className="chart-title">Ecom DQ Score</span>
+                <span className="chart-title">Marketplace</span>
                 {loading ? (
                   <div className="loader-container-sm">
                     <div className="loader-sm"></div>
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <LineChart key={`Ecom_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Ecom" />
+                  <LineChart key={`Marketplace_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Marketplace" />
                 ) : (
                   <p>No data available</p>
                 )}
@@ -226,14 +280,14 @@ export default function Insights() {
 
             <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
-                <span className="chart-title">Social DQ Score</span>
+                <span className="chart-title">Digital Spends</span>
                 {loading ? (
                   <div className="loader-container-sm">
                     <div className="loader-sm"></div>
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <LineChart key={`Social_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Social" />
+                  <LineChart key={`Digital_Spends_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Digital Spends" />
                 ) : (
                   <p>No data available</p>
                 )}
@@ -242,14 +296,14 @@ export default function Insights() {
 
             <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
-                <span className="chart-title">Paid DQ Score</span>
+                <span className="chart-title">Socialwatch</span>
                 {loading ? (
                   <div className="loader-container-sm">
                     <div className="loader-sm"></div>
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <LineChart key={`Paid_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Paid" />
+                  <LineChart key={`Socialwatch_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Socialwatch" />
                 ) : (
                   <p>No data available</p>
                 )}
@@ -258,33 +312,124 @@ export default function Insights() {
 
             <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
-                <span className="chart-title">Brand Performance Score</span>
+                <span className="chart-title">Organic Performance</span>
                 {loading ? (
                   <div className="loader-container-sm">
                     <div className="loader-sm"></div>
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <LineChart key={`BrandPerf_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Brand_Perf" />
+                  <LineChart key={`Organic_Performance_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Organic Performance" />
                 ) : (
                   <p>No data available</p>
                 )}
               </div>
-            </div>
+            </div> */}
+
+<div className="scores-charts">
+  <span className="chart-title">DQ Score</span>
+  {loading ? (
+    <div className="loader-container-sm">
+      <div className="loader-sm"></div>
+      <span className="loader-text">Loading...</span>
+    </div>
+  ) : insightsDQScore ? (
+    <LineChart
+      key={`Overall_Final_Score_${insightsDQScore[0]?.project_id}`}
+      insightsDQScoreData={insightsDQScore}
+      scoreType="Overall_Final_Score"
+    />
+  ) : (
+    <p>No data available</p>
+  )}
+</div>
+
+<div className="scores-charts">
+  <span className="chart-title">Marketplace</span>
+  {loading ? (
+    <div className="loader-container-sm">
+      <div className="loader-sm"></div>
+      <span className="loader-text">Loading...</span>
+    </div>
+  ) : insightsDQScore ? (
+    <LineChart
+      key={`Marketplace_${insightsDQScore[0]?.project_id}`}
+      insightsDQScoreData={insightsDQScore}
+      scoreType="Marketplace"
+    />
+  ) : (
+    <p>No data available</p>
+  )}
+</div>
+
+<div className="scores-charts">
+  <span className="chart-title">Digital Spends</span>
+  {loading ? (
+    <div className="loader-container-sm">
+      <div className="loader-sm"></div>
+      <span className="loader-text">Loading...</span>
+    </div>
+  ) : insightsDQScore ? (
+    <LineChart
+      key={`Digital_Spends_${insightsDQScore[0]?.project_id}`}
+      insightsDQScoreData={insightsDQScore}
+      scoreType="Digital Spends"
+    />
+  ) : (
+    <p>No data available</p>
+  )}
+</div>
+
+<div className="scores-charts">
+  <span className="chart-title">Organic Performance</span>
+  {loading ? (
+    <div className="loader-container-sm">
+      <div className="loader-sm"></div>
+      <span className="loader-text">Loading...</span>
+    </div>
+  ) : insightsDQScore ? (
+    <LineChart
+      key={`Organic_Performance_${insightsDQScore[0]?.project_id}`}
+      insightsDQScoreData={insightsDQScore}
+      scoreType="Organic Performance"
+    />
+  ) : (
+    <p>No data available</p>
+  )}
+</div>
+
+<div className="scores-charts">
+  <span className="chart-title">Socialwatch</span>
+  {loading ? (
+    <div className="loader-container-sm">
+      <div className="loader-sm"></div>
+      <span className="loader-text">Loading...</span>
+    </div>
+  ) : insightsDQScore ? (
+    <LineChart
+      key={`Socialwatch_${insightsDQScore[0]?.project_id}`}
+      insightsDQScoreData={insightsDQScore}
+      scoreType="Socialwatch"
+    />
+  ) : (
+    <p>No data available</p>
+  )}
+</div>
+
 
           </div>
         </>
       ),
     },
-    {
-      label: "Super Themes",
-      disabled: "disabled",
-      content: (
-        <div>
-          <SuperThemes />
-        </div>
-      ),
-    },
+    // {
+    //   label: "Super Themes",
+    //   disabled: "disabled",
+    //   content: (
+    //     <div>
+    //       <SuperThemes />
+    //     </div>
+    //   ),
+    // },
     {
       label: "Tabular Summary",
       content: (
@@ -323,10 +468,10 @@ export default function Insights() {
       ),
     },
     {
-      label: "Graphical view",
+      label: "Brand View",
       content: (
         <div>
-          <GraphicalView />
+          {/* <GraphicalView /> */}
         </div>
       ),
     },
@@ -344,10 +489,7 @@ export default function Insights() {
                   Select files from saved Projects
                 </span>
                 <div className="insights-project-filter">
-                  {/* <select name="frequency" className="Select-input">
-                      <option value="beauty">Monthly</option>
-                      <option value="haircare">Quarterly</option>
-                    </select> */}
+
                   <select
                     className="form-control-select"
                     onChange={handleFrequenciesChange}
@@ -360,48 +502,67 @@ export default function Insights() {
                       </option>
                     ))}
                   </select>
-                  <MultiSelectDropdown
-                    options={categories}
-                    selectedValues={selectedCategories}
-                    onChange={handleCategoryChanges}
-                    disabled={selectedFrequencies?.length == 0}
-                    placeholder="Select Categories"
-                  />
+                  {selectedFrequency === "Monthly" && (
+                    <Form.Select
+                      name="Months"
+                      className="filter-input mt-3"
+                      value={selectedValue}
+                      onChange={handleSelectionChange}
+                    >
+                      <option value="">Select a Month</option>
+                      <option value="Jan">Jan</option>
+                      <option value="Feb">Feb</option>
+                      <option value="Mar">Mar</option>
+                      <option value="Apr">Apr</option>
+                      <option value="May">May</option>
+                      <option value="Jun">Jun</option>
+                      <option value="Jul">Jul</option>
+                      <option value="Aug">Aug</option>
+                      <option value="Sep">Sep</option>
+                      <option value="Oct">Oct</option>
+                      <option value="Nov">Nov</option>
+                      <option value="Dec">Dec</option>
+                    </Form.Select>
+                  )}
+
+                  {selectedFrequency === "Quarterly" && (
+                    <Form.Select
+                      name="Quarters"
+                      className="filter-input mt-3"
+                      value={selectedValue}
+                      onChange={handleSelectionChange}
+                    >
+                      <option value="">Select a Quarter</option>
+                      <option value="JFM">JFM</option>
+                      <option value="AMJ">AMJ</option>
+                      <option value="JAS">JAS</option>
+                      <option value="OND">OND</option>
+                    </Form.Select>
+                  )}
                   <MultiSelectDropdown
                     options={projects}
                     selectedValues={selectedProjects}
                     onChange={handleProjectChanges}
-                    disabled={selectedCategories?.lenth == 0}
+                    disabled={selectedCategories?.lenth}
                     placeholder="Select Workspace"
                   />
+                
+                  <div>
+                    <ButtonComponent
+                      btnClass={"btn-primary"}
+                      disabled={selectedProjects?.length == 0 || selectedProjects?.length > 4}
+                      onClick={fetchDQScoresBasedOnFilter}
+                      btnName={"Submit"}
+                    />
+                    {selectedProjects?.length > 4 &&
+                      <div>
+                        Maximum four Projects can be selected
+                      </div>
+                    }
+                  </div>
 
-                  {/* <select name="category" className="Select-input">
-                      <option value="beauty">Beauty</option>
-                      <option value="haircare">Hair care</option>
-                      <option value="baby">Baby</option>
-                      <option value="mansGrooming">Men's Grooming</option>
-                    </select> */}
-                  {/* <select name="files" className="Select-input">
-                      <option value="digitalAssessment-1">
-                        Digital Assessment -1
-                      </option>
-                      <option value="digitalAssessment-2">
-                        Digital Assessment -2
-                      </option>
-                      <option value="digitalAssessment-3">
-                        Digital Assessment -3
-                      </option>
-                      <option value="digitalAssessment-4">
-                        Digital Assessment -4
-                      </option>
-                    </select> */}
-                  <ButtonComponent
-                    btnClass={"btn-primary"}
-                    disabled={selectedProjects?.length == 0}
-                    onClick={fetchDQScoresBasedOnFilter}
-                    btnName={"Submit"}
-                  />
                 </div>
+
               </div>
             </div>
           </div>
@@ -417,20 +578,6 @@ export default function Insights() {
               <TabComponent tabs={tabs} isBenchmarkDataSaved={true} className="insights-tabs" />
             </div>
           </div>
-
-          {/* <div className="project-table-data mt-5">
-              <TableComponent />
-            </div> */}
-          {/* <div className="footer-button">
-              <ButtonComponent
-                btnClass={"btn-outline-secondary"}
-                btnName={"Back"}
-              />
-              <ButtonComponent
-                btnClass={"btn-primary"}
-                btnName={"Go to Analytics"}
-              />
-            </div> */}
         </div>
       </div>
     </>

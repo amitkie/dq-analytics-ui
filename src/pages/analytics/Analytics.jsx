@@ -52,7 +52,7 @@ import { FaInfo } from "react-icons/fa";
 import * as XLSX from "xlsx";
 import ModalComponent from "../../components/Modal/ModalComponent";
 
-
+import { getProjectInfoRequest, getRecentProjectRequest } from "../../features/user/userSlice";
 
 export default function Analytics() {
   const [projectIds, setProjectIds] = useState(1);
@@ -131,6 +131,10 @@ export default function Analytics() {
   };
 
 
+  const recentProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
+   
+ 
+
 
   const columnsMetrics = Object.keys(AMData[0] || []).map((key) => ({
     Header: key,
@@ -203,6 +207,7 @@ export default function Analytics() {
         start_date: projectDetails?.start_date,
         end_date: projectDetails?.end_date,
       };
+      
 
       try {
         const benchmarks = await getBenchamarkValues(reqPayload);
@@ -240,6 +245,7 @@ export default function Analytics() {
         );
       }
     } else {
+       
       // If the checkbox is unchecked, just reset the values
       setMetrics((prev) =>
         prev.map((ele) => {
@@ -259,6 +265,9 @@ export default function Analytics() {
     }
   };
 
+ 
+
+ 
   const handleSelectAll = async (e, type) => {
     const isChecked = e.target.checked;
 
@@ -266,6 +275,7 @@ export default function Analytics() {
     let updatedMetrics = [];
 
     const processBatch = async (batch) => {
+      setLoading(true);
       const results = await Promise.all(
         batch.map(async (metric) => {
           if (isChecked) {
@@ -405,7 +415,7 @@ export default function Analytics() {
         if (compareNormalizeValue && dqScoreValueResponse) {
           setComparisonData(compareNormalizeValue);
           setDQScoreValue(dqScoreValueResponse);
-          setDQScoreLoading(true);
+          setDQScoreLoading(false);
           fetchKPIScores(response?.project, response?.project?.metrics);
         }
 
@@ -593,10 +603,10 @@ export default function Analytics() {
           category_id: benchmark.categoryid,
           category_name: benchmark.categoryName,
           dq: dqScore.Overall_Final_Score,
-          ecom_dq: dqScore.Ecom,
-          social_dq: dqScore.Social,
-          paid_dq: dqScore.Paid,
-          brand_perf_dq: dqScore["Brand Perf"]
+          ecom_dq: dqScore.Marketplace,
+          social_dq: dqScore['Digital Spends'],
+          paid_dq: dqScore['Social Watch'],
+          brand_perf_dq: dqScore['Organic Performance'],
         };
 
         payload.push(scoreData);
@@ -676,13 +686,36 @@ export default function Analytics() {
   };
 
   const handleFilterCategory = async (selectedOptions) => {
-    setSelectedFilterCategories(selectedOptions);
-    if (selectedOptions.length > 0) {
-      try {
-        const categoryIds = selectedOptions.map((option) => option.value);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
+    // setSelectedFilterCategories(selectedOptions);
+    // if (selectedOptions.length > 0) {
+    //   try {
+    //     const categoryIds = selectedOptions.map((option) => option.value);
+    //   } catch (error) {
+    //     console.error("Error fetching categories:", error);
+    //   }
+    // }
+    try {
+      setSelectedFilterCategories(selectedOptions);
+
+      const existingValues = selectedOptions.map((option) => option.value);
+
+      const categoriesIDs = await getAllCategories(existingValues);
+
+      const filteredCategory = categoriesIDs?.data
+        .map(cat => ({
+          value: cat.id,
+          label: cat.name,
+        }));
+
+        setFilterCategories(prevCategory => {
+        return [
+          ...filteredCategory
+        ];
+      });
+
+
+    } catch (error) {
+      console.error("Error fetching Categories:", error);
     }
   };
 
@@ -993,7 +1026,6 @@ export default function Analytics() {
   const handleAddMetric = (selectedOptions) => {
     setAddSelectedMetricList(selectedOptions);
   };
-
   const tabs = [
     {
       label: "Weights and Benchmark",
@@ -1022,6 +1054,7 @@ export default function Analytics() {
             selectedSections={selectedFilterSection}
             selectedPlatforms={selectedfilterPlatforms}
             selectedMetrics={selectedFilterMetrics}
+            isLoading={true}
           />
           <div className="row">
             <div className="col12">
@@ -1096,14 +1129,14 @@ export default function Analytics() {
             <li> Organic Performance</li>
           </ul>
           {normalizedValue?.length > 0 ? (
-            <Table responsive striped bordered className="insights-table">
+            <Table responsive striped bordered className="insights-table comparision-table">
               <thead>
                 <tr>
-                  <th>Section</th>
-                  <th>Platform</th>
-                  <th>Metric</th>
+                  <th className="sticky-col" style={{ width: '100px' }}>Section</th>
+                  <th className="sticky-col" style={{ width: '100px' }}>Platform</th>
+                  <th className="sticky-col" style={{ width: '100px' }}>Metric</th>
                   {uniqueComparisonBrandName?.sort((a, b) => a.localeCompare(b)).map(brand => (
-                    <th key={brand}>{brand}
+                    <th key={brand} style={{ width: '100px' }}>{brand}
                       <span className="brand-category">{brandCategoryMap[brand]} </span>
                     </th>
                   ))}
@@ -1112,7 +1145,7 @@ export default function Analytics() {
               <tbody>
                 {normalizedValue?.map((row, index) => (
                   <tr key={index}>
-                    <td><span
+                    <td className="sticky-col" style={{ width: '100px' }}><span
                       style={{
                         display: 'inline-block',
                         width: '10px',
@@ -1123,8 +1156,8 @@ export default function Analytics() {
                       }}
 
                     ></span>{row?.sectionName}</td>
-                    <td>{row?.platformName} </td>
-                    <td>
+                    <td className="sticky-col" style={{ width: '100px' }}>{row?.platformName} </td>
+                    <td className="sticky-col" style={{ width: '100px' }}>
                       <div className="metric-name">{row?.metricName}
                         <div className="metric-info">
                           <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricName, row?.platformName)} />
@@ -1136,7 +1169,7 @@ export default function Analytics() {
                     </td>
                     {/* {row} */}
                     {uniqueComparisonBrandName?.map(brand => (
-                      <td key={brand}
+                      <td key={brand} style={{ width: '100px' }}
                         title={`Benchmark Value: ${row[brand]?.benchmarkValue || 'N/A'}\nPercentile: ${row[brand]?.percentile || 'N/A'}`}
                       >
                         {row[brand]?.normalized || "-"}
@@ -1165,18 +1198,21 @@ export default function Analytics() {
       disabled: "disabled",
       content: (
         <div>
+          {normalizedValue && (
           <SuperThemes metrics={metrics} normalizedDQScoreValue={normalizedValue} projectId={projectId} />
+          )}
         </div>
       ),
     },
   ];
+  
 
   return (
     <>
       <div className="col-12">
         <div className="workspace-container">
           <h2 className="page-title">Analytics</h2>
-
+          
           <div className="row mb-3">
             <div className="col-12">
               <div className="analytics-filter">
@@ -1204,6 +1240,12 @@ export default function Analytics() {
 
               <div className="filter-options mb-3">
 
+                <MultiSelectDropdown
+                  options={filterCategories}
+                  selectedValues={selectedFilterCategories}
+                  onChange={handleFilterCategory}
+                  placeholder="Select Category"
+                />
                 <MultiSelectDropdown
                   options={filterSection}
                   selectedValues={selectedFilterSection}
@@ -1280,7 +1322,7 @@ export default function Analytics() {
           />
           <ButtonComponent
             btnClass={"btn-primary px-4"}
-            btnName={"Save Project"}
+            btnName={"Add Metric"}
             onClick={handleClose}
           />
         </Modal.Footer>
