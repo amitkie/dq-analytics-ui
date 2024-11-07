@@ -609,52 +609,88 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
       ),
     },
 
+    
+
     // {
     //   label: "super themes values",
     //   content: (
     //     <>
-    //       <Table responsive striped bordered className="insights-table comparision-table">
-    //         <thead>
-    //           <tr>
-    //             <th className="sticky-col" style={{ width: '100px' }}>Super Metric Group</th>
-    //             <th className="sticky-col" style={{ width: '100px' }}>Super Metric Theme</th>
-    //             {/* <th className="sticky-col" style={{ width: '100px' }}>Metric Group</th> */}
-    //              <th>PureSense</th>
-    //              <th>Livon</th>
-    //           </tr>
-    //         </thead>
-    //         <tbody>
-    //         {metricThemeGroupData.map((item, index) => (
-    //           item.metric_ids.map((metric, idx) => (
-    //             <tr key={`${index}-${idx}`}>
-    //               {idx === 0 && <td  className="sticky-col" style={{ width: '100px' }} rowSpan={item.metric_ids.length}>{item.name}</td>}
-    //               <td className="sticky-col" style={{ width: '100px' }}>{metric.name}</td>
-    //               {/* {idx === 0 && (
-    //                 <td rowSpan={item.metric_ids.length}>
-    //                   {item.metric_group_ids.map((group, gidIdx) => (
-    //                     <div key={gidIdx}>{group.name}</div>
+    //       {themeGroupTable?.length > 0 ? (
+    //         (() => {
+    //           const brandNames = [...new Set(themeGroupTable?.map(item => item.brandname))];
+    
+    //           const groupedData = themeGroupTable?.reduce((acc, curr) => {
+    //             const { theme_group_name, metric_group_name, brandname, normalized_per_weight } = curr;
+    //             const themeMetricKey = `${theme_group_name}-${metric_group_name}`;
+    
+    //             if (!acc[themeMetricKey]) {
+    //               acc[themeMetricKey] = { theme_group_name, metric_group_name, values: {} };
+    //             }
+    //             acc[themeMetricKey].values[brandname] = normalized_per_weight;
+        
+    //             return acc;
+    //           }, {});
+    
+    //           const tableRows = Object.values(groupedData);
+    
+    //           return (
+    //             <Table responsive striped bordered className="insights-table comparision-table">
+    //               <thead>
+    //                 <tr>
+    //                   <th className="sticky-col" style={{ width: '160px' }}>Super Theme Groups</th>
+    //                   <th className="sticky-col" style={{ width: '160px' }}>Super Theme Group Metrics</th>
+    //                   {brandNames.map((brand, index) => (
+    //                     <th key={index}>{brand}</th>
     //                   ))}
-    //                 </td>
-    //               )} */}
-    //                <td>0</td>
-    //                <td>0</td>
+    //                 </tr>
+    //               </thead>
+    //               <tbody>
+                     
+    //                 {tableRows.map((row, index) => {
+    //                   // Group data by theme_group_name and calculate rowCount for each group
+    //                   const rowCount = tableRows.filter(r => r.theme_group_name === row.theme_group_name).length;
 
-    //             </tr>
-    //           ))
-    //         ))}
+    //                   // Only render the theme_group_name cell on the first occurrence of each group with rowspan
+    //                   return (
+    //                     <tr key={index}>
+    //                       {index === 0 || tableRows[index - 1].theme_group_name !== row.theme_group_name ? (
+    //                         <td rowSpan={rowCount} className="sticky-col group-td" style={{ width: '160px' }}>
+    //                           {row.theme_group_name}
+    //                         </td>
+    //                       ) : null}
+                          
+    //                       <td className="sticky-col" style={{ width: '160px' }}>{row.metric_group_name}</td>
+    //                       {brandNames.map((brand, idx) => (
+    //                         <td key={idx}>
+    //                           {row.values[brand] !== undefined ? row.values[brand].toFixed(2) : 0}
+    //                         </td>
+    //                       ))}
+    //                     </tr>
+    //                   );
+    //                 })}
 
-    //           {/* <tr>
-    //             {metricThemeGroupData.map(item => <td>item.name</td>)}
-    //             <td>Content</td>
-    //             <td>65</td>
-    //             <td>68</td>
-    //           </tr> */}
-    //         </tbody>
-    //       </Table>
+    //                 {/* {tableRows.map((row, index) => (
+    //                   <tr key={index}>
+                          
+    //                     <td className="sticky-col" style={{ width: '100px' }}>{row.theme_group_name}</td>
+    //                     <td className="sticky-col" style={{ width: '100px' }}>{row.metric_group_name}</td>
+    //                     {brandNames.map((brand, idx) => (
+    //                       <td key={idx}>
+    //                         {row.values[brand] !== undefined ? row.values[brand].toFixed(2) : 0}
+    //                       </td>
+    //                     ))}
+    //                   </tr>
+    //                 ))} */}
+    //               </tbody>
+    //             </Table>
+    //           );
+    //         })()
+    //       ) : (
+    //         <p>No data found</p>
+    //       )}
     //     </>
     //   ),
     // },
-
     {
       label: "super themes values",
       content: (
@@ -663,18 +699,21 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
             (() => {
               const brandNames = [...new Set(themeGroupTable?.map(item => item.brandname))];
     
+              // Group data by theme_group_name and metric_group_name
               const groupedData = themeGroupTable?.reduce((acc, curr) => {
-                const { theme_group_name, metric_group_name, brandname, final_theme_norm_value } = curr;
+                const { theme_group_name, metric_group_name, brandname, normalized_per_weight, final_theme_norm_value } = curr;
                 const themeMetricKey = `${theme_group_name}-${metric_group_name}`;
     
                 if (!acc[themeMetricKey]) {
-                  acc[themeMetricKey] = { theme_group_name, metric_group_name, values: {} };
+                  acc[themeMetricKey] = { theme_group_name, metric_group_name, values: {}, final_theme_norm_values: {} };
                 }
-                acc[themeMetricKey].values[brandname] = final_theme_norm_value;
-        
+                acc[themeMetricKey].values[brandname] = normalized_per_weight;
+                acc[themeMetricKey].final_theme_norm_values[brandname] = final_theme_norm_value;
+    
                 return acc;
               }, {});
     
+              // Extract rows for the table
               const tableRows = Object.values(groupedData);
     
               return (
@@ -689,42 +728,43 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                     </tr>
                   </thead>
                   <tbody>
-                     
                     {tableRows.map((row, index) => {
-                      // Group data by theme_group_name and calculate rowCount for each group
+                      // Get rowCount for each super theme group
                       const rowCount = tableRows.filter(r => r.theme_group_name === row.theme_group_name).length;
-
-                      // Only render the theme_group_name cell on the first occurrence of each group with rowspan
+    
+                      // Check if it's the last metric for the theme group to add the final row after it
+                      const isLastMetricForGroup = (index + 1 === tableRows.length) || (tableRows[index + 1].theme_group_name !== row.theme_group_name);
+    
                       return (
-                        <tr key={index}>
-                          {index === 0 || tableRows[index - 1].theme_group_name !== row.theme_group_name ? (
-                            <td rowSpan={rowCount} className="sticky-col group-td" style={{ width: '160px' }}>
-                              {row.theme_group_name}
-                            </td>
-                          ) : null}
-                          
-                          <td className="sticky-col" style={{ width: '160px' }}>{row.metric_group_name}</td>
-                          {brandNames.map((brand, idx) => (
-                            <td key={idx}>
-                              {row.values[brand] !== undefined ? row.values[brand].toFixed(2) : 0}
-                            </td>
-                          ))}
-                        </tr>
+                        <React.Fragment key={index}>
+                          <tr>
+                            {index === 0 || tableRows[index - 1].theme_group_name !== row.theme_group_name ? (
+                              <td rowSpan={rowCount} className="sticky-col group-td" style={{ width: '160px' }}>
+                                {row.theme_group_name}
+                              </td>
+                            ) : null}
+    
+                            <td className="sticky-col" style={{ width: '160px' }}>{row.metric_group_name}</td>
+                            {brandNames.map((brand, idx) => (
+                              <td key={idx}>
+                                {row.values[brand] !== undefined ? row.values[brand].toFixed(2) : 0}
+                              </td>
+                            ))}
+                          </tr>
+    
+                          {isLastMetricForGroup && (
+                            <tr>
+                              <td colSpan={2} className="sticky-col group-td" style={{ fontWeight: 'bold', width: '160px' }}>Final Theme Normalized Value</td>
+                              {brandNames.map((brand, idx) => (
+                                <td key={idx} style={{ fontWeight: 'bold' }}>
+                                  {row.final_theme_norm_values[brand] !== undefined ? row.final_theme_norm_values[brand].toFixed(2) : 0}
+                                </td>
+                              ))}
+                            </tr>
+                          )}
+                        </React.Fragment>
                       );
                     })}
-
-                    {/* {tableRows.map((row, index) => (
-                      <tr key={index}>
-                          
-                        <td className="sticky-col" style={{ width: '100px' }}>{row.theme_group_name}</td>
-                        <td className="sticky-col" style={{ width: '100px' }}>{row.metric_group_name}</td>
-                        {brandNames.map((brand, idx) => (
-                          <td key={idx}>
-                            {row.values[brand] !== undefined ? row.values[brand].toFixed(2) : 0}
-                          </td>
-                        ))}
-                      </tr>
-                    ))} */}
                   </tbody>
                 </Table>
               );
@@ -734,7 +774,7 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
           )}
         </>
       ),
-    },
+    }
     
     
   ]
