@@ -24,7 +24,7 @@ const MetricWeights = ({ metricThemeGroupWeights, removeMetric }) => {
           <div className="group-name-details">
             {/* <h5 className="group-name-heading">Metric Theme Name</h5> */}
             <div className={isExpanded[group.id] ? "theme-btn-expanded" : "theme-btn-collapsed"}>
-              <span className="group-name"> {group.Theme_name} </span>
+              <span className="group-name"> {group.Theme_name}: {group.weight_sum} </span>
               <div className="action-items">
               {isExpanded[group.id] ? <IoIosArrowDropupCircle className="expand-details" onClick={() => toggleExpand(group.id)} /> : <IoIosArrowDropdownCircle className="expand-details" onClick={() => toggleExpand(group.id)} />}
                 

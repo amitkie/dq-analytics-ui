@@ -21,6 +21,7 @@ import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelec
 
 import "./Insights.scss";
 import { getProjectListsByFilter, getDQScoreMultipleProjects, getProjectsByDateRangeForUser } from "../../services/projectService";
+import InsightsTabular from "./InisghtsTabular";
 
 export default function Insights() {
   const data = getData();
@@ -38,7 +39,7 @@ export default function Insights() {
   const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
   const [selectedValue, setSelectedValue] = useState();
   const [loading, setLoading] = useState(false);
-
+  const [tableData,setTableData] = useState([])
 
   const [brand, setBrand] = useState([]);
 
@@ -223,6 +224,52 @@ export default function Insights() {
     { header: "Paid Marketing DQ Score", accessor: "Paid Marketing DQ Score" },
     { header: "Organic DQ", accessor: "Organic DQ" },
   ];
+
+ 
+  useEffect(() => {
+    if (insightsDQScore && insightsDQScore.length > 0) {
+      const dataByProject = insightsDQScore.reduce((acc, project) => {
+        const transformedData = project.brands.map((brand) => ({
+          Quarter: "Q4 2024",
+          Category: project.project_name,
+          brand_name: brand.brand_name,
+          Marketplace: brand.dq_score.Marketplace,
+          "Digital Spends": brand.dq_score["Digital Spends"],
+          "Organic Performance": brand.dq_score["Organic Performance"],
+          Socialwatch: brand.dq_score.Socialwatch,
+          Overall_Final_Score: brand.dq_score.Overall_Final_Score,
+        }));
+
+        acc[project.project_id] = {
+          projectName: project.project_name,
+          data: transformedData,
+        };
+        return acc;
+      }, {});
+
+      setTableData(dataByProject);
+    } else {
+      setTableData({});
+    }
+  }, [insightsDQScore]);
+
+  const columns1 = [
+    {
+      header: "Quarter",
+      accessor: "Quarter",
+    },
+    { header: "Category", accessor: "Category" },
+    { header: "Brands", accessor: "brand_name" },
+    { header: "Marketplace", accessor: "Marketplace" },
+    {
+      header: "Digital Spends",
+      accessor: "Digital Spends",
+    },
+    { header: "Organic Performance", accessor: "Organic Performance" },
+    { header: "Socialwatch", accessor: "Socialwatch" },
+    { header: "DQ Score", accessor: "Overall_Final_Score" },
+  ];
+  
   const keys = Array.from(new Set(normalizedData.flatMap(Object.keys)));
   const keysToDisplay = keys?.slice(2);
 
@@ -246,7 +293,8 @@ export default function Insights() {
                 </select>
               </div>
             </div>
-            {/* <div className="col-12">
+            
+            <div className="col-12">
               <div className="scores-charts">
                 <span className="chart-title">DQ Score</span>
                 {loading ? (
@@ -255,13 +303,16 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <LineChart key={`Overall_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Overall_Final_Score" />
+                  <LineChart
+                    key={`Overall_Final_Score_${insightsDQScore[0]?.project_name}`}
+                    insightsDQScoreData={insightsDQScore}
+                    scoreType="Overall_Final_Score"
+                  />
                 ) : (
-                  <p>No data available</p>
+                  <p className="no-data">No data available</p>
                 )}
               </div>
             </div>
-
             <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Marketplace</span>
@@ -271,13 +322,16 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <LineChart key={`Marketplace_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Marketplace" />
+                  <LineChart
+                    key={`Marketplace_${insightsDQScore[0]?.project_name}`}
+                    insightsDQScoreData={insightsDQScore}
+                    scoreType="Marketplace"
+                  />
                 ) : (
-                  <p>No data available</p>
+                  <p className="no-data">No data available</p>
                 )}
               </div>
             </div>
-
             <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Digital Spends</span>
@@ -287,29 +341,16 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <LineChart key={`Digital_Spends_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Digital Spends" />
+                  <LineChart
+                    key={`Digital_Spends_${insightsDQScore[0]?.project_name}`}
+                    insightsDQScoreData={insightsDQScore}
+                    scoreType="Digital Spends"
+                  />
                 ) : (
-                  <p>No data available</p>
+                  <p className="no-data">No data available</p>
                 )}
               </div>
             </div>
-
-            <div className="col-sm-12 col-md-6 col-lg-6">
-              <div className="scores-charts">
-                <span className="chart-title">Socialwatch</span>
-                {loading ? (
-                  <div className="loader-container-sm">
-                    <div className="loader-sm"></div>
-                    <span className="loader-text">Loading...</span>
-                  </div>
-                ) : insightsDQScore ? (
-                  <LineChart key={`Socialwatch_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Socialwatch" />
-                ) : (
-                  <p>No data available</p>
-                )}
-              </div>
-            </div>
-
             <div className="col-sm-12 col-md-6 col-lg-6">
               <div className="scores-charts">
                 <span className="chart-title">Organic Performance</span>
@@ -319,117 +360,41 @@ export default function Insights() {
                     <span className="loader-text">Loading...</span>
                   </div>
                 ) : insightsDQScore ? (
-                  <LineChart key={`Organic_Performance_${insightsDQScore?.project_id}`} insightsDQScoreData={insightsDQScore} scoreType="Organic Performance" />
+                  <LineChart
+                    key={`Organic_Performance_${insightsDQScore[0]?.project_name}`}
+                    insightsDQScoreData={insightsDQScore}
+                    scoreType="Organic Performance"
+                  />
                 ) : (
-                  <p>No data available</p>
+                  <p className="no-data">No data available</p>
                 )}
               </div>
-            </div> */}
-
-<div className="scores-charts">
-  <span className="chart-title">DQ Score</span>
-  {loading ? (
-    <div className="loader-container-sm">
-      <div className="loader-sm"></div>
-      <span className="loader-text">Loading...</span>
-    </div>
-  ) : insightsDQScore ? (
-    <LineChart
-      key={`Overall_Final_Score_${insightsDQScore[0]?.project_id}`}
-      insightsDQScoreData={insightsDQScore}
-      scoreType="Overall_Final_Score"
-    />
-  ) : (
-    <p>No data available</p>
-  )}
-</div>
-
-<div className="scores-charts">
-  <span className="chart-title">Marketplace</span>
-  {loading ? (
-    <div className="loader-container-sm">
-      <div className="loader-sm"></div>
-      <span className="loader-text">Loading...</span>
-    </div>
-  ) : insightsDQScore ? (
-    <LineChart
-      key={`Marketplace_${insightsDQScore[0]?.project_id}`}
-      insightsDQScoreData={insightsDQScore}
-      scoreType="Marketplace"
-    />
-  ) : (
-    <p>No data available</p>
-  )}
-</div>
-
-<div className="scores-charts">
-  <span className="chart-title">Digital Spends</span>
-  {loading ? (
-    <div className="loader-container-sm">
-      <div className="loader-sm"></div>
-      <span className="loader-text">Loading...</span>
-    </div>
-  ) : insightsDQScore ? (
-    <LineChart
-      key={`Digital_Spends_${insightsDQScore[0]?.project_id}`}
-      insightsDQScoreData={insightsDQScore}
-      scoreType="Digital Spends"
-    />
-  ) : (
-    <p>No data available</p>
-  )}
-</div>
-
-<div className="scores-charts">
-  <span className="chart-title">Organic Performance</span>
-  {loading ? (
-    <div className="loader-container-sm">
-      <div className="loader-sm"></div>
-      <span className="loader-text">Loading...</span>
-    </div>
-  ) : insightsDQScore ? (
-    <LineChart
-      key={`Organic_Performance_${insightsDQScore[0]?.project_id}`}
-      insightsDQScoreData={insightsDQScore}
-      scoreType="Organic Performance"
-    />
-  ) : (
-    <p>No data available</p>
-  )}
-</div>
-
-<div className="scores-charts">
-  <span className="chart-title">Socialwatch</span>
-  {loading ? (
-    <div className="loader-container-sm">
-      <div className="loader-sm"></div>
-      <span className="loader-text">Loading...</span>
-    </div>
-  ) : insightsDQScore ? (
-    <LineChart
-      key={`Socialwatch_${insightsDQScore[0]?.project_id}`}
-      insightsDQScoreData={insightsDQScore}
-      scoreType="Socialwatch"
-    />
-  ) : (
-    <p>No data available</p>
-  )}
-</div>
+            </div>
+            <div className="col-sm-12 col-md-6 col-lg-6">
+              <div className="scores-charts">
+                <span className="chart-title">Socialwatch</span>
+                {loading ? (
+                  <div className="loader-container-sm">
+                    <div className="loader-sm"></div>
+                    <span className="loader-text">Loading...</span>
+                  </div>
+                ) : insightsDQScore ? (
+                  <LineChart
+                    key={`Socialwatch_${insightsDQScore[0]?.project_name}`}
+                    insightsDQScoreData={insightsDQScore}
+                    scoreType="Socialwatch"
+                  />
+                ) : (
+                  <p className="no-data">No data available</p>
+                )}
+              </div>
+            </div>
 
 
           </div>
         </>
       ),
     },
-    // {
-    //   label: "Super Themes",
-    //   disabled: "disabled",
-    //   content: (
-    //     <div>
-    //       <SuperThemes />
-    //     </div>
-    //   ),
-    // },
     {
       label: "Tabular Summary",
       content: (
@@ -448,7 +413,16 @@ export default function Insights() {
               placeholder="Select Categories"
             />
           </div>
-          <TableComponent data={data} columns={columns} />
+          {/* <TableComponent data={data} columns={columns} /> */}
+          {Object.values(tableData).map((projectData, index) => (
+        <InsightsTabular
+          key={index}
+          data={projectData.data}
+          columns={columns1}
+          projectName={projectData.projectName}
+        />
+      ))}
+
           <div className="pagination-container">
             <PaginationComponent />
           </div>
@@ -505,7 +479,7 @@ export default function Insights() {
                   {selectedFrequency === "Monthly" && (
                     <Form.Select
                       name="Months"
-                      className="filter-input mt-3"
+                      className="form-control-select"
                       value={selectedValue}
                       onChange={handleSelectionChange}
                     >
@@ -528,7 +502,7 @@ export default function Insights() {
                   {selectedFrequency === "Quarterly" && (
                     <Form.Select
                       name="Quarters"
-                      className="filter-input mt-3"
+                      className="form-control-select"
                       value={selectedValue}
                       onChange={handleSelectionChange}
                     >

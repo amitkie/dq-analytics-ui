@@ -272,6 +272,7 @@ class TrendChart extends Component {
       series: [
         {
           name: chartType,
+          
           data: seriesData,
         },
       ],

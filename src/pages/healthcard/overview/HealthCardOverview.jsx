@@ -77,7 +77,7 @@ export default function HealthCardOverview() {
         value: project.id,          
         label: project.project_name, 
       }));
-       
+
       setFilterProject(projects);
 
     }catch(err){
@@ -172,7 +172,7 @@ export default function HealthCardOverview() {
   };
  
   
- console.log('currentProjectId', currentProjectId);
+ 
   const fetchBrandScoreDetails = async () => {
     setLoading(true);
     setError(null)
@@ -180,7 +180,7 @@ export default function HealthCardOverview() {
       "brand_name": brand,
       "project_ids": [selectedProjectId],
     }
-    
+    console.log(selectedProjectId, 'selectedProjectId')
     try {
       const brandScoreDetails = await getBrandData(requestPayload);
       if (brandScoreDetails) {
@@ -241,7 +241,6 @@ export default function HealthCardOverview() {
 
   const handleSelectedProjects = (selectedOptions) => {
     setSelectedFilterProject(selectedOptions);
-
   };
   // const handleSelectedProjects = async (selectedOptions) => {
   //   setSelectedFilterProject(selectedOptions);
@@ -482,7 +481,7 @@ export default function HealthCardOverview() {
               {selectedFrequency === "Monthly" && (
                 <Form.Select
                   name="Months"
-                  className="filter-input mt-3"
+                  className="filter-input"
                   value={selectedValue}
                   onChange={handleSelectionChange} // Trigger API call on selection
                 >
@@ -517,9 +516,16 @@ export default function HealthCardOverview() {
                 </Form.Select>
               )}
 
+              {/* <MultiSelectDropdown
+                options={filterProject}
+                selectedValues={selectedFilterProject}
+                onChange={handleSelectedProjects}
+                placeholder="Select Project"
+              /> */}
+
               <Form.Select
                 name="Project Name"
-                className="filter-input mt-3"
+                className="filter-input"
                 value={selectedValue}
                 onChange={handleSelectedProjects}
               >
@@ -738,13 +744,13 @@ export default function HealthCardOverview() {
           <div className="tab-container">
             {loading ? (
               <div className="loader-container">
-                <div className="loader">
+                <div className="loader-sm">
                 </div>
                 <span className="loader-text">Loading...</span>
               </div>
             ) : error ? (
               <div className="loader-container">
-                <div className="loader">
+                <div className="loader-sm">
                 </div>
                 <span className="loader-text">Loading...</span>
               </div>

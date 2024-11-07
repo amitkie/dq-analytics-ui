@@ -13,6 +13,7 @@ const MetricThemeGroupList = ({ metricThemeGroups, removeMetric }) => {
       [groupId]: !prevExpanded[groupId],
     }));
   };
+  console.log('metricThemeGroups', metricThemeGroups)
   return (
     <div> 
       <h5 className="group-name-heading">Saved Themes</h5>
@@ -40,7 +41,7 @@ const MetricThemeGroupList = ({ metricThemeGroups, removeMetric }) => {
             <ul className="selected-metrics">
               {group.metric_ids.map((metric, index) => (
                 <li key={index} className="metric-list">
-                  {metric.name}
+                  {metric.name} 
                 </li>
               ))}
             </ul>

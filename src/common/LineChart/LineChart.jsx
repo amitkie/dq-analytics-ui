@@ -1,3 +1,4 @@
+
 // import React, { Component } from "react";
 // import Chart from "react-apexcharts";
 // import "../../assets/mixins/mixins.scss";
@@ -7,25 +8,24 @@
 //   constructor(props) {
 //     super(props);
 
-//     // Extracting project names and corresponding scores for each project
 //     const { insightsDQScoreData, scoreType } = this.props;
 
-//     // Assuming insightsDQScoreData is an array of multiple project data
-//     const projects = insightsDQScoreData?.map(project => {
-//       return {
-//         name: project?.project_name || 'Unnamed Project',
-//         brands: project?.brands?.map(brand => ({
-//           brandName: brand.brand_name,
-//           score: brand.dq_score[scoreType] || 0,
-//         }))
-//       };
-//     }) || [];
+//     // Transforming the data to extract projects with brand names and corresponding scores for the chosen scoreType
+//     const projects = insightsDQScoreData?.map(project => ({
+//       name: `Project ${project.project_name}`,
+//       brands: project.brands.map(brand => ({
+//         brandName: brand.brand_name,
+//         score: brand.dq_score[scoreType]?.toFixed(2) || 0,
+//       }))
+//     })) || [];
 
-//     const series = projects.map((project, index) => ({
+//     // Construct series data for each project
+//     const series = projects.map(project => ({
 //       name: project.name, // Project name
-//       data: project.brands.map(brand => brand.score), // Y-axis values for each brand
+//       data: project.brands.map(brand => brand.score), // Scores for each brand
 //     }));
 
+//     // Assuming all projects contain the same brands, we use the first project’s brand names for the x-axis
 //     const brandNames = projects.length > 0 ? projects[0].brands.map(brand => brand.brandName) : [];
 
 //     this.state = {
@@ -82,7 +82,7 @@
 //           <Chart options={this.state.options} series={this.state.series} type="line" height={450} />
 //         ) : (
 //           <div className="empty-chart">
-//             <p>No data available for {this.state.options.title.text}</p>
+//             <p className="no-data">No data available for {this.state.options.title.text}</p>
 //           </div>
 //         )}
 //       </div>
@@ -91,6 +91,7 @@
 // }
 
 // export default LineChart;
+
 
 import React, { Component } from "react";
 import Chart from "react-apexcharts";
@@ -103,23 +104,31 @@ class LineChart extends Component {
 
     const { insightsDQScoreData, scoreType } = this.props;
 
-    // Transforming the data to extract projects with brand names and corresponding scores for the chosen scoreType
+    // Step 1: Collect unique brand names from all projects
+    const allBrandNames = Array.from(new Set(
+      insightsDQScoreData.flatMap(project =>
+        project.brands.map(brand => brand.brand_name)
+      )
+    ));
+
+    // Step 2: Transform data to align each project’s scores with the complete list of brand names
     const projects = insightsDQScoreData?.map(project => ({
-      name: `Project ${project.project_id}`,
-      brands: project.brands.map(brand => ({
-        brandName: brand.brand_name,
-        score: brand.dq_score[scoreType] || 0,
-      }))
+      name: `Project ${project.project_name}`,
+      brands: allBrandNames.map(brandName => {
+        // Find the brand's score in the current project
+        const brand = project.brands.find(b => b.brand_name === brandName);
+        return {
+          brandName,
+          score: brand ? brand.dq_score[scoreType]?.toFixed(2) || 0 : 0, // Use 0 if the brand is not found
+        };
+      })
     })) || [];
 
-    // Construct series data for each project
+    // Step 3: Construct series data for each project
     const series = projects.map(project => ({
       name: project.name, // Project name
       data: project.brands.map(brand => brand.score), // Scores for each brand
     }));
-
-    // Assuming all projects contain the same brands, we use the first project’s brand names for the x-axis
-    const brandNames = projects.length > 0 ? projects[0].brands.map(brand => brand.brandName) : [];
 
     this.state = {
       options: {
@@ -136,7 +145,7 @@ class LineChart extends Component {
           },
         },
         xaxis: {
-          categories: brandNames, // X-axis labels (brand names)
+          categories: allBrandNames, // X-axis labels (all brand names)
           title: {
             text: "Brands",
           },
@@ -165,7 +174,6 @@ class LineChart extends Component {
   }
 
   render() {
-    // Check if there are no data points to display
     const { series } = this.state;
     const hasData = series.some(s => s.data.length > 0 && s.data.some(score => score > 0));
 
@@ -175,7 +183,7 @@ class LineChart extends Component {
           <Chart options={this.state.options} series={this.state.series} type="line" height={450} />
         ) : (
           <div className="empty-chart">
-            <p>No data available for {this.state.options.title.text}</p>
+            <p className="no-data">No data available for {this.state.options.title.text}</p>
           </div>
         )}
       </div>
@@ -184,4 +192,5 @@ class LineChart extends Component {
 }
 
 export default LineChart;
+
 

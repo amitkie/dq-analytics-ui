@@ -3,57 +3,40 @@ import TableComponent from "../../components/tableComponent/TableComponent";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import { gethealthCardData } from "../../services/HealthCard";
 import { getAllBrands, getAllCategories } from "../../services/userService";
+import { getProjectDetailsByProjectId } from "../../services/projectService";
 import { useSelector } from "react-redux";
-import { getProjectDetailsByUserId } from "../../services/projectService";
 import "./HealthCard.scss";
 
 export default function HealthCard() {
   // const { userInfo, projectInfo } = useSelector((state) => state.user);
-  const data = gethealthCardData; 
- 
+  const [data, setData] = useState([]); 
   const [filteredData, setFilteredData] = useState(data);
   const [alphabetFilter, setAlphabetFilter] = useState("");
   const [filterCategory, setFilterCategory] = useState([]);
   const [selectedFilterCategory, setSelectedFilterCategory] = useState([]);
   const alphabets = "abcdefghijklmnopqrstuvwxyz".split("");
   const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [healthCardDetails, setHealthCardDetails] = useState({});
-
-  const fetchHealthCardData = async () => {
-    setLoading(true); // Start loading
-    setError(null); // Reset error state
-     
-    try {
-      const healthCardData = await getProjectDetailsByUserId(1);
-      if (healthCardData) {
-        setHealthCardDetails(healthCardData?.project);
-        
-      } else {
-        setError("No data found");
-      }
-    } catch (error) {
-      console.error("Error fetching health card data:", error);
-      setError("No data found"); // Set error message if API call fails
-    } finally {
-      setLoading(false); // End loading
-    }
-  };
-
+  const [tableBrandData, setTableBrandData] = useState();
   useEffect(() => {
     fetchAllBrands();
     fetchAllCategories();
     fetchHealthCardData();
-;  }, []);
+  }, []);
 
- 
- 
-  // const selectedProject = healthCardDetails?.find((item) => item.id === selectedProjectId);
- 
-  // const projectName = selectedProject ? selectedProject?.project_name : 'Project not found';
- 
-    console.log('healthCardDetails', healthCardDetails)
+  const fetchHealthCardData = async () => {
+    const requestPayload = {
+      "project_ids": [selectedProjectId]
+    };
+    try {
+      const healthCardData = await gethealthCardData();
+      // const healthCardData = await getProjectDetailsByProjectId(requestPayload);
+      setData(healthCardData); // Set the fetched data
+      setFilteredData(healthCardData); // Initialize filteredData with the fetched data
+    } catch (error) {
+      console.log("Error fetching health card data:", error);
+    }
+  };
+     
   useEffect(() => {
     let filtered = data;
 
@@ -78,33 +61,10 @@ export default function HealthCard() {
       });
     }
 
+    console.log('filtered', filtered);
     setFilteredData(filtered);
   }, [alphabetFilter, selectedFilterCategory, data]);
 
-  // useEffect(() => {
-  //   fetchAllBrands();
-  //   fetchAllCategories();
-  
-  //   let filtered = data;
- 
-  //   if (alphabetFilter !== "") {
-  //     filtered = filtered.filter((item) =>
-  //       item.Brands?.toLowerCase().startsWith(alphabetFilter.toLowerCase())
-  //     );
-  //   }
-  
-  //   // Category filter (filter by category names)
-  //   if (selectedFilterCategory.length > 0) {
-  //     const selectedCategoryNames = selectedFilterCategory.map((option) => option.label);
-  //     filtered = filtered.filter((item) => {
-  //       const itemCategory = item.Category ? item.Category : "";
-  //       return selectedCategoryNames.includes(itemCategory);
-  //     });
-  //   }
-
-  //   setFilteredData(filtered);
-  // }, [alphabetFilter, selectedFilterCategory, data]);
-    
   const fetchAllBrands = async() => {
     try {
       const brandsData = await getAllBrands();
@@ -136,8 +96,33 @@ export default function HealthCard() {
     setSelectedFilterCategory(selectedOptions);
   };
 
+  // useEffect(() => {
+  //   if(filteredData && filteredData.length > 0) {
+  //     const transformedData = filteredData.flatMap((project) =>
+  //       project.brands.map((brand) => ({
+  //         Quarter: "Q4 2024", 
+  //         Category: project.project_name,
+  //         brand_name: brand.brand_name,
+  //         Marketplace: brand.dq_score.Marketplace,
+  //         "Digital Spends": brand.dq_score["Digital Spends"],
+  //         "Organic Performance": brand.dq_score["Organic Performance"],
+  //         Socialwatch: brand.dq_score.Socialwatch,
+  //         Overall_Final_Score: brand.dq_score.Overall_Final_Score,
+  //       }))
+  //     );
+      
+  //     setTableBrandData(transformedData);
+  //   } else {
+  //     setTableBrandData([])
+  //   }
+  // }, [filteredData]);
 
-
+  console.log('filteredData', filteredData)
+   
+  const columns1 = [
+    { header: "Brands", accessor: "brandName" },
+    { header: "Category", accessor: "categoryName" },
+  ];
   const columns = [
     {
       header: "S.no",
@@ -181,6 +166,10 @@ export default function HealthCard() {
           data={filteredData} 
           columns={columns} 
         />
+        {/* <TableComponent 
+          data={tableBrandData} 
+          columns={columns1} 
+        /> */}
 
       </div>
     </div>
