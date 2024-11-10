@@ -29,7 +29,7 @@ import { Form } from "react-bootstrap";
 
 
 export default function HealthCardOverview() {
-  const { brand, projectId } = useParams(); // Use this project Id by default
+  const { brand, projectId } = useParams(); 
   const [healthCardData, setHealthCardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -93,7 +93,7 @@ export default function HealthCardOverview() {
   const handleReportClick = () => {
     
     if (brandDetailData && brandImages && brandCategoryDetails) {
-      navigate(`/healthcardreport/${brand}/${selectedFilterProject ? selectedFilterProject : currentProjectId}`, {
+      navigate(`/healthcardreport/${brand}/${selectedFilterProject ? selectedFilterProject : projectId}`, {
         state: {
           brandDetailData: brandDetailData,
           brandImages: brandImages,
@@ -112,7 +112,7 @@ export default function HealthCardOverview() {
   };
   
   const handleCompetitorBrands = (comp) => {
-    navigate(`/healthcardOverview/${comp.brand}/${selectedFilterProject ? selectedFilterProject : currentProjectId}`);
+    navigate(`/healthcardOverview/${comp.brand}/${selectedFilterProject ? selectedFilterProject : projectId}`);
   };
 
   useEffect(() => {

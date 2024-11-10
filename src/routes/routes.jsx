@@ -53,6 +53,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/insights/:projectId/:projectName",
+    element: (
+      <Layout>
+        <Insights />
+      </Layout>
+    ),
+  },
+  {
     path: "/insights",
     element: (
       <Layout>

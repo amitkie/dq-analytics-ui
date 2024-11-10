@@ -269,7 +269,12 @@ const handleEditProjectName = (id) => {
         console.error("Error fetching brands:", error);
       }
     }
+
   };
+  const navigateToInsights = (projectD) => {
+    console.log(projectD, 'projectD')
+    navigate(`/insights/${projectD?.id}/${projectD?.project_name}`)
+  }
 
   const handleBrandChange = (selectedOptions) => {
     setSelectedBrands(selectedOptions);
@@ -636,7 +641,7 @@ const handleEditProjectName = (id) => {
                       <div className="actionITems">
                         <MdOutlineEdit onClick={() => handleEditClick(item.id, item?.project_name)} className="action-item-icon" title="Edit"/>
                         <FaRegTrashCan onClick={() => deleteProjectDetails(item.id)} className="action-item-icon" title="Delete"/>
-                        <VscGoToFile className="action-item-icon" title="Go to Insights" onClick={handleDeleteShow}/>
+                        <VscGoToFile className="action-item-icon" title="Go to Insights" onClick={() => navigateToInsights(item)}/>
                         {showAlert && (
                           <ModalComponent
                             ModalHeading={"Delete Confirmation"}

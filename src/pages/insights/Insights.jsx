@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import Form from "react-bootstrap/Form";
@@ -25,6 +26,8 @@ import InsightsTabular from "./InisghtsTabular";
 
 export default function Insights() {
   const data = getData();
+  const { projectId, projectName } = useParams();
+
   const normalizedData = getNormalizedData();
   const [categories, setCategories] = useState([]);
   const [frequencies, setFrequencies] = useState([]);
@@ -47,31 +50,31 @@ export default function Insights() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-  
-          const categoriesData = await getAllCategories();
-          setCategories(
-            categoriesData.data.map((cat) => ({
-              value: cat.id,
-              label: cat.name,
-            }))
-          );
-  
-          const brandsData = await getAllBrands();
-          setBrand(
-            brandsData.data.map((brand) => ({
-              value: brand.id,
-              label: brand.name,
-            }))
-          );
-  
-          const frequencyData = await getAllFrequencies();
-          setFrequencies(
-            frequencyData?.data?.map((brand) => ({
-              value: brand.id,
-              label: brand.name,
-            }))
-          );
-        
+
+        const categoriesData = await getAllCategories();
+        setCategories(
+          categoriesData.data.map((cat) => ({
+            value: cat.id,
+            label: cat.name,
+          }))
+        );
+
+        const brandsData = await getAllBrands();
+        setBrand(
+          brandsData.data.map((brand) => ({
+            value: brand.id,
+            label: brand.name,
+          }))
+        );
+
+        const frequencyData = await getAllFrequencies();
+        setFrequencies(
+          frequencyData?.data?.map((brand) => ({
+            value: brand.id,
+            label: brand.name,
+          }))
+        );
+
 
         // const projectsData = await getProjectListsByFilter();
       } catch (error) {
@@ -81,6 +84,10 @@ export default function Insights() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchDQScoresBasedOnFilter()
+  }, [projectId])
 
   const fetchProjectsByFilter = async (frequency, categories) => {
 
@@ -141,21 +148,39 @@ export default function Insights() {
 
   const fetchDQScoresBasedOnFilter = async () => {
     setLoading(true);
+    try {
 
-    if (selectedProjects?.length > 0) {
-      const selectedProjectsOptions = selectedProjects?.map((cg) => cg?.value);
-      const requestedPayload = {
-        project_ids: selectedProjects.map((prj) => prj.value),
-      };
+      if (selectedProjects?.length > 0) {
+        const selectedProjectsOptions = selectedProjects?.map((cg) => cg?.value);
+        const requestedPayload = {
+          project_ids: selectedProjects.map((prj) => prj.value),
+        };
 
-      const insightsDQScoreData = await getDQScoreMultipleProjects(requestedPayload);
-      if (insightsDQScoreData?.data?.length > 0) {
-        setLoading(false);
-        setInsightsDQScore(insightsDQScoreData?.data);
-      } else {
-        setLoading(false);
-        setInsightsDQScore(null);
+        const insightsDQScoreData = await getDQScoreMultipleProjects(requestedPayload);
+        if (insightsDQScoreData?.data?.length > 0) {
+          setLoading(false);
+          setInsightsDQScore(insightsDQScoreData?.data);
+        } else {
+          setLoading(false);
+          setInsightsDQScore(null);
+        }
+      } else if (projectId) {
+        const requestedPayload = {
+          project_ids: [projectId],
+        };
+
+        const insightsDQScoreData = await getDQScoreMultipleProjects(requestedPayload);
+        if (insightsDQScoreData?.data?.length > 0) {
+          setLoading(false);
+          setInsightsDQScore(insightsDQScoreData?.data);
+        } else {
+          setLoading(false);
+          setInsightsDQScore(null);
+        }
       }
+    } catch (error) {
+      setLoading(false);
+      setInsightsDQScore(null);
     }
   };
 
@@ -231,11 +256,11 @@ export default function Insights() {
                   <Form.Range />
                 </div>
                 <MultiSelectDropdown
-              options={brand}
-              selectedValues={selectedBrand}
-              onChange={handleBrandChanges}
-              placeholder="Select Brands"
-            />
+                  options={brand}
+                  selectedValues={selectedBrand}
+                  onChange={handleBrandChanges}
+                  placeholder="Select Brands"
+                />
               </div>
             </div>
 
@@ -371,7 +396,7 @@ export default function Insights() {
           <div className="pagination-container">
             <PaginationComponent />
           </div>
-      
+
         </div>
       ),
     },
@@ -390,7 +415,7 @@ export default function Insights() {
         <div className="workspace-container">
           <h2 className="page-title mt-4 ml-3">Insights</h2>
 
-          <div className="row mb-4">
+          {!projectId ? (<div className="row mb-4">
             <div className="col-12">
               <div className="insights-filter">
                 <span className="subtitle">
@@ -473,7 +498,17 @@ export default function Insights() {
 
               </div>
             </div>
-          </div>
+          </div>) : (
+            <div className="insights-filter">
+              <div>
+                <span><b>Project Id</b></span>: <span>{projectId}</span>
+              </div>
+              <div>
+                <span><b>Project Name</b></span>: <span>{projectName}</span>
+              </div>
+            </div>
+          )
+          }
           <div className="row">
             <div className="col-12">
               <div className="export-btn justify-content-end">
