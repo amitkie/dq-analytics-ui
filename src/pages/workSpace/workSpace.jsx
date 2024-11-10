@@ -224,6 +224,7 @@ const handleEditProjectName = (id) => {
     try {
       const project = await updateProject(id, data);
       if(project){
+        dispatch(getProjectInfoRequest(userInfo?.user?.id))
         alert("Project Name Updated Successfully.")
       }
     } catch (error) {
