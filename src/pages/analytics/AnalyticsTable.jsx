@@ -263,14 +263,13 @@ const AnalyticsTable = ({
                               "NA"
                             )} */}
                           </td>
-                          {/* <td>
+                          <td>
                             <IoMdRemoveCircleOutline
                               className="action-item-icon"
                               onClick={() => removeMetricsFromDB(item.metric_id, item.metric_name)}
                               title="Remove Metric data"
                             />
-                            <IoMdAddCircleOutline className="action-item-icon" title="Add Metric data" />
-                          </td> */}
+                          </td>
                         </tr>
                       ))}
                   </>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState,  } from "react";
+import React, { useEffect, useRef, useState, } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
@@ -27,6 +27,7 @@ import {
   removeMetricFromProject,
   getKPIScoreValues,
   createUserProjectDQScore,
+  updateProject,
 } from "../../services/projectService";
 import {
   getAllBrands,
@@ -74,6 +75,7 @@ export default function Analytics() {
 
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [addMetricLoading, setAddMetricLoading] = useState(false);
   const [dqScoreLoading, setDQScoreLoading] = useState(false);
 
   const [checkStates, setCheckStates] = useState({});
@@ -130,11 +132,29 @@ export default function Analytics() {
     setShow(true);
   };
 
+  const updateMetricData = async() => {
+    setAddMetricLoading(true);
+    try {
+      const reqPayload = {
+        metric_id: selectedAddMetricList.map(m => m.value)
+      }
+      const res = await updateProject(projectId,reqPayload);
+      console.log(res)
+      if(res){
+        setAddMetricLoading(false);
+
+        fetchProjectDetails(projectId);
+        handleClose();
+      }
+    } catch (error) {
+      setAddMetricLoading(false);
+      handleClose();
+      
+    }
+
+  }
 
   const recentProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
-   
- 
-
 
   const columnsMetrics = Object.keys(AMData[0] || []).map((key) => ({
     Header: key,
@@ -207,7 +227,7 @@ export default function Analytics() {
         start_date: projectDetails?.start_date,
         end_date: projectDetails?.end_date,
       };
-      
+
 
       try {
         const benchmarks = await getBenchamarkValues(reqPayload);
@@ -245,7 +265,7 @@ export default function Analytics() {
         );
       }
     } else {
-       
+
       // If the checkbox is unchecked, just reset the values
       setMetrics((prev) =>
         prev.map((ele) => {
@@ -265,9 +285,9 @@ export default function Analytics() {
     }
   };
 
- 
 
- 
+
+
   const handleSelectAll = async (e, type) => {
     const isChecked = e.target.checked;
 
@@ -438,8 +458,9 @@ export default function Analytics() {
       const compareNormalizeValue = await getNormalizedValues(requestPayload);
 
       if (compareNormalizeValue) {
+        console.log(".........xxx.x..x.xx", compareNormalizeValue)
         setComparisonData(compareNormalizeValue)
-         
+
         const uniqueData = transformComparisonViewApiData(compareNormalizeValue);
         const uniqueComparisonBrandNames = Array.from(new Set(compareNormalizeValue.map(item => item.brandName)));
         const brandCategoryMap = compareNormalizeValue.reduce((acc, item) => {
@@ -450,7 +471,7 @@ export default function Analytics() {
         setNormalizedValue(uniqueData);
         setBrandCategoryMap(brandCategoryMap);
       }
-      
+
       return compareNormalizeValue;
 
     } catch (error) {
@@ -569,7 +590,7 @@ export default function Analytics() {
       // setLoading(false); 
     }
   };
-  
+
 
   const saveUserProjectDQScore = async (cmpData, dqVal) => {
 
@@ -619,10 +640,10 @@ export default function Analytics() {
     return payload;
   };
 
-  const fetchSections = async() => {
+  const fetchSections = async () => {
     const sectionsData = await getAllSections();
     const uniqueSections = sectionsData.data.filter(
-      (section, index, self) => 
+      (section, index, self) =>
         index === self.findIndex((s) => s.name === section.name)
     );
     setSectionsList(
@@ -702,7 +723,7 @@ export default function Analytics() {
       console.error('Error while fetching or mapping metrics data:', error);
     }
   };
-  
+
 
   const handleFilterCategory = async (selectedOptions) => {
     // setSelectedFilterCategories(selectedOptions);
@@ -726,7 +747,7 @@ export default function Analytics() {
           label: cat.name,
         }));
 
-        setFilterCategories(prevCategory => {
+      setFilterCategories(prevCategory => {
         return [
           ...filteredCategory
         ];
@@ -1023,7 +1044,7 @@ export default function Analytics() {
       }
     }
   };
- 
+
 
   const handleAddPlatform = async (selectedOptions) => {
     setSelectedPlatformsList(selectedOptions);
@@ -1044,6 +1065,7 @@ export default function Analytics() {
     }
   };
   const handleAddMetric = (selectedOptions) => {
+    console.log(selectedOptions,'selectedOptions')
     setAddSelectedMetricList(selectedOptions);
   };
   const tabs = [
@@ -1054,9 +1076,15 @@ export default function Analytics() {
           <div className="row">
             <div className="col12">
               <div className="table-buttons">
-                <ButtonComponent btnClass={"btn-secondary"} btnName={"Set weights as 0"} onClick={setWeightsValueToZero} />
-                <ButtonComponent btnClass={"btn-secondary"} btnName={"Reset"} onClick={resetWeightsValue} />
-                <ButtonComponent btnClass={"btn-secondary"} btnName={"Add Metric"} onClick={handleShowModal} />
+                <ButtonComponent btnClass={"btn-secondary"} 
+                  disabled={projectDetails?.is_benchmark_saved}
+                  btnName={"Set weights as 0"} onClick={setWeightsValueToZero} />
+                <ButtonComponent btnClass={"btn-secondary"}
+                  disabled={projectDetails?.is_benchmark_saved}
+                  btnName={"Reset"} onClick={resetWeightsValue} />
+                <ButtonComponent btnClass={"btn-secondary"}
+                  disabled={projectDetails?.is_benchmark_saved}
+                  btnName={"Add Metric"} onClick={handleShowModal} />
               </div>
             </div>
           </div>
@@ -1114,17 +1142,110 @@ export default function Analytics() {
       label: "KPI Scores",
       content: (
         <>
-        <KPITable
-          kpiData={kpiData}
-          metrics={metrics}
-          projectDetails={projectDetails}
-          getColor={getColor}
-          getColorScore={getColorScore}
-        />
-           
+          <KPITable
+            normalizedData={comparisonData}
+            kpiData={kpiData}
+            metrics={metrics}
+            projectDetails={projectDetails}
+            getColor={getColor}
+            getColorScore={getColorScore}
+          />
+
         </>
       ),
     },
+    // {
+    //   label: "Comparison View",
+    //   content: (
+    //     <div>
+    //       <div className="filter-options mb-2">
+    //         <select name="Brands" className="Select-input">
+    //           <option value="himalaya">Himalaya</option>
+    //           <option value="lux">Lux</option>
+    //           <option value="palmolive">Palmolive</option>
+    //           <option value="parachute">Parachute</option>
+    //         </select>
+    //         <select name="category" className="Select-input">
+    //           <option value="all">All</option>
+    //           <option value="beauty">Beauty</option>
+    //           <option value="haircare">Hair care</option>
+    //           <option value="foods">Foods</option>
+    //           <option value="male-grooming">Male Grooming</option>
+    //         </select>
+    //       </div>
+    //       <ul class="legend">
+    //         <li> Marketplace</li>
+    //         <li> Digital Spends</li>
+    //         <li> Socialwatch</li>
+    //         <li> Organic Performance</li>
+    //       </ul>
+
+    //       {normalizedValue?.length > 0 ? (
+    //         <Table responsive striped bordered className="insights-table comparision-table">
+    //           <thead>
+    //             <tr>
+    //               <th className="sticky-col" style={{ width: '100px' }}>Section</th>
+    //               <th className="sticky-col" style={{ width: '100px' }}>Platform</th>
+    //               <th className="sticky-col" style={{ width: '100px' }}>Metric</th>
+    //               {uniqueComparisonBrandName?.sort((a, b) => a.localeCompare(b)).map(brand => (
+    //                 <th key={brand} style={{ width: '100px' }}>{brand}
+    //                   <span className="brand-category">{brandCategoryMap[brand]} </span>
+    //                 </th>
+    //               ))}
+    //             </tr>
+    //           </thead>
+    //           <tbody>
+    //             {normalizedValue?.map((row, index) => (
+    //               <tr key={index}>
+    //                 <td className="sticky-col" style={{ width: '100px' }}><span
+    //                   style={{
+    //                     display: 'inline-block',
+    //                     width: '10px',
+    //                     height: '10px',
+    //                     borderRadius: '50%',
+    //                     backgroundColor: getColor(row?.sectionName),
+    //                     marginRight: '5px',
+    //                   }}
+
+    //                 ></span>{row?.sectionName}</td>
+    //                 <td className="sticky-col" style={{ width: '100px' }}>{row?.platformName} </td>
+    //                 <td className="sticky-col" style={{ width: '100px' }}>
+    //                   <div className="metric-name">{row?.metricName}
+    //                     <div className="metric-info">
+    //                       <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricName, row?.platformName)} />
+
+    //                       {selectedMetricDesc === row?.metricName && (
+    //                         <span className="metric-desc">{metricsDesc}</span>
+    //                       )}
+    //                     </div>
+    //                   </div>
+    //                 </td>
+    //                 {/* {row} */}
+    //                 {uniqueComparisonBrandName?.map(brand => (
+    //                   <td key={brand} style={{ width: '100px' }}
+    //                     title={`Benchmark Value: ${row[brand]?.benchmarkValue || 'N/A'}\nPercentile: ${row[brand]?.percentile || 'N/A'}`}
+    //                   >
+    //                     {row[brand]?.normalized || "-"}
+    //                   </td>
+    //                 ))}
+    //               </tr>
+    //             ))}
+    //           </tbody>
+    //         </Table>
+    //       ) : (
+    //         <div className="loader-container-sm">
+    //           <div className="loader-sm"></div>
+    //           <span className="loader-text">Loading...</span>
+    //         </div>
+    //       )}
+
+
+
+
+    //     </div>
+    //   ),
+    // },
+
     {
       label: "Comparison View",
       content: (
@@ -1144,63 +1265,78 @@ export default function Analytics() {
               <option value="male-grooming">Male Grooming</option>
             </select>
           </div>
-          <ul class="legend">
+          <ul className="legend">
             <li> Marketplace</li>
             <li> Digital Spends</li>
             <li> Socialwatch</li>
             <li> Organic Performance</li>
           </ul>
-          
-          {normalizedValue?.length > 0 ? (
+    
+          {comparisonData?.length > 0 ? (
             <Table responsive striped bordered className="insights-table comparision-table">
               <thead>
                 <tr>
                   <th className="sticky-col" style={{ width: '100px' }}>Section</th>
                   <th className="sticky-col" style={{ width: '100px' }}>Platform</th>
                   <th className="sticky-col" style={{ width: '100px' }}>Metric</th>
-                  {uniqueComparisonBrandName?.sort((a, b) => a.localeCompare(b)).map(brand => (
-                    <th key={brand} style={{ width: '100px' }}>{brand}
-                      <span className="brand-category">{brandCategoryMap[brand]} </span>
-                    </th>
-                  ))}
+                  {/* Dynamically generate brand columns */}
+                  {Array.from(new Set(comparisonData.map(row => row?.brandName)))
+                    .sort((a, b) => a.localeCompare(b))
+                    .map(brand => (
+                      <th key={brand} style={{ width: '100px' }}>
+                        {brand}
+                        <span className="brand-category"> {/* Hardcoded or placeholder category name if needed */} </span>
+                      </th>
+                    ))}
                 </tr>
               </thead>
               <tbody>
-                {normalizedValue?.map((row, index) => (
-                  <tr key={index}>
-                    <td className="sticky-col" style={{ width: '100px' }}><span
-                      style={{
-                        display: 'inline-block',
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        backgroundColor: getColor(row?.sectionName),
-                        marginRight: '5px',
-                      }}
-
-                    ></span>{row?.sectionName}</td>
-                    <td className="sticky-col" style={{ width: '100px' }}>{row?.platformName} </td>
-                    <td className="sticky-col" style={{ width: '100px' }}>
-                      <div className="metric-name">{row?.metricName}
-                        <div className="metric-info">
-                          <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricName, row?.platformName)} />
-                           
-                          {selectedMetricDesc === row?.metricName && (
-                            <span className="metric-desc">{metricsDesc}</span>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    {/* {row} */}
-                    {uniqueComparisonBrandName?.map(brand => (
-                      <td key={brand} style={{ width: '100px' }}
-                        title={`Benchmark Value: ${row[brand]?.benchmarkValue || 'N/A'}\nPercentile: ${row[brand]?.percentile || 'N/A'}`}
-                      >
-                        {row[brand]?.normalized || "-"}
+                {/* Group data by section and metric */}
+                {Array.from(new Set(comparisonData.map((row) => row.metricname))).map((metricName) => {
+                  return comparisonData.filter(row => row.metricname === metricName).map((row, index) => (
+                    <tr key={index}>
+                      <td className="sticky-col" style={{ width: '100px' }}>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            backgroundColor: getColor(row?.sectionName),
+                            marginRight: '5px',
+                          }}
+                        ></span>
+                        {row?.sectionName}
                       </td>
-                    ))}
-                  </tr>
-                ))}
+                      <td className="sticky-col" style={{ width: '100px' }}>{row?.platformname}</td>
+                      <td className="sticky-col" style={{ width: '100px' }}>
+                        <div className="metric-name">
+                          {row?.metricname}
+                          <div className="metric-info">
+                            <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricname, row?.platformname)} />
+                            {selectedMetricDesc === row?.metricname && (
+                              <span className="metric-desc">{metricsDesc}</span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      {/* Display normalized values for each brand */}
+                      {Array.from(new Set(comparisonData.map((row) => row.brandName)))
+                        .sort((a, b) => a.localeCompare(b))
+                        .map(brand => {
+                          const brandData = comparisonData.find((data) => data.brandName === brand && data.metricname === metricName);
+                          return (
+                            <td key={brand} style={{ width: '100px' }}
+                              title={`Benchmark Value: ${brandData?.benchmarkValue || 'N/A'}\nPercentile: ${brandData?.percentile || 'N/A'}`}
+                            >
+                              {brandData?.normalized || "-"}
+                            </td>
+                          );
+                        })
+                      }
+                    </tr>
+                  ));
+                })}
               </tbody>
             </Table>
           ) : (
@@ -1209,34 +1345,30 @@ export default function Analytics() {
               <span className="loader-text">Loading...</span>
             </div>
           )}
-
-
-
-
         </div>
       ),
     },
-
+    
     {
       label: "Super Themes",
       disabled: "disabled",
       content: (
         <div>
           {normalizedValue && (
-          <SuperThemes metrics={metrics} normalizedDQScoreValue={normalizedValue} projectId={projectId} />
+            <SuperThemes metrics={metrics} normalizedDQScoreValue={normalizedValue} projectId={projectId} />
           )}
         </div>
       ),
     },
   ];
-  
+
 
   return (
     <>
       <div className="col-12">
         <div className="workspace-container">
           <h2 className="page-title">Analytics</h2>
-          
+
           <div className="row mb-3">
             <div className="col-12">
               <div className="analytics-filter">
@@ -1337,6 +1469,13 @@ export default function Analytics() {
 
             </div>
           </div>
+
+          { addMetricLoading && (<div className="loader-container-sm">
+              <div className="loader-sm"></div>
+               <span className="loader-text">Loading...</span>
+             </div>)
+             
+             }
         </Modal.Body>
         <Modal.Footer>
           <ButtonComponent
@@ -1347,7 +1486,7 @@ export default function Analytics() {
           <ButtonComponent
             btnClass={"btn-primary px-4"}
             btnName={"Add Metric"}
-            onClick={handleClose}
+            onClick={updateMetricData}
           />
         </Modal.Footer>
       </Modal>
