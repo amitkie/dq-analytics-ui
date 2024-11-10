@@ -19,7 +19,7 @@ import "./overview/HealthCardOverview.scss";
 import "./HealthCardReport.scss";
 
 const HealthCardReport = () => {
-  const { brand } = useParams();
+  const { brand, projectId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { brandDetailData, brandImages, brandCategoryDetails } = location.state || {};
@@ -27,11 +27,10 @@ const HealthCardReport = () => {
   const [getTop5List, setGetTop5List] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
   const [competitorsData, setCompetitorsData] = useState([]);
 
   const handleCompetitorBrands = (comp) => {
-    navigate(`/healthcardOverview/${comp.brand}`);
+    navigate(`/healthcardOverview/${comp.brand}/${projectId}`);
   };
 
   const fetchTopFiveListDetails = async () => {
@@ -39,7 +38,7 @@ const HealthCardReport = () => {
     setError(null);
   
     const requestPayload = {
-      project_id: selectedProjectId,
+      project_id: projectId,
       brandname: brand
     };
     console.log("Request Payload:", requestPayload); // Log the request payload
@@ -66,7 +65,7 @@ const HealthCardReport = () => {
     setError(null);
   
     const requestPayload = {
-        "project_id": selectedProjectId,
+        "project_id": projectId,
         "brand_name": brand
     };
     console.log("Request Payload:", requestPayload); // Log the request payload
@@ -524,7 +523,7 @@ const tabsSummary = [
             <div className="info-title">
                 <div className="info-left">
                 <h4>{brandCategoryDetails?.main_brand?.brand}</h4>
-                <span className="brand-subtitle">Project Id: {selectedProjectId}</span>
+                <span className="brand-subtitle">Project Id: {projectId}</span>
                 <div className="category-name">
                     <span>Category: <strong>{brandCategoryDetails?.main_brand?.category}</strong></span>
                 </div>

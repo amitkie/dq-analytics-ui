@@ -69,7 +69,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/healthcardoverview/:brand",
+    path: "/healthcardoverview/:brand/:projectId",
     element: (
       <Layout>
         <HealthCardOverview />
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/healthcardreport/:brand",
+    path: "/healthcardreport/:brand/:projectId",
     element: (
       <Layout>
         <HealthCardReport />

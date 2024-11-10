@@ -29,7 +29,7 @@ import { Form } from "react-bootstrap";
 
 
 export default function HealthCardOverview() {
-  const { brand } = useParams();
+  const { brand, projectId } = useParams(); // Use this project Id by default
   const [healthCardData, setHealthCardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,7 +38,7 @@ export default function HealthCardOverview() {
   const [brandCategoryDetails, setBrandCategoryDetails] = useState([]);
 
   const [filterProject, setFilterProject] = useState([]);
-  const [selectedFilterProject, setSelectedFilterProject] = useState([]);
+  const [selectedFilterProject, setSelectedFilterProject] = useState(""); // use this project id after project change
   const { userInfo, projectInfo } = useSelector((state) => state.user);
 
   const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
@@ -48,7 +48,6 @@ export default function HealthCardOverview() {
   const [projectName, setProjectName] = useState([]);
   const [getProjectIds, setProjectIds] = useState([]);
 
-  const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
 
   
 
@@ -94,7 +93,7 @@ export default function HealthCardOverview() {
   const handleReportClick = () => {
     
     if (brandDetailData && brandImages && brandCategoryDetails) {
-      navigate(`/healthcardreport/${brand}`, {
+      navigate(`/healthcardreport/${brand}/${selectedFilterProject ? selectedFilterProject : currentProjectId}`, {
         state: {
           brandDetailData: brandDetailData,
           brandImages: brandImages,
@@ -113,7 +112,7 @@ export default function HealthCardOverview() {
   };
   
   const handleCompetitorBrands = (comp) => {
-    navigate(`/healthcardOverview/${comp.brand}`);
+    navigate(`/healthcardOverview/${comp.brand}/${selectedFilterProject ? selectedFilterProject : currentProjectId}`);
   };
 
   useEffect(() => {
@@ -122,13 +121,16 @@ export default function HealthCardOverview() {
       setError(null);
       
       try {
-        const currentProjectData = await getProjectDetailsByUserId(userInfo?.user?.id);
-        const currentProject = currentProjectData?.project?.[0];
-         
-        if (currentProject) {
-          setCurrentProjectId(currentProject.id);  
-        } else {
-          setError("No Data Found")
+        if(userInfo?.user?.id){
+          const currentProjectData = await getProjectDetailsByUserId(userInfo?.user?.id);
+          const currentProject = currentProjectData?.project?.[0];
+           
+          if (currentProject) {
+            setCurrentProjectId(currentProject.id);  
+            fetchBrandScoreDetails(currentProject.id)
+          } else {
+            setError("No Data Found")
+          }
         }
       } catch (error) {
         console.error("Error fetching project data:", error);
@@ -172,27 +174,14 @@ export default function HealthCardOverview() {
     }
   };
  
-  useEffect(() => {
-    fetchBrandScoreDetails();
-    if (selectedFilterProject && selectedFilterProject.length > 0) {
-      const selectProjectIds = selectedFilterProject.map((item) => item.value).join(",");
-      setProjectIds(selectProjectIds);
-    } else {
-      setProjectIds(selectedProjectId);
-    }
-     
-    
-  }, [selectedFilterProject, selectedProjectId, brand]);
-  
  
-  const fetchBrandScoreDetails = async () => {
+  const fetchBrandScoreDetails = async (id) => {
     setLoading(true);
     setError(null)
     const requestPayload = {
       "brand_name": brand,
-      "project_ids": [selectedProjectId],
+      "project_ids": [id],
     }
-    console.log(selectedProjectId, getProjectIds, 'project_ids api call')
     try {
       const brandScoreDetails = await getBrandData(requestPayload);
       if (brandScoreDetails) {
@@ -251,31 +240,11 @@ export default function HealthCardOverview() {
     }
   };
 
-  const handleSelectedProjects = (selectedOptions) => {
-    setSelectedFilterProject(selectedOptions);
+  const handleSelectedProjects = (selectedPrjId) => {
+    console.log(selectedPrjId, 'selectedPrjId')
+    fetchBrandScoreDetails(selectedPrjId)
+    setSelectedFilterProject(selectedPrjId);
   };
-  
-   
-  
-  // const handleSelectedProjects = async (selectedOptions) => {
-  //   setSelectedFilterProject(selectedOptions);
-
-  //   if (selectedOptions.length > 0) {
-  //     try {
-  //       const projectIds = selectedOptions.map((option) => option.value);
-  //       const projectNames = await getProjectDetailsByUserId(userInfo?.user?.id);
-  //       setFilterProject(
-  //         projectNames.data.map((project) => ({
-  //           value: project.id,
-  //           label: project.name,
-  //         }))
-  //       );
-  //     } catch (error) {
-  //       console.error("Error fetching projects:", error);
-  //     }
-  //   }
-  // };
-
 
   const tabColors = ['#C1DED3', '#A6CCE0', '#DFE9DE', '#FCFAFB', '#E2E3EF']
   const tabs = [
@@ -531,18 +500,11 @@ export default function HealthCardOverview() {
                 </Form.Select>
               )}
 
-              <MultiSelectDropdown
-                options={filterProject}
-                selectedValues={selectedFilterProject}
-                onChange={handleSelectedProjects}
-                placeholder="Select Project"
-              />
-
               <Form.Select
                 name="Project Name"
                 className="filter-input"
-                value={selectedValue}
-                onChange={handleSelectedProjects}
+                value={selectedFilterProject}
+                onChange={(e) => handleSelectedProjects(e.target.value)}
               >
                 <option value="">Select a Project</option>
 

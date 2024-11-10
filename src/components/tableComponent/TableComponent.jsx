@@ -1,12 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "react-bootstrap/Table";
+import { useSelector } from "react-redux";
 
 const TableComponent = ({ data, columns }) => {
   const navigate = useNavigate();
+  const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
+
 
   const handleRowClick = (row) => {
-    navigate(`/healthcardOverview/${row?.Brands}`);
+    navigate(`/healthcardOverview/${row?.Brands}/${selectedProjectId}`);
   };
   return (
     <>
