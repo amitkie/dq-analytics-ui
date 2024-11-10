@@ -505,7 +505,7 @@ export const getMetricThemeGroupNames = async (projectId) => {
 export const deleteSuperTheme = async (superThemeId, projectId) => {
   try {
     const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${superThemeId}?project_id=${projectId}`;
-    const response = await axios.get(url);
+    const response = await axios.delete(url);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");

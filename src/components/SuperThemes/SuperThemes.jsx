@@ -128,7 +128,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
           [type]: null,
         },
       };
-      console.log(updatedStatus, "Updated apiStatus"); // Debugging log
+      console.log(updatedStatus, "Updated apiStatus"); 
       return updatedStatus;
     });
   };
@@ -171,8 +171,20 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
     }
   };
 
-  const removeLanguage = (language) => {
+  const removeLanguage = async(language) => {
+    console.log(language, 'language')
     setSelectedLanguages(selectedLanguages.filter((item) => item !== language));
+
+    try {
+      const res = await deleteSuperTheme(language, projectId);
+      fetchMetricThemeGroupNames();
+      fetchWeightsOfGroupNormalized();
+      console.log(res)
+      
+    } catch (error) {
+      
+    }
+
   };
 
   const handleDropdownToggle = (isOpen) => {
