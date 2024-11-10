@@ -39,7 +39,6 @@ export default function Insights() {
   const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
   const [selectedValue, setSelectedValue] = useState();
   const [loading, setLoading] = useState(false);
-  const [tableData,setTableData] = useState([])
 
   const [brand, setBrand] = useState([]);
 
@@ -48,29 +47,31 @@ export default function Insights() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const categoriesData = await getAllCategories();
-        setCategories(
-          categoriesData.data.map((cat) => ({
-            value: cat.id,
-            label: cat.name,
-          }))
-        );
-
-        const brandsData = await getAllBrands();
-        setBrand(
-          brandsData.data.map((brand) => ({
-            value: brand.id,
-            label: brand.name,
-          }))
-        );
-
-        const frequencyData = await getAllFrequencies();
-        setFrequencies(
-          frequencyData?.data?.map((brand) => ({
-            value: brand.id,
-            label: brand.name,
-          }))
-        );
+  
+          const categoriesData = await getAllCategories();
+          setCategories(
+            categoriesData.data.map((cat) => ({
+              value: cat.id,
+              label: cat.name,
+            }))
+          );
+  
+          const brandsData = await getAllBrands();
+          setBrand(
+            brandsData.data.map((brand) => ({
+              value: brand.id,
+              label: brand.name,
+            }))
+          );
+  
+          const frequencyData = await getAllFrequencies();
+          setFrequencies(
+            frequencyData?.data?.map((brand) => ({
+              value: brand.id,
+              label: brand.name,
+            }))
+          );
+        
 
         // const projectsData = await getProjectListsByFilter();
       } catch (error) {
@@ -99,8 +100,6 @@ export default function Insights() {
   }
   useEffect(() => {
     if (selectedFrequencies && selectedCategories.length > 0) {
-      console.log(selectedFrequencies, 'selectedFrequencies')
-      console.log(selectedCategories, 'selectedCategories')
       fetchProjectsByFilter(selectedFrequencies, selectedCategories.map((sc) => sc?.value));
 
     }
@@ -112,9 +111,7 @@ export default function Insights() {
 
 
   const handleFrequenciesChange = (selectedOptions) => {
-    console.log(selectedOptions?.target?.value, 'selectedOptions')
     setSelectedFrequencies(selectedOptions?.target?.value);
-    console.log(selectedOptions?.target?.value, 'cxxxxxx')
     let freq = "Monthly"
     switch (parseInt(selectedOptions?.target?.value, 10)) {
       case 1:
@@ -126,18 +123,14 @@ export default function Insights() {
       default:
         break;
     }
-    console.log(freq, "frerere")
     setSelectedFrequency(freq)
   };
 
 
   const handleCategoryChanges = (selectedOptions) => {
-    // const categoryOptions = selectedOptions?.map((cg) => cg?.value);  
 
     setSelectedCategories((prevSelectedCategories) => {
-      // Combine previous selected values with new ones, ensuring no duplicates
       const updatedCategories = [...new Set([...prevSelectedCategories, ...selectedOptions])];
-      console.log(updatedCategories, 'updatedCategories')
       return updatedCategories;
     });
   };
@@ -154,7 +147,6 @@ export default function Insights() {
       const requestedPayload = {
         project_ids: selectedProjects.map((prj) => prj.value),
       };
-      console.log(requestedPayload, 'requestedPayload');
 
       const insightsDQScoreData = await getDQScoreMultipleProjects(requestedPayload);
       if (insightsDQScoreData?.data?.length > 0) {
@@ -164,13 +156,11 @@ export default function Insights() {
         setLoading(false);
         setInsightsDQScore(null);
       }
-      console.log(insightsDQScoreData?.data, 'insightsDQScore');
     }
   };
 
   const handleSelectionChange = (e) => {
     const value = e.target.value;
-    console.log(value, selectedFrequency)
     const payload = {
       user_id: userInfo?.user?.id,
       filter: {
@@ -179,7 +169,6 @@ export default function Insights() {
       }
     }
     fetchProjectDetails(payload)
-    console.log(payload)
 
     setSelectedValue(value);
   };
@@ -200,14 +189,6 @@ export default function Insights() {
   }
 
 
-  useEffect(() => {
-    console.log(insightsDQScore, 'Updated insightsDQScore');
-  }, [insightsDQScore]);
-
-
-
-
-
   const columns = [
     {
       header: "Quarter",
@@ -225,35 +206,6 @@ export default function Insights() {
     { header: "Organic DQ", accessor: "Organic DQ" },
   ];
 
- 
-  useEffect(() => {
-    if (insightsDQScore && insightsDQScore.length > 0) {
-      const dataByProject = insightsDQScore.reduce((acc, project) => {
-        const transformedData = project.brands.map((brand) => ({
-          Quarter: "Q4 2024",
-          Category: project.project_name,
-          brand_name: brand.brand_name,
-          Marketplace: brand.dq_score?.Marketplace ?? "N/A",
-          "Digital Spends": brand.dq_score?.["Digital Spends"] ?? "N/A",
-          "Organic Performance": brand.dq_score?.["Organic Performance"] ?? "N/A",
-          Socialwatch: brand.dq_score?.Socialwatch ?? "N/A",
-          Overall_Final_Score: brand.dq_score?.Overall_Final_Score ?? "N/A",
-        }));
-  
-        acc[project.project_id] = {
-          projectName: project.project_name,
-          data: transformedData,
-        };
-        return acc;
-      }, {});
-  
-      setTableData(dataByProject);
-    } else {
-      setTableData({});
-    }
-  }, [insightsDQScore]);
-  
-
   const columns1 = [
     { header: "Marketplace", accessor: "Marketplace" },
     {
@@ -265,9 +217,6 @@ export default function Insights() {
     { header: "DQ Score", accessor: "Overall_Final_Score" },
   ];
 
-  
-  const keys = Array.from(new Set(normalizedData.flatMap(Object.keys)));
-  const keysToDisplay = keys?.slice(2);
 
   const tabs = [
     {
@@ -281,15 +230,15 @@ export default function Insights() {
                   <span>DQ score Range:</span>
                   <Form.Range />
                 </div>
-                <select name="category" className="Select-input">
-                  <option value="beauty">Beauty</option>
-                  <option value="haircare">Hair care</option>
-                  <option value="baby">Baby</option>
-                  <option value="mansGrooming">Male Grooming</option>
-                </select>
+                <MultiSelectDropdown
+              options={brand}
+              selectedValues={selectedBrand}
+              onChange={handleBrandChanges}
+              placeholder="Select Brands"
+            />
               </div>
             </div>
-            
+
             <div className="col-12">
               <div className="scores-charts">
                 <span className="chart-title">DQ Score</span>
@@ -303,6 +252,7 @@ export default function Insights() {
                     key={`Overall_Final_Score_${insightsDQScore[0]?.project_name}`}
                     insightsDQScoreData={insightsDQScore}
                     scoreType="Overall_Final_Score"
+                    filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
                   <p className="no-data">No data available</p>
@@ -322,6 +272,7 @@ export default function Insights() {
                     key={`Marketplace_${insightsDQScore[0]?.project_name}`}
                     insightsDQScoreData={insightsDQScore}
                     scoreType="Marketplace"
+                    filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
                   <p className="no-data">No data available</p>
@@ -341,6 +292,7 @@ export default function Insights() {
                     key={`Digital_Spends_${insightsDQScore[0]?.project_name}`}
                     insightsDQScoreData={insightsDQScore}
                     scoreType="Digital Spends"
+                    filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
                   <p className="no-data">No data available</p>
@@ -360,6 +312,7 @@ export default function Insights() {
                     key={`Organic_Performance_${insightsDQScore[0]?.project_name}`}
                     insightsDQScoreData={insightsDQScore}
                     scoreType="Organic Performance"
+                    filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
                   <p className="no-data">No data available</p>
@@ -379,14 +332,13 @@ export default function Insights() {
                     key={`Socialwatch_${insightsDQScore[0]?.project_name}`}
                     insightsDQScoreData={insightsDQScore}
                     scoreType="Socialwatch"
+                    filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
                   <p className="no-data">No data available</p>
                 )}
               </div>
             </div>
-
-
           </div>
         </>
       ),
@@ -396,49 +348,30 @@ export default function Insights() {
       content: (
         <div>
           <div className="filter-option d-flex mb-2 gap-3 justify-content-end">
-            <MultiSelectDropdown
+            {/* <MultiSelectDropdown
               options={categories}
               selectedValues={selectedCategories}
               onChange={handleCategoryChanges}
               placeholder="Select Categories"
-            />
+            /> */}
             <MultiSelectDropdown
               options={brand}
               selectedValues={selectedBrand}
               onChange={handleBrandChanges}
-              placeholder="Select Categories"
+              placeholder="Select Brands"
             />
           </div>
-          {/* <TableComponent data={data} columns={columns} /> */}
-          {/* {Object.values(tableData).map((projectData, index) => (
-            <InsightsTabular
-              key={index}
-              data={projectData.data}
-              columns={columns1}
-              projectName={projectData.projectName}
-            />
-          ))} */}
-
-<InsightsTabular 
-      data={insightsDQScore} 
-      columns={columns1} 
-    />
+          <InsightsTabular
+            loading={loading}
+            data={insightsDQScore}
+            columns={columns1}
+            filteredBrands={selectedBrand.map(b => b.label)}
+          />
 
           <div className="pagination-container">
             <PaginationComponent />
           </div>
-          {/* <Table responsive striped bordered className="insights-table">
-            <tbody>
-              {keysToDisplay.map((key, index) => (
-                <tr key={index}>
-                  <td width="25%">{key}</td>
-                  {normalizedData.map((data, i) => (
-                    <td key={i}>{data[key]}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </Table> */}
+      
         </div>
       ),
     },
@@ -446,7 +379,7 @@ export default function Insights() {
       label: "Brand View",
       content: (
         <div>
-          {/* <GraphicalView /> */}
+          This feature development is in progress.
         </div>
       ),
     },
@@ -521,7 +454,7 @@ export default function Insights() {
                     disabled={selectedCategories?.lenth}
                     placeholder="Select Workspace"
                   />
-                
+
                   <div>
                     <ButtonComponent
                       btnClass={"btn-primary"}

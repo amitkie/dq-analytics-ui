@@ -2,15 +2,25 @@ import React from "react";
 import Table from "react-bootstrap/Table";
 import "./InsightsTabular.scss";
 
-const InsightsTabular = ({ data, columns }) => {
+const InsightsTabular = ({loading, data, columns, filteredBrands }) => {
+  console.log(filteredBrands, 'filteredBrands')
+  if (!data || data.length === 0) {
+    return <div className="no-data">No Data Available</div>;
+  }
+
+  // Get unique brand names across all projects
   const uniqueBrands = Array.from(
     new Set(
-      data
-        .flatMap((project) =>
-          project.brands ? project.brands.map((item) => item.brand_name) : []
-        )
+      data.flatMap((project) =>
+        project.brands ? project.brands.map((item) => item.brand_name) : []
+      )
     )
   );
+
+  // If filteredBrands is provided and not empty, filter the uniqueBrands
+  const brandsToShow = filteredBrands && filteredBrands.length > 0
+    ? uniqueBrands.filter((brand) => filteredBrands.includes(brand))
+    : uniqueBrands;
 
   return (
     <Table responsive striped bordered className="insights-table">
@@ -33,7 +43,7 @@ const InsightsTabular = ({ data, columns }) => {
         </tr>
       </thead>
       <tbody>
-        {uniqueBrands.map((brand, brandIndex) => (
+        {brandsToShow.map((brand, brandIndex) => (
           <tr key={brandIndex}>
             <td className="sticky-brand">{brand}</td>
             {data.map((project, projIndex) => {
