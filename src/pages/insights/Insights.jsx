@@ -233,33 +233,28 @@ export default function Insights() {
           Quarter: "Q4 2024",
           Category: project.project_name,
           brand_name: brand.brand_name,
-          Marketplace: brand.dq_score.Marketplace,
-          "Digital Spends": brand.dq_score["Digital Spends"],
-          "Organic Performance": brand.dq_score["Organic Performance"],
-          Socialwatch: brand.dq_score.Socialwatch,
-          Overall_Final_Score: brand.dq_score.Overall_Final_Score,
+          Marketplace: brand.dq_score?.Marketplace ?? "N/A",
+          "Digital Spends": brand.dq_score?.["Digital Spends"] ?? "N/A",
+          "Organic Performance": brand.dq_score?.["Organic Performance"] ?? "N/A",
+          Socialwatch: brand.dq_score?.Socialwatch ?? "N/A",
+          Overall_Final_Score: brand.dq_score?.Overall_Final_Score ?? "N/A",
         }));
-
+  
         acc[project.project_id] = {
           projectName: project.project_name,
           data: transformedData,
         };
         return acc;
       }, {});
-
+  
       setTableData(dataByProject);
     } else {
       setTableData({});
     }
   }, [insightsDQScore]);
+  
 
   const columns1 = [
-    {
-      header: "Quarter",
-      accessor: "Quarter",
-    },
-    { header: "Category", accessor: "Category" },
-    { header: "Brands", accessor: "brand_name" },
     { header: "Marketplace", accessor: "Marketplace" },
     {
       header: "Digital Spends",
@@ -269,6 +264,7 @@ export default function Insights() {
     { header: "Socialwatch", accessor: "Socialwatch" },
     { header: "DQ Score", accessor: "Overall_Final_Score" },
   ];
+
   
   const keys = Array.from(new Set(normalizedData.flatMap(Object.keys)));
   const keysToDisplay = keys?.slice(2);
@@ -414,14 +410,19 @@ export default function Insights() {
             />
           </div>
           {/* <TableComponent data={data} columns={columns} /> */}
-          {Object.values(tableData).map((projectData, index) => (
-        <InsightsTabular
-          key={index}
-          data={projectData.data}
-          columns={columns1}
-          projectName={projectData.projectName}
-        />
-      ))}
+          {/* {Object.values(tableData).map((projectData, index) => (
+            <InsightsTabular
+              key={index}
+              data={projectData.data}
+              columns={columns1}
+              projectName={projectData.projectName}
+            />
+          ))} */}
+
+<InsightsTabular 
+      data={insightsDQScore} 
+      columns={columns1} 
+    />
 
           <div className="pagination-container">
             <PaginationComponent />

@@ -453,14 +453,8 @@ Table thead {
   background-color: #fff;
   border:1px solid $text-success;
   border-radius: 6px;
-  margin: 0 auto 16px;
+  // margin: 0 auto 16px;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-  width: max-content;
-  border-radius: 50%;
-  height: fit-content;
-  aspect-ratio: 1;
-  align-items: center;
-  justify-content: center;
   h4{
     margin-bottom: 0;
   }
@@ -474,6 +468,6 @@ Table thead {
   background-color: #fff;
   border:1px solid $text-danger;
   border-radius: 6px;
-  margin: 12px;
+  // margin: 12px;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }

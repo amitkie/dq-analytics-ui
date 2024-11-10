@@ -15,12 +15,13 @@ import {
   getMetricThemeGroupNames,
   getWeightsOfSuperTheme,
   getWeightsOfMetricGroup,
-  getWeightsOfGroupNormalised
+  getWeightsOfGroupNormalised,
+  deleteSuperTheme
 } from "../../services/projectService";
 import MetricThemeGroupList from "./MetricThemeGroupList";
 import MetricWeights from "./MetricWeights";
 
-function SuperThemes({ metrics, normalizedValue={}, projectId }) {
+function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
   const [field, setField] = useState([]);
   const languages = [
     "Average ratings",
@@ -118,6 +119,21 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
 
   }, [metrics])
 
+  const clearMessage = (group, type) => {
+    setApiStatus((prevStatus) => {
+      const updatedStatus = {
+        ...prevStatus,
+        [group]: {
+          ...prevStatus[group],
+          [type]: null,
+        },
+      };
+      console.log(updatedStatus, "Updated apiStatus"); // Debugging log
+      return updatedStatus;
+    });
+  };
+
+
   const handleApiStatusChange = (type, statusKey, value) => {
     setApiStatus(prevState => ({
       ...prevState,
@@ -206,12 +222,12 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
         console.log(metricGroupNamesResponse, 'metricGroupNamesResponse');
 
         setMetricThemeGroupData(metricGroupNamesResponse?.data);
-        
+
         const data = {
           project_ids: [projectId]
         }
         const weightsInfo = await getWeightsOfSuperTheme(data);
-        if(weightsInfo){
+        if (weightsInfo) {
           handleApiStatusChange('normalizedWeights', 'loading', false);
           handleApiStatusChange('normalizedWeights', 'success', true);
         }
@@ -228,24 +244,24 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
     }
   };
 
-  const fetchWeightsOfGroupNormalized = async() => {
-    try{
+  const fetchWeightsOfGroupNormalized = async () => {
+    try {
       const reqPayload = { project_ids: [projectId] }
       const data = await getWeightsOfGroupNormalised(reqPayload);
-      if(data){
+      if (data) {
         setThemeGroupTable(data)
       }
       console.log(data);
-    }catch(err){
+    } catch (err) {
 
     }
   }
-  const fetchWeightsOfGroupMetric = async() => {
-    try{
+  const fetchWeightsOfGroupMetric = async () => {
+    try {
       const reqPayload = { project_ids: [projectId] }
       const data = await getWeightsOfMetricGroup(reqPayload);
       console.log(data);
-    }catch(err){
+    } catch (err) {
 
     }
   }
@@ -299,7 +315,7 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
         await fetchMetricGroupNames();
         await fetchWeightsOfGroupNormalized();
         await fetchMetricThemeGroupNames()
-       
+
       }
     } catch (err) {
       handleApiStatusChange('metricThemeGroup', 'error', "Failed to save Theme group!");
@@ -420,8 +436,19 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                   {(apiStatus.metricThemeGroup.loading || apiStatus.metricThemeGroup.success || apiStatus.metricThemeGroup.error) && (
                     <div className="theme-status-overflow">
                       {apiStatus.metricThemeGroup.loading && <div className="loader-container"><span>Loading...</span></div>}
-                      {apiStatus.metricThemeGroup.success && <div className="success-message">{apiStatus.metricThemeGroup.success}</div>}
-                      {apiStatus.metricThemeGroup.error && <div className="error-message">{apiStatus.metricThemeGroup.error}</div>}
+                      {apiStatus.metricThemeGroup.success &&
+                        <div className="message-container">
+                          <div className="success-message">{apiStatus.metricThemeGroup.success}</div>
+                          <button className="close-button" onClick={() => clearMessage('metricThemeGroup',"success")}>✖</button>
+                        </div>
+
+                      }
+                      {apiStatus.metricThemeGroup.error &&
+                        <div className="message-container">
+                          <div className="error-message">{apiStatus.metricThemeGroup.error}</div>
+                          <button className="close-button" onClick={() => clearMessage('metricThemeGroup',"error")}>✖</button>
+                        </div>
+                      }
                     </div>
                   )}
 
@@ -497,7 +524,7 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                       btnName={"Save"}
                     />
                   </div>
-                   
+
                   {(apiStatus.metricGroup.loading || apiStatus.metricGroup.success || apiStatus.metricGroup.error) && (
                     <div className="theme-status-overflow">
                       {apiStatus.metricGroup.loading && (
@@ -506,14 +533,20 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                         </div>
                       )}
                       {apiStatus.metricGroup.success && (
-                        <div className="success-message">{apiStatus.metricGroup.success}</div>
+                        <div className="message-container">
+                          <div className="success-message">{apiStatus.metricGroup.success}</div>
+                          <button className="close-button" onClick={() => clearMessage('metricGroup',"success")}>✖</button>
+                        </div>
                       )}
                       {apiStatus.metricGroup.error && (
-                        <div className="error-message">{apiStatus.metricGroup.error}</div>
+                        <div className="message-container">
+                          <div className="error-message">{apiStatus.metricGroup.error}</div>
+                          <button className="close-button" onClick={() => clearMessage('metricGroup',"error")}>✖</button>
+                        </div>
                       )}
                     </div>
                   )}
-                   
+
                 </fieldset>
               </div>
             </div>
@@ -558,13 +591,28 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                     {(apiStatus.normalizedWeights.loading || apiStatus.normalizedWeights.success || apiStatus.normalizedWeights.error) && (
                       <div className={apiStatus.normalizedWeights.loading && "theme-status-overflow"}>
                         {apiStatus.normalizedWeights.loading && <div className="loader-container"><span>Loading...</span></div>}
-                        <div className="success-message">{!apiStatus.normalizedWeights.loading && totalWeightInfo && totalWeightInfo.length > 0 ? <h4>{totalWeightInfo[0]?.weight_sum}</h4> : 'No Weights Found'}</div>
-                        {apiStatus.normalizedWeights.error && <div className="error-message">{apiStatus.normalizedWeights.error}</div>}
+                        {/* <div className="">
+                          {!apiStatus.normalizedWeights.loading && totalWeightInfo && totalWeightInfo.length > 0 ? (
+                            totalWeightInfo.map((w) => (
+                              <h4 className="success-message" key={w.id}>{w.weight_sum}</h4> 
+                            ))
+                          ) : (
+                            <span>No Weights Found</span>
+                          )}
+                        </div> */} 
+                        {/* //TODO: Check if it is required */}
+
+                        {apiStatus.normalizedWeights.error &&
+                          <div className="message-container">
+                            <div className="error-message">{apiStatus.normalizedWeights.error}</div>
+                            <button className="close-button" onClick={() => clearMessage('normalizedWeights',"error")}>✖</button>
+                          </div>
+                        }
                       </div>
                     )}
                     <div className="d-flex flex-column">
                       <div className="selected-languages">
-                      <MetricWeights removeMetric={removeLanguage} metricThemeGroupWeights={metricThemeGroupWeightsData} />
+                        <MetricWeights removeMetric={removeLanguage} metricThemeGroupWeights={metricThemeGroupWeightsData} />
                         {console.log("metricThemeGroupWeightsData", metricThemeGroupWeightsData)}
                         {selectedLanguages.map((language, index) => (
                           <div key={index} className="selected-metrics">
@@ -577,7 +625,7 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                         ))}
                       </div>
                     </div>
-                    
+
 
                     {/* {loading ? (
                       <div className="loader-container-sm">
@@ -616,24 +664,24 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
           {themeGroupTable?.length > 0 ? (
             (() => {
               const brandNames = [...new Set(themeGroupTable?.map(item => item.brandname))];
-    
+
               // Group data by theme_group_name and metric_group_name
               const groupedData = themeGroupTable?.reduce((acc, curr) => {
                 const { theme_group_name, metric_group_name, brandname, normalized_per_weight, final_theme_norm_value } = curr;
                 const themeMetricKey = `${theme_group_name}-${metric_group_name}`;
-    
+
                 if (!acc[themeMetricKey]) {
                   acc[themeMetricKey] = { theme_group_name, metric_group_name, values: {}, final_theme_norm_values: {} };
                 }
                 acc[themeMetricKey].values[brandname] = normalized_per_weight;
                 acc[themeMetricKey].final_theme_norm_values[brandname] = final_theme_norm_value;
-    
+
                 return acc;
               }, {});
-    
+
               // Extract rows for the table
               const tableRows = Object.values(groupedData);
-    
+
               return (
                 <Table responsive striped bordered className="insights-table comparision-table">
                   <thead>
@@ -649,10 +697,10 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                     {tableRows.map((row, index) => {
                       // Get rowCount for each super theme group
                       const rowCount = tableRows.filter(r => r.theme_group_name === row.theme_group_name).length;
-    
+
                       // Check if it's the last metric for the theme group to add the final row after it
                       const isLastMetricForGroup = (index + 1 === tableRows.length) || (tableRows[index + 1].theme_group_name !== row.theme_group_name);
-    
+
                       return (
                         <React.Fragment key={index}>
                           <tr>
@@ -661,7 +709,7 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                                 {row.theme_group_name}
                               </td>
                             ) : null}
-    
+
                             <td className="sticky-col" style={{ width: '160px' }}>{row.metric_group_name}</td>
                             {brandNames.map((brand, idx) => (
                               <td key={idx}>
@@ -669,7 +717,7 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
                               </td>
                             ))}
                           </tr>
-    
+
                           {isLastMetricForGroup && (
                             <tr>
                               <td colSpan={2} className="sticky-col group-td" style={{ fontWeight: 'bold', width: '160px' }}>Final Theme Normalized Value</td>
@@ -693,8 +741,8 @@ function SuperThemes({ metrics, normalizedValue={}, projectId }) {
         </>
       ),
     }
-    
-    
+
+
   ]
 
   return (

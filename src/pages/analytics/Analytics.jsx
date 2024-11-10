@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState,  } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
@@ -439,7 +439,7 @@ export default function Analytics() {
 
       if (compareNormalizeValue) {
         setComparisonData(compareNormalizeValue)
-
+         
         const uniqueData = transformComparisonViewApiData(compareNormalizeValue);
         const uniqueComparisonBrandNames = Array.from(new Set(compareNormalizeValue.map(item => item.brandName)));
         const brandCategoryMap = compareNormalizeValue.reduce((acc, item) => {
@@ -450,7 +450,7 @@ export default function Analytics() {
         setNormalizedValue(uniqueData);
         setBrandCategoryMap(brandCategoryMap);
       }
-
+      
       return compareNormalizeValue;
 
     } catch (error) {
@@ -569,6 +569,7 @@ export default function Analytics() {
       // setLoading(false); 
     }
   };
+  
 
   const saveUserProjectDQScore = async (cmpData, dqVal) => {
 
@@ -592,6 +593,8 @@ export default function Analytics() {
       const brandBenchmarks = benchmarkValue?.filter(benchmark => benchmark?.brandName === dqScore?.Brand_Name);
 
       // For each section in the benchmark value, create a payload object
+      // Todo: create a function to consider names in both upper & lowercase 
+      // Todo: also spacing if we can remove ?
       brandBenchmarks.forEach(benchmark => {
         const scoreData = {
           user_id: userInfo?.user?.id,
@@ -605,7 +608,7 @@ export default function Analytics() {
           dq: dqScore.Overall_Final_Score,
           ecom_dq: dqScore.Marketplace,
           social_dq: dqScore['Digital Spends'],
-          paid_dq: dqScore['Social Watch'],
+          paid_dq: dqScore['Socialwatch'],
           brand_perf_dq: dqScore['Organic Performance'],
         };
 
@@ -616,8 +619,23 @@ export default function Analytics() {
     return payload;
   };
 
+  const fetchSections = async() => {
+    const sectionsData = await getAllSections();
+    const uniqueSections = sectionsData.data.filter(
+      (section, index, self) => 
+        index === self.findIndex((s) => s.name === section.name)
+    );
+    setSectionsList(
+      uniqueSections.map((section) => ({
+        value: section.id,
+        label: section.name,
+      }))
+    );
+
+  }
 
   useEffect(() => {
+    fetchSections();
 
     if (projectId) {
       setProjectIds(projectId);
@@ -684,6 +702,7 @@ export default function Analytics() {
       console.error('Error while fetching or mapping metrics data:', error);
     }
   };
+  
 
   const handleFilterCategory = async (selectedOptions) => {
     // setSelectedFilterCategories(selectedOptions);
@@ -1004,6 +1023,7 @@ export default function Analytics() {
       }
     }
   };
+ 
 
   const handleAddPlatform = async (selectedOptions) => {
     setSelectedPlatformsList(selectedOptions);
@@ -1093,6 +1113,7 @@ export default function Analytics() {
     {
       label: "KPI Scores",
       content: (
+        <>
         <KPITable
           kpiData={kpiData}
           metrics={metrics}
@@ -1100,7 +1121,8 @@ export default function Analytics() {
           getColor={getColor}
           getColorScore={getColorScore}
         />
-
+           
+        </>
       ),
     },
     {
@@ -1128,6 +1150,7 @@ export default function Analytics() {
             <li> Socialwatch</li>
             <li> Organic Performance</li>
           </ul>
+          
           {normalizedValue?.length > 0 ? (
             <Table responsive striped bordered className="insights-table comparision-table">
               <thead>
@@ -1161,6 +1184,7 @@ export default function Analytics() {
                       <div className="metric-name">{row?.metricName}
                         <div className="metric-info">
                           <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricName, row?.platformName)} />
+                           
                           {selectedMetricDesc === row?.metricName && (
                             <span className="metric-desc">{metricsDesc}</span>
                           )}

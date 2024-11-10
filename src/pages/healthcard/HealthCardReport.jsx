@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useSelector } from "react-redux";
 import { IoIosTrendingUp } from "react-icons/io";
 import { IoIosTrendingDown } from "react-icons/io";
 import { Table } from "react-bootstrap";
@@ -12,7 +13,7 @@ import { GiMultipleTargets } from "react-icons/gi";
 import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import HealthCardScore from "./HealthCardScore.jsx";
-import {getTop5Data, getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData, getProjectDetailsByUserId} from "../../services/projectService";
+import {getTop5Data, getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData, getProjectDetailsByUserId, getCompetitorsData} from "../../services/projectService";
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import "./overview/HealthCardOverview.scss";
 import "./HealthCardReport.scss";
@@ -26,6 +27,8 @@ const HealthCardReport = () => {
   const [getTop5List, setGetTop5List] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
+  const [competitorsData, setCompetitorsData] = useState([]);
 
   const handleCompetitorBrands = (comp) => {
     navigate(`/healthcardOverview/${comp.brand}`);
@@ -36,7 +39,7 @@ const HealthCardReport = () => {
     setError(null);
   
     const requestPayload = {
-      project_id: 238,
+      project_id: selectedProjectId,
       brandname: brand
     };
     console.log("Request Payload:", requestPayload); // Log the request payload
@@ -58,9 +61,37 @@ const HealthCardReport = () => {
       setLoading(false);
     }
 };
+  const fetchCompetitorsDetails = async () => {
+    setLoading(true);
+    setError(null);
+  
+    const requestPayload = {
+        "project_id": selectedProjectId,
+        "brand_name": brand
+    };
+    console.log("Request Payload:", requestPayload); // Log the request payload
+
+    try {
+      const competitorsList = await getCompetitorsData(requestPayload);
+      console.log("API Response:", competitorsList); // Log the full response
+
+      if (competitorsList) {
+        setCompetitorsData(competitorsList);
+        console.log("competitorsList", competitorsList);
+      } else {
+        setError("No Data Found");
+      }
+    } catch (error) {
+      console.error("Error during API call:", error);
+      setError("Error fetching brand data.");
+    } finally {
+      setLoading(false);
+    }
+};
 
 useEffect(() => {
   fetchTopFiveListDetails();
+  fetchCompetitorsDetails();
 },[brand])
 
 function getColorScore(value, thresholds) {
@@ -493,6 +524,7 @@ const tabsSummary = [
             <div className="info-title">
                 <div className="info-left">
                 <h4>{brandCategoryDetails?.main_brand?.brand}</h4>
+                <span className="brand-subtitle">Project Id: {selectedProjectId}</span>
                 <div className="category-name">
                     <span>Category: <strong>{brandCategoryDetails?.main_brand?.category}</strong></span>
                 </div>
@@ -501,7 +533,7 @@ const tabsSummary = [
                     <li className="competitor-title">Competitor List:</li>
                     {brandCategoryDetails?.competitors?.map((comp, index) => (
                       <li key={index}>
-                        <span class="brand-list" onClick={() => handleCompetitorBrands(comp)}>{comp.brand}</span>
+                        <span className="brand-list" onClick={() => handleCompetitorBrands(comp)}>{comp.brand}</span>
                         {/* <p>Category: {comp.category}</p>
                         <p>Sub-Category: {comp.sub_category}</p> */}
                       </li>

@@ -1,7 +1,8 @@
+@import "../../assets/mixins/mixins.scss";
 #wrapper1,
 #wrapper2 {
   width: 100%;
-  border: none 0px RED;
+  border: none 0px $table-stroke-color;
   overflow-x: scroll;
   overflow-y: hidden;
 }
@@ -21,4 +22,26 @@
   height: 100%;
   background-color: #88ff88;
   overflow: auto;
+}
+
+.insights-table {
+  th,
+  td {
+    white-space: nowrap;
+  }
+
+  .sticky-brand {
+    position: sticky;
+    left: 0;
+    background-color: #ffffff; // or any other background color you prefer
+    z-index: 2; // ensures the sticky column stays above the other content
+    border-right: 1px solid #dee2e6; // adds a border for distinction
+  }
+
+  .sticky-brand-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: #f8f9fa; // background for header row
+  }
 }

@@ -3,42 +3,49 @@ import TableComponent from "../../components/tableComponent/TableComponent";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import { gethealthCardData } from "../../services/HealthCard";
 import { getAllBrands, getAllCategories } from "../../services/userService";
-import { getProjectDetailsByProjectId } from "../../services/projectService";
+import { getProjectDetailsByProjectId, } from "../../services/projectService";
 import { useSelector } from "react-redux";
 import "./HealthCard.scss";
 
 export default function HealthCard() {
   // const { userInfo, projectInfo } = useSelector((state) => state.user);
-  const [data, setData] = useState([]); 
-  const [filteredData, setFilteredData] = useState(data);
+  const [healthTableData, setHealthTableData] = useState([]); 
+  const [filteredData, setFilteredData] = useState(healthTableData);
   const [alphabetFilter, setAlphabetFilter] = useState("");
   const [filterCategory, setFilterCategory] = useState([]);
   const [selectedFilterCategory, setSelectedFilterCategory] = useState([]);
   const alphabets = "abcdefghijklmnopqrstuvwxyz".split("");
   const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
   const [tableBrandData, setTableBrandData] = useState();
+  const [tableCategories, setTableCategories] = useState();
+
+
   useEffect(() => {
     fetchAllBrands();
     fetchAllCategories();
     fetchHealthCardData();
   }, []);
-
+  
   const fetchHealthCardData = async () => {
-    const requestPayload = {
-      "project_ids": [selectedProjectId]
-    };
     try {
       const healthCardData = await gethealthCardData();
-      // const healthCardData = await getProjectDetailsByProjectId(requestPayload);
-      setData(healthCardData); // Set the fetched data
-      setFilteredData(healthCardData); // Initialize filteredData with the fetched data
+      // const healthCardData = await getProjectDetailsByProjectId(selectedProjectId);
+       
+        if(healthCardData ){
+
+          setHealthTableData(healthCardData);  
+          setFilteredData(healthCardData); 
+        } 
+
     } catch (error) {
       console.log("Error fetching health card data:", error);
     }
   };
+
+
      
   useEffect(() => {
-    let filtered = data;
+    let filtered = healthTableData;
 
     // Clear alphabet filter when category is selected
     if (selectedFilterCategory.length > 0) {
@@ -61,9 +68,9 @@ export default function HealthCard() {
       });
     }
 
-    console.log('filtered', filtered);
+    
     setFilteredData(filtered);
-  }, [alphabetFilter, selectedFilterCategory, data]);
+  }, [alphabetFilter, selectedFilterCategory, healthTableData]);
 
   const fetchAllBrands = async() => {
     try {
@@ -77,7 +84,7 @@ export default function HealthCard() {
     try {
       const categoriesData = await getAllCategories();
       setFilterCategory(
-        categoriesData.data.map((cat) => ({
+        categoriesData?.data?.map((cat) => ({
           value: cat.id,
           label: cat.name,
         }))
@@ -116,13 +123,10 @@ export default function HealthCard() {
   //     setTableBrandData([])
   //   }
   // }, [filteredData]);
-
-  console.log('filteredData', filteredData)
    
-  const columns1 = [
-    { header: "Brands", accessor: "brandName" },
-    { header: "Category", accessor: "categoryName" },
-  ];
+  console.log('filtered', filteredData);
+  
+
   const columns = [
     {
       header: "S.no",
@@ -166,10 +170,27 @@ export default function HealthCard() {
           data={filteredData} 
           columns={columns} 
         />
-        {/* <TableComponent 
-          data={tableBrandData} 
-          columns={columns1} 
-        /> */}
+         
+        {/* <table>
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Brand</th>
+              <th>Category</th>
+            </tr>
+          </thead>
+          <tbody>
+          {filteredData?.metrics?.map((obj) =>
+            obj?.brands?.map((brand) => (
+              <tr key={brand.id}>
+                <td>{brand.id}</td>
+                <td colSpan="2">{brand.name}</td>
+              </tr>
+            ))
+          )}
+          </tbody>
+        </table> */}
+
 
       </div>
     </div>

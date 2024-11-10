@@ -20,6 +20,11 @@
   font-size: 1rem;
   color: $primary-color;
 }
+.message-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .btn-primary.next-btn {
   max-width: 160px;
   display: flex;

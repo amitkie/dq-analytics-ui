@@ -46,9 +46,12 @@ export default function HealthCardOverview() {
 
   const [currentProjectId, setCurrentProjectId] = useState([]);
   const [projectName, setProjectName] = useState([]);
+  const [getProjectIds, setProjectIds] = useState([]);
+
   const selectedProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
 
   
+
   const handleFrequencyChange = (frequency) => {
     setSelectedFrequency(frequency);
     setSelectedValue(""); 
@@ -141,10 +144,8 @@ export default function HealthCardOverview() {
     fetchHealthCardData();
     fetchBrandImages();
     fetchBrandDetails();
-    if (currentProjectId) {
-      fetchBrandScoreDetails(); // Fetch brand score details whenever currentProjectId is updated
-    }
-  }, [brand, currentProjectId]);
+     
+  }, [brand]);
 
   const fetchHealthCardData = async () => {
     setLoading(true); // Start loading
@@ -171,6 +172,17 @@ export default function HealthCardOverview() {
     }
   };
  
+  useEffect(() => {
+    fetchBrandScoreDetails();
+    if (selectedFilterProject && selectedFilterProject.length > 0) {
+      const selectProjectIds = selectedFilterProject.map((item) => item.value).join(",");
+      setProjectIds(selectProjectIds);
+    } else {
+      setProjectIds(selectedProjectId);
+    }
+     
+    
+  }, [selectedFilterProject, selectedProjectId, brand]);
   
  
   const fetchBrandScoreDetails = async () => {
@@ -180,7 +192,7 @@ export default function HealthCardOverview() {
       "brand_name": brand,
       "project_ids": [selectedProjectId],
     }
-    console.log(selectedProjectId, 'selectedProjectId')
+    console.log(selectedProjectId, getProjectIds, 'project_ids api call')
     try {
       const brandScoreDetails = await getBrandData(requestPayload);
       if (brandScoreDetails) {
@@ -242,6 +254,9 @@ export default function HealthCardOverview() {
   const handleSelectedProjects = (selectedOptions) => {
     setSelectedFilterProject(selectedOptions);
   };
+  
+   
+  
   // const handleSelectedProjects = async (selectedOptions) => {
   //   setSelectedFilterProject(selectedOptions);
 
@@ -516,12 +531,12 @@ export default function HealthCardOverview() {
                 </Form.Select>
               )}
 
-              {/* <MultiSelectDropdown
+              <MultiSelectDropdown
                 options={filterProject}
                 selectedValues={selectedFilterProject}
                 onChange={handleSelectedProjects}
                 placeholder="Select Project"
-              /> */}
+              />
 
               <Form.Select
                 name="Project Name"

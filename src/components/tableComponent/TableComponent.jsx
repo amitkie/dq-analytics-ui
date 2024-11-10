@@ -19,7 +19,7 @@ const TableComponent = ({ data, columns }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, rowIndex) => (
+          {data?.map((row, rowIndex) => (
             <tr
               className="c-pointer"
               key={rowIndex}

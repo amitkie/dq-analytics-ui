@@ -502,7 +502,7 @@ export const getMetricThemeGroupNames = async (projectId) => {
     throw error;
   }
 };
-export const deleteSuperTheem = async (superThemeId, projectId) => {
+export const deleteSuperTheme = async (superThemeId, projectId) => {
   try {
     const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${superThemeId}?project_id=${projectId}`;
     const response = await axios.get(url);
@@ -540,6 +540,25 @@ export const getTop5Data = async (data) => {
   try {
     const response = await axios.post(
       `https://m594bmgj-8018.inc1.devtunnels.ms/top_5/`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getTopFiveData = response.data;
+    console.log('getTopFiveData', getTopFiveData)
+    return getTopFiveData;
+  } catch (error) {
+    console.error("Error in fetching Top 5 data:", error);
+    throw error;
+  }
+};
+export const getCompetitorsData = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hrsbjqs8-8012.inc1.devtunnels.ms/brands/competitors`,
       data
     );
 
