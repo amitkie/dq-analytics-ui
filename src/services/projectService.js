@@ -368,9 +368,9 @@ export const getBrandImages = async (data) => {
     throw error;
   }
 };
-export const getBrandDetailsData = async (data) => {
+export const getBrandDetailsData = async (brandName, projectId) => {
   try {
-    const url = `https://m594bmgj-8018.inc1.devtunnels.ms/brands/${data}`;
+    const url = `https://hrsbjqs8-8012.inc1.devtunnels.ms/brands/${brandName}/project_id/${projectId}`;
     const response = await axios.get(url);
 
     if (response.status !== 200) {

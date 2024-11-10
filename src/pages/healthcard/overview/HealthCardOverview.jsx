@@ -223,8 +223,9 @@ export default function HealthCardOverview() {
     setLoading(true);
     setError(null);
     setBrandCategoryDetails([]);
+ 
     try {
-      const brandCatDetails = await getBrandDetailsData(brand);
+      const brandCatDetails = await getBrandDetailsData(brand, selectedFilterProject ? selectedFilterProject : projectId);
 
       if (brandCatDetails) {
         setBrandCategoryDetails(brandCatDetails);
