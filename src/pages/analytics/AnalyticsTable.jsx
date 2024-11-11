@@ -42,8 +42,6 @@ const AnalyticsTable = ({
     );
   };
   useEffect(() => {
-    console.log("Updated metrics:", metrics);
-    console.log("isLoading:", metrics.some(metric => metric.isLoading));
   }, [metrics]);
   
   

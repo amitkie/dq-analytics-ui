@@ -201,7 +201,9 @@ export default function Insights() {
   const fetchProjectDetails = async (reqPayload) => {
     try {
       const projectResponse = await getProjectsByDateRangeForUser(reqPayload);
-      const projects = projectResponse?.projects?.map((project) => ({
+      const projects = projectResponse?.projects
+      ?.filter((project) => project.is_benchmark_saved) 
+      .map((project) => ({
         value: project.id,
         label: project.project_name,
       }));

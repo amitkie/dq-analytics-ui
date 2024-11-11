@@ -81,8 +81,6 @@ export const saveMetricsOfProject = async (data) => {
       data
     );
 
-    console.log("saveWeights", response)
-
     if (response?.status !== 200) {
       throw new Error("Network response was not ok");
     }
@@ -136,7 +134,6 @@ export const getProjectDetailsByUserId = async (userId) => {
 export const getProjectListsByFilter = async (frequencyId, categoryIds) => {
   try {
     let url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects-by-id?frequency_id=${frequencyId}`;
-    console.log(categoryIds, 'categoryIds')
 
     if (categoryIds?.length > 0) {
 
@@ -160,7 +157,7 @@ export const getProjectListsByFilter = async (frequencyId, categoryIds) => {
 };
 
 
-export const getBenchamarkValues = async (data) => {
+export const getBenchmarkValues = async (data) => {
 
   try {
     const response = await axios.post(
@@ -171,7 +168,6 @@ export const getBenchamarkValues = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log(response, "xxxxxxxxxxx")
     const frequenciesData = response?.data?.results;
 
     return frequenciesData;
@@ -192,7 +188,6 @@ export const getKPIScoreValues = async (data) => {
     }
 
     const frequenciesData = response.data;
-    console.log('frequenciesData', frequenciesData);
     return frequenciesData;
   } catch (error) {
     console.error("Error in fetching benchmark:", error);
@@ -210,7 +205,6 @@ export const getWeightsOfSuperTheme = async (data) => {
     }
 
     const frequenciesData = response.data;
-    console.log('frequenciesData', frequenciesData);
     return frequenciesData;
   } catch (error) {
     console.error("Error in fetching benchmark:", error);
@@ -228,7 +222,6 @@ export const getWeightsOfGroupNormalised = async (data) => {
     }
 
     const frequenciesData = response.data;
-    console.log('frequenciesData', frequenciesData);
     return frequenciesData;
   } catch (error) {
     console.error("Error in fetching benchmark:", error);
@@ -246,7 +239,6 @@ export const getWeightsOfMetricGroup = async (data) => {
     }
 
     const frequenciesData = response.data;
-    console.log('frequenciesData', frequenciesData);
     return frequenciesData;
   } catch (error) {
     console.error("Error in fetching benchmark:", error);
@@ -343,7 +335,6 @@ export const getBrandData = async (data) => {
     }
 
     const getBrandDataDetails = response.data;
-    console.log('getBrandDataDetails', getBrandDataDetails)
     return getBrandDataDetails;
   } catch (error) {
     console.error("Error in fetching :", error);
@@ -354,14 +345,12 @@ export const getBrandImages = async (data) => {
   try {
 
     let url = `https://m594bmgj-8018.inc1.devtunnels.ms/brand-images/${data}`;
-    // let url = `https://hrsbjqs8-8019.inc1.devtunnels.ms/brand-images/${data}`;
     const response = await axios.get(url, { responseType: 'blob' });
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
 
     const imageUrl = URL.createObjectURL(response.data);
-    console.log('imageUrl', imageUrl)
     return imageUrl;
   } catch (error) {
     console.error("Error in fetching :", error);
@@ -377,7 +366,6 @@ export const getBrandDetailsData = async (brandName, projectId) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -393,7 +381,6 @@ export const removeMetricFromProject = async (projectId, metricId) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -409,7 +396,6 @@ export const createUserProjectDQScore = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -426,7 +412,6 @@ export const saveMetricGroup = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -443,7 +428,6 @@ export const getWeights = async (projectId) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -461,7 +445,6 @@ export const getMetricGroupNames = async (projectId) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -478,7 +461,6 @@ export const saveMetricsThemeGroup = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -495,7 +477,6 @@ export const getMetricThemeGroupNames = async (projectId) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -511,7 +492,6 @@ export const deleteSuperTheme = async (superThemeId, projectId) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -528,7 +508,6 @@ export const getProjectsByDateRangeForUser = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Brand Details Data:', response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
@@ -548,7 +527,6 @@ export const getTop5Data = async (data) => {
     }
 
     const getTopFiveData = response.data;
-    console.log('getTopFiveData', getTopFiveData)
     return getTopFiveData;
   } catch (error) {
     console.error("Error in fetching Top 5 data:", error);
@@ -566,9 +544,28 @@ export const getCompetitorsData = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    const getTopFiveData = response.data;
-    console.log('getTopFiveData', getTopFiveData)
-    return getTopFiveData;
+    const getCompetitorsDetails = response.data;
+    
+    return getCompetitorsDetails;
+  } catch (error) {
+    console.error("Error in fetching Top 5 data:", error);
+    throw error;
+  }
+};
+export const getCompetitorsReport = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hrsbjqs8-8013.inc1.devtunnels.ms/dq_filter_data`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getCompetitorsDetailsReport = response.data;
+
+    return getCompetitorsDetailsReport;
   } catch (error) {
     console.error("Error in fetching Top 5 data:", error);
     throw error;

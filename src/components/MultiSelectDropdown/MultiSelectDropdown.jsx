@@ -34,7 +34,6 @@ const MultiSelectDropdown = ({
     }
   };
   const handleUnselect = ( ) => {
-    console.log('clicked')
   };
   const handleSearch = (event) => setSearchTerm(event.target.value);
 

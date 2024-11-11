@@ -51,7 +51,6 @@ const ComparisionView = ({ compareNormalizeValue, projectDetails }) => {
           );
 
           const color = getColor(resultData?.section);
-          console.log(color, "checkkkkkkkk")
           // Change this logic to check the section
 
           return (

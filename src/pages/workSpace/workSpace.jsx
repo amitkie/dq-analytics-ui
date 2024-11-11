@@ -68,7 +68,6 @@ export default function WorkSpace() {
   const handleDeleteClose = () => setShowAlert(false);
   const handleDeleteShow = () => setShowAlert(true);
 
-  console.log("handleDeleteShow", handleDeleteShow)
   const [sortColumn, setSortcolumn] = useState({ key: null, direction: "asc" });
 
   const [dateRange, setDateRange] = useState({
@@ -129,10 +128,8 @@ const handleEditProjectName = (id) => {
   };
   // Function to handle date range changesF
   const handleDateRangeChange = (event) => {
-    console.log(event);
     
     const { startDate, endDate } = event;
-    console.log(startDate, endDate)
     setDateRange({
       startDate: startDate.format("MM/DD/YYYY"),
       endDate: endDate.format("MM/DD/YYYY"),
@@ -147,7 +144,6 @@ const handleEditProjectName = (id) => {
       try {
         const categoriesData = await getAllCategories();
         categoriesData.data = categoriesData?.data?.filter((cg) => cg?.name !== 'Hair Care')
-        console.log(categoriesData,'categoriesData')
         setCategories(
           categoriesData.data.map((cat) => ({
             value: cat.id,
@@ -220,7 +216,6 @@ const handleEditProjectName = (id) => {
   }
 
   const updateProjectDetails = async (id, data) => {
-    console.log(id, data , 'xxxxxxxxx')
     try {
       const project = await updateProject(id, data);
       if(project){
@@ -258,7 +253,6 @@ const handleEditProjectName = (id) => {
       try {
         const sectionIDs = selectedOptions.map((option) => option.value);
         const platformsIDs = await getAllPlatformsBySectionIds(sectionIDs);
-        console.log(platformsIDs, 'platformsIDs')
         setPlatforms(
           platformsIDs.data.map((sec) => ({
             value: sec.platformId,
@@ -272,7 +266,6 @@ const handleEditProjectName = (id) => {
 
   };
   const navigateToInsights = (projectD) => {
-    console.log(projectD, 'projectD')
     navigate(`/insights/${projectD?.id}/${projectD?.project_name}`)
   }
 
@@ -301,7 +294,6 @@ const handleEditProjectName = (id) => {
   };
 
   const handleProjectNameChange = async (e) => {
-    console.log(e.target.value)
     const name = e.target.value;
     setProjectName(name);
 
@@ -325,20 +317,17 @@ const handleEditProjectName = (id) => {
   };
 
   const handleFrequenciesChange = (selectedOptions) => {
-    console.log(selectedOptions?.target?.value,'selectedOptions')
     setSelectedFrequencies(selectedOptions?.target?.value);
   };
 
   const handleProjectClick = (id) => {
      dispatch(getRecentProjectRequest(id));
-     console.log("Dispatched project ID:", id);
     navigate(`/analytics/${id}`);
   };
 
   const handleSave = async () => {
     setLoading(true);
     setError(null);
-    console.log("save clicked", selectedFrequencies);
     try {
       const projectData = {
         project_name: projectName,
@@ -352,21 +341,15 @@ const handleEditProjectName = (id) => {
         end_date: dateRange?.endDate,
       };
 
-
-      console.log(projectData, 'projectData')
-      
       const projectCreated = await createProject(projectData);
       if (projectCreated) {
-        console.log(projectCreated);
 
         setTimeout(() => {
           navigate(`/analytics/${projectCreated?.data?.id}`);
         }, 1000);
       }
       setShow(false);
-      // Optionally, reset form fields or show a success message
     } catch (error) {
-      console.log(error,'jjjj')
       setError(error.message);
     } finally {
       setLoading(false);

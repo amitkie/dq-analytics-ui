@@ -38,7 +38,6 @@ export default function HealthCard() {
         } 
 
     } catch (error) {
-      console.log("Error fetching health card data:", error);
     }
   };
 
@@ -76,7 +75,6 @@ export default function HealthCard() {
     try {
       const brandsData = await getAllBrands();
     } catch (error) {
-      console.log("error fetching brands", error);
     }
   }
 
@@ -90,7 +88,6 @@ export default function HealthCard() {
         }))
       );
     }catch(error) {
-      console.log("error Filter categories", error);
     }
   }
 
@@ -99,7 +96,6 @@ export default function HealthCard() {
   };
 
   const handleCategoryFilter = (selectedOptions) => {
-    console.log("Selected Options:", selectedOptions); // Log selected options
     setSelectedFilterCategory(selectedOptions);
   };
 
@@ -124,7 +120,6 @@ export default function HealthCard() {
   //   }
   // }, [filteredData]);
    
-  console.log('filtered', filteredData);
   
 
   const columns = [

@@ -13,7 +13,6 @@ const MetricThemeGroupList = ({ metricThemeGroups, removeMetric }) => {
       [groupId]: !prevExpanded[groupId],
     }));
   };
-  console.log('metricThemeGroups', metricThemeGroups)
   return (
     <div> 
       <h5 className="group-name-heading">Saved Themes</h5>

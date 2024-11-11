@@ -1,7 +1,7 @@
 import React from 'react'
 import "./HealthCardScore.scss"
 
-const HealthCardScore = ({brands}) => {
+const HealthCardScore = ({ brands, valueKey}) => {
     
   return (
     <>
@@ -23,12 +23,9 @@ const HealthCardScore = ({brands}) => {
       {brands.map((brand, index) => (
         <div
           key={index}
+          className="text-range-container"
           style={{
-            position: 'absolute',
-            left: `${brand.value}%`,
-            top: '18px',
-            transform: 'translateX(-50%)',
-            textAlign: 'center',
+            left: `${brand[valueKey] ?? 0}%`,
           }}
         >
           {/* Marker for the brand */}
@@ -37,8 +34,9 @@ const HealthCardScore = ({brands}) => {
           />
           {/* Brand label and value */}
     
-          <div className="textIndicator" >
-            {brand.name} ({brand.value})
+          <div className="textIndicator" title={brand[valueKey] ?? 0}>
+            <span className="brand-names">{brand.brand_name}</span> 
+            <span className="brand-values">({brand[valueKey] ?? '0'})</span> 
           </div>
         </div>
       ))}

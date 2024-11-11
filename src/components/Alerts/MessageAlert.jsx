@@ -5,7 +5,6 @@
 // import './MessageAlert.scss';
 
 // function MessageAlert({ variant, message, show }) {
-//   console.log('messaegeeeee', message, variant, show)
 
 //   if (!show) return null; // Hide the alert if show is false
 

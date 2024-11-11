@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import "./ScoreCard.scss";
 
+// Insights 
 function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
   const [brandDQ, setBrandDQ] = useState([]);
   const [selectedBrandDQ, setSelectedBrandDQ] = useState([]);
@@ -49,15 +50,12 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
         data["Organic Performance"] <= maxScore
       );
     });
-    console.log(rdata, 'rdata')
         return rdata;
   };
 
-  // const filteredDQScoreValue = getFilteredData();
   useEffect(() => {
     const updatedData = getFilteredData();
     setFilteredDQScoreValue(updatedData);
-    console.log(updatedData, "updatedData")
   }, [scoreRange, dqScoreValue]);
 
 
@@ -150,47 +148,9 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
         </div>
       </div>
 
-      {/* <div className="col-md-12 col-lg-6 mb-md-4 mt-md-4">
-        <div className="chart-group">
-          {chartTypes.map(({ type, title }) => (
-            <div className="chart-list" key={type}>
-              {!dqScoreLoading && dqScoreValue.length > 0 ? (
-                <TrendChart dqScoreValue={filteredDQScoreValue} chartType={type} />
-              ) : (
-                <div className="loader-container-sm">
-                  <div className="loader-sm"></div>
-                  <span className="loader-text">Loading, Please Wait</span>
-                </div>
-              )}
-              <span className="graph-title">{title}</span>
-            </div>
-          ))}
-        </div>
-      </div> */}
 
       <div className="col-md-12 col-lg-12 mb-md-4 mt-md-4">
-        {/* <div className="chart-group">
-          {chartTypes.map(({ type, title, colorFill }) => (
-            <div className="chart-list" key={type}>
-              {dqScoreLoading ? (
-                <div className="loader-container-sm">
-                  <div className="loader-sm"></div>
-                  <span className="loader-text">Loading, Please Wait</span>
-                </div>
-              ) : filteredDQScoreValue.some((data) => data[type] !== undefined) ? (
-                <TrendChart 
-                  dqScoreValue={filteredDQScoreValue}
-                  chartType={type}
-                  scoreRange={scoreRange}
-                  colorFill={colorFill}
-                  />
-              ) : (
-                <span className="no-data-text">No Data Found</span>
-              )}
-              <span className="graph-title">{title}</span>
-            </div>
-          ))}
-        </div> */}
+    
         <div className="chart-container">
           <div className="left-side">
             {chartTypes.slice(0, 4).map(({ type, title, colorFill }) => (

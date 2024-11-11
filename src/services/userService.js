@@ -263,10 +263,9 @@ export const getAllMetricsDefinition = async (metricName, platformName ) => {
       throw new Error("Network response was not ok");
     }
 
-    console.log('Metric Data:', response.data); // Log only the response data
-    return response.data; // Return the response data directly
+    return response.data;
   } catch (error) {
     console.error("Error fetching brand details:", error.response || error.message);
-    throw error; // Re-throw the error so it can be handled by the calling code
+    throw error; 
   }
 };

@@ -13,7 +13,6 @@ const MetricWeights = ({ metricThemeGroupWeights, removeMetric }) => {
       [groupId]: !prevExpanded[groupId],
     }));
   };
-  console.log("weights of ", metricThemeGroupWeights)
   return (
     <div> 
       <h5 className="group-name-heading">Saved Metrics Weights</h5>
@@ -24,7 +23,7 @@ const MetricWeights = ({ metricThemeGroupWeights, removeMetric }) => {
           <div className="group-name-details">
             {/* <h5 className="group-name-heading">Metric Theme Name</h5> */}
             <div className={isExpanded[group.id] ? "theme-btn-expanded" : "theme-btn-collapsed"}>
-              <span className="group-name"> {group.Theme_name}: <span className='success-message'>{group.weight_sum}</span> </span>
+              <span className="group-name"> {group.Theme_name}: <span className='weights-value'>{group.weight_sum}</span> </span>
               <div className="action-items">
               {isExpanded[group.id] ? <IoIosArrowDropupCircle className="expand-details" onClick={() => toggleExpand(group.id)} /> : <IoIosArrowDropdownCircle className="expand-details" onClick={() => toggleExpand(group.id)} />}
                 

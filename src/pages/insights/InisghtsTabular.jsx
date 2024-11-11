@@ -3,7 +3,6 @@ import Table from "react-bootstrap/Table";
 import "./InsightsTabular.scss";
 
 const InsightsTabular = ({loading, data, columns, filteredBrands }) => {
-  console.log(filteredBrands, 'filteredBrands')
   if (!data || data.length === 0) {
     return <div className="no-data">No Data Available</div>;
   }
@@ -45,7 +44,7 @@ const InsightsTabular = ({loading, data, columns, filteredBrands }) => {
       <tbody>
         {brandsToShow.map((brand, brandIndex) => (
           <tr key={brandIndex}>
-            <td className="sticky-brand">{brand}</td>
+            <td className="sticky-brand"><b>{brand}</b></td>
             {data.map((project, projIndex) => {
               const brandData = project.brands
                 ? project.brands.find((item) => item.brand_name === brand)

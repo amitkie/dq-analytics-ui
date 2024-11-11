@@ -36,7 +36,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
     "CPC",
     "Purchases",
   ];
-  console.log("normalizedValue value", normalizedValue)
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [metricGroupName, setMetricGroupName] = useState("");
@@ -128,7 +127,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
           [type]: null,
         },
       };
-      console.log(updatedStatus, "Updated apiStatus"); 
       return updatedStatus;
     });
   };
@@ -172,14 +170,12 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
   };
 
   const removeLanguage = async(language) => {
-    console.log(language, 'language')
     setSelectedLanguages(selectedLanguages.filter((item) => item !== language));
 
     try {
       const res = await deleteSuperTheme(language, projectId);
       fetchMetricThemeGroupNames();
       fetchWeightsOfGroupNormalized();
-      console.log(res)
       
     } catch (error) {
       
@@ -200,7 +196,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
 
 
       if (metricGroupNamesResponse) {
-        console.log(metricGroupNamesResponse, 'metricGroupNamesResponse');
         setMetricGroupData(metricGroupNamesResponse?.data)
         // Correctly map the values and labels and set the state
         const metricGroups = metricGroupNamesResponse?.data?.map(gp => ({
@@ -231,7 +226,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
       const metricGroupNamesResponse = await getMetricThemeGroupNames(projectId);
 
       if (metricGroupNamesResponse) {
-        console.log(metricGroupNamesResponse, 'metricGroupNamesResponse');
 
         setMetricThemeGroupData(metricGroupNamesResponse?.data);
 
@@ -245,7 +239,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
         }
         setTotalWeightInfo(weightsInfo)
         setMetricThemeGroupWeightsData(weightsInfo);
-        console.log(weightsInfo, 'weightsInfoweightsInfoweightsInfo')
 
       }
     } catch (err) {
@@ -263,7 +256,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
       if (data) {
         setThemeGroupTable(data)
       }
-      console.log(data);
     } catch (err) {
 
     }
@@ -272,7 +264,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
     try {
       const reqPayload = { project_ids: [projectId] }
       const data = await getWeightsOfMetricGroup(reqPayload);
-      console.log(data);
     } catch (err) {
 
     }
@@ -288,15 +279,12 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
     handleApiStatusChange('metricGroup', 'loading', true);
     handleApiStatusChange('metricGroup', 'error', null);
     handleApiStatusChange('metricGroup', 'success', null);
-    console.log(reqPayload)
     try {
       const metricData = await saveMetricGroup(reqPayload);
       if (metricData) {
-        console.log(metricData);
         handleApiStatusChange('metricGroup', 'success', "Metric group saved successfully!");
         fetchMetricGroupNames();
         const data = await getWeightsOfMetricGroup({ project_ids: [projectId] });
-        console.log(data)
       }
     } catch (err) {
       handleApiStatusChange('metricGroup', 'error', "An error occurred while saving metric group.");
@@ -306,7 +294,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
     }
   }
   const saveMetricsThemeGroups = async () => {
-    console.log(selectedMetricAndMetricGroupId)
     const reqPayload = {
       project_id: projectId,
       metric_ids: uniqueSelectedMetricsThemeBasedOnProjectId?.map(mc => mc.value),
@@ -314,7 +301,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
       metric_group_ids: selectedMetricAndMetricGroupId?.map(mgi => mgi?.value)
 
     }
-    console.log(reqPayload)
     handleApiStatusChange('metricThemeGroup', 'loading', true);
     handleApiStatusChange('metricThemeGroup', 'error', null);
     handleApiStatusChange('metricThemeGroup', 'success', null);
@@ -323,7 +309,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
       if (metricData) {
         handleApiStatusChange('metricThemeGroup', 'success', "Theme group saved successfully!");
 
-        console.log(metricData);
         await fetchMetricGroupNames();
         await fetchWeightsOfGroupNormalized();
         await fetchMetricThemeGroupNames()
@@ -363,7 +348,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
 
   const getDetails = () => {
     const reqPayload = transformResponseToPayload(metricThemeGroupData, projectId);
-    console.log(reqPayload, "payload")
   }
 
   const tabs = [
@@ -625,7 +609,6 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
                     <div className="d-flex flex-column">
                       <div className="selected-languages">
                         <MetricWeights removeMetric={removeLanguage} metricThemeGroupWeights={metricThemeGroupWeightsData} />
-                        {console.log("metricThemeGroupWeightsData", metricThemeGroupWeightsData)}
                         {selectedLanguages.map((language, index) => (
                           <div key={index} className="selected-metrics">
                             <span style={{ marginRight: "10px" }}>{language}</span>

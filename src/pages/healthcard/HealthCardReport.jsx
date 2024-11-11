@@ -13,7 +13,7 @@ import { GiMultipleTargets } from "react-icons/gi";
 import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import HealthCardScore from "./HealthCardScore.jsx";
-import {getTop5Data, getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData, getProjectDetailsByUserId, getCompetitorsData} from "../../services/projectService";
+import {getTop5Data, getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData, getProjectDetailsByUserId, getCompetitorsData, getCompetitorsReport} from "../../services/projectService";
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import "./overview/HealthCardOverview.scss";
 import "./HealthCardReport.scss";
@@ -28,6 +28,7 @@ const HealthCardReport = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [competitorsData, setCompetitorsData] = useState([]);
+  const [competitorsScoresData, setCompetitorsScoresData] = useState([]);
 
   const handleCompetitorBrands = (comp) => {
     navigate(`/healthcardOverview/${comp.brand}/${projectId}`);
@@ -41,15 +42,12 @@ const HealthCardReport = () => {
       project_id: projectId,
       brandname: brand
     };
-    console.log("Request Payload:", requestPayload); // Log the request payload
 
     try {
       const topFiveList = await getTop5Data(requestPayload);
-      console.log("API Response:", topFiveList); // Log the full response
 
       if (topFiveList) {
         setGetTop5List(topFiveList);
-        console.log("topFiveList", topFiveList);
       } else {
         setError("No Data Found");
       }
@@ -59,7 +57,8 @@ const HealthCardReport = () => {
     } finally {
       setLoading(false);
     }
-};
+  };
+
   const fetchCompetitorsDetails = async () => {
     setLoading(true);
     setError(null);
@@ -68,15 +67,12 @@ const HealthCardReport = () => {
         "project_id": projectId,
         "brand_name": brand
     };
-    console.log("Request Payload:", requestPayload); // Log the request payload
 
     try {
       const competitorsList = await getCompetitorsData(requestPayload);
-      console.log("API Response:", competitorsList); // Log the full response
 
       if (competitorsList) {
         setCompetitorsData(competitorsList);
-        console.log("competitorsList", competitorsList);
       } else {
         setError("No Data Found");
       }
@@ -86,11 +82,36 @@ const HealthCardReport = () => {
     } finally {
       setLoading(false);
     }
-};
+  };
+  const fetchCompetitorsScoresDetails = async () => {
+    setLoading(true);
+    setError(null);
+  
+    const requestPayload = {
+        "project_id": projectId,
+        "brand_name": brand
+    };
+     
+    try {
+      const competitorsScoresList = await getCompetitorsReport(requestPayload);
+
+      if (competitorsScoresList) {
+        setCompetitorsScoresData(competitorsScoresList);
+      } else {
+        setError("No Data Found");
+      }
+    } catch (error) {
+      console.error("Error during API call:", error);
+      setError("Error fetching brand data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 useEffect(() => {
   fetchTopFiveListDetails();
   fetchCompetitorsDetails();
+  fetchCompetitorsScoresDetails();
 },[brand])
 
 function getColorScore(value, thresholds) {
@@ -104,6 +125,13 @@ function getColorScore(value, thresholds) {
       return <span style={{ color: "#252627" }}>{value}</span>;
     }
 }
+
+const brandScores = () => {
+  if(competitorsScoresData && competitorsScoresData.length > 0) {
+    competitorsScoresData.map((item) => item.brand_name)
+  }
+}
+
 const brands = [
   { name: 'Puresense', value: 85 },
   { name: 'Livon', value: 87 },
@@ -324,6 +352,7 @@ const tabsSummary = [
   },
   
 ];
+
 
   return (
     <div className="col-12">
@@ -550,23 +579,23 @@ const tabsSummary = [
                 <div className="main-score-content">
                     <div className="item-category">
                         <h4>DQ Score</h4>
-                        <HealthCardScore brands={brands} />
+                        <HealthCardScore brands={competitorsScoresData?.dq || []} valueKey="dq" />
                     </div>
                     <div className="item-category">
                         <h4>Ecom DQ Score</h4>
-                        <HealthCardScore brands={brands} />
+                        <HealthCardScore brands={competitorsScoresData?.ecom_dq || []} valueKey="ecom_dq" />
                     </div>
                     <div className="item-category">
                         <h4>Social DQ Score</h4>
-                        <HealthCardScore brands={brands} />
+                        <HealthCardScore brands={competitorsScoresData?.social_dq || []} valueKey="social_dq" />
                     </div>
                     <div className="item-category">
                         <h4>Paid DQ Score</h4>
-                        <HealthCardScore brands={brands} />
+                        <HealthCardScore brands={competitorsScoresData?.paid_dq || []} valueKey="paid_dq" />
                     </div>
                     <div className="item-category">
                         <h4>Brand Perf</h4>
-                        <HealthCardScore brands={brands} />
+                        <HealthCardScore brands={competitorsScoresData?.brand_perf_dq || []} valueKey="brand_perf_dq"/>
                     </div>
                 </div>
                 <div className="score-table-percentile">
@@ -583,6 +612,18 @@ const tabsSummary = [
                             </tr>
                         </thead>
                         <tbody>
+                          {/* {competitorsScoresData?.map((dataItem, dataIndex) =>
+                            dataItem.statistics?.map((statItem, statIndex) => (
+                              <tr key={`stat-${dataIndex}-${statIndex}`}>
+                                <td>Avg Scores (Competition Brands)</td>
+                                <td>{statItem.dq?.average ?? 'N/A'}</td>
+                                <td>{statItem.ecom_dq?.average ?? 'N/A'}</td>
+                                <td>{statItem.social_dq?.average ?? 'N/A'}</td>
+                                <td>{statItem.paid_dq ?? 'N/A'}</td>
+                                <td>{statItem.brand_perf_dq ?? 'N/A'}</td>
+                              </tr>
+                            ))
+                          )} */}
                             <tr>
                                 <td>Avg Scores (Competition Brands)</td>
                                 <td>76</td>

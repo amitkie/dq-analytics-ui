@@ -1,17 +1,11 @@
-import React, { useEffect, useRef, useState, } from "react";
+import React, { useEffect, useState, } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-bootstrap/Modal";
-import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
-import SideBar from "../../components/sidebar/SideBar";
-import TableComponent from "../../components/tableComponent/TableComponent";
 import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import ButtonComponent from "../../common/button/button";
-import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import SuperThemes from "../../components/SuperThemes/SuperThemes";
 import { getData } from "../../services/q3";
 import { getAMData } from "../../services/Quarter-actual-metric-data";
@@ -20,7 +14,7 @@ import { getNormalizedData } from "../../services/quarter-metrics-normalised-dat
 import { getSection } from "../../services/section-platform-metrics";
 import {
   getProjectDetailsByProjectId,
-  getBenchamarkValues,
+  getBenchmarkValues,
   saveMetricsOfProject,
   getNormalizedValues,
   getDQScore,
@@ -30,19 +24,13 @@ import {
   updateProject,
 } from "../../services/projectService";
 import {
-  getAllBrands,
   getAllCategories,
-  getAllPlatforms,
-  getAllMetrics,
   getAllSections,
-  getAllFrequencies,
-  getAllCategoriesByBrandIds,
   getAllMetricsByPlatformId,
   getAllMetricsDefinition,
   getAllPlatformsBySectionIds,
 } from "../../services/userService";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
-import { createProject } from "../../services/projectService";
 import "./analytics.scss";
 import "./AnalyticsTable.scss";
 
@@ -51,9 +39,6 @@ import KPITable from "./KPITable";
 import { useParams } from "react-router-dom";
 import { FaInfo } from "react-icons/fa";
 import * as XLSX from "xlsx";
-import ModalComponent from "../../components/Modal/ModalComponent";
-
-import { getProjectInfoRequest, getRecentProjectRequest } from "../../features/user/userSlice";
 
 export default function Analytics() {
   const [projectIds, setProjectIds] = useState(1);
@@ -139,7 +124,6 @@ export default function Analytics() {
         metric_id: selectedAddMetricList.map(m => m.value)
       }
       const res = await updateProject(projectId,reqPayload);
-      console.log(res)
       if(res){
         setAddMetricLoading(false);
 
@@ -190,10 +174,7 @@ export default function Analytics() {
         return "#000000";
     }
   };
-  // Ecom : [ "metrics1","metrcs2"
-  // ] 
-  // Order of KPI: Ecom > Social > Paid > Brand Perf
-  // Order of Comparison: View Ecom > Social > Paid > Brand Perf
+ 
   const section = getSection();
   let colorCode;
   if (section === "Ecom") {
@@ -230,7 +211,7 @@ export default function Analytics() {
 
 
       try {
-        const benchmarks = await getBenchamarkValues(reqPayload);
+        const benchmarks = await getBenchmarkValues(reqPayload);
 
         setMetrics((prev) =>
           prev.map((ele) => {
@@ -311,7 +292,7 @@ export default function Analytics() {
             };
 
             try {
-              const benchmarks = await getBenchamarkValues(reqPayload);
+              const benchmarks = await getBenchmarkValues(reqPayload);
               if (type === "overall") {
                 return {
                   ...metric,
@@ -358,8 +339,6 @@ export default function Analytics() {
       updatedMetrics = [...updatedMetrics, ...batchResults];
     }
 
-    console.log(updatedMetrics, 'updatedMetrics')
-    console.log(checkAllMetricsCheckboxSelected())
     setMetrics(updatedMetrics);
   };
 
@@ -458,7 +437,6 @@ export default function Analytics() {
       const compareNormalizeValue = await getNormalizedValues(requestPayload);
 
       if (compareNormalizeValue) {
-        console.log(".........xxx.x..x.xx", compareNormalizeValue)
         setComparisonData(compareNormalizeValue)
 
         const uniqueData = transformComparisonViewApiData(compareNormalizeValue);
@@ -567,8 +545,6 @@ export default function Analytics() {
     }
   }
   const fetchKPIScores = async (projectdata, metricdata) => {
-    console.log(metrics, "checking metrics while setting kpi")
-    console.log(projectDetails, "checking metrics while setting kpi")
     const data = {
       platform: Array.from(new Set(metricdata?.map((metric) => metric.platform?.name))),
       metrics: Array.from(new Set(metricdata?.map((metric) => metric.metric_name))),
@@ -933,34 +909,6 @@ export default function Analytics() {
     return false;
   };
 
-  // const handleExportAnalytics = () => {
-  //   const dqScoreData = dqScoreValue;
-  //   const kpiScoresData = kpiData;
-  //   const comparisionScoreData = normalizedValue;
-  //   console.log("kpiScoresData", kpiScoresData);
-  //   if (dqScoreData.length > 0 || kpiScoresData.length > 0 || comparisionScoreData.length > 0) {
-  //     generateExcel(dqScoreData, kpiScoresData, comparisionScoreData);
-  //   }
-  // };
-
-  // const generateExcel = (dqScoreData, kpiScoresData, comparisionScoreData) => {
-  //   const workbook = XLSX.utils.book_new(); 
-
-  //   const worksheet1 = XLSX.utils.json_to_sheet(dqScoreData);
-  //   const worksheet2 = XLSX.utils.json_to_sheet(kpiScoresData);
-  //   const worksheet3 = XLSX.utils.json_to_sheet(comparisionScoreData);
-
-  //   XLSX.utils.book_append_sheet(workbook, worksheet1, "DQ Score")
-  //   XLSX.utils.book_append_sheet(workbook, worksheet2, "KPI Score")
-  //   XLSX.utils.book_append_sheet(workbook, worksheet3, "Comparision View")
-
-  //   XLSX.writeFile(workbook, "Analytics.xlsx");
-  // };
-
-  // const formatToAOA = (data) => {
-  //   return Array.isArray(data) ? data : Object.entries(data);
-  // };
-
   const handleExportAnalytics = () => {
     const dqScoreData = dqScoreValue;
     const kpiScoresData = kpiData;
@@ -975,19 +923,15 @@ export default function Analytics() {
   const restructureDataForBrandAsHeader = (data) => {
     if (!data || data.length === 0) return [];
 
-    // Get unique metrics, platforms, and sections to form row headers
     const rowHeaders = Array.from(new Set(data.map(item => `${item.section}-${item.platform}-${item.metric}`)));
 
-    // Get unique brand names for column headers
     const brands = Array.from(new Set(data.map(item => item.brand)));
 
-    // Initialize the table with row headers and empty brand columns
     const structuredData = rowHeaders.map(header => {
       const [section, platform, metric] = header.split('-');
-      return [section, platform, metric, ...brands.map(() => '')]; // Empty cells for each brand initially
+      return [section, platform, metric, ...brands.map(() => '')]; 
     });
 
-    // Populate the brand-specific values for each row header
     data.forEach(item => {
       const rowIndex = rowHeaders.indexOf(`${item.section}-${item.platform}-${item.metric}`);
       const brandIndex = brands.indexOf(item.brand);
@@ -1032,7 +976,6 @@ export default function Analytics() {
       try {
         const sectionIDs = selectedOptions.map((option) => option.value);
         const platformsIDs = await getAllPlatformsBySectionIds(sectionIDs);
-        console.log(platformsIDs, 'platformsIDs')
         setPlatformsList(
           platformsIDs.data.map((sec) => ({
             value: sec.platformId,
@@ -1065,7 +1008,6 @@ export default function Analytics() {
     }
   };
   const handleAddMetric = (selectedOptions) => {
-    console.log(selectedOptions,'selectedOptions')
     setAddSelectedMetricList(selectedOptions);
   };
   const tabs = [
@@ -1134,7 +1076,7 @@ export default function Analytics() {
       label: "Graphical view",
       content: (
         <div>
-          <GraphicalView getColor={getColor} projectId={projectId} />
+          <GraphicalView getColor={getColor} projectId={projectId} normalizedData={comparisonData}/>
         </div>
       ),
     },

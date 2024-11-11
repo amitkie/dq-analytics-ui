@@ -58,7 +58,6 @@ export default function HealthCardOverview() {
 
   const handleSelectionChange = (e) => {
     const value = e.target.value;
-    console.log(value, selectedFrequency)
     const payload = {
       user_id: userInfo?.user?.id,
       filter: {
@@ -67,8 +66,6 @@ export default function HealthCardOverview() {
       }
     }
     fetchProjectDetails(payload)
-    console.log(payload)
-
     setSelectedValue(value);
   };
 
@@ -186,7 +183,6 @@ export default function HealthCardOverview() {
       const brandScoreDetails = await getBrandData(requestPayload);
       if (brandScoreDetails) {
         setBrandDetailData(brandScoreDetails?.data)
-        console.log("brandScoreDetails", brandScoreDetails);
       } else {
         setError("No Data Found")
       }
@@ -207,7 +203,6 @@ export default function HealthCardOverview() {
 
       if (brandImageDetails) {
         setBrandImages(brandImageDetails);
-        console.log("brandImageDetails", brandImageDetails);
       } else {
         setError("No Data Found");
       }
@@ -229,7 +224,6 @@ export default function HealthCardOverview() {
 
       if (brandCatDetails) {
         setBrandCategoryDetails(brandCatDetails);
-        console.log("brandCatDetails", brandCatDetails);
       } else {
         setError("No Data Found");
       }
@@ -242,7 +236,6 @@ export default function HealthCardOverview() {
   };
 
   const handleSelectedProjects = (selectedPrjId) => {
-    console.log(selectedPrjId, 'selectedPrjId')
     fetchBrandScoreDetails(selectedPrjId)
     setSelectedFilterProject(selectedPrjId);
   };

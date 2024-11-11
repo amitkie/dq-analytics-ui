@@ -133,6 +133,9 @@ legend {
   font-size: 14px;
   line-height: 1.2;
   color: $text-color;
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1;
 }
 .group-name-heading {
   @include secondaryFontBold();
@@ -145,8 +148,19 @@ legend {
   justify-content: flex-end;
   align-items: flex-end;
 }
+.weights-value {
+  @include secondaryFontBold;
+  font-size: 13px;
+  width: max-content;
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: $white;
+  display: flex;
+  padding: 4px 8px;
+  border-radius: 3px;
+}
 .expand-details {
-  color: $primary-color;
+  color: #262B3F;
   line-height: 1;
   padding: 4px;
   display: block;
@@ -165,6 +179,7 @@ legend {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   transition: all .35s ease-in-out;
   align-items: center;
+  flex: 1 1 auto;
 }
 .theme-btn-expanded {
   display: flex;

@@ -1,7 +1,6 @@
 import React from "react";
 
 function MediaEcom({ healthCardData }) {
-  console.log(healthCardData);
 
   return (
     <div>

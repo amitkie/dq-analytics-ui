@@ -20,25 +20,20 @@ function* handleLogin(action) {
 }
 function* getUserInfo(action) {
   try {
-  // console.log(action);
   const  id  = action.payload;
   const response  = yield call(() => getUserAndPaymentInfo(id))
     yield put(getUserInfoSuccess(response));
   } catch (error) {
-    // console.log(error);
     yield put(getUserInfoFailure(error.message));
-    // yield put(setAlert({ type: 'error', message: 'Failed to fetch user info!' }));
   }
 }
 
 function* getProjectInfo(action) {
   try {
-  // console.log(action);
   const  id  = action.payload;
   const response  = yield call(() => getProjectDetailsByUserId(id))
     yield put(getProjectInfoSuccess(response));
   } catch (error) {
-    // console.log(error);
     yield put(getProjectInfoFailure(error.message));
     // yield put(setAlert({ type: 'error', message: 'Failed to fetch user info!' }));
   }

@@ -1,15 +1,37 @@
 @import "../../assets/mixins/mixins.scss";
+.text-range-container {
+  position: absolute;
+  top: 18px;
+  text-align: center;
+  &:hover {
+    z-index: 2;
+    .textIndicator {
+      border-color: $primary-color;
+    }
+  }
+}
 .textIndicator {
     font-size: 12px; 
     background: #fff;
     border: 1px solid #e4e5e6; 
     border-radius: 6px; 
     padding:6px 12px;
+    display: flex;
+    flex-direction: column;
+    .brand-names{
+      @include secondaryFontBold();
+      color:#333;
+    }
+    .brand-names{
+      @include secondaryFontBold();
+      color:#333;
+      font-size: 15px;
+    }
 }
 .textIndicator:after{
 content: " ";
 position: absolute;
-bottom: 70%;  /* At the top of the tooltip */
+top: 11px;  /* At the top of the tooltip */
   left: 5%;
 margin-top: -5px;
 border-width: 5px;
