@@ -23,6 +23,7 @@ import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelec
 import "./Insights.scss";
 import { getProjectListsByFilter, getDQScoreMultipleProjects, getProjectsByDateRangeForUser } from "../../services/projectService";
 import InsightsTabular from "./InisghtsTabular";
+import * as XLSX from "xlsx";
 
 export default function Insights() {
   const data = getData();
@@ -42,6 +43,7 @@ export default function Insights() {
   const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
   const [selectedValue, setSelectedValue] = useState();
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const [brand, setBrand] = useState([]);
 
@@ -147,10 +149,10 @@ export default function Insights() {
   };
 
   const fetchDQScoresBasedOnFilter = async () => {
-    setLoading(true);
     try {
 
       if (selectedProjects?.length > 0) {
+        setLoading(true);
         const selectedProjectsOptions = selectedProjects?.map((cg) => cg?.value);
         const requestedPayload = {
           project_ids: selectedProjects.map((prj) => prj.value),
@@ -163,8 +165,11 @@ export default function Insights() {
         } else {
           setLoading(false);
           setInsightsDQScore(null);
+          setMessage("No Data Found for this Project.")
         }
       } else if (projectId) {
+        setLoading(true);
+
         const requestedPayload = {
           project_ids: [projectId],
         };
@@ -176,6 +181,8 @@ export default function Insights() {
         } else {
           setLoading(false);
           setInsightsDQScore(null);
+          setMessage("No Data Found for this Project.")
+
         }
       }
     } catch (error) {
@@ -245,6 +252,47 @@ export default function Insights() {
   ];
 
 
+  const handleDownloadExport = () => {
+    const insightScore = insightsDQScore;
+    const insightScoreDataXL = restructureDataForExport(insightScore);
+    if (insightScoreDataXL && insightScoreDataXL.length > 0) {
+      generateExcel(insightScoreDataXL);
+    }
+  };
+  
+  const restructureDataForExport = (data) => {
+    if (!data || data.length === 0) return [];
+  
+    // Extract unique brand names
+    const brands = Array.from(new Set(data.map(item => item.brands)));
+    console.log('brands', brands);
+    // Define the headers for the Excel sheet
+    const headers = ['brand_name', 'Marketplace', 'Digital Spends', 'Organic Performance', 'Socialwatch', 'DQ Score'];
+  
+    // Structure data with "Brands" as the first column
+    const structuredData = brands.map(brand => {
+      const brandData = data.find(item => item.Brands === brand);
+      return [
+        brandData?.brand_name ?? 'N/A',
+        brandData?.dq_score?.Marketplace ?? 'N/A',
+        brandData?.dq_score?.['Digital Spends'] ?? 'N/A',
+        brandData?.dq_score?.['Organic Performance'] ?? 'N/A',
+        brandData?.dq_score?.Socialwatch ?? 'N/A',
+        brandData?.dq_score?.Overall_Final_Score ?? 'N/A'
+      ];
+    });
+  
+    // Combine headers and structured data
+    return [headers, ...structuredData];
+  };
+  
+  const generateExcel = (exportData) => {
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(exportData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Insight DQ Score');
+    XLSX.writeFile(workbook, 'Insights.xlsx');
+  };
+
   const tabs = [
     {
       label: "Score Comparison",
@@ -282,7 +330,7 @@ export default function Insights() {
                     filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
-                  <p className="no-data">No data available</p>
+                  message ? (<p className="no-data">{message}</p>): (<p className="no-data">No data available</p>)
                 )}
               </div>
             </div>
@@ -302,7 +350,7 @@ export default function Insights() {
                     filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
-                  <p className="no-data">No data available</p>
+                  message ? (<p className="no-data">{message}</p>): (<p className="no-data">No data available</p>)
                 )}
               </div>
             </div>
@@ -322,7 +370,7 @@ export default function Insights() {
                     filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
-                  <p className="no-data">No data available</p>
+                  message ? (<p className="no-data">{message}</p>): (<p className="no-data">No data available</p>)
                 )}
               </div>
             </div>
@@ -342,7 +390,7 @@ export default function Insights() {
                     filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
-                  <p className="no-data">No data available</p>
+                  message ? (<p className="no-data">{message}</p>): (<p className="no-data">No data available</p>)
                 )}
               </div>
             </div>
@@ -362,7 +410,7 @@ export default function Insights() {
                     filteredBrands={selectedBrand.map(b => b.label)}
                   />
                 ) : (
-                  <p className="no-data">No data available</p>
+                  message ? (<p className="no-data">{message}</p>): (<p className="no-data">No data available</p>)
                 )}
               </div>
             </div>
@@ -375,12 +423,7 @@ export default function Insights() {
       content: (
         <div>
           <div className="filter-option d-flex mb-2 gap-3 justify-content-end">
-            {/* <MultiSelectDropdown
-              options={categories}
-              selectedValues={selectedCategories}
-              onChange={handleCategoryChanges}
-              placeholder="Select Categories"
-            /> */}
+           
             <MultiSelectDropdown
               options={brand}
               selectedValues={selectedBrand}
@@ -390,6 +433,7 @@ export default function Insights() {
           </div>
           <InsightsTabular
             loading={loading}
+            message={message}
             data={insightsDQScore}
             columns={columns1}
             filteredBrands={selectedBrand.map(b => b.label)}
@@ -515,9 +559,10 @@ export default function Insights() {
             <div className="col-12">
               <div className="export-btn justify-content-end">
                 <ButtonComponent
-                  disabled
+                  
                   btnClass={"btn-primary export-excel-btn"}
                   btnName={"Download"}
+                  onClick={handleDownloadExport}
                 />
               </div>
               <TabComponent tabs={tabs} isBenchmarkDataSaved={true} className="insights-tabs" />
