@@ -359,7 +359,7 @@ export const getBrandImages = async (data) => {
 };
 export const getBrandDetailsData = async (brandName, projectId) => {
   try {
-    const url = `https://hrsbjqs8-8012.inc1.devtunnels.ms/brands/${brandName}/project_id/${projectId}`;
+    const url = `https://m594bmgj-8018.inc1.devtunnels.ms/brands/${brandName}/project_id/${projectId}`;
     const response = await axios.get(url);
 
     if (response.status !== 200) {
@@ -536,7 +536,7 @@ export const getTop5Data = async (data) => {
 export const getCompetitorsData = async (data) => {
   try {
     const response = await axios.post(
-      `https://hrsbjqs8-8012.inc1.devtunnels.ms/brands/competitors`,
+      `https://m594bmgj-8018.inc1.devtunnels.ms/brands/competitors`,
       data
     );
 
@@ -555,7 +555,7 @@ export const getCompetitorsData = async (data) => {
 export const getCompetitorsReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://hrsbjqs8-8013.inc1.devtunnels.ms/dq_filter_data`,
+      `https://m594bmgj-8018.inc1.devtunnels.ms/dq_filter_data`,
       data
     );
 
@@ -566,6 +566,63 @@ export const getCompetitorsReport = async (data) => {
     const getCompetitorsDetailsReport = response.data;
 
     return getCompetitorsDetailsReport;
+  } catch (error) {
+    console.error("Error in fetching Top 5 data:", error);
+    throw error;
+  }
+};
+export const getSectionalReport = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8012inc1.devtunnels.ms/sectional_report`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getSectionalReport = response.data;
+
+    return getSectionalReport;
+  } catch (error) {
+    console.error("Error in fetching Top 5 data:", error);
+    throw error;
+  }
+};
+export const getPlatformHealthReport = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8010.inc1.devtunnels.ms/platform_report`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getPlatformHealthReport = response.data;
+
+    return getPlatformHealthReport;
+  } catch (error) {
+    console.error("Error in fetching Top 5 data:", error);
+    throw error;
+  }
+};
+export const getMetricHealthReport = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8008.inc1.devtunnels.ms/metric_report`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getMetricHealthReport = response.data;
+
+    return getMetricHealthReport;
   } catch (error) {
     console.error("Error in fetching Top 5 data:", error);
     throw error;

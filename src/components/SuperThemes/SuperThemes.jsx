@@ -681,8 +681,8 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
                 <Table responsive striped bordered className="insights-table comparision-table">
                   <thead>
                     <tr>
-                      <th className="sticky-col" style={{ width: '160px' }}>Super Theme Groups</th>
-                      <th className="sticky-col" style={{ width: '160px' }}>Super Theme Group Metrics</th>
+                      <th className="sticky-col" style={{ width: '180px' }}>Super Theme Groups</th>
+                      <th className="sticky-col" style={{ width: '200px' }}>Super Theme Group Metrics</th>
                       {brandNames.map((brand, index) => (
                         <th key={index}>{brand}</th>
                       ))}
@@ -700,12 +700,12 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
                         <React.Fragment key={index}>
                           <tr>
                             {index === 0 || tableRows[index - 1].theme_group_name !== row.theme_group_name ? (
-                              <td rowSpan={rowCount} className="sticky-col group-td" style={{ width: '160px' }}>
+                              <td rowSpan={rowCount} className="sticky-col group-td" style={{ width: '180px' }}>
                                 {row.theme_group_name}
                               </td>
                             ) : null}
 
-                            <td className="sticky-col" style={{ width: '160px' }}>{row.metric_group_name}</td>
+                            <td className="sticky-col" style={{ width: '200px' }}>{row.metric_group_name}</td>
                             {brandNames.map((brand, idx) => (
                               <td key={idx}>
                                 {row.values[brand] !== undefined ? row.values[brand].toFixed(2) : 0}

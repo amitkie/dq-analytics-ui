@@ -87,6 +87,7 @@ export default function HealthCardOverview() {
    
 
   const navigate = useNavigate();
+
   const handleReportClick = () => {
     
     if (brandDetailData && brandImages && brandCategoryDetails) {
@@ -107,6 +108,7 @@ export default function HealthCardOverview() {
     }
      
   };
+  console.log('selectedFilterProject', selectedFilterProject);
   
   const handleCompetitorBrands = (comp) => {
     navigate(`/healthcardOverview/${comp.brand}/${selectedFilterProject ? selectedFilterProject : projectId}`);
@@ -145,6 +147,9 @@ export default function HealthCardOverview() {
     fetchBrandDetails();
      
   }, [brand]);
+  useEffect(() => {
+    fetchBrandScoreDetails();
+  }, [brand, selectedFilterProject]);
 
   const fetchHealthCardData = async () => {
     setLoading(true); // Start loading
@@ -172,12 +177,12 @@ export default function HealthCardOverview() {
   };
  
  
-  const fetchBrandScoreDetails = async (id) => {
+  const fetchBrandScoreDetails = async () => {
     setLoading(true);
     setError(null)
     const requestPayload = {
       "brand_name": brand,
-      "project_ids": [id],
+      "project_ids": [selectedFilterProject || projectId],
     }
     try {
       const brandScoreDetails = await getBrandData(requestPayload);
@@ -546,7 +551,7 @@ export default function HealthCardOverview() {
                 <div className="score-details">
                   <div className="brand-title">
                     {loading ? (
-                      <div className="loader-container-sm">
+                      <div className="loader-container-sm  h-auto">
                         <div className="loader-sm"></div>
                         <span className="loader-text">Loading...</span>
                       </div>

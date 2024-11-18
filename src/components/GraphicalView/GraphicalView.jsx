@@ -62,7 +62,24 @@ function ScoreCard({ getColor, projectId, normalizedData }) {
     }));
 
     setChartsData(chartData);
+    generateBrandColors(chartData);
   };
+  const [brandColors, setBrandColors] = useState({});
+
+  const generateBrandColors = (chartData) => {
+    const colors = {};
+    const colorPalette = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"];
+
+    chartData.forEach((metric) => {
+      metric.brands.forEach((brandData, index) => {
+        if (!colors[brandData.brand]) {
+          colors[brandData.brand] = colorPalette[index % colorPalette.length];
+        }
+      });
+    });
+    setBrandColors(colors);
+  };
+
 
   const handleGraphData = (type) => {
     setCurrentSection(type);
@@ -101,6 +118,14 @@ function ScoreCard({ getColor, projectId, normalizedData }) {
           Organic Performance
         </button>
       </div>
+      {/* <div className="common-legend">
+        {Object.entries(brandColors).map(([brand, color]) => (
+          <div key={brand} className="legend-item">
+            <span className="legend-color" style={{ backgroundColor: color }}></span>
+            <span className="legend-label">{brand}</span>
+          </div>
+        ))}
+      </div> */}
       {displayChartsData?.map((chartData, index) => {
 
         const seriesData = chartData.brands.map((brand) => ({

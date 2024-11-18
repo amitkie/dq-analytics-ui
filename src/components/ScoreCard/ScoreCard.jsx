@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import TrendChart from "../../common/TrendChart/TrendChart";
 import Form from "react-bootstrap/Form";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
+import { getAllCategories } from "../../services/userService";
 import "./ScoreCard.scss";
 
 // Insights 
@@ -9,7 +10,7 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
   const [brandDQ, setBrandDQ] = useState([]);
   const [selectedBrandDQ, setSelectedBrandDQ] = useState([]);
   const [categoryDQ, setCategoryDQ] = useState([]);
-  const [SelectedCategoryDQ, setSelectedCategoryDQ] = useState([]);
+  const [selectedCategoryDQ, setSelectedCategoryDQ] = useState([]);
   const [scoreRange, setScoreRange] = useState([0, 100]);
   const [filteredDQScoreValue, setFilteredDQScoreValue] = useState([]);
 
@@ -20,19 +21,37 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
   };
 
   useEffect(() => {
+     
     if (dqScoreValue) {
       const brandsData = dqScoreValue.map((brand, index) => ({
         value: index,
         label: brand.Brand_Name,
       }));
       setBrandDQ(brandsData);
+
+      const categoryData = dqScoreValue
+        .map((category, index) => ({
+          value: index,
+          label: category.Category_Name,
+        }))
+        .filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.label === item.label)
+        );
+
+      setCategoryDQ(categoryData);
     }
+     
   }, [dqScoreValue]);
 
   const handleBrandDQChange = (event) => {
     setSelectedBrandDQ(event.target.value);
   };
 
+  const handleCategoryDQ = async (selectedOptions) => {
+    setSelectedCategoryDQ(selectedOptions);
+  };
+    
   const selectedBrandData =
     selectedBrandDQ !== "" && dqScoreValue[selectedBrandDQ]
       ? dqScoreValue[selectedBrandDQ]
@@ -40,7 +59,7 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
 
   const getFilteredData = () => {
     const [ , maxScore] = scoreRange;
-  
+    const selectedCategoryLabels = selectedCategoryDQ.map((option) => option.label);
     const rdata = dqScoreValue.filter((data) => {
       return (
         data.Overall_Final_Score <= maxScore ||
@@ -50,14 +69,24 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
         data["Organic Performance"] <= maxScore
       );
     });
-        return rdata;
+
+    if(selectedCategoryDQ.length === 0 ){
+      return rdata;
+    }
+
+    const categorySelectionFilter = rdata.filter((data) => selectedCategoryLabels.includes(data.Category_Name));
+    console.log('categorySelectionFilter', categorySelectionFilter)
+      return categorySelectionFilter;
   };
+  
 
-  useEffect(() => {
-    const updatedData = getFilteredData();
-    setFilteredDQScoreValue(updatedData);
-  }, [scoreRange, dqScoreValue]);
-
+    useEffect(() => {
+      const updatedData = getFilteredData();
+      console.log('updatedData', updatedData);
+      setFilteredDQScoreValue(updatedData);
+    }, [scoreRange, dqScoreValue, selectedCategoryDQ]);
+    
+    console.log('FilteredDQScoreValue', filteredDQScoreValue)
 
   const chartTypes = [
     { type: "Marketplace", title: "Marketplace DQ Score", colorFill: "#0d47a0" },
@@ -139,9 +168,9 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
             <div className="brand-select-option w-160">
               <MultiSelectDropdown
                 options={categoryDQ}
-                selectedValues={SelectedCategoryDQ}
-                onChange={() => console.log("category")}
+                selectedValues={selectedCategoryDQ}
                 placeholder="Select Category"
+                onChange={handleCategoryDQ}
               />
             </div>
           </div>

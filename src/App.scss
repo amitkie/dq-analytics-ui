@@ -424,16 +424,16 @@ Table thead {
   left: 0;
   background-color: #fff;
   z-index: 1;
-  width: 100px;
+  width: 150px;
   
 }
 
 .sticky-col:nth-child(2) {
-  left: 100px; /* Adjust width as needed */
+  left: 150px; /* Adjust width as needed */
 }
 
 .sticky-col:nth-child(3) {
-  left: 200px; /* Adjust width as needed */
+  left: 300px; /* Adjust width as needed */
 }
 
 .btn-text {
@@ -470,4 +470,12 @@ Table thead {
   border-radius: 6px;
   // margin: 12px;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.close-button {
+  @include secondaryFont();
+  background-color: #333;
+  padding: 4px 6px;
+  color: $white;
+  font-size: 1rem;
 }

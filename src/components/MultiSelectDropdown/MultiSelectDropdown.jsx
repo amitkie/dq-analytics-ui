@@ -33,7 +33,10 @@ const MultiSelectDropdown = ({
       onChange(options);
     }
   };
-  const handleUnselect = ( ) => {
+  const handleUnselect = (option) => {
+    if (!option) return;
+    const newSelection = selectedValues.filter((item) => item.value !== option.value);
+    onChange(newSelection);
   };
   const handleSearch = (event) => setSearchTerm(event.target.value);
 
@@ -67,7 +70,7 @@ const MultiSelectDropdown = ({
           {selectedValues.length > 0
             ? selectedValues.map((item, index) => (
                 <span className="selected-items" key={index}>
-                  {item.label} <IoMdClose onClick={() => handleUnselect()}/>
+                  {item.label} <IoMdClose onClick={() => handleUnselect(item)}/>
                 </span>
               ))
             : placeholder}

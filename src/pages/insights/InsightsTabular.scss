@@ -31,6 +31,7 @@
   }
 
   .sticky-brand {
+    @include secondaryFontBold();
     position: sticky;
     left: 0;
     background-color: #ffffff; // or any other background color you prefer

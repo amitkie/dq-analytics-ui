@@ -13,7 +13,17 @@ import { GiMultipleTargets } from "react-icons/gi";
 import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import HealthCardScore from "./HealthCardScore.jsx";
-import {getTop5Data, getHealthCardDetails, getBrandData, getBrandImages, getBrandDetailsData, getProjectDetailsByUserId, getCompetitorsData, getCompetitorsReport} from "../../services/projectService";
+import {getTop5Data, 
+  getHealthCardDetails, 
+  getBrandData, 
+  getBrandImages, 
+  getBrandDetailsData, 
+  getProjectDetailsByUserId, 
+  getCompetitorsData, 
+  getCompetitorsReport, 
+  getSectionalReport, 
+  getPlatformwiseReport, 
+  getMetricwiseReport} from "../../services/projectService";
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import "./overview/HealthCardOverview.scss";
 import "./HealthCardReport.scss";
@@ -29,6 +39,9 @@ const HealthCardReport = () => {
   const [error, setError] = useState(null);
   const [competitorsData, setCompetitorsData] = useState([]);
   const [competitorsScoresData, setCompetitorsScoresData] = useState([]);
+  const [sectionalReportData, setSectionalReportData] = useState([]);
+  const [platformReportData, setPlatformReportData] = useState([]);
+  const [metricReportData, setMetricReportData] = useState([]);
 
   const handleCompetitorBrands = (comp) => {
     navigate(`/healthcardOverview/${comp.brand}/${projectId}`);
@@ -107,11 +120,58 @@ const HealthCardReport = () => {
       setLoading(false);
     }
   };
+  const fetchHealthReports = async () => {
+    setLoading(true);
+    setError(null);
+  
+    const requestPayload = {
+        "project_id": projectId,
+    };
+     
+    try {
+      const GetSectionalReports = await getSectionalReport(requestPayload)  ;
+      // const [
+      //   GetSectionalReports,
+      //   GetPlatformsReports,
+      //   GetMetricsHealthReports,
+      // ] = await Promise.all([
+      //   getSectionalReport(requestPayload),
+      //   getPlatformwiseReport(requestPayload),
+      //   getMetricwiseReport(requestPayload),
+      // ]);
+
+      if (GetSectionalReports) {
+        setSectionalReportData(GetSectionalReports);
+      } else {
+        setError("No Data Found");
+      }
+      // if (GetPlatformsReports) {
+      //   setPlatformReportData(GetPlatformsReports);
+      // } else {
+      //   setError("No Data Found");
+      // }
+      // if (GetMetricsHealthReports) {
+      //   setMetricReportData(GetMetricsHealthReports);
+      // } else {
+      //   setError("No Data Found");
+      // }
+    } catch (error) {
+      console.error("Error during API call:", error);
+      setError("Error fetching brand data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+   
+  console.log('setSectionalReportData', sectionalReportData)
+  console.log('setPlatformReportData', platformReportData)
+  console.log('setMetricReportData', metricReportData)
 
 useEffect(() => {
   fetchTopFiveListDetails();
   fetchCompetitorsDetails();
   fetchCompetitorsScoresDetails();
+  fetchHealthReports();
 },[brand])
 
 function getColorScore(value, thresholds) {
@@ -352,6 +412,9 @@ const tabsSummary = [
   },
   
 ];
+
+console.log('competitorsScoresData:', competitorsScoresData);
+console.log('Type:', typeof competitorsScoresData);
 
 
   return (
@@ -612,43 +675,35 @@ const tabsSummary = [
                             </tr>
                         </thead>
                         <tbody>
-                          {/* {competitorsScoresData?.map((dataItem, dataIndex) =>
-                            dataItem.statistics?.map((statItem, statIndex) => (
-                              <tr key={`stat-${dataIndex}-${statIndex}`}>
-                                <td>Avg Scores (Competition Brands)</td>
-                                <td>{statItem.dq?.average ?? 'N/A'}</td>
-                                <td>{statItem.ecom_dq?.average ?? 'N/A'}</td>
-                                <td>{statItem.social_dq?.average ?? 'N/A'}</td>
-                                <td>{statItem.paid_dq ?? 'N/A'}</td>
-                                <td>{statItem.brand_perf_dq ?? 'N/A'}</td>
-                              </tr>
-                            ))
-                          )} */}
-                            <tr>
-                                <td>Avg Scores (Competition Brands)</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>50th percentile category value</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                            <tr>
-                                <td>75th percentile category value</td>
-                                <td>76</td>
-                                <td>50</td>
-                                <td>72.5</td>
-                                <td>39.5</td>
-                                <td>75</td>
-                            </tr>
-                          
+                          {/* Average Scores Row */}
+                          <tr>
+                            <td>Avg Scores (Competition Brands)</td>
+                            <td>{competitorsScoresData?.statistics?.dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.ecom_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.social_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.paid_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.brand_perf_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                          </tr>
+
+                          {/* 50th Percentile Row */}
+                          <tr>
+                            <td>50th Percentile Category Value</td>
+                            <td>{competitorsScoresData?.statistics?.dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.ecom_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.social_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.paid_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.brand_perf_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          </tr>
+
+                          {/* 75th Percentile Row */}
+                          <tr>
+                            <td>75th Percentile Category Value</td>
+                            <td>{competitorsScoresData?.statistics?.dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.ecom_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.social_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.paid_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                            <td>{competitorsScoresData?.statistics?.brand_perf_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          </tr>
                         </tbody>
                     </Table>
                 </div>

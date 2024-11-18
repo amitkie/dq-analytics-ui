@@ -92,7 +92,7 @@ const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorS
 
       return (
         <tr key={metricIndex}>
-          <td className="sticky-col" style={{ width: '100px' }}>
+          <td className="sticky-col" style={{ width: '150px' }}>
             <span
               style={{
                 display: 'inline-block',
@@ -105,7 +105,7 @@ const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorS
             ></span>
             {metricData[Object.keys(metricData)[0]]?.sectionName}
           </td>
-          <td className="sticky-col" style={{ width: '100px' }}>
+          <td className="sticky-col" style={{ width: '150px' }}>
             {metricData[Object.keys(metricData)[0]]?.platformname}
           </td>
           <td className="sticky-col" style={{ width: '150px' }}>
@@ -153,8 +153,8 @@ const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorS
       <Table responsive striped bordered className="insights-table kpi-table" id="wrapper2">
         <thead>
           <tr>
-            <th className="sticky-col" style={{ width: '100px' }}>Section</th>
-            <th className="sticky-col" style={{ width: '100px' }}>Platform</th>
+            <th className="sticky-col" style={{ width: '150px' }}>Section</th>
+            <th className="sticky-col" style={{ width: '150px' }}>Platform</th>
             <th className="sticky-col" style={{ width: '150px' }}>Metrics</th>
             {brandsToDisplay.sort((a, b) => a.localeCompare(b)).map((brandItem, index) => (
               <th key={index} style={{ width: '100px' }}>

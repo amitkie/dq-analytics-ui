@@ -78,6 +78,11 @@ export default function Analytics() {
 
   const [filterCategories, setFilterCategories] = useState([]);
   const [selectedFilterCategories, setSelectedFilterCategories] = useState([]);
+  
+  const [filteredComparisonData, setFilteredComparisonData] = useState([]);
+
+  const [compareFilterCategories, setCompareFilterCategories] = useState([]);
+  const [compareSelectedFilterCategories, setCompareSelectedFilterCategories] = useState([]);
 
   const [filterPlatforms, setFilterPlatforms] = useState([]);
   const [selectedfilterPlatforms, setSelectedFilterPlatforms] = useState([]);
@@ -92,6 +97,10 @@ export default function Analytics() {
   const [metricsDesc, setMetricsDesc] = useState([]);
 
   const [brandCategoryMap, setBrandCategoryMap] = useState({})
+
+
+  const [brandFilterOptions, setBrandFilterOptions] = useState([]);
+  const [compareSelectedFilterBrands, setCompareSelectedFilterBrands] = useState([]);
 
   const columns = [
     {
@@ -381,8 +390,10 @@ export default function Analytics() {
     try {
       const response = await getProjectDetailsByProjectId(id);
       setProjectDetails(response?.project);
-      const { uniqueCategoriesArray, uniqueSectionsArray, uniquePlatformsArray, uniqueMetricsArray } = extractUniqueValues(response?.project?.metrics);
+      const { uniqueCategoriesArray, uniqueBrandsArray, uniqueSectionsArray, uniquePlatformsArray, uniqueMetricsArray } = extractUniqueValues(response?.project?.metrics);
       setFilterCategories(uniqueCategoriesArray);
+      setCompareFilterCategories(uniqueCategoriesArray);
+      setBrandFilterOptions(uniqueBrandsArray);
       setFilterSection(uniqueSectionsArray);
       setFilterPlatforms(uniquePlatformsArray);
       setFilterMetrics(uniqueMetricsArray)
@@ -631,6 +642,7 @@ export default function Analytics() {
 
   }
 
+
   useEffect(() => {
     fetchSections();
 
@@ -652,6 +664,14 @@ export default function Analytics() {
       label: metric?.platform?.name
     }));
 
+    const brandsArray = data?.flatMap(metric => 
+      metric.brands.map(brand => ({
+        value: brand?.id,
+        label: brand?.name
+      }))
+    ); 
+
+    console.log('brandsArray', brandsArray)
     const categoriesArray = data?.flatMap(metric =>
       metric.categories.map(category => ({
         value: category?.id,
@@ -666,12 +686,14 @@ export default function Analytics() {
 
     const uniqueSectionsArray = [...new Map(sectionsArray?.map(item => [item.label, item])).values()];
     const uniquePlatformsArray = [...new Map(platformsArray?.map(item => [item.label, item])).values()];
+    const uniqueBrandsArray = [...new Map(brandsArray?.map(item => [item.label, item])).values()];
     const uniqueCategoriesArray = [...new Map(categoriesArray?.map(item => [item.label, item])).values()];
     const uniqueMetricsArray = [...new Map(metricsArray?.map(item => [item.label, item])).values()];
 
     return {
       uniqueSectionsArray: uniqueSectionsArray,
       uniquePlatformsArray: uniquePlatformsArray,
+      uniqueBrandsArray: uniqueBrandsArray,
       uniqueCategoriesArray: uniqueCategoriesArray,
       uniqueMetricsArray: uniqueMetricsArray
     };
@@ -702,38 +724,80 @@ export default function Analytics() {
 
 
   const handleFilterCategory = async (selectedOptions) => {
-    // setSelectedFilterCategories(selectedOptions);
-    // if (selectedOptions.length > 0) {
-    //   try {
-    //     const categoryIds = selectedOptions.map((option) => option.value);
-    //   } catch (error) {
-    //     console.error("Error fetching categories:", error);
-    //   }
-    // }
-    try {
-      setSelectedFilterCategories(selectedOptions);
-
-      const existingValues = selectedOptions.map((option) => option.value);
-
-      const categoriesIDs = await getAllCategories(existingValues);
-
-      const filteredCategory = categoriesIDs?.data
-        .map(cat => ({
-          value: cat.id,
-          label: cat.name,
+    setSelectedFilterCategories(selectedOptions);
+    if (selectedOptions.length > 0) {
+      try {
+        const categoryIds = selectedOptions.map((option) => option.value);
+        const getCatIds = await getAllCategories(categoryIds);
+        const selectedCategorieIds = getCatIds?.data.map(category => ({
+          value: category.id,
+          label: category.name,
         }));
-
-      setFilterCategories(prevCategory => {
-        return [
-          ...filteredCategory
-        ];
-      });
-
-
-    } catch (error) {
-      console.error("Error fetching Categories:", error);
+        setFilterSection(prevPlatforms => {
+          return [
+            ...selectedCategorieIds
+          ];
+        })
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
     }
   };
+
+
+  useEffect(() => {
+    if (comparisonData.length > 0) {
+      setFilteredComparisonData(comparisonData);
+    }
+  }, [comparisonData]);
+
+  const handleCompareFilterBrand = (selectedOptions) => {
+    // setCompareSelectedFilterBrands(selectedOptions);
+    filterComparisonData(compareSelectedFilterCategories, selectedOptions);
+  };
+
+  const handleCompareFilterCategory = (selectedOptions) => {
+    setCompareSelectedFilterCategories(selectedOptions);
+    filterComparisonData(selectedOptions, compareSelectedFilterBrands);
+  };
+  
+  const filterComparisonData = (selectedCategories, selectedBrands) => {
+    const selectedCategoryIds = selectedCategories.map((option) => option.value);
+    const selectedBrandIds = selectedBrands.map((option) => option.value);
+  
+    // Filter the data based on selected categories and brands
+    const filteredData = comparisonData.filter((item) => {
+      const matchesCategory = selectedCategoryIds.length === 0 || selectedCategoryIds.includes(Number(item.categoryid));
+      const matchesBrand = selectedBrandIds.length === 0 || selectedBrandIds.includes(Number(item.brand_ids));
+      return matchesCategory && matchesBrand;
+    });
+  
+    console.log('Filtered Data:', filteredData);
+    setFilteredComparisonData(filteredData);
+  };
+  
+  
+
+  // const handleCompareFilterCategory = (selectedOptions) => {
+  //   setCompareSelectedFilterCategories(selectedOptions);
+  
+  //   if (selectedOptions.length > 0) {
+       
+  //     const selectedCategoryIds = selectedOptions.map((option) => option.value);
+   
+  //     const filteredData = comparisonData.filter((item) =>
+  //       selectedCategoryIds.includes(Number(item.categoryid))
+  //     );
+       
+  //     setFilteredComparisonData(filteredData);
+  //   } else {
+       
+  //     setFilteredComparisonData(comparisonData);
+  //   }
+  // };
+  
+
+
 
   const handleSelectedSection = async (selectedOptions) => {
     try {
@@ -753,8 +817,7 @@ export default function Analytics() {
         return [
           ...filteredPlatforms
         ];
-      });
-
+      })
 
     } catch (error) {
       console.error("Error fetching sections:", error);
@@ -1010,6 +1073,10 @@ export default function Analytics() {
   const handleAddMetric = (selectedOptions) => {
     setAddSelectedMetricList(selectedOptions);
   };
+
+console.log('filteredComparisonData', filteredComparisonData)
+console.log('brandFilterOptions', brandFilterOptions)
+
   const tabs = [
     {
       label: "Weights and Benchmark",
@@ -1041,6 +1108,7 @@ export default function Analytics() {
             handleWeightChange={handleWeightChange}
             removeMetricsFromDB={removeMetricsFromDB}
             isBenchmarkSaved={projectDetails?.is_benchmark_saved}
+            selectedCategory={selectedFilterCategories}
             selectedSections={selectedFilterSection}
             selectedPlatforms={selectedfilterPlatforms}
             selectedMetrics={selectedFilterMetrics}
@@ -1193,19 +1261,18 @@ export default function Analytics() {
       content: (
         <div>
           <div className="filter-options mb-2">
-            <select name="Brands" className="Select-input">
-              <option value="himalaya">Himalaya</option>
-              <option value="lux">Lux</option>
-              <option value="palmolive">Palmolive</option>
-              <option value="parachute">Parachute</option>
-            </select>
-            <select name="category" className="Select-input">
-              <option value="all">All</option>
-              <option value="beauty">Beauty</option>
-              <option value="haircare">Hair care</option>
-              <option value="foods">Foods</option>
-              <option value="male-grooming">Male Grooming</option>
-            </select>
+            <MultiSelectDropdown
+              options={brandFilterOptions} 
+              selectedValues={compareSelectedFilterBrands}
+              onChange={handleCompareFilterBrand}
+              placeholder="Select Brand"
+            />
+            <MultiSelectDropdown
+              options={compareFilterCategories}
+              selectedValues={compareSelectedFilterCategories}
+              onChange={handleCompareFilterCategory}
+              placeholder="Select Category"
+            />
           </div>
           <ul className="legend">
             <li> Marketplace</li>
@@ -1214,30 +1281,30 @@ export default function Analytics() {
             <li> Organic Performance</li>
           </ul>
     
-          {comparisonData?.length > 0 ? (
+          {/* {comparisonData?.length > 0 ? (
             <Table responsive striped bordered className="insights-table comparision-table">
               <thead>
                 <tr>
-                  <th className="sticky-col" style={{ width: '100px' }}>Section</th>
-                  <th className="sticky-col" style={{ width: '100px' }}>Platform</th>
-                  <th className="sticky-col" style={{ width: '100px' }}>Metric</th>
-                  {/* Dynamically generate brand columns */}
+                  <th className="sticky-col" style={{ width: '150px' }}>Section</th>
+                  <th className="sticky-col" style={{ width: '150px' }}>Platform</th>
+                  <th className="sticky-col" style={{ width: '150px' }}>Metric</th>
+                  
                   {Array.from(new Set(comparisonData.map(row => row?.brandName)))
                     .sort((a, b) => a.localeCompare(b))
                     .map(brand => (
                       <th key={brand} style={{ width: '100px' }}>
                         {brand}
-                        <span className="brand-category"> {/* Hardcoded or placeholder category name if needed */} </span>
+                        <span className="brand-category">  </span>
                       </th>
                     ))}
                 </tr>
               </thead>
               <tbody>
-                {/* Group data by section and metric */}
+               
                 {Array.from(new Set(comparisonData.map((row) => row.metricname))).map((metricName) => {
                   return comparisonData.filter(row => row.metricname === metricName).map((row, index) => (
                     <tr key={index}>
-                      <td className="sticky-col" style={{ width: '100px' }}>
+                      <td className="sticky-col" style={{ width: '150px' }}>
                         <span
                           style={{
                             display: 'inline-block',
@@ -1250,8 +1317,8 @@ export default function Analytics() {
                         ></span>
                         {row?.sectionName}
                       </td>
-                      <td className="sticky-col" style={{ width: '100px' }}>{row?.platformname}</td>
-                      <td className="sticky-col" style={{ width: '100px' }}>
+                      <td className="sticky-col" style={{ width: '150px' }}>{row?.platformname}</td>
+                      <td className="sticky-col" style={{ width: '150px' }}>
                         <div className="metric-name">
                           {row?.metricname}
                           <div className="metric-info">
@@ -1262,7 +1329,7 @@ export default function Analytics() {
                           </div>
                         </div>
                       </td>
-                      {/* Display normalized values for each brand */}
+                      
                       {Array.from(new Set(comparisonData.map((row) => row.brandName)))
                         .sort((a, b) => a.localeCompare(b))
                         .map(brand => {
@@ -1286,7 +1353,54 @@ export default function Analytics() {
               <div className="loader-sm"></div>
               <span className="loader-text">Loading...</span>
             </div>
+          )} */}
+
+          {filteredComparisonData?.length > 0 ? (
+            <Table responsive striped bordered className="insights-table comparision-table">
+              <thead>
+                <tr>
+                  <th className="sticky-col" style={{ width: '150px' }}>Section</th>
+                  <th className="sticky-col" style={{ width: '150px' }}>Platform</th>
+                  <th className="sticky-col" style={{ width: '150px' }}>Metric</th>
+                  {Array.from(new Set(filteredComparisonData.map(row => row?.brandName)))
+                    .sort((a, b) => a.localeCompare(b))
+                    .map(brand => (
+                      <th key={brand} style={{ width: '100px' }}>
+                        {brand}
+                      </th>
+                    ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from(new Set(filteredComparisonData.map((row) => row.metricname))).map((metricName) => {
+                  return filteredComparisonData.filter(row => row.metricname === metricName).map((row, index) => (
+                    <tr key={index}>
+                      <td className="sticky-col">{row?.sectionName}</td>
+                      <td className="sticky-col">{row?.platformname}</td>
+                      <td className="sticky-col">{row?.metricname}</td>
+                      {Array.from(new Set(filteredComparisonData.map((row) => row.brandName)))
+                        .sort((a, b) => a.localeCompare(b))
+                        .map(brand => {
+                          const brandData = filteredComparisonData.find((data) => data.brandName === brand && data.metricname === metricName);
+                          return (
+                            <td key={brand}>
+                              {brandData?.normalized || "-"}
+                            </td>
+                          );
+                        })}
+                    </tr>
+                  ));
+                })}
+              </tbody>
+            </Table>
+          ) : (
+            <div className="loader-container-sm">
+              <div className="loader-sm"></div>
+              <span className="loader-text">Loading...</span>
+            </div>
           )}
+
+
         </div>
       ),
     },
@@ -1303,7 +1417,6 @@ export default function Analytics() {
       ),
     },
   ];
-
 
   return (
     <>
