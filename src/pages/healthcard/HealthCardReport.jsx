@@ -22,9 +22,10 @@ import {getTop5Data,
   getCompetitorsData, 
   getCompetitorsReport, 
   getSectionalReport, 
-  getPlatformwiseReport, 
-  getMetricwiseReport} from "../../services/projectService";
+  getPlatformHealthReport, 
+  getMetricHealthReport} from "../../services/projectService";
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import * as XLSX from "xlsx";
 import "./overview/HealthCardOverview.scss";
 import "./HealthCardReport.scss";
 
@@ -83,7 +84,7 @@ const HealthCardReport = () => {
 
     try {
       const competitorsList = await getCompetitorsData(requestPayload);
-
+      console.log('competitorsList', competitorsList)
       if (competitorsList) {
         setCompetitorsData(competitorsList);
       } else {
@@ -96,6 +97,7 @@ const HealthCardReport = () => {
       setLoading(false);
     }
   };
+
   const fetchCompetitorsScoresDetails = async () => {
     setLoading(true);
     setError(null);
@@ -107,7 +109,7 @@ const HealthCardReport = () => {
      
     try {
       const competitorsScoresList = await getCompetitorsReport(requestPayload);
-
+      console.log('competitorsScoresList', competitorsScoresList);
       if (competitorsScoresList) {
         setCompetitorsScoresData(competitorsScoresList);
       } else {
@@ -120,41 +122,77 @@ const HealthCardReport = () => {
       setLoading(false);
     }
   };
+
   const fetchHealthReports = async () => {
     setLoading(true);
     setError(null);
   
     const requestPayload = {
-        "project_id": projectId,
+      "project_ids": [projectId],
+      "brandname": brand
     };
-     
+   
     try {
       const GetSectionalReports = await getSectionalReport(requestPayload)  ;
-      // const [
-      //   GetSectionalReports,
-      //   GetPlatformsReports,
-      //   GetMetricsHealthReports,
-      // ] = await Promise.all([
-      //   getSectionalReport(requestPayload),
-      //   getPlatformwiseReport(requestPayload),
-      //   getMetricwiseReport(requestPayload),
-      // ]);
-
+       
       if (GetSectionalReports) {
         setSectionalReportData(GetSectionalReports);
       } else {
         setError("No Data Found");
       }
-      // if (GetPlatformsReports) {
-      //   setPlatformReportData(GetPlatformsReports);
-      // } else {
-      //   setError("No Data Found");
-      // }
-      // if (GetMetricsHealthReports) {
-      //   setMetricReportData(GetMetricsHealthReports);
-      // } else {
-      //   setError("No Data Found");
-      // }
+  
+    } catch (error) {
+      console.error("Error during API call:", error);
+      setError("Error fetching brand data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPlatformHealthReports = async () => {
+    setLoading(true);
+    setError(null);
+  
+    const requestPayload = {
+      "project_ids": [projectId],
+      "brandname": brand
+    };
+     
+    try {
+      const GetPlatformReports = await getPlatformHealthReport(requestPayload)  ;
+       
+      if (GetPlatformReports) {
+        setPlatformReportData(GetPlatformReports);
+      } else {
+        setError("No Data Found");
+      }
+  
+    } catch (error) {
+      console.error("Error during API call:", error);
+      setError("Error fetching brand data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const fetchMetricHealthReports = async () => {
+    setLoading(true);
+    setError(null);
+  
+    const requestPayload = {
+      "project_ids": [projectId],
+      "brandname": brand
+    };
+     
+    try {
+      const GetMetricReports = await getMetricHealthReport(requestPayload)  ;
+       
+      if (GetMetricReports) {
+        setMetricReportData(GetMetricReports);
+      } else {
+        setError("No Data Found");
+      }
+  
     } catch (error) {
       console.error("Error during API call:", error);
       setError("Error fetching brand data.");
@@ -172,7 +210,9 @@ useEffect(() => {
   fetchCompetitorsDetails();
   fetchCompetitorsScoresDetails();
   fetchHealthReports();
-},[brand])
+  fetchPlatformHealthReports();
+  fetchMetricHealthReports();
+;},[brand, projectId])
 
 function getColorScore(value, thresholds) {
     if (typeof value === "string") {
@@ -191,6 +231,154 @@ const brandScores = () => {
     competitorsScoresData.map((item) => item.brand_name)
   }
 }
+
+
+// const handleExportData = () => {
+//   const workbook = XLSX.utils.book_new();  
+
+//   const addSheet = (sheetName, headers, rows) => {
+//     const data = [headers, ...rows];
+//     const worksheet = XLSX.utils.aoa_to_sheet(data);
+//     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+//   };
+
+//   const processTable = (label, data, headers) => {
+//     const rows = data.map(item => headers.map(header => item[header] || "N/A"));
+//     addSheet(label, headers, rows);
+//   };
+
+//   if (sectionalReportData?.data) {
+//     processTable(
+//       "Sectional Summary",
+//       sectionalReportData.data,
+//       ["sectionname", "weights_sum", "above", "below", "normalized_avg"]
+//     );
+//   }
+
+//   if (platformReportData?.data) {
+//     processTable(
+//       "Platform Summary",
+//       platformReportData.data,
+//       ["sectionname", "platformname", "weights_sum", "above", "below", "normalized_avg"]
+//     );
+//   }
+
+//   if (metricReportData?.data) {
+//     processTable(
+//       "Metric Summary",
+//       metricReportData.data,
+//       [
+//         "sectionname",
+//         "platformname",
+//         "metricname",
+//         "weights_sum",
+//         "above",
+//         "below",
+//         "normalized_avg",
+//         "benchmark"
+//       ]
+//     );
+//   }
+
+  
+//   if (getTop5List?.top_metrics) {
+//     processTable(
+//       "Best Metrics",
+//       getTop5List.top_metrics,
+//       ["platformname", "metricname", "weights", "normalized"]
+//     );
+//   }
+
+  
+//   if (getTop5List?.bottom_metrics) {
+//     processTable(
+//       "Worst Metrics",
+//       getTop5List.bottom_metrics,
+//       ["platformname", "metricname", "weights", "normalized"]
+//     );
+//   }
+
+ 
+//   XLSX.writeFile(workbook, `Brand_Health_Report_project-${projectId}.xlsx`);
+// };
+
+const handleExportData = () => {
+  const workbook = XLSX.utils.book_new(); // Create a new workbook
+
+  // Helper to add data to a worksheet
+  const addSheet = (sheetName, headers, rows) => {
+    const data = [headers, ...rows];
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+  };
+
+  // Process data for each tab or table
+  const processTable = (label, data, headers) => {
+    const rows = data.map(item => headers.map(header => item[header] || "N/A"));
+    addSheet(label, headers, rows);
+  };
+
+  // Example: Sectional Summary
+  if (sectionalReportData?.data) {
+    processTable(
+      "Sectional Summary",
+      sectionalReportData.data,
+      ["sectionname", "weights_sum", "above", "below", "normalized_avg"]
+    );
+  }
+
+  // Example: Platform Summary
+  if (platformReportData?.data) {
+    processTable(
+      "Platform Summary",
+      platformReportData.data,
+      ["sectionname", "platformname", "weights_sum", "above", "below", "normalized_avg"]
+    );
+  }
+
+  // Example: Metric Summary
+  if (metricReportData?.data) {
+    processTable(
+      "Metric Summary",
+      metricReportData.data,
+      [
+        "sectionname",
+        "platformname",
+        "metricname",
+        "weights_sum",
+        "above",
+        "below",
+        "normalized_avg",
+        "benchmark"
+      ]
+    );
+  }
+
+  // Combined Best and Worst Performing Metrics in a single sheet
+  if (getTop5List?.top_metrics || getTop5List?.bottom_metrics) {
+    const headers = ["platformname", "metricname", "weights", "normalized"];
+
+    // Combine top and bottom metrics into one array
+    const bestMetrics = getTop5List.top_metrics ? getTop5List.top_metrics : [];
+    const worstMetrics = getTop5List.bottom_metrics ? getTop5List.bottom_metrics : [];
+
+    const combinedMetrics = [
+      { label: "Best Performing Metrics", data: bestMetrics },
+      { label: "Worst Performing Metrics", data: worstMetrics }
+    ];
+
+    // Add Best and Worst Metrics as sections in a single sheet
+    combinedMetrics.forEach(({ label, data }) => {
+      if (data.length > 0) {
+        processTable(label, data, headers);
+      }
+    });
+  }
+
+  // Export to Excel
+  XLSX.writeFile(workbook, `Brand_Health_Report_project-id-${projectId}.xlsx`);
+};
+
 
 const brands = [
   { name: 'Puresense', value: 85 },
@@ -246,7 +434,8 @@ const tabsBest = [
 const tabsWorst = [
   ...bottomMetricsTabs
 ];
-
+console.log("metricReportData:", metricReportData);
+console.log("metricReportData.data:", metricReportData?.data);
 const tabsSummary = [
   {
     label: "Sectional Summary",
@@ -263,38 +452,22 @@ const tabsSummary = [
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>Ecom</td>
-                <td>50</td>
-                <td>Livon</td>
-                <td>Lakme</td>
-                <td>75</td>
+        {Array.isArray(sectionalReportData?.data) && sectionalReportData.data.length > 0 ? (
+          sectionalReportData.data.map((item, index) => (
+            <tr key={item.id || index}>
+              <td>{index + 1}</td>  
+              <td>{item.sectionname}</td>
+              <td>{item.weights_sum}</td>
+              <td>{item.above}</td>
+              <td>{item.below}</td>
+              <td>{Number(item.normalized_avg).toFixed(2)}</td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>Social</td>
-                <td>50</td>
-                <td> </td>
-                <td>Lakme</td>
-                <td>75</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Paid</td>
-                <td>50</td>
-                <td>Wow</td>
-                <td>Lakme</td>
-                <td>75</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Brand Perf</td>
-                <td>50</td>
-                <td>Wow</td>
-                <td>Lakme</td>
-                <td>75</td>
-            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="9">No data available</td>
+          </tr>
+        )}
         </tbody>
     </Table> 
     ),
@@ -315,42 +488,24 @@ const tabsSummary = [
             </tr>
         </thead>
         <tbody>
+          {Array.isArray(platformReportData?.data) && platformReportData.data.length > 0 ? (
+            platformReportData.data.map((item, index) => (
+              <tr key={item.id || index}>
+                <td>{index + 1}</td>  
+                <td>{item.sectionname}</td>
+                <td>{item.platformname}</td>
+                <td>{item.weights_sum}</td>
+                <td>{item.above}</td>
+                <td>{item.below}</td>
+                <td>{Number(item.normalized_avg).toFixed(2)}</td>
+                 
+              </tr>
+            ))
+          ) : (
             <tr>
-                <td>1</td>
-                <td>Ecom</td>
-                <td>Amazon</td>
-                <td>50</td>
-                <td>Livon</td>
-                <td>Lakme</td>
-                <td>75</td>
+              <td colSpan="9">No data available</td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>Social</td>
-                <td>Facebook</td>
-                <td>50</td>
-                <td> </td>
-                <td>Lakme</td>
-                <td>75</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Paid</td>
-                <td>DV360</td>
-                <td>50</td>
-                <td>Wow</td>
-                <td>Lakme</td>
-                <td>75</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Brand Perf</td>
-                <td>Page Speed insights</td>
-                <td>50</td>
-                <td>Wow</td>
-                <td>Lakme</td>
-                <td>75</td>
-            </tr>
+          )}
         </tbody>
     </Table>
     ),
@@ -373,39 +528,26 @@ const tabsSummary = [
             </tr>
         </thead>
         <tbody>
-            <tr>
-              <td>1</td>
-              <td>Ecom</td>
-              <td>Amazon</td>
-              <td>Engagement</td>
-              <td>50</td>
-              <td>72.5</td>
-              <td>39.5</td>
-              <td>75</td>
-              <td>75</td>
+        {Array.isArray(metricReportData?.data) && metricReportData.data.length > 0 ? (
+          metricReportData.data.map((item, index) => (
+            <tr key={item.id || index}>
+              <td>{index + 1}</td>  
+              <td>{item.sectionname}</td>
+              <td>{item.platformname}</td>
+              <td>{item.metricname}</td>
+              <td>{item.weights_sum}</td>
+              <td>{item.above}</td>
+              <td>{item.below}</td>
+              <td>{Number(item.normalized_avg).toFixed(2)}</td>
+              <td>{item.benchmark ?? "NA"}</td> 
             </tr>
-            <tr>
-              <td>2</td>
-              <td>Ecom</td>
-              <td>Amazon</td>
-              <td>Impressions</td>
-              <td>39.5</td>
-              <td>75</td>
-              <td>72.5</td>
-              <td>39.5</td>
-              <td>75</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Ecom</td>
-              <td>Amazon</td>
-              <td>Clicks</td>
-              <td>39.5</td>
-              <td>75</td>
-              <td>72.5</td>
-              <td>39.5</td>
-              <td>75</td>
-            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="9">No data available</td>
+          </tr>
+        )}
+
         </tbody>
     </Table>
     ),
@@ -633,7 +775,7 @@ console.log('Type:', typeof competitorsScoresData);
                 </div>
                 </div>
                 <ButtonComponent
-                    // disabled
+                    onClick={handleExportData}
                     btnClass={"btn-primary"}
                     btnName={"Export as Excel"}
                 />

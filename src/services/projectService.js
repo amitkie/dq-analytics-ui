@@ -574,7 +574,7 @@ export const getCompetitorsReport = async (data) => {
 export const getSectionalReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8012inc1.devtunnels.ms/sectional_report`,
+      `https://hzz4tlcw-8012.inc1.devtunnels.ms/sectional_report`,
       data
     );
 
@@ -582,9 +582,9 @@ export const getSectionalReport = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    const getSectionalReport = response.data;
+    const getSectionalReportData = response.data;
 
-    return getSectionalReport;
+    return getSectionalReportData;
   } catch (error) {
     console.error("Error in fetching Top 5 data:", error);
     throw error;
@@ -601,9 +601,9 @@ export const getPlatformHealthReport = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    const getPlatformHealthReport = response.data;
+    const getPlatformHealthReportData = response.data;
 
-    return getPlatformHealthReport;
+    return getPlatformHealthReportData;
   } catch (error) {
     console.error("Error in fetching Top 5 data:", error);
     throw error;
@@ -620,9 +620,9 @@ export const getMetricHealthReport = async (data) => {
       throw new Error("Network response was not ok");
     }
 
-    const getMetricHealthReport = response.data;
+    const getMetricHealthReportData = response.data;
 
-    return getMetricHealthReport;
+    return getMetricHealthReportData;
   } catch (error) {
     console.error("Error in fetching Top 5 data:", error);
     throw error;
