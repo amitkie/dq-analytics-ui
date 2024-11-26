@@ -343,7 +343,6 @@ const handleEditProjectName = (id) => {
 
       const projectCreated = await createProject(projectData);
       if (projectCreated) {
-
         setTimeout(() => {
           navigate(`/analytics/${projectCreated?.data?.id}`);
         }, 1000);

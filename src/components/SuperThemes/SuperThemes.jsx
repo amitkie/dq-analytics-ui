@@ -386,7 +386,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
               <div className="create-theme">
                 <fieldset>
                   <legend>Create Super Theme Group</legend>
-                  <div class="theme-content">
+                  <div className="theme-content">
                     <label htmlFor="exampleFormControlInput1" class="form-label">
                       Select Metrics from list
                     </label>
@@ -397,7 +397,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
                       placeholder="Select Metrics"
                     />
                   </div>
-                  <div class="theme-content">
+                  <div className="theme-content">
                     <label htmlFor="exampleFormControlInput1" class="form-label">
                       Select Metrics Group from list
                     </label>
@@ -408,7 +408,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
                       placeholder="Select Metrics Group"
                     />
                   </div>
-                  <div class="theme-content">
+                  <div className="theme-content">
                     <label htmlFor="exampleFormControlInput1" class="form-label">
                       Super Themes Group name
                     </label>
@@ -421,7 +421,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
                       placeholder="CTR, ACOS, Purchases etc"
                     />
                   </div>
-                  <div class="theme-content">
+                  <div className="theme-content">
                     <ButtonComponent
                       btnClass={"btn-primary"}
                       disabled={uniqueSelectedMetricsThemeBasedOnProjectId?.length < 1 || !metricThemeGroupName}
@@ -455,7 +455,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
               <div className="create-theme">
                 <fieldset>
                   <legend>Create Metric Group</legend>
-                  <div class="theme-content">
+                  <div className="theme-content">
                     <label htmlFor="exampleFormControlInput1" class="form-label">
                       Select Metrics from list
                     </label>
@@ -499,7 +499,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
                       placeholder="Select Metrics"
                     />
                   </div>
-                  <div class="theme-content">
+                  <div className="theme-content">
                     <label htmlFor="exampleFormControlInput1" class="form-label">
                       Metric Group name
                     </label>
@@ -512,7 +512,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
                       placeholder="CTR, ACOS, Purchases etc"
                     />
                   </div>
-                  <div class="theme-content">
+                  <div className="theme-content">
                     <ButtonComponent
                       btnClass={"btn-primary"}
                       disabled={uniqueSelectedMetricsBasedOnProjectId?.length < 1 || !metricGroupName}

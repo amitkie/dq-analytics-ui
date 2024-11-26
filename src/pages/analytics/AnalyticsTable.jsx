@@ -17,6 +17,7 @@ const AnalyticsTable = ({
   totalWeights,
   removeMetricsFromDB,
   isLoading,
+  selectedCategory= [],
   selectedSections = [],
   selectedPlatforms = [],
   selectedMetrics = [],
@@ -47,6 +48,7 @@ const AnalyticsTable = ({
   
   // Filter metrics based on selected sections, platforms, and metrics
   const filteredMetrics = metrics.filter((metric) => {
+    // const categoryMatch = selectedCategory.length === 0 || selectedCategory.some(catergory => catergory.value === metric.categories.id);
     const sectionMatch = selectedSections.length === 0 || selectedSections.some(section => section.value === metric.section.id);
     const platformMatch = selectedPlatforms.length === 0 || selectedPlatforms.some(platform => platform.value === metric.platform.id);
     const metricMatch = selectedMetrics.length === 0 || selectedMetrics.some(mc => mc.value === metric.metric_id);

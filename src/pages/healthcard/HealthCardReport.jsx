@@ -446,8 +446,9 @@ const tabsSummary = [
                 <th>S.No</th>
                 <th>Section Name</th>
                 <th>total Weight</th>
+                <th>Brand</th>
                 <th>Brands above you</th>
-                <th>Brands above you</th>
+                <th>Brands below you</th>
                 <th>average normalised Score</th>
             </tr>
         </thead>
@@ -458,6 +459,7 @@ const tabsSummary = [
               <td>{index + 1}</td>  
               <td>{item.sectionname}</td>
               <td>{item.weights_sum}</td>
+              <td>{item.brand}</td>
               <td>{item.above}</td>
               <td>{item.below}</td>
               <td>{Number(item.normalized_avg).toFixed(2)}</td>
@@ -482,8 +484,9 @@ const tabsSummary = [
                 <th>Section Name</th>
                 <th>Platform Name</th>
                 <th>total Weight</th>
+                <th>Brand</th>
                 <th>Brands above you</th>
-                <th>Brands above you</th>
+                <th>Brands below you</th>
                 <th>average normalised Score</th>
             </tr>
         </thead>
@@ -495,6 +498,7 @@ const tabsSummary = [
                 <td>{item.sectionname}</td>
                 <td>{item.platformname}</td>
                 <td>{item.weights_sum}</td>
+                <td>{item.brand}</td>
                 <td>{item.above}</td>
                 <td>{item.below}</td>
                 <td>{Number(item.normalized_avg).toFixed(2)}</td>
@@ -521,8 +525,9 @@ const tabsSummary = [
                 <th>Platform Name</th>
                 <th>Metric Name</th>
                 <th>total Weight</th>
+                <th>Brand</th>
                 <th>Brands above you</th>
-                <th>Brands above you</th>
+                <th>Brands below you</th>
                 <th>average normalised Score</th>
                 <th>Benchmark Value</th>
             </tr>
@@ -536,10 +541,11 @@ const tabsSummary = [
               <td>{item.platformname}</td>
               <td>{item.metricname}</td>
               <td>{item.weights_sum}</td>
+              <td>{item.brand}</td>
               <td>{item.above}</td>
               <td>{item.below}</td>
               <td>{Number(item.normalized_avg).toFixed(2)}</td>
-              <td>{item.benchmark ?? "NA"}</td> 
+              <td>{item.benchmarkvalue_x ?? "NA"}</td> 
             </tr>
           ))
         ) : (

@@ -95,7 +95,9 @@ function ScoreCard({ getColor, projectId, normalizedData }) {
     brands: [{ brand: "", actualValue: 0 }],
   }));
 
-  const displayChartsData = [...filteredChartsData, ...emptyCharts];
+  const displayChartsData = [...filteredChartsData, ...emptyCharts].filter(
+    (data) => data.brands.some((brand) => brand.actualValue && brand.actualValue > 0)
+  );
 
 
   return (
@@ -126,7 +128,12 @@ function ScoreCard({ getColor, projectId, normalizedData }) {
           </div>
         ))}
       </div> */}
-      {displayChartsData?.map((chartData, index) => {
+
+
+
+
+     
+      {displayChartsData && displayChartsData.length > 0 ? (displayChartsData?.map((chartData, index) => {
 
         const seriesData = chartData.brands.map((brand) => ({
           name: brand.brand,
@@ -155,8 +162,12 @@ function ScoreCard({ getColor, projectId, normalizedData }) {
             </div>
           </div>
         );
-      })}
+      })) : (<div className="no-data">
+        <p>No data</p>
+      </div>)}
 
+
+ 
 
 
 

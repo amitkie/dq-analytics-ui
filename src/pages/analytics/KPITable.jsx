@@ -7,7 +7,9 @@ import { useParams } from "react-router-dom";
 import "./KPITable.scss";
 import { getAllMetricsDefinition } from "../../services/userService";
 
-const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorScore, kpiData = [] }) => {
+const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorScore, kpiData = [], selectedSections = [],
+  selectedPlatforms = [],
+  selectedMetrics = [], }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const { brand } = useParams();
@@ -24,6 +26,7 @@ const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorS
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+ 
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -108,7 +111,7 @@ const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorS
           <td className="sticky-col" style={{ width: '150px' }}>
             {metricData[Object.keys(metricData)[0]]?.platformname}
           </td>
-          <td className="sticky-col" style={{ width: '150px' }}>
+          <td className="sticky-col" style={{ width: '200px' }}>
             <div className="metric-name">
               {metricName}
               <div className="metric-info">
@@ -118,8 +121,8 @@ const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorS
                     fetchMetricsDefinition(metricName, metricData[Object.keys(metricData)[0]]?.platformname)
                   }
                 />
-                {showSelectedMetricDesc === metricName && <span className="metric-desc">{showMetricsDesc}</span>}
               </div>
+                {showSelectedMetricDesc === metricName && <span className="metric-desc">{showMetricsDesc}</span>}
             </div>
           </td>
 
@@ -155,7 +158,7 @@ const KPITable = ({ normalizedData, getColor, metrics, projectDetails, getColorS
           <tr>
             <th className="sticky-col" style={{ width: '150px' }}>Section</th>
             <th className="sticky-col" style={{ width: '150px' }}>Platform</th>
-            <th className="sticky-col" style={{ width: '150px' }}>Metrics</th>
+            <th className="sticky-col" style={{ width: '200px' }}>Metrics</th>
             {brandsToDisplay.sort((a, b) => a.localeCompare(b)).map((brandItem, index) => (
               <th key={index} style={{ width: '100px' }}>
                 <span>{brandItem}</span>

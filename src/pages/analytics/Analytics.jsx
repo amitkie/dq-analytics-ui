@@ -85,7 +85,7 @@ export default function Analytics() {
   const [compareSelectedFilterCategories, setCompareSelectedFilterCategories] = useState([]);
 
   const [filterPlatforms, setFilterPlatforms] = useState([]);
-  const [selectedfilterPlatforms, setSelectedFilterPlatforms] = useState([]);
+  const [selectedFilterPlatforms, setSelectedFilterPlatforms] = useState([]);
 
   const [filterSection, setFilterSection] = useState([]);
   const [selectedFilterSection, setSelectedFilterSection] = useState([]);
@@ -97,7 +97,6 @@ export default function Analytics() {
   const [metricsDesc, setMetricsDesc] = useState([]);
 
   const [brandCategoryMap, setBrandCategoryMap] = useState({})
-
 
   const [brandFilterOptions, setBrandFilterOptions] = useState([]);
   const [compareSelectedFilterBrands, setCompareSelectedFilterBrands] = useState([]);
@@ -148,6 +147,7 @@ export default function Analytics() {
   }
 
   const recentProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
+   
 
   const columnsMetrics = Object.keys(AMData[0] || []).map((key) => ({
     Header: key,
@@ -671,7 +671,6 @@ export default function Analytics() {
       }))
     ); 
 
-    console.log('brandsArray', brandsArray)
     const categoriesArray = data?.flatMap(metric =>
       metric.categories.map(category => ({
         value: category?.id,
@@ -723,26 +722,10 @@ export default function Analytics() {
   };
 
 
-  const handleFilterCategory = async (selectedOptions) => {
-    setSelectedFilterCategories(selectedOptions);
-    if (selectedOptions.length > 0) {
-      try {
-        const categoryIds = selectedOptions.map((option) => option.value);
-        const getCatIds = await getAllCategories(categoryIds);
-        const selectedCategorieIds = getCatIds?.data.map(category => ({
-          value: category.id,
-          label: category.name,
-        }));
-        setFilterSection(prevPlatforms => {
-          return [
-            ...selectedCategorieIds
-          ];
-        })
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    }
-  };
+ 
+  
+
+  
 
 
   useEffect(() => {
@@ -752,7 +735,7 @@ export default function Analytics() {
   }, [comparisonData]);
 
   const handleCompareFilterBrand = (selectedOptions) => {
-    // setCompareSelectedFilterBrands(selectedOptions);
+    setCompareSelectedFilterBrands(selectedOptions);
     filterComparisonData(compareSelectedFilterCategories, selectedOptions);
   };
 
@@ -772,9 +755,33 @@ export default function Analytics() {
       return matchesCategory && matchesBrand;
     });
   
-    console.log('Filtered Data:', filteredData);
-    setFilteredComparisonData(filteredData);
+    // Remove duplicates by unique combination of relevant fields
+    const uniqueData = Array.from(
+      new Map(
+        filteredData.map((item) => [
+          `${item.categoryid}-${item.brand_ids}-${item.metricname}`, // Unique key
+          item,
+        ])
+      ).values()
+    );
+  
+    setFilteredComparisonData(uniqueData);
   };
+  
+  // const filterComparisonData = (selectedCategories, selectedBrands) => {
+  //   const selectedCategoryIds = selectedCategories.map((option) => option.value);
+  //   const selectedBrandIds = selectedBrands.map((option) => option.value);
+  
+    
+  //   const filteredData = comparisonData.filter((item) => {
+  //     const matchesCategory = selectedCategoryIds.length === 0 || selectedCategoryIds.includes(Number(item.categoryid));
+  //     const matchesBrand = selectedBrandIds.length === 0 || selectedBrandIds.includes(Number(item.brand_ids));
+  //     return matchesCategory && matchesBrand;
+  //   });
+  
+     
+  //   setFilteredComparisonData(filteredData);
+  // };
   
   
 
@@ -797,6 +804,63 @@ export default function Analytics() {
   // };
   
 
+  // const handleFilterCategory = async (selectedOptions) => {
+  //   setSelectedFilterCategories(selectedOptions);
+    
+  //   if (selectedOptions.length > 0) {
+  //     try {
+  //       const categoryIds = selectedOptions.map((option) => option.value);
+        
+  //       const getCatIds = await getAllCategories(categoryIds);
+  //       const selectedCategorieIds = getCatIds?.data.map((category) => ({
+  //         value: category.id,
+  //         label: category.name,
+  //       }));
+  //       console.log("Fetched Categories:", getCatIds?.data);
+
+  //       setFilterCategories(() => [...selectedCategorieIds]);
+
+  //       setComparisonData((prevComparisonData) => {
+  //         if (prevComparisonData && prevComparisonData.length > 0) {
+  //           return prevComparisonData.filter((item) =>
+  //             categoryIds.includes(item.categoryid)
+  //           );
+  //         }
+  //          console.log("Previous Comparison Data:", prevComparisonData);
+  //         return [];
+  //       });
+  //     } catch (error) {
+  //       console.error("Error fetching categories:", error);
+  //     }
+  //   } else {
+
+  //     setFilterCategories([]);
+  //     fetchProjectDetails(); 
+  //   }
+  // };
+
+  const handleFilterCategory = async (selectedOptions) => {
+    setSelectedFilterCategories(selectedOptions);
+    if (selectedOptions.length > 0) {
+      try {
+        const categoryIds = selectedOptions.map((option) => option.value);
+        const getCatIds = await getAllCategories(categoryIds);
+        const selectedCategorieIds = getCatIds?.data.map(category => ({
+          value: category.id,
+          label: category.name,
+        }));
+        setFilterCategories(prevCategories => {
+          return [
+            ...selectedCategorieIds
+          ];
+        })
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    }
+  };
+  
+  
 
 
   const handleSelectedSection = async (selectedOptions) => {
@@ -1074,8 +1138,20 @@ export default function Analytics() {
     setAddSelectedMetricList(selectedOptions);
   };
 
-console.log('filteredComparisonData', filteredComparisonData)
-console.log('brandFilterOptions', brandFilterOptions)
+
+  // Group data by metricname
+  const groupedData = filteredComparisonData.reduce((acc, row) => {
+    if (!acc[row.metricname]) {
+      acc[row.metricname] = [];
+    }
+    acc[row.metricname].push(row);
+    return acc;
+  }, {});
+
+  // Get unique brands
+  const uniqueBrands = Array.from(new Set(filteredComparisonData.map((row) => row.brandName))).sort((a, b) => a.localeCompare(b));
+
+  console.log('filteredComparisonData', filteredComparisonData);
 
   const tabs = [
     {
@@ -1110,7 +1186,7 @@ console.log('brandFilterOptions', brandFilterOptions)
             isBenchmarkSaved={projectDetails?.is_benchmark_saved}
             selectedCategory={selectedFilterCategories}
             selectedSections={selectedFilterSection}
-            selectedPlatforms={selectedfilterPlatforms}
+            selectedPlatforms={selectedFilterPlatforms}
             selectedMetrics={selectedFilterMetrics}
             isLoading={true}
           />
@@ -1136,7 +1212,13 @@ console.log('brandFilterOptions', brandFilterOptions)
       disabled: "disabled",
       content: (
         <div>
-          <ScoreCard dqScoreValue={dqScoreValue} dqScoreLoading={dqScoreLoading} />
+          <ScoreCard 
+            dqScoreValue={dqScoreValue} 
+            dqScoreLoading={dqScoreLoading}  
+            selectedCategory={selectedFilterCategories}
+            selectedSections={selectedFilterSection}
+            selectedPlatforms={selectedFilterPlatforms}
+            selectedMetrics={selectedFilterMetrics} />
         </div>
       ),
     },
@@ -1164,97 +1246,6 @@ console.log('brandFilterOptions', brandFilterOptions)
         </>
       ),
     },
-    // {
-    //   label: "Comparison View",
-    //   content: (
-    //     <div>
-    //       <div className="filter-options mb-2">
-    //         <select name="Brands" className="Select-input">
-    //           <option value="himalaya">Himalaya</option>
-    //           <option value="lux">Lux</option>
-    //           <option value="palmolive">Palmolive</option>
-    //           <option value="parachute">Parachute</option>
-    //         </select>
-    //         <select name="category" className="Select-input">
-    //           <option value="all">All</option>
-    //           <option value="beauty">Beauty</option>
-    //           <option value="haircare">Hair care</option>
-    //           <option value="foods">Foods</option>
-    //           <option value="male-grooming">Male Grooming</option>
-    //         </select>
-    //       </div>
-    //       <ul class="legend">
-    //         <li> Marketplace</li>
-    //         <li> Digital Spends</li>
-    //         <li> Socialwatch</li>
-    //         <li> Organic Performance</li>
-    //       </ul>
-
-    //       {normalizedValue?.length > 0 ? (
-    //         <Table responsive striped bordered className="insights-table comparision-table">
-    //           <thead>
-    //             <tr>
-    //               <th className="sticky-col" style={{ width: '100px' }}>Section</th>
-    //               <th className="sticky-col" style={{ width: '100px' }}>Platform</th>
-    //               <th className="sticky-col" style={{ width: '100px' }}>Metric</th>
-    //               {uniqueComparisonBrandName?.sort((a, b) => a.localeCompare(b)).map(brand => (
-    //                 <th key={brand} style={{ width: '100px' }}>{brand}
-    //                   <span className="brand-category">{brandCategoryMap[brand]} </span>
-    //                 </th>
-    //               ))}
-    //             </tr>
-    //           </thead>
-    //           <tbody>
-    //             {normalizedValue?.map((row, index) => (
-    //               <tr key={index}>
-    //                 <td className="sticky-col" style={{ width: '100px' }}><span
-    //                   style={{
-    //                     display: 'inline-block',
-    //                     width: '10px',
-    //                     height: '10px',
-    //                     borderRadius: '50%',
-    //                     backgroundColor: getColor(row?.sectionName),
-    //                     marginRight: '5px',
-    //                   }}
-
-    //                 ></span>{row?.sectionName}</td>
-    //                 <td className="sticky-col" style={{ width: '100px' }}>{row?.platformName} </td>
-    //                 <td className="sticky-col" style={{ width: '100px' }}>
-    //                   <div className="metric-name">{row?.metricName}
-    //                     <div className="metric-info">
-    //                       <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricName, row?.platformName)} />
-
-    //                       {selectedMetricDesc === row?.metricName && (
-    //                         <span className="metric-desc">{metricsDesc}</span>
-    //                       )}
-    //                     </div>
-    //                   </div>
-    //                 </td>
-    //                 {/* {row} */}
-    //                 {uniqueComparisonBrandName?.map(brand => (
-    //                   <td key={brand} style={{ width: '100px' }}
-    //                     title={`Benchmark Value: ${row[brand]?.benchmarkValue || 'N/A'}\nPercentile: ${row[brand]?.percentile || 'N/A'}`}
-    //                   >
-    //                     {row[brand]?.normalized || "-"}
-    //                   </td>
-    //                 ))}
-    //               </tr>
-    //             ))}
-    //           </tbody>
-    //         </Table>
-    //       ) : (
-    //         <div className="loader-container-sm">
-    //           <div className="loader-sm"></div>
-    //           <span className="loader-text">Loading...</span>
-    //         </div>
-    //       )}
-
-
-
-
-    //     </div>
-    //   ),
-    // },
 
     {
       label: "Comparison View",
@@ -1262,17 +1253,18 @@ console.log('brandFilterOptions', brandFilterOptions)
         <div>
           <div className="filter-options mb-2">
             <MultiSelectDropdown
-              options={brandFilterOptions} 
-              selectedValues={compareSelectedFilterBrands}
-              onChange={handleCompareFilterBrand}
-              placeholder="Select Brand"
-            />
-            <MultiSelectDropdown
               options={compareFilterCategories}
               selectedValues={compareSelectedFilterCategories}
               onChange={handleCompareFilterCategory}
               placeholder="Select Category"
             />
+            <MultiSelectDropdown
+              options={brandFilterOptions} 
+              selectedValues={compareSelectedFilterBrands}
+              onChange={handleCompareFilterBrand}
+              placeholder="Select Brand"
+            />
+            
           </div>
           <ul className="legend">
             <li> Marketplace</li>
@@ -1361,36 +1353,93 @@ console.log('brandFilterOptions', brandFilterOptions)
                 <tr>
                   <th className="sticky-col" style={{ width: '150px' }}>Section</th>
                   <th className="sticky-col" style={{ width: '150px' }}>Platform</th>
-                  <th className="sticky-col" style={{ width: '150px' }}>Metric</th>
-                  {Array.from(new Set(filteredComparisonData.map(row => row?.brandName)))
-                    .sort((a, b) => a.localeCompare(b))
-                    .map(brand => (
-                      <th key={brand} style={{ width: '100px' }}>
-                        {brand}
-                      </th>
-                    ))}
+                  <th className="sticky-col" style={{ width: '200px' }}>Metric</th>
+                    
+                    {Array.from(new Set(filteredComparisonData.map(row => row?.brandName)))
+                      .sort((a, b) => a.localeCompare(b))
+                      .map(brand => {
+                        const row = filteredComparisonData.find(data => data.brandName === brand);
+                        return (
+                          <th key={brand} style={{ width: '100px' }}>
+                            {brand}
+                            {row?.categoryName && (
+                              <span className="brand-category"> ({row.categoryName})</span>
+                            )}
+                          </th>
+                        );
+                      })}
                 </tr>
               </thead>
               <tbody>
-                {Array.from(new Set(filteredComparisonData.map((row) => row.metricname))).map((metricName) => {
+               
+                {Object.entries(groupedData).map(([metricName, rows]) => {
+                const firstRow = rows[0]; // Representative row for static data
+                return (
+                  <tr key={metricName}>
+                    <td className="sticky-col">{firstRow?.sectionName}</td>
+                    <td className="sticky-col">{firstRow?.platformname}</td>
+                    <td className="sticky-col" style={{ width: '200px' }}>
+                      <div className="metric-name">
+                        {metricName}
+                        <div className="metric-info">
+                          <FaInfo
+                            className="info-icon"
+                            onClick={() => fetchMetricsDefinition(metricName, firstRow?.platformname)}
+                          />
+                        </div>
+                          {selectedMetricDesc === metricName && (
+                            <span className="metric-desc">{metricsDesc}</span>
+                          )}
+                      </div>
+                    </td>
+                    {uniqueBrands.map((brand) => {
+                      const brandData = rows.find((row) => row.brandName === brand);
+                      return (
+                        <td
+                          key={brand}
+                          style={{ width: '100px' }}
+                          title={`Benchmark Value: ${brandData?.benchmarkValue || 'N/A'}\nPercentile: ${brandData?.percentile || 'N/A'}`}
+                        >
+                          {brandData?.normalized || "-"}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+                {/* {Array.from(new Set(filteredComparisonData.map((row) => row.metricname))).map((metricName) => {
                   return filteredComparisonData.filter(row => row.metricname === metricName).map((row, index) => (
                     <tr key={index}>
                       <td className="sticky-col">{row?.sectionName}</td>
                       <td className="sticky-col">{row?.platformname}</td>
-                      <td className="sticky-col">{row?.metricname}</td>
+                      <td className="sticky-col" style={{ width: '200px' }}>
+                        <div className="metric-name">
+                          {row?.metricname}
+                          <div className="metric-info">
+                            <FaInfo className="info-icon" onClick={() => fetchMetricsDefinition(row?.metricname, row?.platformname)} />
+                            {selectedMetricDesc === row?.metricname && (
+                              <span className="metric-desc">{metricsDesc}</span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
                       {Array.from(new Set(filteredComparisonData.map((row) => row.brandName)))
                         .sort((a, b) => a.localeCompare(b))
                         .map(brand => {
                           const brandData = filteredComparisonData.find((data) => data.brandName === brand && data.metricname === metricName);
                           return (
-                            <td key={brand}>
+                            <td key={brand} style={{ width: '100px' }}
+                              title={`Benchmark Value: ${brandData?.benchmarkValue || 'N/A'}\nPercentile: ${brandData?.percentile || 'N/A'}`}
+                            >
                               {brandData?.normalized || "-"}
                             </td>
                           );
-                        })}
+                        })
+                      }
+                      
                     </tr>
                   ));
-                })}
+                })} */}
               </tbody>
             </Table>
           ) : (
@@ -1465,7 +1514,7 @@ console.log('brandFilterOptions', brandFilterOptions)
                 />
                 <MultiSelectDropdown
                   options={filterPlatforms}
-                  selectedValues={selectedfilterPlatforms}
+                  selectedValues={selectedFilterPlatforms}
                   onChange={handleSelectedPlatforms}
                   placeholder="Select Platforms"
                 />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 import { gethealthCardData } from "../../services/HealthCard";
@@ -9,6 +10,7 @@ import "./HealthCard.scss";
 
 export default function HealthCard() {
   // const { userInfo, projectInfo } = useSelector((state) => state.user);
+  const { brand, projectId } = useParams(); 
   const [healthTableData, setHealthTableData] = useState([]); 
   const [filteredData, setFilteredData] = useState(healthTableData);
   const [alphabetFilter, setAlphabetFilter] = useState("");
@@ -19,7 +21,7 @@ export default function HealthCard() {
   const [tableBrandData, setTableBrandData] = useState();
   const [tableCategories, setTableCategories] = useState();
 
-
+  console.log('projectId', projectId);
   useEffect(() => {
     fetchAllBrands();
     fetchAllCategories();
