@@ -21,8 +21,9 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./Insights.scss";
-import { getProjectListsByFilter, getDQScoreMultipleProjects, getProjectsByDateRangeForUser } from "../../services/projectService";
+import { getProjectListsByFilter, getDQScoreMultipleProjects, getProjectsByDateRangeForUser, getProjectDetailsByUserId, getMultipleBrandReport } from "../../services/projectService";
 import InsightsTabular from "./InisghtsTabular";
+import BrandView from "./BrandView";
 import * as XLSX from "xlsx";
 
 export default function Insights() {
@@ -43,11 +44,14 @@ export default function Insights() {
   const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
   const [selectedValue, setSelectedValue] = useState();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
-
   const [brand, setBrand] = useState([]);
-
   const [selectedBrand, setSelectedBrand] = useState([]);
+  const [selectedProjectsList, setSelectedProjectsList] = useState([]);
+  const [selectedProjectsData, setSelectedProjectsData] = useState([]);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +81,6 @@ export default function Insights() {
           }))
         );
 
-
         // const projectsData = await getProjectListsByFilter();
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -88,8 +91,89 @@ export default function Insights() {
   }, []);
 
   useEffect(() => {
-    fetchDQScoresBasedOnFilter()
+    fetchDQScoresBasedOnFilter();
   }, [projectId])
+  
+
+  useEffect(() => {
+    const fetchCurrentProjectDetails = async () => {
+      setLoading(true);
+      setError(null);
+  
+      try {
+        if (userInfo?.user?.id) {
+          // Fetch project details by user ID
+          const currentProjectData = await getProjectDetailsByUserId(userInfo.user.id);
+  
+          if (selectedProjects?.length > 0) {
+            const requestedPayload = {
+              project_ids: selectedProjects.map((prj) => prj.value),
+            };
+  
+            // Find all matching projects
+            const currentProjectNames = currentProjectData?.project?.filter((project) =>
+              requestedPayload.project_ids.includes(project.id)
+            );
+            if(currentProjectNames) {
+              setSelectedProjectsList(currentProjectNames)
+            }else {
+              setError("No Data Found")
+            }
+            
+          } else {
+            setError("No projects selected.");
+          }
+        } else {
+          setError("User ID not found.");
+        }
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+        setError("Error fetching project data.");
+      } finally {
+        setLoading(false); // End loading in both success and error cases
+      }
+    };
+  
+    fetchCurrentProjectDetails();
+  }, [userInfo?.user?.id, selectedProjects]); // Add selectedProjects as a dependency
+
+  useEffect(() => {
+    const fetchBrandsDataDetails = async () => {
+      try {
+        // Ensure there are selected projects
+        if (selectedProjects && selectedProjects.length > 0) {
+
+          const requestedPayload = {
+            project_ids: selectedProjects.map((prj) => prj.value),
+          };
+  
+          console.log("requestedPayload", requestedPayload);
+          // payload format{"project_ids":["273","266"]}
+          const selectedProjectsDataReport = await getMultipleBrandReport(requestedPayload);
+  
+          if (selectedProjectsDataReport) {
+            setSelectedProjectsData(selectedProjectsDataReport?.data);
+            console.log("selectedProjectsDataReport:", selectedProjectsData);
+          } else {
+            console.error("No matching data found for selected projects:", requestedPayload.project_ids);
+            setError("No data found for selected projects");
+          }
+        } else {
+          console.error("No projects selected");
+          setError("No projects selected");
+        }
+      } catch (error) {
+        console.error("Error fetching brand data details:", error);
+        setError("Failed to fetch data. Please try again.");
+      }
+    };
+  
+    fetchBrandsDataDetails();
+  }, [selectedProjects]);
+  
+  
+  
+  
 
   const fetchProjectsByFilter = async (frequency, categories) => {
 
@@ -107,11 +191,13 @@ export default function Insights() {
     }
 
   }
+  
+
   useEffect(() => {
     if (selectedFrequencies && selectedCategories.length > 0) {
       fetchProjectsByFilter(selectedFrequencies, selectedCategories.map((sc) => sc?.value));
-
     }
+     
   }, [selectedFrequencies, selectedCategories]);
 
   const handleBrandChanges = (selectedOptions) => {
@@ -147,6 +233,7 @@ export default function Insights() {
   const handleProjectChanges = (selectedOptions) => {
     setSelectedProjects(selectedOptions);
   };
+   
 
   const fetchDQScoresBasedOnFilter = async () => {
     try {
@@ -190,6 +277,8 @@ export default function Insights() {
       setInsightsDQScore(null);
     }
   };
+
+  console.log('insightsDQScore', insightsDQScore)
 
   const handleSelectionChange = (e) => {
     const value = e.target.value;
@@ -423,7 +512,6 @@ export default function Insights() {
       content: (
         <div>
           <div className="filter-option d-flex mb-2 gap-3 justify-content-end">
-           
             <MultiSelectDropdown
               options={brand}
               selectedValues={selectedBrand}
@@ -449,9 +537,9 @@ export default function Insights() {
     {
       label: "Brand View",
       content: (
-        <div>
-          This feature development is in progress.
-        </div>
+        <>
+          <BrandView selectedProjectsList={selectedProjectsList} selectedProjectsData={selectedProjectsData} />
+        </>
       ),
     },
   ];

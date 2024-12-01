@@ -793,67 +793,66 @@ console.log('Type:', typeof competitorsScoresData);
                         <HealthCardScore brands={competitorsScoresData?.dq || []} valueKey="dq" />
                     </div>
                     <div className="item-category">
-                        <h4>Ecom DQ Score</h4>
+                        <h4>Marketplace </h4>
                         <HealthCardScore brands={competitorsScoresData?.ecom_dq || []} valueKey="ecom_dq" />
                     </div>
                     <div className="item-category">
-                        <h4>Social DQ Score</h4>
+                        <h4>SocialWatch</h4>
                         <HealthCardScore brands={competitorsScoresData?.social_dq || []} valueKey="social_dq" />
                     </div>
                     <div className="item-category">
-                        <h4>Paid DQ Score</h4>
+                        <h4>Digital Spends </h4>
                         <HealthCardScore brands={competitorsScoresData?.paid_dq || []} valueKey="paid_dq" />
                     </div>
                     <div className="item-category">
-                        <h4>Brand Perf</h4>
+                        <h4>Organic Performance</h4>
                         <HealthCardScore brands={competitorsScoresData?.brand_perf_dq || []} valueKey="brand_perf_dq"/>
                     </div>
                 </div>
                 <div className="score-table-percentile">
-                  
-                    <Table responsive striped bordered>
-                        <thead>
-                            <tr>
-                                <th>Metric</th>
-                                <th>DQ Score</th>
-                                <th>Ecom DQ Score</th>
-                                <th>Social DQ Score</th>
-                                <th>Paid DQ Score</th>
-                                <th>Brand Perf</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          {/* Average Scores Row */}
+                  <Table responsive striped bordered>
+                      <thead>
                           <tr>
-                            <td>Avg Scores (Competition Brands)</td>
-                            <td>{competitorsScoresData?.statistics?.dq?.average?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.ecom_dq?.average?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.social_dq?.average?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.paid_dq?.average?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.brand_perf_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                              <th>Metric</th>
+                              <th>DQ Score</th>
+                              <th>Marketplace DQ Score</th>
+                              <th>SocialWatch DQ Score</th>
+                              <th>Digital Spends DQ Score</th>
+                              <th>Organic Performance</th>
                           </tr>
+                      </thead>
+                      <tbody>
+                        {/* Average Scores Row */}
+                        <tr>
+                          <td>Avg Scores (Competition Brands)</td>
+                          <td>{competitorsScoresData?.statistics?.dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.ecom_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.social_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.paid_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.brand_perf_dq?.average?.toFixed(2) ?? 'N/A'}</td>
+                        </tr>
 
-                          {/* 50th Percentile Row */}
-                          <tr>
-                            <td>50th Percentile Category Value</td>
-                            <td>{competitorsScoresData?.statistics?.dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.ecom_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.social_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.paid_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.brand_perf_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                          </tr>
+                        {/* 50th Percentile Row */}
+                        <tr>
+                          <td>50th Percentile Category Value</td>
+                          <td>{competitorsScoresData?.statistics?.dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.ecom_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.social_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.paid_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.brand_perf_dq?.["50th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                        </tr>
 
-                          {/* 75th Percentile Row */}
-                          <tr>
-                            <td>75th Percentile Category Value</td>
-                            <td>{competitorsScoresData?.statistics?.dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.ecom_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.social_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.paid_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                            <td>{competitorsScoresData?.statistics?.brand_perf_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
-                          </tr>
-                        </tbody>
-                    </Table>
+                        {/* 75th Percentile Row */}
+                        <tr>
+                          <td>75th Percentile Category Value</td>
+                          <td>{competitorsScoresData?.statistics?.dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.ecom_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.social_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.paid_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                          <td>{competitorsScoresData?.statistics?.brand_perf_dq?.["75th_percentile"]?.toFixed(2) ?? 'N/A'}</td>
+                        </tr>
+                      </tbody>
+                  </Table>
                 </div>
               </div>
               <div className="metric-performance">
@@ -884,7 +883,6 @@ console.log('Type:', typeof competitorsScoresData);
                   tabs={tabsSummary}
                   className="custom-tabs performance-tab"
                 />
-                    
               </div>
               
           </div>

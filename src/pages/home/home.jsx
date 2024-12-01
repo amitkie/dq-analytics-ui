@@ -124,6 +124,47 @@ const Home = () => {
         </div>
       ),
     },
+    {
+      label: "Favorites",
+      content: (
+        <div className="user-menu">
+          {projectInfo.project && projectInfo?.project.length > 0 ? (
+            // Filter the projects based on the 'is_favorite' field
+            projectInfo?.project
+              .filter(project => project.is_favorite === true) // Only include favorite projects
+              .length > 0 ? (
+                // Render filtered projects
+                projectInfo?.project
+                .filter(project => project.is_favorite === true).map(pj => {
+                  return(
+
+                <div className="user-activity" key={pj.id}>
+                  <p>
+                    Last activity on:{" "}
+                    <b>{formatDate(pj.updatedAt)}</b>
+                  </p>
+                  <p>
+                    Project Name:{" "}
+                    <span
+                      className="btn-text"
+                      onClick={() => handleProjectClicks(pj.id)}
+                    >
+                      {pj.project_name}
+                    </span>
+                  </p>
+                </div>
+                  )
+                })
+              ) : (
+                <p>No favorite projects available. Please add some to your favorites.</p>
+              )
+          ) : (
+            <p>No Projects available. Please create one.</p>
+          )}
+        </div>
+      ),
+    }
+    
   ];
   const Link = ({ id, children, className, title, to }) => (
     <OverlayTrigger

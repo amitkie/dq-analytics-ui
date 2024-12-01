@@ -74,9 +74,15 @@ input[type="checkbox"] {
   border-color: #9fa7b7;
   box-shadow: none;
 }
+
+.btn.btn-primary,
 .btn:active.btn-primary,
 .btn.active.btn-primary {
   background-color: $primary-color;
+}
+
+.btn.btn-primary:hover {
+  background-color: $primary-color-hover
 }
 .form-label {
   margin-bottom: 0.325rem;
@@ -399,10 +405,7 @@ Table thead {
   left: 0;
 }
 .actionITems {
-  position: relative;
-  display: flex;
-  flex-flow: row nowrap;
-  gap: .5rem;
+  display: block;
   .action-item-icon {
     cursor: pointer;
     font-size: 22px;

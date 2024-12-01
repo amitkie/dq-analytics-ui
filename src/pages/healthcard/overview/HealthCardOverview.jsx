@@ -47,7 +47,7 @@ export default function HealthCardOverview() {
   const [currentProjectId, setCurrentProjectId] = useState([]);
   const [projectName, setProjectName] = useState([]);
   const [getProjectIds, setProjectIds] = useState([]);
-
+const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
 
   
 
@@ -108,7 +108,7 @@ export default function HealthCardOverview() {
     }
      
   };
-  console.log('selectedFilterProject', selectedFilterProject);
+ 
   
   const handleCompetitorBrands = (comp) => {
     navigate(`/healthcardOverview/${comp.brand}/${selectedFilterProject ? selectedFilterProject : projectId}`);
@@ -118,12 +118,24 @@ export default function HealthCardOverview() {
     const fetchCurrentProjectDetails = async () => {
       setLoading(true);
       setError(null);
-      
+       
       try {
         if(userInfo?.user?.id){
           const currentProjectData = await getProjectDetailsByUserId(userInfo?.user?.id);
           const currentProject = currentProjectData?.project?.[0];
            
+          const currentProjectName =currentProjectData?.project?.find(
+            (project) => project.id === Number(projectId) // Convert projectId to number if necessary
+          );
+          console.log('currentProjectName', currentProjectName, projectId)
+          if(currentProjectName) {
+            setCurrentProjectDetails(currentProject.project_name)
+            console.log("Project Name:", currentProject.project_name);
+          }else {
+            console.error("No matching project found for ID:", projectId);
+            setError("No Data Found")
+          }
+
           if (currentProject) {
             setCurrentProjectId(currentProject.id);  
             fetchBrandScoreDetails(currentProject.id)
@@ -141,6 +153,8 @@ export default function HealthCardOverview() {
     fetchCurrentProjectDetails();
   }, [userInfo?.user?.id]);
 
+
+  console.log('currentProjectDetails', currentProjectDetails)
   useEffect(() => {
     fetchHealthCardData();
     fetchBrandImages();
@@ -282,15 +296,18 @@ export default function HealthCardOverview() {
       ),
     },
   ];
-  function getColorScore(value, thresholds) {
-    if (typeof value === "string") {
+  // Healthcard scores need to add 75th/50th percentile and also add color code for main scores if its above 75th percentile - Greenbetween 75th and 50th - Yellow below 50th - red
+  function getColorScore(value, seventyFifthPercentileValue, fiftiethPercentileValue) {
+console.log(value, typeof value , "ssssssssssss")
+const actualValue = parseFloat(value);
+console.log(actualValue, typeof actualValue , "ssssssssssss")
+
+    if(actualValue > seventyFifthPercentileValue){
       return <span style={{ color: "#252627" }}>{value}</span>;
-    } else if (value > thresholds) {
+    }else if(actualValue > fiftiethPercentileValue && value < seventyFifthPercentileValue){
       return <span style={{ color: "#339900" }}>{value}</span>;
-    } else if (value < thresholds) {
-      return <span style={{ color: "#cc3201" }}>{value}</span>;
-    } else {
-      return <span style={{ color: "#252627" }}>{value}</span>;
+    }else if(actualValue < fiftiethPercentileValue){
+      return <span style={{ color: "#339900" }}>{value}</span>;
     }
   }
   const handleExport = () => {
@@ -424,6 +441,7 @@ export default function HealthCardOverview() {
     return Array.isArray(data) ? data : Object.entries(data);
   };
 
+
   return (
     <>
       <div className="col-12">
@@ -517,7 +535,9 @@ export default function HealthCardOverview() {
           </div>
           <div className="brand-overview">
             <div className="brand-header">
-              <span className="section-title">Brand Overview</span>
+              <span className="section-title">Brand Overview
+                <span className="brand-subtitle">Project Name: {currentProjectDetails}</span>
+              </span>
               <div className="competitor">
                 <span className="competitor-title">Competitor List:</span>
                 <ul className="comptetitor-item">
@@ -557,7 +577,7 @@ export default function HealthCardOverview() {
                       </div>
                     ) :(
                       brandDetailData.map(item =>
-                        getColorScore((parseFloat(item.Overall_Final_Score) || 0).toFixed(2), 70.3)
+                        getColorScore((parseFloat(item.Overall_Final_Score) || 0).toFixed(2), 70.3, 30) // send 75% and 50th%
                       )
                     )}
                   </div>
@@ -591,14 +611,14 @@ export default function HealthCardOverview() {
                           item.Marketplace != null && !isNaN(parseFloat(item.Marketplace))
                             ? parseFloat(item.Marketplace).toFixed(2)
                             : 0,
-                          40.0
+                          40.0, 30
                         )
                       )
                     )
                     
                     }
                   </div>
-                  <span className="brand-subtitle">Ecom DQ Score</span>
+                  <span className="brand-subtitle">Marketplace</span>
                   <OverlayTrigger
                     key="top"
                     placement="top"
@@ -628,12 +648,12 @@ export default function HealthCardOverview() {
                         item.Socialwatch != null && !isNaN(parseFloat(item.Socialwatch))
                           ? parseFloat(item.Socialwatch).toFixed(2)
                           : 0,
-                        60.5
+                        60.5,30
                       )
                     )
                     )}
                   </div>
-                  <span className="brand-subtitle">Social DQ Score</span>
+                  <span className="brand-subtitle">Socialwatch</span>
                   <OverlayTrigger
                     key="top"
                     placement="top"
@@ -663,12 +683,12 @@ export default function HealthCardOverview() {
                         item['Digital Spends'] != null && !isNaN(parseFloat(item['Digital Spends']))
                           ? parseFloat(item['Digital Spends']).toFixed(2)
                           : 0,
-                        60.5
+                        60.5,30
                       )
                     )
                     )}
                   </div>
-                  <span className="brand-subtitle">Paid DQ Score</span>
+                  <span className="brand-subtitle">Digital Spends</span>
                   <OverlayTrigger
                     key="top"
                     placement="top"
@@ -697,12 +717,12 @@ export default function HealthCardOverview() {
                           item['Organic Performance'] != null && !isNaN(parseFloat(item['Organic Performance']))
                             ? parseFloat(item['Organic Performance']).toFixed(2)
                             : 0,
-                          60.5
+                          60.5,30
                         )
                       ))
                     }                     
                   </div>
-                  <span className="brand-subtitle">Brand Perf DQ Score</span>
+                  <span className="brand-subtitle">Organic Performance</span>
                   <OverlayTrigger
                     key="top"
                     placement="top"

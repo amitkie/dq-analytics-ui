@@ -21,11 +21,11 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./workSpace.scss";
-import { createProject, deleteProject, getProjecName, updateProject } from "../../services/projectService";
+import { createProject, deleteProject, getProjecName, toggleFavoriteProject, updateProject } from "../../services/projectService";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDate } from "../../utils/dateFormatter";
 import { useNavigate } from "react-router-dom";
-import { FaArrowDownShortWide } from "react-icons/fa6";
+import { FaArrowDownShortWide, FaV } from "react-icons/fa6";
 import { FaArrowUpWideShort } from "react-icons/fa6";
 import { FaArrowUp19 } from "react-icons/fa6";
 import { FaArrowDown91 } from "react-icons/fa6";
@@ -33,6 +33,11 @@ import { HiArrowsUpDown } from "react-icons/hi2";
 import { MdOutlineEdit } from "react-icons/md";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { VscGoToFile } from "react-icons/vsc";
+import { FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+import { RxCountdownTimer } from "react-icons/rx";
+import { MdOutlinePublishedWithChanges } from "react-icons/md";
+import { MdOutlineUnpublished } from "react-icons/md";
 import { getProjectInfoRequest, getRecentProjectRequest } from "../../features/user/userSlice";
 import ModalComponent from "../../components/Modal/ModalComponent";
 
@@ -76,13 +81,45 @@ export default function WorkSpace() {
   });
 
   const [editProjectId, setEditProjectId] = useState(null);
-const [editedProjectName, setEditedProjectName] = useState("");
+  const [editedProjectName, setEditedProjectName] = useState("");
+
+  const [favoriteProject, setFavoriteProject] = useState(false);
 
 const handleEditClick = (id, currentName) => {
   setEditProjectId(id);
   setEditedProjectName(currentName);
 };
 
+const handleFavoriteProject = async (id) => {
+  try {
+    console.log(favoriteProject, 'favoriteProjectllllllll')
+    // Check if the project is currently marked as a favorite
+    const currentStatus = favoriteProject[id] || false;
+
+    // Toggle the status (send the opposite value to the backend)
+    const newStatus = !currentStatus;
+
+    // API call to toggle the favorite status
+    const response = await toggleFavoriteProject(id, {is_favorite: newStatus});
+    console.log(response, "responseeeeeeeeee")
+    if (response) {
+      console.log('ooooooooooooooooooooo')
+      dispatch(getProjectInfoRequest(userInfo?.user?.id));
+      dispatch(getRecentProjectRequest(userInfo?.user?.id));
+
+      // Successfully updated in the database, update local state
+      setFavoriteProject((prev) => ({
+        ...prev,
+        [id]: newStatus, // Set the new status
+      }));
+    } else {
+      console.error("Failed to update the favorite status");
+    }
+  } catch (error) {
+    console.error("Error toggling favorite project:", error);
+  }
+};
+ 
 const handleEditProjectName = (id) => {
   // Logic to save the updated project name
   // Example: Call an API or update state
@@ -123,6 +160,8 @@ const handleEditProjectName = (id) => {
       brandNames: sortColumn.direction === "asc" ? <FaArrowUp19 /> : <FaArrowDown91 />,   
       start_date: sortColumn.direction === "asc" ? <HiArrowsUpDown /> : <HiArrowsUpDown />,      
       frequencyNames: sortColumn.direction === "asc" ? <FaArrowDownShortWide /> : <FaArrowUpWideShort />,  
+      updatedAt: sortColumn.direction === "asc" ? <RxCountdownTimer /> : <RxCountdownTimer />,  
+      is_benchmark_saved: sortColumn.direction === "asc" ? <MdOutlinePublishedWithChanges /> : <MdOutlineUnpublished />,  
     };
     return <span>{icons[key]}</span>;
   };
@@ -583,7 +622,8 @@ const handleEditProjectName = (id) => {
                     </span>
                   </th>
                   <th onClick={() => handleSortingChange("updatedAt")}><span className="table-heading">Last modified on {renderSortIcon("updatedAt")}</span></th>
-                  <th>Actions</th>
+                  <th onClick={() => handleSortingChange("is_benchmark_saved")}><span className="table-heading">Status {renderSortIcon("is_benchmark_saved")}</span></th>
+                  <th className="table-heading">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -619,11 +659,12 @@ const handleEditProjectName = (id) => {
                     <td>{formatDate(item?.start_date)} - {formatDate(item?.end_date)}</td>
                     <td>{item?.frequencyNames?.join(", ")}</td>
                     <td>{formatDate(item?.updatedAt)}</td>
-                    <td>
-                      <div className="actionITems">
+                    <td>{item.is_benchmark_saved ? "Published" : "In Progress"}</td>
+                    <td className="actionITems">
                         <MdOutlineEdit onClick={() => handleEditClick(item.id, item?.project_name)} className="action-item-icon" title="Edit"/>
                         <FaRegTrashCan onClick={() => deleteProjectDetails(item.id)} className="action-item-icon" title="Delete"/>
                         <VscGoToFile className="action-item-icon" title="Go to Insights" onClick={() => navigateToInsights(item)}/>
+                        {!item.is_favorite ? (<FaRegHeart className="action-item-icon" onClick={() => handleFavoriteProject(item.id)} />) : (<FaHeart className="action-item-icon" onClick={() => handleFavoriteProject(item.id)} />)}
                         {showAlert && (
                           <ModalComponent
                             ModalHeading={"Delete Confirmation"}
@@ -637,7 +678,7 @@ const handleEditProjectName = (id) => {
                             }}  // Perform delete on confirmation
                           />
                         )}
-                      </div>
+                     
                     </td>
                   </tr>
                 ))}
