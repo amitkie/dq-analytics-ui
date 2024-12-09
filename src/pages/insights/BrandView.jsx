@@ -10,7 +10,7 @@ import "./Insights.scss";
 
 
 
-export default function BrandView({ selectedProjectsList, selectedProjectsData }) {
+export default function BrandView({ selectedProjectsList, selectedProjectsData, selectedProjectsWeightsData, selectedProjectsBrandsData }) {
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [showBrands, setShowBrands] = useState([]);
     const [showSelectedBrands, setShowSelectedBrands] = useState([]);
@@ -35,21 +35,36 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData }
         console.log(filteredData, 'Filtered Projects');
     };
 
-
     const allProjectsData = filteredProjects.length > 0 ? filteredProjects : Object.values(selectedProjectsData).flat();
 
-    console.log('selectedProjectsData brandView', selectedProjectsData);
+    // function getUniqueBrands(response) {
+    //     const allBrandNames = [];
 
+    //     for (const Project_ID in response) {
+    //         const brands = response[Project_ID].map((project) => project.Brand_Name);
+    //         allBrandNames.push(...brands);
+    //     }
+
+    //     const uniqueBrands = [...new Set(allBrandNames)];
+
+    //     return uniqueBrands.map((brand, index) => ({
+    //         value: index + 1,
+    //         label: brand,
+    //     }));
+    // }
     function getUniqueBrands(response) {
-        const allBrandNames = [];
-
-        for (const projectId in response) {
-            const brands = response[projectId].map((project) => project.Brand_Name);
-            allBrandNames.push(...brands);
+        // Validate that response and response.data exist and are arrays
+        if (!response || !Array.isArray(response.data)) {
+            console.error("Invalid response format", response);
+            return [];
         }
-
+    
+        // Extract all brand names
+        const allBrandNames = response.data.map((project) => project.Brand_Name);
+    
+        // Remove duplicates and format the output
         const uniqueBrands = [...new Set(allBrandNames)];
-
+    
         return uniqueBrands.map((brand, index) => ({
             value: index + 1,
             label: brand,
@@ -696,48 +711,30 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData }
                                 <Table responsive striped bordered>
                                     <thead>
                                         <tr>
-                                            <th> Common metrics name</th>
-                                            <th>Weight in Project 1</th>
-                                            <th>Weight in Project 2</th>
-                                            <th>Weight in Project 3</th>
-                                            <th>Weight in Project 4</th>
+                                            <th width="200"> Common metrics name</th>
+                                            {selectedProjectsWeightsData.map((item, index) => (
+                                                <th key={index}>{item.project_name}</th>
+                                            ))}
 
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* Average Scores Row */}
-                                        <tr>
-                                            <td>Ratings</td>
-                                            <td>4</td>
-                                            <td>1</td>
-                                            <td>3</td>
-                                            <td>4</td>
+                                    {Object.keys(selectedProjectsWeightsData[0]?.metrics || {}).map((metric, i) => (
+                                        <tr key={i}>
+                                            <td  width="200">{metric}</td>
+                                            {/* Iterate through each project's metrics for the current metric */}
+                                            {selectedProjectsWeightsData.map((project, j) => (
+                                            <td key={j}>{project.metrics[metric] || "No Data"}</td>
+                                            ))}
                                         </tr>
-
-                                        {/* 50th Percentile Row */}
-                                        <tr>
-                                            <td>reviews</td>
-                                            <td>3</td>
-                                            <td>4</td>
-                                            <td>2</td>
-                                            <td>1</td>
-                                        </tr>
-
-                                        {/* 75th Percentile Row */}
-                                        <tr>
-                                            <td>net sentiment</td>
-                                            <td>5</td>
-                                            <td>4</td>
-                                            <td>2</td>
-                                            <td>3</td>
-                                        </tr>
+                                        ))}
                                     </tbody>
                                 </Table>
                             )}
                         </div>
                         <div className="table-extend">
                             <h4 className="table-title-normal">Normalized Values View</h4>
-                            <Table responsive striped bordered>
+                            <Table responsive striped bordered className="brand-norm-table">
                                 <thead>
                                     <tr>
                                         <th> Common metrics name</th>
@@ -749,106 +746,81 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData }
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* Average Scores Row */}
-                                    <tr>
-                                        <td>metric name 1</td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>metric name 2</td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>metric name 3</td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                        <td>
-                                            project 1 brands names with scores
-                                            project 2 brands names with scores
-                                            project 3 brands names with scores
-                                            project 4 brands names with scores
-                                        </td>
-                                    </tr>
+                                        {selectedProjectsBrandsData.map((item,index) => (
+                                            <tr key={index}>
+                                                <td>{item.metricname}</td>
+                                                <td>
+                                                    {Array.from(
+                                                    new Set(
+                                                        item.Above81_100
+                                                        .split(",")                           
+                                                        .map(value => value.trim())           
+                                                        .filter(value => value !== "")        
+                                                    )
+                                                    ).map((value, index) => (
+                                                    <span key={index} style={{ display: "block" }}>
+                                                        {value}
+                                                    </span>
+                                                    ))}
+                                                </td>
+                                                <td>
+                                                    {Array.from(
+                                                        new Set(
+                                                            item.Between61_80
+                                                            .split(",")                           
+                                                            .map(value => value.trim())           
+                                                            .filter(value => value !== "")        
+                                                        )
+                                                        ).map((value, index) => (
+                                                        <span key={index} style={{ display: "block" }}>
+                                                            {value}
+                                                        </span>
+                                                        ))}
+                                                </td>
+                                                <td>
+                                                    {Array.from(
+                                                        new Set(
+                                                            item.Between51_60
+                                                            .split(",")                           
+                                                            .map(value => value.trim())           
+                                                            .filter(value => value !== "")        
+                                                        )
+                                                        ).map((value, index) => (
+                                                        <span key={index} style={{ display: "block" }}>
+                                                            {value}
+                                                        </span>
+                                                        ))}
+                                                </td>
+                                                <td>
+                                                    {Array.from(
+                                                        new Set(
+                                                            item.Between20_50
+                                                            .split(",")                           
+                                                            .map(value => value.trim())           
+                                                            .filter(value => value !== "")        
+                                                        )
+                                                        ).map((value, index) => (
+                                                        <span key={index} style={{ display: "block" }}>
+                                                            {value}
+                                                        </span>
+                                                        ))}
+                                                </td>
+                                                <td>
+                                                    {Array.from(
+                                                        new Set(
+                                                            item.Below0_19
+                                                            .split(",")                           
+                                                            .map(value => value.trim())           
+                                                            .filter(value => value !== "")        
+                                                        )
+                                                        ).map((value, index) => (
+                                                        <span key={index} style={{ display: "block" }}>
+                                                            {value}
+                                                        </span>
+                                                        ))}
+                                                </td>
+                                            </tr>
+                                        ))}
                                 </tbody>
                             </Table>
                         </div>
@@ -857,26 +829,31 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData }
             ),
         },
     ];
+    console.log('allProjectsData.length', allProjectsData.length);
     return (
         <div className="row">
-            {allProjectsData.length > 0 ? (<div className="col-12">
+            <div className="col-12">
                 <div className="score-table-percentile">
                     <Table responsive striped bordered>
                         <thead>
                             <tr>
                                 <th>Overall Details</th>
-                                {selectedProjectsList.map((item, index) => (<th key={index}>{item.project_name}</th>))}
+                                {selectedProjectsList.map((item, index) => (
+                                    <th key={index}>{item.project_name}</th>
+                                ))}
 
                             </tr>
                         </thead>
                         <tbody>
-                            {/* Average Scores Row */}
+                             
                             <tr>
                                 <td>Total Metrics</td>
-                                {selectedProjectsList.map((item, index) => (<td key={index}>{item.metricNames.length}</td>))}
+                                {selectedProjectsList.map((item, index) => (
+                                    <td key={index}>{Array.isArray(item.metricNames) ? item.metricNames.length : 0}</td>
+                                ))}
+                                
                             </tr>
 
-                            {/* 50th Percentile Row */}
                             <tr>
                                 <td>Categories</td>
                                 {selectedProjectsList.map((item, index) => (
@@ -887,10 +864,13 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData }
                                     </td>
                                 ))}
                             </tr>
-                            {/* 75th Percentile Row */}
+                            
                             <tr>
                                 <td>Total Brands  </td>
-                                {selectedProjectsList.map((item, index) => (<td key={index}>{item.brandNames.length}</td>))}
+                                {selectedProjectsList.map((item, index) => (
+                                    <td key={index}>{Array.isArray(item.brandNames) ? item.brandNames.length : 0}</td>
+                                ))}
+                                
                             </tr>
                         </tbody>
                     </Table>
@@ -903,9 +883,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData }
                         className="custom-tabs performance-tab"
                     />
                 </div>
-            </div>) : (
-                <div>Please Select Project to display this view</div>
-            )}
+            </div>
         </div>
     );
 }

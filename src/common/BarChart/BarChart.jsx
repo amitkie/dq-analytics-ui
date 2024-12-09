@@ -43,7 +43,7 @@ const BarChart = ({ series, categories, noDataText }) => {
         },
       },
       grid: {
-        show: true,
+        show: false,
       },
       legend: {
         show: true,  

@@ -21,7 +21,7 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./Insights.scss";
-import { getProjectListsByFilter, getDQScoreMultipleProjects, getProjectsByDateRangeForUser, getProjectDetailsByUserId, getMultipleBrandReport } from "../../services/projectService";
+import { getProjectListsByFilter, getDQScoreMultipleProjects, getProjectsByDateRangeForUser, getProjectDetailsByUserId, getMultipleBrandReport, getNormWeightValueInsight, getNormBrandValueInsight } from "../../services/projectService";
 import InsightsTabular from "./InisghtsTabular";
 import BrandView from "./BrandView";
 import * as XLSX from "xlsx";
@@ -50,6 +50,8 @@ export default function Insights() {
   const [selectedBrand, setSelectedBrand] = useState([]);
   const [selectedProjectsList, setSelectedProjectsList] = useState([]);
   const [selectedProjectsData, setSelectedProjectsData] = useState([]);
+  const [selectedProjectsWeightsData, setSelectedProjectsWeightsData] = useState([]);
+  const [selectedProjectsBrandsData, setSelectedProjectsBrandsData] = useState([]);
 
 
 
@@ -169,6 +171,74 @@ export default function Insights() {
     };
   
     fetchBrandsDataDetails();
+  }, [selectedProjects]);
+
+  useEffect(() => {
+    const fetchWeightsDataDetails = async () => {
+      try {
+        // Ensure there are selected projects
+        if (selectedProjects && selectedProjects.length > 0) {
+
+          const requestedPayload = {
+            project_ids: selectedProjects.map((prj) => prj.value),
+          };
+  
+          console.log("requestedPayload", requestedPayload);
+          // payload format{"project_ids":["273","266"]}
+          const selectedProjectsweightsReport = await getNormWeightValueInsight(requestedPayload);
+  
+          if (selectedProjectsweightsReport) {
+            setSelectedProjectsWeightsData(selectedProjectsweightsReport?.data);
+            console.log("selectedProjectsweightsReport:", selectedProjectsweightsReport);
+          } else {
+            console.error("No matching data found for selected projects:", requestedPayload.project_ids);
+            setError("No data found for selected projects");
+          }
+        } else {
+          console.error("No projects selected");
+          setError("No projects selected");
+        }
+      } catch (error) {
+        console.error("Error fetching brand data details:", error);
+        setError("Failed to fetch data. Please try again.");
+      }
+    };
+  
+    fetchWeightsDataDetails();
+  }, [selectedProjects]);
+
+  useEffect(() => {
+    const fetchBrandsReportDetails = async () => {
+      try {
+        // Ensure there are selected projects
+        if (selectedProjects && selectedProjects.length > 0) {
+
+          const requestedPayload = {
+            project_ids: selectedProjects.map((prj) => prj.value),
+          };
+  
+          console.log("requestedPayload", requestedPayload);
+          // payload format{"project_ids":["273","266"]}
+          const selectedProjectsBrandsReport = await getNormBrandValueInsight(requestedPayload);
+  
+          if (selectedProjectsBrandsReport) {
+            setSelectedProjectsBrandsData(selectedProjectsBrandsReport?.data);
+            console.log("selectedProjectsBrandsReport:", selectedProjectsBrandsData);
+          } else {
+            console.error("No matching data found for selected projects:", requestedPayload.project_ids);
+            setError("No data found for selected projects");
+          }
+        } else {
+          console.error("No projects selected");
+          setError("No projects selected");
+        }
+      } catch (error) {
+        console.error("Error fetching brand data details:", error);
+        setError("Failed to fetch data. Please try again.");
+      }
+    };
+  
+    fetchBrandsReportDetails();
   }, [selectedProjects]);
   
   
@@ -538,7 +608,12 @@ export default function Insights() {
       label: "Brand View",
       content: (
         <>
-          <BrandView selectedProjectsList={selectedProjectsList} selectedProjectsData={selectedProjectsData} />
+          <BrandView 
+            selectedProjectsList={selectedProjectsList} 
+            selectedProjectsData={selectedProjectsData} 
+            selectedProjectsWeightsData={selectedProjectsWeightsData} 
+            selectedProjectsBrandsData={selectedProjectsBrandsData} 
+            />
         </>
       ),
     },

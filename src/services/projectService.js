@@ -3,7 +3,7 @@ import axios from "axios";
 export const createProject = async (data) => {
   try {
     const response = await axios.post(
-      "/api/v1/api/v1/project/create-project",
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/create-project",
       data
     );
 
@@ -22,7 +22,7 @@ export const createProject = async (data) => {
 export const updateProject = async (id, data) => {
   try {
     const response = await axios.put(
-      `/api/v1/api/v1/project/projects/${id}`,
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${id}`,
       data
     );
 
@@ -41,7 +41,7 @@ export const updateProject = async (id, data) => {
 export const deleteProject = async (id) => {
   try {
     const response = await axios.delete(
-      `/api/v1/api/v1/project/projects/${id}`);
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${id}`);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -58,7 +58,7 @@ export const deleteProject = async (id) => {
 export const getProjecName = async (data) => {
   try {
     const response = await axios.get(
-      `/api/v1/api/v1/project/check-project-name/?project_name=${data}`,
+      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/check-project-name/?project_name=${data}`,
       data
     );
 
@@ -77,7 +77,7 @@ export const getProjecName = async (data) => {
 export const saveMetricsOfProject = async (data) => {
   try {
     const response = await axios.post(
-      "/api/v1/api/v1/project/save-metrics",
+      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/save-metrics",
       data
     );
 
@@ -631,7 +631,7 @@ export const getMetricHealthReport = async (data) => {
 export const getMultipleBrandReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8003.inc1.devtunnels.ms/multiple_get_brand_data`,
+      `https://hzz4tlcw-8022.inc1.devtunnels.ms/get_project_brand_data`,
       data
     );
 
@@ -647,6 +647,26 @@ export const getMultipleBrandReport = async (data) => {
     throw error;
   }
 };
+// export const getMultipleBrandReport = async (data) => {
+//   try {
+//     const response = await axios.post(
+//       `https://m594bmgj-8003.inc1.devtunnels.ms/multiple_get_brand_data`,
+//       data
+//     );
+
+//     if (response.status !== 200) {
+//       throw new Error("Network response was not ok");
+//     }
+
+//     const getMultipleBrandReportData = response.data;
+     
+//     return getMultipleBrandReportData;
+//   } catch (error) {
+//     console.error("Error in fetching Top 5 data:", error);
+//     throw error;
+//   }
+// };
+
 export const toggleFavoriteProject = async (projectId,data) => {
   try {
     const response = await axios.put(
@@ -667,4 +687,42 @@ export const toggleFavoriteProject = async (projectId,data) => {
   }
 };
 
+export const getNormWeightValueInsight = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8020.inc1.devtunnels.ms/norm_weight_value`,
+      data
+    );
 
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getWeightsValueInsightsData = response.data;
+     
+    return getWeightsValueInsightsData;
+  } catch (error) {
+    console.error("Error in fetching Top 5 data:", error);
+    throw error;
+  }
+};
+
+export const getNormBrandValueInsight = async (data) => {
+  try {
+    const response = await axios.post(
+      `https://hzz4tlcw-8018.inc1.devtunnels.ms/norm_brand_value`,
+      data
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    const getBrandValueInsightsData = response.data;
+     
+    return getBrandValueInsightsData;
+  } catch (error) {
+    console.error("Error in fetching Top 5 data:", error);
+    throw error;
+  }
+};

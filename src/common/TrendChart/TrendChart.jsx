@@ -160,6 +160,9 @@ class TrendChart extends Component {
             },
           },
         },
+        grid: {
+          show: false,
+        },
         yaxis: {
           labels: {
             show: true,

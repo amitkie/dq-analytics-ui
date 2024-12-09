@@ -115,6 +115,18 @@ const LineChart = ({ insightsDQScoreData, scoreType, filteredBrands }) => {
         fontWeight: "bold",
       },
     },
+    grid: {
+      xaxis: {
+          lines: {
+              show: false
+          }
+      },   
+      yaxis: {
+          lines: {
+              show: false
+          }
+      },
+    },
     xaxis: {
       categories: [], // This will be dynamically set
       title: {

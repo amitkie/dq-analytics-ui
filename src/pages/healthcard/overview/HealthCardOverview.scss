@@ -203,6 +203,21 @@
   position: absolute;
   top: 0;
   right: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  line-height: 1;
+}
+
+.percentile-score:nth-child(1) {
+  bottom: -4px;
+  top: inherit;
+}
+.percentile-subtitle {
+  @include secondaryFont();
+  font-size: 0.725rem;
+  color: rgba($color: #333333, $alpha: 0.6);
+  line-height: 1;
 }
 .score-diff {
   @include secondaryFont();

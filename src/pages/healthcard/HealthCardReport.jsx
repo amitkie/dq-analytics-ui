@@ -214,16 +214,20 @@ useEffect(() => {
   fetchMetricHealthReports();
 ;},[brand, projectId])
 
-function getColorScore(value, thresholds) {
-    if (typeof value === "string") {
-      return <span style={{ color: "#252627" }}>{value}</span>;
-    } else if (value > thresholds) {
-      return <span style={{ color: "#339900" }}>{value}</span>;
-    } else if (value < thresholds) {
-      return <span style={{ color: "#cc3201" }}>{value}</span>;
-    } else {
-      return <span style={{ color: "#252627" }}>{value}</span>;
-    }
+function getColorScore(value, seventyFivePercentileValue, fiftyPercentileValue) {
+  // Convert values to numbers
+  const actualValue = parseFloat(value);
+  const seventyFifthPercentileValueParsed = parseFloat(seventyFivePercentileValue);
+  const fiftiethPercentileValueParsed = parseFloat(fiftyPercentileValue);
+   
+  // Compare values and return corresponding color
+  if (actualValue > seventyFifthPercentileValueParsed) {
+    return <span style={{ color: "#279E6F" }}>{value}</span>;
+  } else if (actualValue > fiftiethPercentileValueParsed && actualValue < seventyFifthPercentileValueParsed) {
+    return <span style={{ color: "#FF9800" }}>{value}</span>;
+  } else if (actualValue < fiftiethPercentileValueParsed) {
+    return <span style={{ color: "#C82519" }}>{value}</span>;
+  }
 }
 
 const brandScores = () => {
@@ -593,27 +597,42 @@ console.log('Type:', typeof competitorsScoresData);
                 <div className="score-details">
                   <div className="brand-title">
                     {loading ? (
-                      <div className="loader-container-sm h-auto">
+                      <div className="loader-container-sm  h-auto">
                         <div className="loader-sm"></div>
                         <span className="loader-text">Loading...</span>
                       </div>
                     ) :(
-                      brandDetailData.map(item =>
-                        getColorScore((parseFloat(item.Overall_Final_Score) || 0).toFixed(2), 70.3)
+                       
+                      (brandDetailData?.data || []).map(item =>
+                        getColorScore(
+                          (parseFloat(item.Overall_Final_Score) || 0).toFixed(2), 
+                          (parseFloat(brandDetailData?.statistics?.overall_score_stats?.["75th_percentile"])).toFixed(2), 
+                          (parseFloat(brandDetailData?.statistics?.overall_score_stats?.["50th_percentile"])).toFixed(2)
+                        )
                       )
                     )}
                   </div>
                   <span className="brand-subtitle">DQ Score</span>
-                  <OverlayTrigger
+                  <div className="percent-container">
+                  {Object.entries(brandDetailData?.statistics?.overall_score_stats || {}).map(([key, value]) => (
+                    <div className="percentile-score" key={key}>
+                      <span className="percentile-subtitle">
+                        {key === "75th_percentile" ? "75th Percentile" : "50th Percentile"}
+                      </span>
+                      {Number(value).toFixed(2)}
+                    </div>
+                  ))}
+                  </div>
+                  {/* <OverlayTrigger
                     key="top"
                     placement="top"
                     overlay={<Tooltip id="top">Percentile Value</Tooltip>}
                   >
-                    <div className="percentile-score">70.3</div>
+                    <div className="percentile-score">12</div>
                   </OverlayTrigger>
-                  <div className="score-diff danger-color">
-                    <IoIosTrendingDown /> - 2.3
-                  </div>
+                  <div className="score-diff">
+                    12
+                  </div> */}
                 </div>
               </div>
               <div className="score-list">
@@ -628,28 +647,29 @@ console.log('Type:', typeof competitorsScoresData);
                         <span className="loader-text">Loading...</span>
                       </div>
                     ) : (
-                    brandDetailData.map(item =>
+                      (brandDetailData?.data || []).map(item =>
                         getColorScore(
                           item.Marketplace != null && !isNaN(parseFloat(item.Marketplace))
                             ? parseFloat(item.Marketplace).toFixed(2)
                             : 0,
-                          40.0
+                            brandDetailData?.statistics?.section_stats?.Marketplace?.["75th_percentile"], 
+                            brandDetailData?.statistics?.section_stats?.Marketplace?.["50th_percentile"]
                         )
                       )
                     )
                     
                     }
                   </div>
-                  <span className="brand-subtitle">Ecom DQ Score</span>
-                  <OverlayTrigger
-                    key="top"
-                    placement="top"
-                    overlay={<Tooltip id="top">Percentile Value</Tooltip>}
-                  >
-                    <div className="percentile-score">40.0</div>
-                  </OverlayTrigger>
-                  <div className="score-diff success-color">
-                    <IoIosTrendingUp /> + 4.3
+                  <span className="brand-subtitle">Marketplace</span>
+                  <div className="percent-container">
+                    {Object.entries(brandDetailData?.statistics?.section_stats?.Marketplace || {}).map(([key, value]) => (
+                       <div className="percentile-score" key={key}>
+                        <span className="percentile-subtitle">
+                          {key === "75th_percentile" ? "75th Percentile" : "50th Percentile"}
+                        </span>
+                        {Number(value).toFixed(2)}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -665,26 +685,27 @@ console.log('Type:', typeof competitorsScoresData);
                         <span className="loader-text">Loading...</span>
                       </div>
                     ) :(
-                    brandDetailData.map(item =>
+                      (brandDetailData?.data || []).map(item =>
                       getColorScore(
                         item.Socialwatch != null && !isNaN(parseFloat(item.Socialwatch))
                           ? parseFloat(item.Socialwatch).toFixed(2)
                           : 0,
-                        60.5
+                          brandDetailData?.statistics?.section_stats?.Socialwatch?.["75th_percentile"], 
+                          brandDetailData?.statistics?.section_stats?.Socialwatch?.["50th_percentile"]
                       )
                     )
                     )}
                   </div>
-                  <span className="brand-subtitle">Social DQ Score</span>
-                  <OverlayTrigger
-                    key="top"
-                    placement="top"
-                    overlay={<Tooltip id="top">Percentile Value</Tooltip>}
-                  >
-                    <div className="percentile-score">75.3</div>
-                  </OverlayTrigger>
-                  <div className="score-diff success-color">
-                    <IoIosTrendingUp /> + 2.3
+                  <span className="brand-subtitle">Socialwatch</span>
+                  <div className="percent-container">
+                    {Object.entries(brandDetailData?.statistics?.section_stats?.Socialwatch || {}).map(([key, value]) => (
+                      <div className="percentile-score" key={key}>
+                        <span className="percentile-subtitle">
+                          {key === "75th_percentile" ? "75th Percentile" : "50th Percentile"}
+                        </span>
+                        {Number(value).toFixed(2)}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -700,26 +721,27 @@ console.log('Type:', typeof competitorsScoresData);
                         <span className="loader-text">Loading...</span>
                       </div>
                     ) :(
-                    brandDetailData.map(item =>
+                      (brandDetailData?.data || []).map(item =>
                       getColorScore(
                         item['Digital Spends'] != null && !isNaN(parseFloat(item['Digital Spends']))
                           ? parseFloat(item['Digital Spends']).toFixed(2)
                           : 0,
-                        60.5
+                          brandDetailData?.statistics?.section_stats?.["Digital Spends"]?.["75th_percentile"], 
+                          brandDetailData?.statistics?.section_stats?.["Digital Spends"]?.["50th_percentile"]
                       )
                     )
                     )}
                   </div>
-                  <span className="brand-subtitle">Paid DQ Score</span>
-                  <OverlayTrigger
-                    key="top"
-                    placement="top"
-                    overlay={<Tooltip id="top">Percentile Value</Tooltip>}
-                  >
-                    <div className="percentile-score">50.0</div>
-                  </OverlayTrigger>
-                  <div className="score-diff warning-color">
-                    <IoIosTrendingUp /> + 0.3
+                  <span className="brand-subtitle">Digital Spends</span>
+                  <div className="percent-container">
+                    {Object.entries(brandDetailData?.statistics?.section_stats?.["Digital Spends"] || {}).map(([key, value]) => (
+                      <div className="percentile-score" key={key}>
+                        <span className="percentile-subtitle">
+                          {key === "75th_percentile" ? "75th Percentile" : "50th Percentile"}
+                        </span>
+                        {Number(value).toFixed(2)}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -734,26 +756,27 @@ console.log('Type:', typeof competitorsScoresData);
                         <div className="loader-sm"></div>
                         <span className="loader-text">Loading...</span>
                       </div>
-                    ) : (brandDetailData.map(item =>
+                    ) : ((brandDetailData?.data || []).map(item =>
                         getColorScore(
                           item['Organic Performance'] != null && !isNaN(parseFloat(item['Organic Performance']))
                             ? parseFloat(item['Organic Performance']).toFixed(2)
                             : 0,
-                          60.5
+                            brandDetailData?.statistics?.section_stats?.["Organic Performance"]?.["75th_percentile"], 
+                            brandDetailData?.statistics?.section_stats?.["Organic Performance"]?.["50th_percentile"]
                         )
                       ))
                     }                     
                   </div>
-                  <span className="brand-subtitle">Brand Perf DQ Score</span>
-                  <OverlayTrigger
-                    key="top"
-                    placement="top"
-                    overlay={<Tooltip id="top">Percentile Value</Tooltip>}
-                  >
-                    <div className="percentile-score">52.4</div>
-                  </OverlayTrigger>
-                  <div className="score-diff danger-color">
-                    <IoIosTrendingDown /> - 1.3
+                  <span className="brand-subtitle">Organic Performance</span>
+                  <div className="percent-container">
+                    {Object.entries(brandDetailData?.statistics?.section_stats?.["Organic Performance"] || {}).map(([key, value]) => (
+                      <div className="percentile-score" key={key}>
+                        <span className="percentile-subtitle">
+                          {key === "75th_percentile" ? "75th Percentile" : "50th Percentile"}
+                        </span>
+                        {Number(value).toFixed(2)}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -764,6 +787,7 @@ console.log('Type:', typeof competitorsScoresData);
                 <div className="info-left">
                 <h4>{brandCategoryDetails?.main_brand?.brand}</h4>
                 <span className="brand-subtitle">Project Id: {projectId}</span>
+                {/* <span className="brand-subtitle">Project Name: {}</span> */}
                 <div className="category-name">
                     <span>Category: <strong>{brandCategoryDetails?.main_brand?.category}</strong></span>
                 </div>
