@@ -416,7 +416,7 @@ const generateTabsData = (metricsList) => {
             <tr key={index}>
               <td>{metric.platformname || "N/A"}</td>
               <td>{metric.metricname || "N/A"}</td>
-              <td>{metric.weights || "N/A"}</td>
+              <td>{Number(metric.weights).toFixed(2) || "N/A"}</td>
               <td>{metric.normalized || "N/A"}</td>
             </tr>
           ))}
@@ -462,7 +462,7 @@ const tabsSummary = [
             <tr key={item.id || index}>
               <td>{index + 1}</td>  
               <td>{item.sectionname}</td>
-              <td>{item.weights_sum}</td>
+              <td>{Number(item.weights_sum).toFixed(2)}</td>
               <td>{item.brand}</td>
               <td>{item.above}</td>
               <td>{item.below}</td>
@@ -501,7 +501,7 @@ const tabsSummary = [
                 <td>{index + 1}</td>  
                 <td>{item.sectionname}</td>
                 <td>{item.platformname}</td>
-                <td>{item.weights_sum}</td>
+                <td>{Number(item.weights_sum).toFixed(2)}</td>
                 <td>{item.brand}</td>
                 <td>{item.above}</td>
                 <td>{item.below}</td>
@@ -544,7 +544,7 @@ const tabsSummary = [
               <td>{item.sectionname}</td>
               <td>{item.platformname}</td>
               <td>{item.metricname}</td>
-              <td>{item.weights_sum}</td>
+              <td>{Number(item.weights_sum).toFixed(2)}</td>
               <td>{item.brand}</td>
               <td>{item.above}</td>
               <td>{item.below}</td>

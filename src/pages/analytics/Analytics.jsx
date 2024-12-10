@@ -370,6 +370,8 @@ export default function Analytics() {
       return;
     }
 
+    console.log(newWeights, 'new weights')
+
     setWeights(newWeights);
     setTotalWeights(totalWeight);
   };
@@ -399,12 +401,13 @@ export default function Analytics() {
       setFilterMetrics(uniqueMetricsArray)
       setMetrics(() => {
         if (response?.project?.metrics && response?.project?.metrics?.length > 0) {
-
+console.log(response?.project?.metrics, 'response?.project?.metrics')
           const initialWeight = 100 / response?.project?.metrics?.length;
           const initialWeights = response?.project?.metrics?.reduce((acc, item) => {
             acc[item.metric_id] = initialWeight;
             return acc;
           }, {});
+          console.log('initialweights', initialWeights)
           setWeights(initialWeights);
         }
         return response?.project?.metrics?.map((ele) => {
@@ -583,6 +586,7 @@ export default function Analytics() {
 
     try {
       const data = constructDQScorePayload(dqVal, cmpData);
+      console.log(data,'data......')
       const projectDQScore = await createUserProjectDQScore(data);
       if (projectDQScore) {
         alert("DQ Score is saved in DB.")
@@ -594,6 +598,8 @@ export default function Analytics() {
   }
 
   const constructDQScorePayload = (dqScoreBasedOnBrandName, benchmarkValue) => {
+    console.log(dqScoreBasedOnBrandName,'dqScoreBasedOnBrandName')
+    console.log(benchmarkValue,'benchmarkValue')
     const payload = [];
 
     dqScoreBasedOnBrandName.forEach(dqScore => {

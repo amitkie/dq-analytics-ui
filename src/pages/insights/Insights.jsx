@@ -685,7 +685,7 @@ export default function Insights() {
                     options={projects}
                     selectedValues={selectedProjects}
                     onChange={handleProjectChanges}
-                    disabled={selectedCategories?.lenth}
+                    disabled={selectedCategories?.length}
                     placeholder="Select Workspace"
                   />
 

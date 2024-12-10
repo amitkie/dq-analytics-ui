@@ -292,12 +292,21 @@ const handleEditProjectName = (id) => {
       try {
         const sectionIDs = selectedOptions.map((option) => option.value);
         const platformsIDs = await getAllPlatformsBySectionIds(sectionIDs);
-        setPlatforms(
-          platformsIDs.data.map((sec) => ({
-            value: sec.platformId,
-            label: sec.platformName,
-          }))
+        const uniquePlatforms = Array.from(
+          new Map(
+            platformsIDs.data.map((sec) => [sec.platformId, {
+              value: sec.platformId,
+              label: sec.platformName,
+            }])
+          ).values()
         );
+        setPlatforms(uniquePlatforms);
+        // setPlatforms(
+        //   platformsIDs.data.map((sec) => ({
+        //     value: sec.platformId,
+        //     label: sec.platformName,
+        //   }))
+        // );
       } catch (error) {
         console.error("Error fetching brands:", error);
       }
