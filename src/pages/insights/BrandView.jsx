@@ -16,7 +16,68 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
     const [showSelectedBrands, setShowSelectedBrands] = useState([]);
     const [showMetrics, setShowMetrics] = useState([]);
     const [showSelectedMetrics, setShowSelectedMetrics] = useState([]);
-    const [showTable, setShowTable] = useState(false)
+    const [showTable, setShowTable] = useState(false);
+    const [expandedSections, setExpandedSections] = useState({});
+    const [expandedPlatforms, setExpandedPlatforms] = useState({});
+    const [expandedNormSections, setExpandedNormSections] = useState({});
+    const [expandedNormPlatforms, setExpandedNormPlatforms] = useState({});
+
+    const toggleSection = (section) => {
+        setExpandedSections((prev) => ({
+            ...prev,
+            [section]: !prev[section],
+        }));
+    };
+
+    const togglePlatform = (section, platform) => {
+        setExpandedPlatforms((prev) => ({
+            ...prev,
+            [`${section}-${platform}`]: !prev[`${section}-${platform}`],
+        }));
+    };
+
+    // Get unique sections
+    const uniqueSections = Array.from(
+        new Set(selectedProjectsWeightsData?.data.map((item) => item.sectionname))
+    );
+
+    // Group data by section names
+    const groupedData = uniqueSections.map((section) => ({
+        section,
+        platforms: selectedProjectsWeightsData?.data.filter(
+            (item) => item.sectionname === section
+        ),
+    }));
+    const uniqueProjectNames = Array.from(
+        new Set(selectedProjectsWeightsData?.data.map((item) => item.project_name))
+    );
+
+    const toggleNormSection = (section) => {
+        setExpandedNormSections((prev) => ({
+            ...prev,
+            [section]:!prev[section]
+        }));
+    }
+
+    const toggleNormPlatform = (section, platform) => {
+        setExpandedNormPlatforms((prev) => ({
+            ...prev,
+            [`${section}-${platform}`]: !prev[`${section}-${platform}`],
+        }));
+    };
+    // Get unique sections
+    const uniqueNormSections = Array.from(
+        new Set(selectedProjectsBrandsData.map((item) => item.sectionname))
+    );
+
+    // Group data by section names
+    const groupedNormData = uniqueSections.map((section) => ({
+        section,
+        platforms: selectedProjectsBrandsData.filter(
+            (item) => item.sectionname === section
+        ),
+    }));
+     
 
     const handleToggleShow = () => {
         setShowTable(!showTable);
@@ -709,27 +770,157 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                             <h4 className="table-title" onClick={handleToggleShow}>Weights View {showTable ? <FcCollapse className="icon-colors" stroke="#093373" /> : <FcExpand className="icon-colors" />} </h4>
                             {showTable && (
                                 <Table responsive striped bordered>
-                                    <thead>
-                                        <tr>
-                                            <th width="200"> Common metrics name</th>
-                                            {selectedProjectsWeightsData.map((item, index) => (
-                                                <th key={index}>{item.project_name}</th>
-                                            ))}
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {Object.keys(selectedProjectsWeightsData[0]?.metrics || {}).map((metric, i) => (
-                                        <tr key={i}>
-                                            <td  width="200">{metric}</td>
-                                            {/* Iterate through each project's metrics for the current metric */}
-                                            {selectedProjectsWeightsData.map((project, j) => (
-                                            <td key={j}>{project.metrics[metric] || "No Data"}</td>
-                                            ))}
-                                        </tr>
+                                <thead>
+                                    <tr>
+                                        <th width="200">Section Name</th>
+                                        <th width="200">Platform Name</th>
+                                        <th width="200">Metric Name</th>
+                                        {/* {Array.from(new Set(selectedProjectsWeightsData?.data.map((item) => item.project_name))).map((projectName, index) => (
+                                            <th key={index}>{projectName}</th>
+                                        ))} */}
+                                       {uniqueProjectNames.map((projectName, index) => (
+                                            <th key={index}>{projectName}</th>
                                         ))}
-                                    </tbody>
-                                </Table>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {/* {selectedProjectsWeightsData &&
+                                        selectedProjectsWeightsData?.data.map((item, i) => (
+                                            Object.keys(item.metrics).map((metric, m) => (
+                                                <tr key={`${i}-${m}`}>
+                                                    <td width="200">{item.sectionname}</td>
+                                                    <td width="200">{item.platformname}</td>
+                                                    <td width="200">{metric}</td>
+                                                    {Array.from(new Set(selectedProjectsWeightsData?.data.map((item) => item.project_name))).map((projectName, index) => {
+                                                        const project = selectedProjectsWeightsData?.data.find(
+                                                            (proj) => proj.project_name === projectName
+                                                        );
+                                                        return (
+                                                            <td key={`${index}-${m}`} width="200">
+                                                                {project && project.metrics?.[metric] !== undefined
+                                                                    ? Number(project.metrics[metric]).toFixed(2)
+                                                                    : " "}
+                                                            </td>
+                                                        );
+                                                    })}
+                                                </tr>
+                                            ))
+                                        ))} */}
+                                       {/* {selectedProjectsWeightsData && selectedProjectsWeightsData?.data.map((item, i) => (
+                                            <React.Fragment key={i}>
+                                                 
+                                                <tr
+                                                    onClick={() => toggleSection(item.sectionname)}
+                                                    style={{ cursor: "pointer", backgroundColor: "#f5f5f5" }}
+                                                >
+                                                    <td width="200">
+                                                        <strong>{item.sectionname}</strong>
+                                                    </td>
+                                                    <td colSpan={uniqueProjectNames.length + 2}></td>
+                                                </tr>
+
+                                                 
+                                                {expandedSections[item.sectionname] && (
+                                                    <tr
+                                                        onClick={() => togglePlatform(item.sectionname, item.platformname)}
+                                                        style={{ cursor: "pointer", paddingLeft: "20px" }}
+                                                    >
+                                                        <td></td>
+                                                        <td width="200">{item.platformname}</td>
+                                                        <td colSpan={uniqueProjectNames.length + 1}></td>
+                                                    </tr>
+                                                )}
+
+                                                
+                                                {expandedSections[item.sectionname] &&
+                                                    expandedPlatforms[`${item.sectionname}-${item.platformname}`] &&
+                                                    Object.keys(item.metrics).map((metric, m) => (
+                                                        <tr key={`${i}-${m}`}>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td width="200">{metric}</td>
+                                                            {uniqueProjectNames.map((projectName, index) => {
+                                                                const project = selectedProjectsWeightsData?.data.find(
+                                                                    (proj) =>
+                                                                        proj.project_name === projectName &&
+                                                                        proj.sectionname === item.sectionname &&
+                                                                        proj.platformname === item.platformname
+                                                                );
+                                                                return (
+                                                                    <td key={index} width="200">
+                                                                        {project?.metrics?.[metric] !== undefined
+                                                                            ? project.metrics[metric]
+                                                                            : " "}
+                                                                    </td>
+                                                                );
+                                                            })}
+                                                        </tr>
+                                                    ))}
+                                            </React.Fragment>
+                                        ))} */}
+                                        {groupedData.map((group, i) => (
+                                            <React.Fragment key={i}>
+                                                {/* Section Row */}
+                                                <tr
+                                                    onClick={() => toggleSection(group.section)}
+                                                    style={{ cursor: "pointer", backgroundColor: "#f5f5f5" }}
+                                                >
+                                                    <td width="200">
+                                                        <strong>{group.section}</strong>
+                                                    </td>
+                                                    <td colSpan={uniqueProjectNames.length + 2}></td>
+                                                </tr>
+
+                                                {expandedSections[group.section] &&
+                                                    group.platforms.map((platformData, j) => (
+                                                        <React.Fragment key={`${i}-${j}`}>
+                                                            {/* Platform Row */}
+                                                            <tr
+                                                                onClick={() =>
+                                                                    togglePlatform(
+                                                                        group.section,
+                                                                        platformData.platformname
+                                                                    )
+                                                                }
+                                                                style={{ cursor: "pointer", paddingLeft: "20px" }}
+                                                            >
+                                                                <td></td>
+                                                                <td width="200">{platformData.platformname}</td>
+                                                                <td colSpan={uniqueProjectNames.length + 1}></td>
+                                                            </tr>
+
+                                                            {/* Metrics Rows */}
+                                                            {expandedPlatforms[`${group.section}-${platformData.platformname}`] &&
+                                                                Object.keys(platformData.metrics).map((metric, m) => (
+                                                                    <tr key={`${i}-${j}-${m}`}>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td width="200">{metric}</td>
+                                                                        {uniqueProjectNames.map((projectName, index) => {
+                                                                            const project = selectedProjectsWeightsData?.data.find(
+                                                                                (proj) =>
+                                                                                    proj.project_name === projectName &&
+                                                                                    proj.sectionname === group.section &&
+                                                                                    proj.platformname ===
+                                                                                        platformData.platformname
+                                                                            );
+                                                                            return (
+                                                                                <td key={index} width="200">
+                                                                                    {project?.metrics?.[metric] !== undefined
+                                                                                        ? project.metrics[metric]
+                                                                                        : " "}
+                                                                                </td>
+                                                                            );
+                                                                        })}
+                                                                    </tr>
+                                                                ))}
+                                                        </React.Fragment>
+                                                    ))}
+                                            </React.Fragment>
+                                        ))}
+                                </tbody>
+                            </Table>
+                             
                             )}
                         </div>
                         <div className="table-extend">
@@ -737,6 +928,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                             <Table responsive striped bordered className="brand-norm-table">
                                 <thead>
                                     <tr>
+                                        <th> Section name</th>
+                                        <th> Platform name</th>
                                         <th> Common metrics name</th>
                                         <th>Above 80 (81 -100)</th>
                                         <th>Between 80 to 60 (61-80)</th>
@@ -746,17 +939,16 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                        {selectedProjectsBrandsData.map((item,index) => (
+                                        {/* {selectedProjectsBrandsData.map((item,index) => (
                                             <tr key={index}>
+                                                <td>{item.sectionname}</td>
+                                                <td>{item.platformname}</td>
                                                 <td>{item.metricname}</td>
                                                 <td>
-                                                    {Array.from(
-                                                    new Set(
+                                                    { (
                                                         item.Above81_100
                                                         .split(",")                           
-                                                        .map(value => value.trim())           
-                                                        .filter(value => value !== "")        
-                                                    )
+                                                               
                                                     ).map((value, index) => (
                                                     <span key={index} style={{ display: "block" }}>
                                                         {value}
@@ -764,63 +956,151 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                                     ))}
                                                 </td>
                                                 <td>
-                                                    {Array.from(
-                                                        new Set(
-                                                            item.Between61_80
+                                                    {(item.Between61_80
                                                             .split(",")                           
-                                                            .map(value => value.trim())           
-                                                            .filter(value => value !== "")        
-                                                        )
-                                                        ).map((value, index) => (
+                                                            ).map((value, index) => (
                                                         <span key={index} style={{ display: "block" }}>
                                                             {value}
                                                         </span>
                                                         ))}
                                                 </td>
                                                 <td>
-                                                    {Array.from(
-                                                        new Set(
-                                                            item.Between51_60
+                                                    {(item.Between51_60
                                                             .split(",")                           
-                                                            .map(value => value.trim())           
-                                                            .filter(value => value !== "")        
-                                                        )
-                                                        ).map((value, index) => (
+                                                            ).map((value, index) => (
                                                         <span key={index} style={{ display: "block" }}>
                                                             {value}
                                                         </span>
                                                         ))}
                                                 </td>
                                                 <td>
-                                                    {Array.from(
-                                                        new Set(
-                                                            item.Between20_50
+                                                    {(item.Between20_50
                                                             .split(",")                           
-                                                            .map(value => value.trim())           
-                                                            .filter(value => value !== "")        
-                                                        )
-                                                        ).map((value, index) => (
+                                                              ).map((value, index) => (
                                                         <span key={index} style={{ display: "block" }}>
                                                             {value}
                                                         </span>
                                                         ))}
                                                 </td>
                                                 <td>
-                                                    {Array.from(
-                                                        new Set(
-                                                            item.Below0_19
+                                                    {(item.Below0_19
                                                             .split(",")                           
-                                                            .map(value => value.trim())           
-                                                            .filter(value => value !== "")        
-                                                        )
-                                                        ).map((value, index) => (
+                                                            ).map((value, index) => (
                                                         <span key={index} style={{ display: "block" }}>
                                                             {value}
                                                         </span>
                                                         ))}
                                                 </td>
                                             </tr>
-                                        ))}
+                                        ))} */}
+                                    {groupedNormData.map((group, i) => (
+                    <React.Fragment key={i}>
+                        {/* Section Row */}
+                        <tr
+                            onClick={() => toggleNormSection(group.section)}
+                            style={{ cursor: "pointer", backgroundColor: "#f5f5f5" }}
+                        >
+                            <td>
+                                <strong>{group.section}</strong>
+                            </td>
+                            <td colSpan={7}></td>
+                        </tr>
+
+                        {expandedNormSections[group.section] &&
+                            group.platforms.map((platformData, j) => (
+                                <React.Fragment key={`${i}-${j}`}>
+                                    {/* Platform Row */}
+                                    <tr
+                                        onClick={() =>
+                                            toggleNormPlatform(
+                                                group.section,
+                                                platformData.platformname
+                                            )
+                                        }
+                                        style={{ cursor: "pointer", paddingLeft: "20px" }}
+                                    >
+                                        <td></td>
+                                        <td>{platformData.platformname}</td>
+                                        <td colSpan={6}></td>
+                                    </tr>
+
+                                    {/* Metrics Rows */}
+                                    {expandedNormPlatforms[`${group.section}-${platformData.platformname}`] && (
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>{platformData.metricname}</td>
+                                            <td>
+                                                {platformData.Above81_100 &&
+                                                    platformData.Above81_100.split(",").map(
+                                                        (value, index) => (
+                                                            <span
+                                                                key={index}
+                                                                style={{ display: "block" }}
+                                                            >
+                                                                {value}
+                                                            </span>
+                                                        )
+                                                    )}
+                                            </td>
+                                            <td>
+                                                {platformData.Between61_80 &&
+                                                    platformData.Between61_80.split(",").map(
+                                                        (value, index) => (
+                                                            <span
+                                                                key={index}
+                                                                style={{ display: "block" }}
+                                                            >
+                                                                {value}
+                                                            </span>
+                                                        )
+                                                    )}
+                                            </td>
+                                            <td>
+                                                {platformData.Between51_60 &&
+                                                    platformData.Between51_60.split(",").map(
+                                                        (value, index) => (
+                                                            <span
+                                                                key={index}
+                                                                style={{ display: "block" }}
+                                                            >
+                                                                {value}
+                                                            </span>
+                                                        )
+                                                    )}
+                                            </td>
+                                            <td>
+                                                {platformData.Between20_50 &&
+                                                    platformData.Between20_50.split(",").map(
+                                                        (value, index) => (
+                                                            <span
+                                                                key={index}
+                                                                style={{ display: "block" }}
+                                                            >
+                                                                {value}
+                                                            </span>
+                                                        )
+                                                    )}
+                                            </td>
+                                            <td>
+                                                {platformData.Below0_19 &&
+                                                    platformData.Below0_19.split(",").map(
+                                                        (value, index) => (
+                                                            <span
+                                                                key={index}
+                                                                style={{ display: "block" }}
+                                                            >
+                                                                {value}
+                                                            </span>
+                                                        )
+                                                    )}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                    </React.Fragment>
+                ))}
                                 </tbody>
                             </Table>
                         </div>

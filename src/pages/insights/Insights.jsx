@@ -188,7 +188,7 @@ export default function Insights() {
           const selectedProjectsweightsReport = await getNormWeightValueInsight(requestedPayload);
   
           if (selectedProjectsweightsReport) {
-            setSelectedProjectsWeightsData(selectedProjectsweightsReport?.data);
+            setSelectedProjectsWeightsData(selectedProjectsweightsReport);
             console.log("selectedProjectsweightsReport:", selectedProjectsweightsReport);
           } else {
             console.error("No matching data found for selected projects:", requestedPayload.project_ids);
