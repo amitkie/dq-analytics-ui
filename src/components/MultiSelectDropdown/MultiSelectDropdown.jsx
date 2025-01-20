@@ -5,6 +5,7 @@ import { IoMdClose } from "react-icons/io";
 
 
 const MultiSelectDropdown = ({
+  className,
   options,
   selectedValues,
   onChange,
@@ -64,7 +65,7 @@ const MultiSelectDropdown = ({
   }, [isOpen]);
 
   return (
-    <div className="multi-select-dropdown" ref={dropdownRef}>
+    <div className={`multi-select-dropdown ${className}`} ref={dropdownRef}>
       <div className="select-header" onClick={handleToggle}>
         <span className="selection-container">
           {selectedValues.length > 0

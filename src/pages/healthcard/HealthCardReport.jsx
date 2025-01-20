@@ -838,10 +838,10 @@ console.log('Type:', typeof competitorsScoresData);
                       <thead>
                           <tr>
                               <th>Metric</th>
-                              <th>DQ Score</th>
-                              <th>Marketplace DQ Score</th>
-                              <th>SocialWatch DQ Score</th>
-                              <th>Digital Spends DQ Score</th>
+                              <th>DC Score</th>
+                              <th>Marketplace DC Score</th>
+                              <th>SocialWatch DC Score</th>
+                              <th>Digital Spends DC Score</th>
                               <th>Organic Performance</th>
                           </tr>
                       </thead>

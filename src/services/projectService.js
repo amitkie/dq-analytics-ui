@@ -3,7 +3,7 @@ import axios from "axios";
 export const createProject = async (data) => {
   try {
     const response = await axios.post(
-      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/create-project",
+      "https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/create-project",
       data
     );
 
@@ -22,7 +22,7 @@ export const createProject = async (data) => {
 export const updateProject = async (id, data) => {
   try {
     const response = await axios.put(
-      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${id}`,
+      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/projects/${id}`,
       data
     );
 
@@ -41,7 +41,7 @@ export const updateProject = async (id, data) => {
 export const deleteProject = async (id) => {
   try {
     const response = await axios.delete(
-      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${id}`);
+      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/projects/${id}`);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -58,7 +58,7 @@ export const deleteProject = async (id) => {
 export const getProjecName = async (data) => {
   try {
     const response = await axios.get(
-      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/check-project-name/?project_name=${data}`,
+      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/check-project-name/?project_name=${data}`,
       data
     );
 
@@ -77,7 +77,7 @@ export const getProjecName = async (data) => {
 export const saveMetricsOfProject = async (data) => {
   try {
     const response = await axios.post(
-      "https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/save-metrics",
+      "https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/save-metrics",
       data
     );
 
@@ -97,7 +97,7 @@ export const saveMetricsOfProject = async (data) => {
 export const getProjectDetailsByProjectId = async (projectId) => {
   try {
     const response = await axios.get(
-      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/get-project/?project_id=${projectId}`
+      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/get-project/?project_id=${projectId}`
     );
 
     if (response.status !== 200) {
@@ -115,7 +115,7 @@ export const getProjectDetailsByProjectId = async (projectId) => {
 export const getProjectDetailsByUserId = async (userId) => {
   try {
     const response = await axios.get(
-      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/get-project-by-user/?user_id=${userId}`
+      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/get-project-by-user/?user_id=${userId}`
     );
 
     if (response.status !== 200) {
@@ -133,7 +133,7 @@ export const getProjectDetailsByUserId = async (userId) => {
 
 export const getProjectListsByFilter = async (frequencyId, categoryIds) => {
   try {
-    let url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects-by-id?frequency_id=${frequencyId}`;
+    let url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/projects-by-id?frequency_id=${frequencyId}`;
 
     if (categoryIds?.length > 0) {
 
@@ -197,7 +197,7 @@ export const getKPIScoreValues = async (data) => {
 export const getWeightsOfSuperTheme = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8001.inc1.devtunnels.ms/weight_sum`, data
+      `https://m594bmgj-8031.inc1.devtunnels.ms/weight_sum`, data
     );
   
     if (response.status !== 200) {
@@ -214,7 +214,7 @@ export const getWeightsOfSuperTheme = async (data) => {
 export const getWeightsOfGroupNormalised = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8005.inc1.devtunnels.ms/theme_normalised`, data
+      `https://m594bmgj-8033.inc1.devtunnels.ms/theme_normalised`, data
     );
   
     if (response.status !== 200) {
@@ -231,7 +231,7 @@ export const getWeightsOfGroupNormalised = async (data) => {
 export const getWeightsOfMetricGroup = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8003.inc1.devtunnels.ms/group_normalised`, data
+      `https://m594bmgj-8032.inc1.devtunnels.ms/group_normalised`, data
     );
   
     if (response.status !== 200) {
@@ -374,7 +374,7 @@ export const getBrandDetailsData = async (brandName, projectId) => {
 };
 export const removeMetricFromProject = async (projectId, metricId) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/remove-metric/${projectId}/metrics/${metricId}`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/remove-metric/${projectId}/metrics/${metricId}`;
     const response = await axios.delete(url);
 
     if (response.status !== 200) {
@@ -389,7 +389,7 @@ export const removeMetricFromProject = async (projectId, metricId) => {
 };
 export const createUserProjectDQScore = async (data) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/create-user-project-dq-score`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/create-user-project-dq-score`;
     const response = await axios.post(url, data);
 
     if (response.status !== 201) {
@@ -405,7 +405,7 @@ export const createUserProjectDQScore = async (data) => {
 
 export const saveMetricGroup = async (data) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-groups`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-groups`;
     const response = await axios.post(url, data);
 
     if (response.status !== 201) {
@@ -421,7 +421,7 @@ export const saveMetricGroup = async (data) => {
 
 export const getWeights = async (projectId) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/get-weights-by-project/${projectId}`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/get-weights-by-project/${projectId}`;
     const response = await axios.get(url);
 
     if (response.status !== 200) {
@@ -438,7 +438,7 @@ export const getWeights = async (projectId) => {
 
 export const getMetricGroupNames = async (projectId) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-groups/${projectId}`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-groups/${projectId}`;
     const response = await axios.get(url);
 
     if (response.status !== 200) {
@@ -454,7 +454,7 @@ export const getMetricGroupNames = async (projectId) => {
 
 export const saveMetricsThemeGroup = async (data) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-theme-groups`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-theme-groups`;
     const response = await axios.post(url, data);
 
     if (response.status !== 201) {
@@ -470,7 +470,7 @@ export const saveMetricsThemeGroup = async (data) => {
 
 export const getMetricThemeGroupNames = async (projectId) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${projectId}`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${projectId}`;
     const response = await axios.get(url);
 
     if (response.status !== 200) {
@@ -485,7 +485,7 @@ export const getMetricThemeGroupNames = async (projectId) => {
 };
 export const deleteSuperTheme = async (superThemeId, projectId) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${superThemeId}?project_id=${projectId}`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${superThemeId}?project_id=${projectId}`;
     const response = await axios.delete(url);
 
     if (response.status !== 200) {
@@ -501,7 +501,7 @@ export const deleteSuperTheme = async (superThemeId, projectId) => {
 
 export const getProjectsByDateRangeForUser = async (data) => {
   try {
-    const url = `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/get-project-by-date-range-for-user`;
+    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/get-project-by-date-range-for-user`;
     const response = await axios.post(url, data);
 
     if (response.status !== 200) {
@@ -574,7 +574,7 @@ export const getCompetitorsReport = async (data) => {
 export const getSectionalReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8012.inc1.devtunnels.ms/sectional_report`,
+      `https://m594bmgj-8035.inc1.devtunnels.ms/sectional_report`,
       data
     );
 
@@ -593,7 +593,7 @@ export const getSectionalReport = async (data) => {
 export const getPlatformHealthReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8010.inc1.devtunnels.ms/platform_report`,
+      `https://m594bmgj-8035.inc1.devtunnels.ms/platform_report`,
       data
     );
 
@@ -612,7 +612,7 @@ export const getPlatformHealthReport = async (data) => {
 export const getMetricHealthReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8008.inc1.devtunnels.ms/metric_report`,
+      `https://m594bmgj-8035.inc1.devtunnels.ms/metric_report`,
       data
     );
 
@@ -631,7 +631,7 @@ export const getMetricHealthReport = async (data) => {
 export const getMultipleBrandReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8022.inc1.devtunnels.ms/get_project_brand_data`,
+      `https://m594bmgj-8036.inc1.devtunnels.ms/get_project_brand_data`,
       data
     );
 
@@ -670,7 +670,7 @@ export const getMultipleBrandReport = async (data) => {
 export const toggleFavoriteProject = async (projectId,data) => {
   try {
     const response = await axios.put(
-      `https://m594bmgj-8080.inc1.devtunnels.ms/api/v1/project/projects/${projectId}/favorite`,
+      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/projects/${projectId}/favorite`,
       data
     );
 
@@ -690,7 +690,7 @@ export const toggleFavoriteProject = async (projectId,data) => {
 export const getNormWeightValueInsight = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8020.inc1.devtunnels.ms/norm_weight_value`,
+      `https://m594bmgj-8034.inc1.devtunnels.ms/norm_weight_value`,
       data
     );
 
@@ -710,7 +710,7 @@ export const getNormWeightValueInsight = async (data) => {
 export const getNormBrandValueInsight = async (data) => {
   try {
     const response = await axios.post(
-      `https://hzz4tlcw-8018.inc1.devtunnels.ms/norm_brand_value`,
+      `https://m594bmgj-8034.inc1.devtunnels.ms/norm_brand_value`,
       data
     );
 

@@ -2,6 +2,10 @@
     position: relative;
     width: 250px;
   }
+.multi-select-dropdown.custom-width {
+    position: relative;
+    width: 100%;
+  }
   
   .select-header {
     display: flex;

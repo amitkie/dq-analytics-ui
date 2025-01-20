@@ -142,7 +142,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
 
     const tabsScoreLevel = [
         {
-            label: "Overall DQ Score",
+            label: "Overall DC Score",
             content: (
                 <>
                     <div className="row">

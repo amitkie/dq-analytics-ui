@@ -116,6 +116,7 @@ export default function Insights() {
             const currentProjectNames = currentProjectData?.project?.filter((project) =>
               requestedPayload.project_ids.includes(project.id)
             );
+            console.log("currentProjectNames:", currentProjectNames);
             if(currentProjectNames) {
               setSelectedProjectsList(currentProjectNames)
             }else {
@@ -249,7 +250,7 @@ export default function Insights() {
 
     try {
       const projectData = await getProjectListsByFilter(frequency, categories);
-
+      console.log("projectData:", projectData);
       setProjects(
         projectData?.map((project) => ({
           value: project?.id,
@@ -373,7 +374,7 @@ export default function Insights() {
         value: project.id,
         label: project.project_name,
       }));
-
+      console.log("projectResponse:", projectResponse);
       setProjects(projects);
 
     } catch (err) {
@@ -390,13 +391,13 @@ export default function Insights() {
     { header: "Category", accessor: "Category" },
     { header: "Brands", accessor: "Brands" },
     {
-      header: "Digital quotient for brand (DQ)",
+      header: "Digital quotient for brand (DC)",
       accessor: "Digital quotient for brand (DQ)",
     },
-    { header: "Ecom DQ Score", accessor: "Ecom DQ Score" },
-    { header: "Social DQ Score", accessor: "Social DQ Score" },
-    { header: "Paid Marketing DQ Score", accessor: "Paid Marketing DQ Score" },
-    { header: "Organic DQ", accessor: "Organic DQ" },
+    { header: "Ecom DC Score", accessor: "Ecom DQ Score" },
+    { header: "Social DC Score", accessor: "Social DQ Score" },
+    { header: "Paid Marketing DC Score", accessor: "Paid Marketing DQ Score" },
+    { header: "Organic DC", accessor: "Organic DQ" },
   ];
 
   const columns1 = [
@@ -426,7 +427,7 @@ export default function Insights() {
     const brands = Array.from(new Set(data.map(item => item.brands)));
     console.log('brands', brands);
     // Define the headers for the Excel sheet
-    const headers = ['brand_name', 'Marketplace', 'Digital Spends', 'Organic Performance', 'Socialwatch', 'DQ Score'];
+    const headers = ['brand_name', 'Marketplace', 'Digital Spends', 'Organic Performance', 'Socialwatch', 'DC Score'];
   
     // Structure data with "Brands" as the first column
     const structuredData = brands.map(brand => {
@@ -448,7 +449,7 @@ export default function Insights() {
   const generateExcel = (exportData) => {
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.aoa_to_sheet(exportData);
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Insight DQ Score');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Insight DC Score');
     XLSX.writeFile(workbook, 'Insights.xlsx');
   };
 
@@ -475,7 +476,7 @@ export default function Insights() {
 
             <div className="col-12">
               <div className="scores-charts">
-                <span className="chart-title">DQ Score</span>
+                <span className="chart-title">DC Score</span>
                 {loading ? (
                   <div className="loader-container-sm">
                     <div className="loader-sm"></div>

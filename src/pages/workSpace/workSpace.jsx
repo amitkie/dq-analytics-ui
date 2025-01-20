@@ -483,7 +483,7 @@ const handleEditProjectName = (id) => {
                       placeholder="Select Section"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 ws-select">
+                  <div className="col-lg-3 col-md-6 ws-select">
                     <MultiSelectDropdown
                       options={platforms}
                       selectedValues={selectedPlatforms}
@@ -491,8 +491,9 @@ const handleEditProjectName = (id) => {
                       placeholder="Select Platforms"
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 ws-select">
+                  <div className="col-lg-6 col-md-6 ws-select">
                     <MultiSelectDropdown
+                      className={"custom-width"}
                       options={metrics}
                       selectedValues={selectedMetrics}
                       onChange={handleMetricsChange}
@@ -500,7 +501,7 @@ const handleEditProjectName = (id) => {
                       isDisabled={isMetricsDisabled}
                     />
                   </div>
-                  <div className="col-lg-4 col-md-6 ws-select">
+                  <div className="col-lg-3 col-md-6 ws-select">
                     <div className="select-frequency">
                       <select 
                         className="form-control-select" 
