@@ -35,6 +35,9 @@ export default function Insights() {
   const [frequencies, setFrequencies] = useState([]);
   const [projects, setProjects] = useState([]);
   const { userInfo, projectInfo } = useSelector((state) => state.user);
+  const [years, setYears] = useState([]);
+  const [selectedYear, setSelectedYear] = useState("");
+
 
 
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -90,6 +93,12 @@ export default function Insights() {
     };
 
     fetchData();
+
+
+    const yearData = Array.from({ length: 2200 - 1980 + 1 }, (_, index) => 1980 + index); 
+    console.log(yearData, "yeardata")
+    setYears(yearData)
+
   }, []);
 
   useEffect(() => {
@@ -417,6 +426,7 @@ export default function Insights() {
     const value = e.target.value;
     const payload = {
       user_id: userInfo?.user?.id,
+      year:selectedYear,
       filter: {
         type: selectedFrequency,
         value: value
@@ -695,7 +705,25 @@ export default function Insights() {
                   Select files from saved Projects
                 </span>
                 <div className="insights-project-filter">
+                <Form.Select
+                name="Select Year"
+                className="filter-input"
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+              >
+                <option value="">Select a Year</option>
 
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+                {/* {filterProject.map((project, index) => (
+                  <option key={index} value={project.value}>
+                    {project.year}
+                  </option>
+                ))} */}
+              </Form.Select>
                   <select
                     className="form-control-select"
                     onChange={handleFrequenciesChange}
