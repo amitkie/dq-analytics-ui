@@ -10,7 +10,7 @@ import "./Insights.scss";
 
 
 
-export default function BrandView({ selectedProjectsList, selectedProjectsData, selectedProjectsWeightsData, selectedProjectsBrandsData }) {
+export default function BrandView({ selectedProjectsList, selectedProjectsData, selectedProjectsWeightsData, selectedProjectsBrandsData}) {
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [showBrands, setShowBrands] = useState([]);
     const [showSelectedBrands, setShowSelectedBrands] = useState([]);
@@ -22,6 +22,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
     const [expandedNormSections, setExpandedNormSections] = useState({});
     const [expandedNormPlatforms, setExpandedNormPlatforms] = useState({});
 
+     
     const toggleSection = (section) => {
         setExpandedSections((prev) => ({
             ...prev,
@@ -38,18 +39,18 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
 
     // Get unique sections
     const uniqueSections = Array.from(
-        new Set(selectedProjectsWeightsData?.data.map((item) => item.sectionname))
+        new Set(selectedProjectsWeightsData?.dat?.map((item) => item.sectionname))
     );
 
     // Group data by section names
-    const groupedData = uniqueSections.map((section) => ({
+    const groupedData = uniqueSections?.map((section) => ({
         section,
         platforms: selectedProjectsWeightsData?.data.filter(
             (item) => item.sectionname === section
         ),
     }));
     const uniqueProjectNames = Array.from(
-        new Set(selectedProjectsWeightsData?.data.map((item) => item.project_name))
+        new Set(selectedProjectsWeightsData?.data?.map((item) => item.project_name))
     );
 
     const toggleNormSection = (section) => {
@@ -67,11 +68,11 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
     };
     // Get unique sections
     const uniqueNormSections = Array.from(
-        new Set(selectedProjectsBrandsData.map((item) => item.sectionname))
+        new Set(selectedProjectsBrandsData?.map((item) => item.sectionname))
     );
 
     // Group data by section names
-    const groupedNormData = uniqueSections.map((section) => ({
+    const groupedNormData = uniqueSections?.map((section) => ({
         section,
         platforms: selectedProjectsBrandsData.filter(
             (item) => item.sectionname === section
@@ -86,7 +87,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
         console.log(options, 'options');
         setShowSelectedBrands(options);
 
-        const selectedBrandNames = options.map((option) => option.label); 
+        const selectedBrandNames = options?.map((option) => option.label); 
 
         const filteredData = Object.values(selectedProjectsData)
             .flat()
@@ -115,18 +116,18 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
     // }
     function getUniqueBrands(response) {
         // Validate that response and response.data exist and are arrays
-        if (!response || !Array.isArray(response.data)) {
+        if (!response || !Array.isArray(response?.data)) {
             console.error("Invalid response format", response);
             return [];
         }
     
         // Extract all brand names
-        const allBrandNames = response.data.map((project) => project.Brand_Name);
+        const allBrandNames = response?.data?.map((project) => project.Brand_Name);
     
         // Remove duplicates and format the output
         const uniqueBrands = [...new Set(allBrandNames)];
     
-        return uniqueBrands.map((brand, index) => ({
+        return uniqueBrands?.map((brand, index) => ({
             value: index + 1,
             label: brand,
         }));
@@ -165,8 +166,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>Digital Trailblaizers/Leaders</td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Overall_Final_Score > 81)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Overall_Final_Score > 81)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Overall_Final_Score).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -184,8 +185,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Overall_Final_Score > 61 && item.Overall_Final_Score < 80)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Overall_Final_Score > 61 && item.Overall_Final_Score < 80)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Overall_Final_Score).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -203,8 +204,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Overall_Final_Score > 51 && item.Overall_Final_Score < 60)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Overall_Final_Score > 51 && item.Overall_Final_Score < 60)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Overall_Final_Score).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -222,8 +223,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>
 
                                             {allProjectsData
-                                                .filter((item) => item.Overall_Final_Score > 20 && item.Overall_Final_Score < 50)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Overall_Final_Score > 20 && item.Overall_Final_Score < 50)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Overall_Final_Score).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -240,8 +241,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Overall_Final_Score < 19)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Overall_Final_Score < 19)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Overall_Final_Score).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -265,6 +266,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                             <Table responsive striped bordered>
                                 <thead>
                                     <tr>
+                                    <th>Category</th>
                                         <th>Above 80 (81 -100)</th>
                                         <th>Between 80 to 60 (61-80)</th>
                                         <th>Between 60 to 50 (51-60)</th>
@@ -278,8 +280,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>Digital Trailblaizers/Leaders</td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Marketplace > 81)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Marketplace > 81)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Marketplace).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -297,8 +299,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Marketplace > 61 && item.Marketplace < 80)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Marketplace > 61 && item.Marketplace < 80)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Marketplace).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -316,8 +318,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Marketplace > 51 && item.Marketplace < 60)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Marketplace > 51 && item.Marketplace < 60)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Marketplace).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -335,8 +337,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>
 
                                             {allProjectsData
-                                                .filter((item) => item.Marketplace > 20 && item.Marketplace < 50)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Marketplace > 20 && item.Marketplace < 50)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Marketplace).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -353,8 +355,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Marketplace < 19)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Marketplace < 19)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Marketplace).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -392,8 +394,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>Digital Trailblaizers/Leaders</td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Socialwatch > 81)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Socialwatch > 81)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Socialwatch).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -411,8 +413,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Socialwatch > 61 && item.Socialwatch < 80)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Socialwatch > 61 && item.Socialwatch < 80)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Socialwatch).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -430,8 +432,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Socialwatch > 51 && item.Socialwatch < 60)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Socialwatch > 51 && item.Socialwatch < 60)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Socialwatch).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -449,8 +451,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>
 
                                             {allProjectsData
-                                                .filter((item) => item.Socialwatch > 20 && item.Socialwatch < 50)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Socialwatch > 20 && item.Socialwatch < 50)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Socialwatch).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -467,8 +469,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item.Socialwatch < 19)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item.Socialwatch < 19)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {Number(item.Socialwatch).toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -506,8 +508,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>Digital Trailblaizers/Leaders</td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item['Digital Spends'] > 81)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Digital Spends'] > 81)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Digital Spends'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -525,8 +527,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item['Digital Spends'] > 61 && item['Digital Spends'] < 80)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Digital Spends'] > 61 && item['Digital Spends'] < 80)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Digital Spends'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -544,8 +546,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item['Digital Spends'] > 51 && item['Digital Spends'] < 60)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Digital Spends'] > 51 && item['Digital Spends'] < 60)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Digital Spends'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -563,8 +565,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>
 
                                             {allProjectsData
-                                                .filter((item) => item['Digital Spends'] > 20 && item['Digital Spends'] < 50)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Digital Spends'] > 20 && item['Digital Spends'] < 50)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Digital Spends'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -581,8 +583,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item['Digital Spends'] < 19)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Digital Spends'] < 19)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Digital Spends'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -620,8 +622,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>Digital Trailblaizers/Leaders</td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item['Organic Performance'] > 81)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Organic Performance'] > 81)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Organic Performance'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -639,8 +641,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item['Organic Performance'] > 61 && item['Organic Performance'] < 80)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Organic Performance'] > 61 && item['Organic Performance'] < 80)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Organic Performance'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -658,8 +660,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item['Organic Performance'] > 51 && item['Organic Performance'] < 60)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Organic Performance'] > 51 && item['Organic Performance'] < 60)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Organic Performance'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -677,8 +679,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td>
 
                                             {allProjectsData
-                                                .filter((item) => item['Organic Performance'] > 20 && item['Organic Performance'] < 50)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Organic Performance'] > 20 && item['Organic Performance'] < 50)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Organic Performance'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -695,8 +697,8 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         <td> </td>
                                         <td>
                                             {allProjectsData
-                                                .filter((item) => item['Organic Performance'] < 19)
-                                                .map((item, index, filteredArray) => (
+                                                ?.filter((item) => item['Organic Performance'] < 19)
+                                                ?.map((item, index, filteredArray) => (
                                                     <span key={index} className="project-scores">
                                                         {item.Brand_Name}, {item['Organic Performance'].toFixed(2)}
                                                         {index < filteredArray.length - 1 && ", "}
@@ -778,7 +780,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                         {/* {Array.from(new Set(selectedProjectsWeightsData?.data.map((item) => item.project_name))).map((projectName, index) => (
                                             <th key={index}>{projectName}</th>
                                         ))} */}
-                                       {uniqueProjectNames.map((projectName, index) => (
+                                       {uniqueProjectNames?.map((projectName, index) => (
                                             <th key={index}>{projectName}</th>
                                         ))}
                                     </tr>
@@ -858,7 +860,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                                     ))}
                                             </React.Fragment>
                                         ))} */}
-                                        {groupedData.map((group, i) => (
+                                        {groupedData?.map((group, i) => (
                                             <React.Fragment key={i}>
                                                 {/* Section Row */}
                                                 <tr
@@ -872,7 +874,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                                 </tr>
 
                                                 {expandedSections[group.section] &&
-                                                    group.platforms.map((platformData, j) => (
+                                                    group.platforms?.map((platformData, j) => (
                                                         <React.Fragment key={`${i}-${j}`}>
                                                             {/* Platform Row */}
                                                             <tr
@@ -891,12 +893,12 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
 
                                                             {/* Metrics Rows */}
                                                             {expandedPlatforms[`${group.section}-${platformData.platformname}`] &&
-                                                                Object.keys(platformData.metrics).map((metric, m) => (
+                                                                Object.keys(platformData.metrics)?.map((metric, m) => (
                                                                     <tr key={`${i}-${j}-${m}`}>
                                                                         <td></td>
                                                                         <td></td>
                                                                         <td width="200">{metric}</td>
-                                                                        {uniqueProjectNames.map((projectName, index) => {
+                                                                        {uniqueProjectNames?.map((projectName, index) => {
                                                                             const project = selectedProjectsWeightsData?.data.find(
                                                                                 (proj) =>
                                                                                     proj.project_name === projectName &&
@@ -993,7 +995,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                                 </td>
                                             </tr>
                                         ))} */}
-                                    {groupedNormData.map((group, i) => (
+                                    {groupedNormData?.map((group, i) => (
                     <React.Fragment key={i}>
                         {/* Section Row */}
                         <tr
@@ -1007,7 +1009,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                         </tr>
 
                         {expandedNormSections[group.section] &&
-                            group.platforms.map((platformData, j) => (
+                            group.platforms?.map((platformData, j) => (
                                 <React.Fragment key={`${i}-${j}`}>
                                     {/* Platform Row */}
                                     <tr
@@ -1032,7 +1034,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                             <td>{platformData.metricname}</td>
                                             <td>
                                                 {platformData.Above81_100 &&
-                                                    platformData.Above81_100.split(",").map(
+                                                    platformData.Above81_100.split(",")?.map(
                                                         (value, index) => (
                                                             <span
                                                                 key={index}
@@ -1045,7 +1047,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                             </td>
                                             <td>
                                                 {platformData.Between61_80 &&
-                                                    platformData.Between61_80.split(",").map(
+                                                    platformData.Between61_80.split(",")?.map(
                                                         (value, index) => (
                                                             <span
                                                                 key={index}
@@ -1058,7 +1060,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                             </td>
                                             <td>
                                                 {platformData.Between51_60 &&
-                                                    platformData.Between51_60.split(",").map(
+                                                    platformData.Between51_60.split(",")?.map(
                                                         (value, index) => (
                                                             <span
                                                                 key={index}
@@ -1071,7 +1073,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                             </td>
                                             <td>
                                                 {platformData.Between20_50 &&
-                                                    platformData.Between20_50.split(",").map(
+                                                    platformData.Between20_50.split(",")?.map(
                                                         (value, index) => (
                                                             <span
                                                                 key={index}
@@ -1084,7 +1086,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                                             </td>
                                             <td>
                                                 {platformData.Below0_19 &&
-                                                    platformData.Below0_19.split(",").map(
+                                                    platformData.Below0_19.split(",")?.map(
                                                         (value, index) => (
                                                             <span
                                                                 key={index}
@@ -1118,7 +1120,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                         <thead>
                             <tr>
                                 <th>Overall Details</th>
-                                {selectedProjectsList.map((item, index) => (
+                                {selectedProjectsList?.map((item, index) => (
                                     <th key={index}>{item.project_name}</th>
                                 ))}
 
@@ -1128,7 +1130,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                              
                             <tr>
                                 <td>Total Metrics</td>
-                                {selectedProjectsList.map((item, index) => (
+                                {selectedProjectsList?.map((item, index) => (
                                     <td key={index}>{Array.isArray(item.metricNames) ? item.metricNames.length : 0}</td>
                                 ))}
                                 
@@ -1136,7 +1138,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
 
                             <tr>
                                 <td>Categories</td>
-                                {selectedProjectsList.map((item, index) => (
+                                {selectedProjectsList?.map((item, index) => (
                                     <td key={index}>
                                         {Array.isArray(item.categoryNames)
                                             ? item.categoryNames.join(", ")
@@ -1147,7 +1149,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                             
                             <tr>
                                 <td>Total Brands  </td>
-                                {selectedProjectsList.map((item, index) => (
+                                {selectedProjectsList?.map((item, index) => (
                                     <td key={index}>{Array.isArray(item.brandNames) ? item.brandNames.length : 0}</td>
                                 ))}
                                 

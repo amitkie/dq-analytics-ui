@@ -170,3 +170,22 @@
     }
   }
 }
+
+.bar-chart, 
+.no-data-text {
+  min-height: 180px;
+  width: 100%;
+  display: block;
+}
+@media (max-width:1023px) {
+  .chart-container {
+    display: grid ;
+    grid-template-columns: 100%;
+  }
+  .left-side {
+    gap: 0rem;
+  }
+  .left-side .chart-list {
+    width:100%
+  }
+}

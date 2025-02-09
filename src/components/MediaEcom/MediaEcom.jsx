@@ -1,12 +1,11 @@
 import React from "react";
 
 function MediaEcom({ healthCardData }) {
-
+  console.log("Marketplace:", healthCardData)
   return (
     <div>
       <div className="row g-3" data-masonry='{"percentPosition": true }'>
         
-
         {healthCardData &&
           Object.entries(healthCardData).map(([key, value], index) => (
             <div key={index} className="col-sm-12 col-md-6 col-lg-4 col-xl-3">

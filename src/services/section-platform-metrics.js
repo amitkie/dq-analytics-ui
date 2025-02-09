@@ -578,13 +578,13 @@ const sectionData = [
   {
     Section: "Ecom",
     Platform: "Amazon",
-    Metrics: "Search visibility share \n(Organic)",
+    Metrics: "Search visibility share Organic",
     Relationship: "0",
   },
   {
     Section: "Ecom",
     Platform: "Amazon",
-    Metrics: "Search visibility share \n(Paid)",
+    Metrics: "Search visibility share Paid",
     Relationship: "0",
   },
   {

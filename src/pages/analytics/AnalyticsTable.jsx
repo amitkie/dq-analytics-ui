@@ -12,6 +12,7 @@ const AnalyticsTable = ({
   handleCheckboxChange,
   projectDetails,
   checkStates,
+  isBenchmarkSaved,
   weights,
   handleSelectAll,
   totalWeights,
@@ -24,7 +25,7 @@ const AnalyticsTable = ({
 }) => {
   const [expandedSections, setExpandedSections] = useState([]);
   const [expandedPlatforms, setExpandedPlatforms] = useState([]);
-   
+   console.log(isBenchmarkSaved, "isbenchmarksaved")
   // Toggle section expansion
   const toggleSection = (sectionId) => {
     setExpandedSections((prev) =>
@@ -107,6 +108,7 @@ const AnalyticsTable = ({
                   type="checkbox"
                   onChange={(e) => handleSelectAll(e, "overall")}
                   className="c-pointer"
+                  disabled={isBenchmarkSaved}
               />
             </div>
           </th>
@@ -118,6 +120,7 @@ const AnalyticsTable = ({
                   type="checkbox"
                   onChange={(e) => handleSelectAll(e, "categoryBased")}
                   className="c-pointer"
+                  disabled={isBenchmarkSaved}
               />
             </div>
           </th>
@@ -135,7 +138,7 @@ const AnalyticsTable = ({
                   <div className="">
                     <b>{sectionName}</b>  <span style={{ backgroundColor: 'lightgrey' }} class="badge badge-pill badge-light">{sectionWeights[sectionName]?.toFixed(2)}</span>
                   </div>
-                  <Button variant="link">
+                  <Button variant="link" disabled={isBenchmarkSaved}>
                     {expandedSections.includes(sectionName) ? <AiOutlineMinus /> : <AiOutlinePlus />}
                   </Button>
                 </div>
@@ -154,7 +157,7 @@ const AnalyticsTable = ({
                           <div className="">
                             <b>{platformName}</b>  <span style={{ backgroundColor: 'lightgrey' }} class="badge badge-pill badge-light">{platformWeights[sectionName][platformName]?.toFixed(2)}</span>
                           </div>
-                          <Button variant="link">
+                          <Button variant="link" disabled={isBenchmarkSaved}>
                             {expandedPlatforms.includes(platformName) ? <AiOutlineMinus /> : <AiOutlinePlus />}
                           </Button>
                         </div>
@@ -179,6 +182,7 @@ const AnalyticsTable = ({
                               max="100"
                               className={totalWeights > 100 ? "input-error form-input" : "form-input"}
                               style={totalWeights > 100 ? { borderColor: "red" } : {}}
+                              disabled={isBenchmarkSaved}
                             />
                           </td>
                           <td>
@@ -187,6 +191,7 @@ const AnalyticsTable = ({
                               checked={item.isOverallChecked || false}
                               className="c-pointer"
                               onChange={(e) => handleCheckboxChange(e, item, "overall")}
+                              disabled={isBenchmarkSaved}
                             />
                           </td>
                           <td>
@@ -195,6 +200,7 @@ const AnalyticsTable = ({
                               checked={item.isCategoryBasedChecked || false}
                               className="c-pointer"
                               onChange={(e) => handleCheckboxChange(e, item, "categoryBased")}
+                              disabled={isBenchmarkSaved}
                             />
                           </td>
                           <td>
@@ -264,11 +270,14 @@ const AnalyticsTable = ({
                             )} */}
                           </td>
                           <td>
-                            <IoMdRemoveCircleOutline
-                              className="action-item-icon"
-                              onClick={() => removeMetricsFromDB(item.metric_id, item.metric_name)}
-                              title="Remove Metric data"
-                            />
+                            <button disabled={isBenchmarkSaved} className="btn-bg-none">
+                              <IoMdRemoveCircleOutline
+                                className="action-item-icon"
+                                onClick={() => removeMetricsFromDB(item.metric_id, item.metric_name)}
+                                title="Remove Metric data"
+                                disabled={isBenchmarkSaved}
+                              />
+                            </button>
                           </td>
                         </tr>
                       ))}

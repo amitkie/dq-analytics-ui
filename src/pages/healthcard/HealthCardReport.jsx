@@ -612,7 +612,7 @@ console.log('Type:', typeof competitorsScoresData);
                       )
                     )}
                   </div>
-                  <span className="brand-subtitle">DQ Score</span>
+                  <span className="brand-subtitle">DC Score</span>
                   <div className="percent-container">
                   {Object.entries(brandDetailData?.statistics?.overall_score_stats || {}).map(([key, value]) => (
                     <div className="percentile-score" key={key}>
@@ -813,7 +813,7 @@ console.log('Type:', typeof competitorsScoresData);
               <div className="dq-scores-tab">
                 <div className="main-score-content">
                     <div className="item-category">
-                        <h4>DQ Score</h4>
+                        <h4>DC Score</h4>
                         <HealthCardScore brands={competitorsScoresData?.dq || []} valueKey="dq" />
                     </div>
                     <div className="item-category">

@@ -112,9 +112,9 @@ export default function Analytics() {
       header: "Digital quotient for brand (DQ)",
       accessor: "Digital quotient for brand (DQ)",
     },
-    { header: "Ecom DQ Score", accessor: "Ecom DQ Score" },
-    { header: "Social DQ Score", accessor: "Social DQ Score" },
-    { header: "Paid Marketing DQ Score", accessor: "Paid Marketing DQ Score" },
+    { header: "Ecom DC Score", accessor: "Ecom DC Score" },
+    { header: "Social DC Score", accessor: "Social DC Score" },
+    { header: "Paid Marketing DC Score", accessor: "Paid Marketing DC Score" },
     { header: "Organic DQ", accessor: "Organic DQ" },
   ];
 
@@ -132,6 +132,7 @@ export default function Analytics() {
         metric_id: selectedAddMetricList.map(m => m.value)
       }
       const res = await updateProject(projectId,reqPayload);
+      console.log("metric res", res);
       if(res){
         setAddMetricLoading(false);
 
@@ -589,11 +590,11 @@ console.log(response?.project?.metrics, 'response?.project?.metrics')
       console.log(data,'data......')
       const projectDQScore = await createUserProjectDQScore(data);
       if (projectDQScore) {
-        alert("DQ Score is saved in DB.")
+        alert("DC Score is saved in DB.")
 
       }
     } catch (error) {
-      alert("Failed to save DQ score in DB.")
+      alert("Failed to save DC score in DB.")
     }
   }
 
@@ -1095,7 +1096,7 @@ console.log(response?.project?.metrics, 'response?.project?.metrics')
     const kpiWorksheet = XLSX.utils.aoa_to_sheet(kpiStructuredData);
     const comparisonWorksheet = XLSX.utils.json_to_sheet(comparisonScoreData);
 
-    XLSX.utils.book_append_sheet(workbook, dqWorksheet, "DQ Score");
+    XLSX.utils.book_append_sheet(workbook, dqWorksheet, "DC Score");
     XLSX.utils.book_append_sheet(workbook, kpiWorksheet, "KPI Score");
     XLSX.utils.book_append_sheet(workbook, comparisonWorksheet, "Comparison View");
 
@@ -1214,7 +1215,7 @@ console.log(response?.project?.metrics, 'response?.project?.metrics')
     },
 
     {
-      label: "DQ Scores",
+      label: "DC Scores",
       disabled: "disabled",
       content: (
         <div>

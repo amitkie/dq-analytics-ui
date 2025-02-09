@@ -653,7 +653,7 @@ function SuperThemes({ metrics, normalizedValue = {}, projectId }) {
     },
 
     {
-      label: "super themes values",
+      label: "Super Themes Values",
       content: (
         <>
           {themeGroupTable?.length > 0 ? (

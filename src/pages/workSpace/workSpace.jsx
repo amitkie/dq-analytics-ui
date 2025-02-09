@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import moment from "moment";
 import DateRangePicker from "react-bootstrap-daterangepicker";
+import "bootstrap-daterangepicker/daterangepicker.css";
 import Modal from "react-bootstrap/Modal";
 import ButtonComponent from "../../common/button/button";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -21,7 +23,7 @@ import {
 import MultiSelectDropdown from "../../components/MultiSelectDropdown/MultiSelectDropdown";
 
 import "./workSpace.scss";
-import { createProject, deleteProject, getProjecName, toggleFavoriteProject, updateProject } from "../../services/projectService";
+import { createProject, deleteProject, getProjecName, toggleFavoriteProject, updateProject, getDateRanges } from "../../services/projectService";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDate } from "../../utils/dateFormatter";
 import { useNavigate } from "react-router-dom";
@@ -53,7 +55,7 @@ export default function WorkSpace() {
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [selectedSections, setSelectedSections] = useState([]);
   const [selectedMetrics, setSelectedMetrics] = useState([]);
-  const [selectedFrequencies, setSelectedFrequencies] = useState([]);
+  const [selectedFrequencies, setSelectedFrequencies] = useState("1");
   const [isBrandsDisabled, setIsBrandsDisabled] = useState(true);
   const [isMetricsDisabled, setIsMetricsDisabled] = useState(true);
   const [show, setShow] = useState(false);
@@ -74,11 +76,15 @@ export default function WorkSpace() {
   const handleDeleteShow = () => setShowAlert(true);
 
   const [sortColumn, setSortcolumn] = useState({ key: null, direction: "asc" });
-
+  const [pickerKey, setPickerKey] = useState(0);
+  const [dateRangeMinMax, setDateRangeMinMax] = useState([]);
+ 
   const [dateRange, setDateRange] = useState({
-    startDate: "04/01/2024",
-    endDate: "06/15/2024",
+    startDate: moment().format("MM/DD/YYYY"),
+    endDate: moment().add(30, "days").format("MM/DD/YYYY"),  
   });
+
+   
 
   const [editProjectId, setEditProjectId] = useState(null);
   const [editedProjectName, setEditedProjectName] = useState("");
@@ -165,17 +171,9 @@ const handleEditProjectName = (id) => {
     };
     return <span>{icons[key]}</span>;
   };
-  // Function to handle date range changesF
-  const handleDateRangeChange = (event) => {
-    
-    const { startDate, endDate } = event;
-    setDateRange({
-      startDate: startDate.format("MM/DD/YYYY"),
-      endDate: endDate.format("MM/DD/YYYY"),
-    });
-  };
-
-  // Function to handle date range changes
+   
+  
+  
 
 
   useEffect(() => {
@@ -240,6 +238,20 @@ const handleEditProjectName = (id) => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchDateData = async () => {
+      try {
+        const allDateRangeMinMax = await getDateRanges();
+        if(allDateRangeMinMax) {
+          setDateRangeMinMax(allDateRangeMinMax)
+        }
+      } catch(error){
+        console.error("Error fetching Date Range:", error);
+      }
+    };
+    fetchDateData();
+  }, []) 
 
   const deleteProjectDetails = async (id) => {
     try {
@@ -364,9 +376,60 @@ const handleEditProjectName = (id) => {
     setSelectedMetrics(selectedOptions);
   };
 
+  
+  useEffect(() => {
+    setDateRange((prev) => {
+      let maxDays = selectedFrequencies === "1" ? 30 : 90;
+      let newEndDate = moment(prev.startDate).add(maxDays - 1, "days");
+      
+      console.log("Updated inside useEffect:", {
+        startDate: prev.startDate,
+        endDate: newEndDate.format("MM/DD/YYYY"),
+      });
+
+      return {
+        startDate: moment(prev.startDate).format("MM/DD/YYYY"),
+        endDate: moment(newEndDate).format("MM/DD/YYYY"),
+      };
+    });
+    setPickerKey((prevKey) => prevKey + 1);
+  }, [selectedFrequencies, dateRange.startDate]);
+
   const handleFrequenciesChange = (selectedOptions) => {
     setSelectedFrequencies(selectedOptions?.target?.value);
   };
+  const handleDateRangeChange = (picker) => {
+    setDateRange((prev) => {
+      let maxDays = selectedFrequencies === "1" ? 30 : 90;
+      let newEndDate = moment(picker.startDate).add(maxDays - 1, "days");
+
+      console.log("Updated inside handleDateRangeChange:", {
+        startDate: picker.startDate.format("MM/DD/YYYY"),
+        endDate: newEndDate.format("MM/DD/YYYY"),
+      });
+
+      return {
+        startDate: picker.startDate.format("MM/DD/YYYY"),
+        endDate: newEndDate.format("MM/DD/YYYY"),
+      };
+    });
+  };
+  // const handleDateRangeChange = (picker) => {
+  //   let maxDays = selectedFrequencies === 1 ? 30 : 90;
+  //   let newEndDate = moment(picker.startDate).add(maxDays - 1, "days");
+
+  //   setDateRange({
+  //     startDate: picker.startDate.format("MM/DD/YYYY"),
+  //     endDate: newEndDate.format("MM/DD/YYYY"),
+  //   });
+
+  //   setPickerKey((prevKey) => prevKey + 1);  
+
+  //   console.log("Updated inside handleDateRangeChange:", {
+  //     startDate: picker.startDate.format("MM/DD/YYYY"),
+  //     endDate: newEndDate.format("MM/DD/YYYY"),
+  //   });
+  // };
 
   const handleProjectClick = (id) => {
      dispatch(getRecentProjectRequest(id));
@@ -526,18 +589,22 @@ const handleEditProjectName = (id) => {
                   <div className="col-lg-4 col-md-6 ws-select">
                     <div className="select-date">
                       <DateRangePicker
-                        
+                         key={pickerKey}
                         initialSettings={{
                           startDate: dateRange.startDate,
                           endDate: dateRange.endDate,
-                          
+                          maxSpan: { days: selectedFrequencies === "1" ? 30 : 90 },
+                          // minDate: moment().format("MM/DD/YYYY"),  // Prevent past dates
+                          // maxDate: moment().add(1, "years").format("MM/DD/YYYY"), // Prevent past dates
                         }}
                         onApply={(e, picker) => handleDateRangeChange(picker)}
                       >
                         <input
-                          type="text"
-                          className="form-control col-4"
-                          placeholder="Select date"
+                         type="text"
+                         className="form-control col-4"
+                         value={`${dateRange.startDate} - ${dateRange.endDate}`}
+                         readOnly
+                           
                         />
                       </DateRangePicker>
                     </div>

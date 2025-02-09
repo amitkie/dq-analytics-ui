@@ -197,7 +197,7 @@ export const getKPIScoreValues = async (data) => {
 export const getWeightsOfSuperTheme = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8031.inc1.devtunnels.ms/weight_sum`, data
+      `https://m594bmgj-8002.inc1.devtunnels.ms/weight_sum`, data
     );
   
     if (response.status !== 200) {
@@ -214,7 +214,7 @@ export const getWeightsOfSuperTheme = async (data) => {
 export const getWeightsOfGroupNormalised = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8033.inc1.devtunnels.ms/theme_normalised`, data
+      `https://m594bmgj-8002.inc1.devtunnels.ms/theme_normalised`, data
     );
   
     if (response.status !== 200) {
@@ -231,7 +231,7 @@ export const getWeightsOfGroupNormalised = async (data) => {
 export const getWeightsOfMetricGroup = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8032.inc1.devtunnels.ms/group_normalised`, data
+      `https://m594bmgj-8002.inc1.devtunnels.ms/group_normalised`, data
     );
   
     if (response.status !== 200) {
@@ -249,7 +249,7 @@ export const getWeightsOfMetricGroup = async (data) => {
 export const getHealthCardDetails = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8017.inc1.devtunnels.ms/health_card/`,
+      `https://q74dx7f7-8028.inc1.devtunnels.ms/health_card/`,
       data
     );
 
@@ -258,7 +258,7 @@ export const getHealthCardDetails = async (data) => {
     }
 
     const frequenciesData = response.data;
-
+     
     return frequenciesData;
   } catch (error) {
     console.error("Error in fetching benchmark:", error);
@@ -269,7 +269,7 @@ export const getHealthCardDetails = async (data) => {
 export const getNormalizedValues = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8003.inc1.devtunnels.ms/normalized_value`,
+      `https://m594bmgj-8001.inc1.devtunnels.ms/normalized/normalized_value`,
       data
     );
 
@@ -288,7 +288,7 @@ export const getNormalizedValues = async (data) => {
 export const getDQScore = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8000.inc1.devtunnels.ms/get_data`,
+      `https://m594bmgj-8001.inc1.devtunnels.ms/metrics/get_data`,
       data
     );
 
@@ -307,7 +307,7 @@ export const getDQScore = async (data) => {
 export const getDQScoreMultipleProjects = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8006.inc1.devtunnels.ms/get_multi_data`,
+      `https://m594bmgj-8004.inc1.devtunnels.ms/get_multi_data`,
       data
     );
 
@@ -326,7 +326,7 @@ export const getDQScoreMultipleProjects = async (data) => {
 export const getBrandData = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8001.inc1.devtunnels.ms/get_brand_data`,
+      `ew: https://m594bmgj-8001.inc1.devtunnels.ms/brand/get_brand_data`,
       data
     );
 
@@ -574,7 +574,7 @@ export const getCompetitorsReport = async (data) => {
 export const getSectionalReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8035.inc1.devtunnels.ms/sectional_report`,
+      `https://m594bmgj-8003.inc1.devtunnels.ms/sectional_report`,
       data
     );
 
@@ -593,7 +593,7 @@ export const getSectionalReport = async (data) => {
 export const getPlatformHealthReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8035.inc1.devtunnels.ms/platform_report`,
+      `https://m594bmgj-8003.inc1.devtunnels.ms/platform_report`,
       data
     );
 
@@ -612,7 +612,7 @@ export const getPlatformHealthReport = async (data) => {
 export const getMetricHealthReport = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8035.inc1.devtunnels.ms/metric_report`,
+      `https://m594bmgj-8003.inc1.devtunnels.ms/metric_report`,
       data
     );
 
@@ -690,7 +690,7 @@ export const toggleFavoriteProject = async (projectId,data) => {
 export const getNormWeightValueInsight = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8034.inc1.devtunnels.ms/norm_weight_value`,
+      `https://m594bmgj-8003.inc1.devtunnels.ms/norm_weight_value`,
       data
     );
 
@@ -710,7 +710,7 @@ export const getNormWeightValueInsight = async (data) => {
 export const getNormBrandValueInsight = async (data) => {
   try {
     const response = await axios.post(
-      `https://m594bmgj-8034.inc1.devtunnels.ms/norm_brand_value`,
+      `https://m594bmgj-8003.inc1.devtunnels.ms/norm_brand_value`,
       data
     );
 
@@ -723,6 +723,22 @@ export const getNormBrandValueInsight = async (data) => {
     return getBrandValueInsightsData;
   } catch (error) {
     console.error("Error in fetching Top 5 data:", error);
+    throw error;
+  }
+};
+
+export const getDateRanges = async () => {
+  try {
+    const dateRange = `https://hzz4tlcw-8005.inc1.devtunnels.ms/date_ranges`;
+    const response = await axios.get(dateRange);
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching brand details:", error.response || error.message);
     throw error;
   }
 };

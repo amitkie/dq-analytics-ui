@@ -38,7 +38,7 @@ export default function HealthCardOverview() {
   const [brandCategoryDetails, setBrandCategoryDetails] = useState([]);
 
   const [filterProject, setFilterProject] = useState([]);
-  const [selectedFilterProject, setSelectedFilterProject] = useState(""); // use this project id after project change
+  const [selectedFilterProject, setSelectedFilterProject] = useState("");
   const { userInfo, projectInfo } = useSelector((state) => state.user);
 
   const [selectedFrequency, setSelectedFrequency] = useState("Monthly");
@@ -48,7 +48,8 @@ export default function HealthCardOverview() {
   const [projectName, setProjectName] = useState([]);
   const [getProjectIds, setProjectIds] = useState([]);
 const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
-
+const [years, setYears] = useState([]);
+const [selectedYear, setSelectedYear] = useState("");
   
 
   const handleFrequencyChange = (frequency) => {
@@ -60,6 +61,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
     const value = e.target.value;
     const payload = {
       user_id: userInfo?.user?.id,
+      year:selectedYear,
       filter: {
         type: selectedFrequency,
         value: value
@@ -74,7 +76,8 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
       const projectResponse = await getProjectsByDateRangeForUser(reqPayload);
       const projects = projectResponse?.projects?.map((project) => ({
         value: project.id,          
-        label: project.project_name, 
+        label: project.project_name,
+        year: project.createdAt,
       }));
 
       setFilterProject(projects);
@@ -84,6 +87,24 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
     }
   }
  
+   
+  
+  useEffect(() => {
+    if (filterProject?.length > 0) {
+      const uniqueYears = [
+        ...new Set(filterProject.map((project) => project.year ? new Date(project.year).getFullYear() : null)),
+      ];
+      console.log("years", uniqueYears)
+      // setYears(uniqueYears.sort((a, b) => b - a));
+      
+    }
+  }, [filterProject]);
+
+  useEffect(() => {
+    const yearData = Array.from({ length: 2200 - 1980 + 1 }, (_, index) => 1980 + index); 
+    console.log(yearData, "yeardata")
+    setYears(yearData)
+  },[])
    
 
   const navigate = useNavigate();
@@ -130,7 +151,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
            
           if(currentProjectName) {
             setCurrentProjectDetails(currentProject.project_name)
-             
+             console.log("setCurrentProjectDetails", currentProjectDetails)
           }else {
             console.error("No matching project found for ID:", projectId);
             setError("No Data Found")
@@ -176,6 +197,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
         end_date: "2024-12-31",
       };
       const healthCard = await getHealthCardDetails(data);
+      console.log('healthCard page:', healthCard.results)
       if (healthCard) {
         setHealthCardData(healthCard);
       } else {
@@ -265,7 +287,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
       label: "Marketplace",
       content: (
         <MediaEcom
-          healthCardData={healthCardData && healthCardData?.results["Marketplace"]}
+          healthCardData={healthCardData && healthCardData?.results["Ecom"]}
         />
       ),
     },
@@ -273,7 +295,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
       label: "Digital Spends",
       content: (
         <MediaOffPlatform
-          healthCardData={healthCardData && healthCardData?.results["Digital Spends"]}
+          healthCardData={healthCardData && healthCardData?.results["Paid"]}
         />
       ),
     },
@@ -281,7 +303,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
       label: "Socialwatch",
       content: (
         <SocialMedia
-          healthCardData={healthCardData && healthCardData?.results["Socialwatch"]}
+          healthCardData={healthCardData && healthCardData?.results["Social"]}
         />
       ),
     },
@@ -290,7 +312,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
       content: (
         <BrandPerformance
           healthCardData={
-            healthCardData && healthCardData?.results["Organic Performance"]
+            healthCardData && healthCardData?.results["Brand Perf"]
           }
         />
       ),
@@ -459,7 +481,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
               <ButtonComponent
                 disabled={!brandDetailData || !brandImages || !brandCategoryDetails}
                 btnClass={"btn-primary"}
-                btnName={"DQ Brand Report"}
+                btnName={"DC Brand Report"}
                 onClick={handleReportClick}
               />
               <ButtonComponent
@@ -468,6 +490,25 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
                 btnName={"Export as Excel"}
                 onClick={handleExport}
               />
+              <Form.Select
+                name="Select Year"
+                className="filter-input"
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+              >
+                <option value="">Select a Year</option>
+
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+                {/* {filterProject.map((project, index) => (
+                  <option key={index} value={project.value}>
+                    {project.year}
+                  </option>
+                ))} */}
+              </Form.Select>
 
               <ButtonGroup aria-label="Select Frequency">
                 <Button
@@ -593,7 +634,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
                       )
                     )}
                   </div>
-                  <span className="brand-subtitle">DQ Score</span>
+                  <span className="brand-subtitle">DC Score</span>
                   <div className="percent-container">
                   {Object.entries(brandDetailData?.statistics?.overall_score_stats || {}).map(([key, value]) => (
                     <div className="percentile-score" key={key}>
@@ -764,7 +805,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
             </div>
           </div>
           <div className="tab-container">
-            {loading ? (
+            {/* {loading ? (
               <div className="loader-container">
                 <div className="loader-sm">
                 </div>
@@ -776,14 +817,14 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
                 </div>
                 <span className="loader-text">Loading...</span>
               </div>
-            ) : (
+            ) : ( */}
               <TabComponent
                 isBenchmarkDataSaved={true}
                 tabs={tabs}
                 tabColors={tabColors}
                 className="custom-tabs healthcard-tab"
               />
-            )}
+             {/* )} */}
           </div>
         </div>
       </div>

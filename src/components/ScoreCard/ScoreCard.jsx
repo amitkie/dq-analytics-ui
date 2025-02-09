@@ -89,11 +89,11 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
     console.log('FilteredDQScoreValue', filteredDQScoreValue)
 
   const chartTypes = [
-    { type: "Marketplace", title: "Marketplace DQ Score", colorFill: "#0d47a0" },
-    { type: "Socialwatch", title: "Socialwatch DQ Score", colorFill: "#FF9800"},
-    { type: "Digital Spends", title: "Digital Spends DQ Score", colorFill: "#279E70"},
-    { type: "Organic Performance", title: "Organic Performance DQ Score", colorFill: "#C82519"},
-    { type: "Overall_Final_Score", title: "Overall DQ Score", colorFill: "#BE7CE2"},
+    { type: "Marketplace", title: "Marketplace DC Score", colorFill: "#0d47a0" },
+    { type: "Socialwatch", title: "Socialwatch DC Score", colorFill: "#FF9800"},
+    { type: "Digital Spends", title: "Digital Spends DC Score", colorFill: "#279E70"},
+    { type: "Organic Performance", title: "Organic Performance DC Score", colorFill: "#C82519"},
+    { type: "Overall_Final_Score", title: "Overall DC Score", colorFill: "#BE7CE2"},
   ];
 
   return (
@@ -118,7 +118,7 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
             {selectedBrandData ? (
               <ul className="score-box">
                 <li>
-                  <span className="scoreTitle">DQ Score</span>
+                  <span className="scoreTitle">DC Score</span>
                   <span className="scoreValue">
                     {selectedBrandData.Overall_Final_Score?.toFixed(2)}
                   </span>
@@ -150,14 +150,14 @@ function ScoreCard({ dqScoreValue, dqScoreLoading = false }) {
               </ul>
             ) : (
               <p className="score-box mb-0">
-                Select Brand to see DQ scores
+                Select Brand to see DC scores
               </p>
             )}
           </div>
 
           <div className="project-filter">
             <div className="range-filter">
-              <span>DQ Score Range: {scoreRange[0]} - {scoreRange[1]}</span>
+              <span>DC Score Range: {scoreRange[0]} - {scoreRange[1]}</span>
               <Form.Range
                 min={0}
                 max={100}

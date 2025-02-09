@@ -117,12 +117,27 @@ export default function Insights() {
               requestedPayload.project_ids.includes(project.id)
             );
             console.log("currentProjectNames:", currentProjectNames);
-            if(currentProjectNames) {
+            if(currentProjectNames.length > 0) {
               setSelectedProjectsList(currentProjectNames)
             }else {
               setError("No Data Found")
             }
             
+          } else if(projectId) {
+            const requestedPayload = {
+              project_ids: projectId,
+            };
+  
+            // Find all matching projects
+            const currentProjectNames = currentProjectData?.project?.filter((project) =>
+              requestedPayload.project_ids.includes(project.id)
+            );
+            console.log("currentProjectNames:", currentProjectNames);
+            if(currentProjectNames.length > 0) {
+              setSelectedProjectsList(currentProjectNames)
+            }else {
+              setError("No Data Found")
+            }
           } else {
             setError("No projects selected.");
           }
@@ -138,7 +153,9 @@ export default function Insights() {
     };
   
     fetchCurrentProjectDetails();
-  }, [userInfo?.user?.id, selectedProjects]); // Add selectedProjects as a dependency
+  }, [userInfo?.user?.id, selectedProjects, projectId]); // Add selectedProjects as a dependency
+
+     
 
   useEffect(() => {
     const fetchBrandsDataDetails = async () => {
@@ -150,7 +167,23 @@ export default function Insights() {
             project_ids: selectedProjects.map((prj) => prj.value),
           };
   
-          console.log("requestedPayload", requestedPayload);
+          console.log("fetchBrandsDataDetails", requestedPayload);
+          // payload format{"project_ids":["273","266"]}
+          const selectedProjectsDataReport = await getMultipleBrandReport(requestedPayload);
+  
+          if (selectedProjectsDataReport) {
+            setSelectedProjectsData(selectedProjectsDataReport?.data);
+            console.log("selectedProjectsDataReport:", selectedProjectsData);
+          } else {
+            console.error("No matching data found for selected projects:", requestedPayload.project_ids);
+            setError("No data found for selected projects");
+          }
+        } else if(projectId){
+          const requestedPayload = {
+            project_ids: [projectId],
+          };
+  
+          console.log("fetchBrandsDataDetails", requestedPayload);
           // payload format{"project_ids":["273","266"]}
           const selectedProjectsDataReport = await getMultipleBrandReport(requestedPayload);
   
@@ -172,7 +205,7 @@ export default function Insights() {
     };
   
     fetchBrandsDataDetails();
-  }, [selectedProjects]);
+  }, [selectedProjects, projectId]);
 
   useEffect(() => {
     const fetchWeightsDataDetails = async () => {
@@ -184,13 +217,29 @@ export default function Insights() {
             project_ids: selectedProjects.map((prj) => prj.value),
           };
   
-          console.log("requestedPayload", requestedPayload);
+          console.log("fetchWeightsDataDetails", requestedPayload);
           // payload format{"project_ids":["273","266"]}
           const selectedProjectsweightsReport = await getNormWeightValueInsight(requestedPayload);
   
           if (selectedProjectsweightsReport) {
             setSelectedProjectsWeightsData(selectedProjectsweightsReport);
-            console.log("selectedProjectsweightsReport:", selectedProjectsweightsReport);
+             
+          } else {
+            console.error("No matching data found for selected projects:", requestedPayload.project_ids);
+            setError("No data found for selected projects");
+          }
+        } else if(projectId){
+          const requestedPayload = {
+            project_ids: [projectId],
+          };
+  
+          console.log("fetchWeightsDataDetails", requestedPayload);
+          // payload format{"project_ids":["273","266"]}
+          const selectedProjectsweightsReport = await getNormWeightValueInsight(requestedPayload);
+  
+          if (selectedProjectsweightsReport) {
+            setSelectedProjectsWeightsData(selectedProjectsweightsReport);
+             console.log()
           } else {
             console.error("No matching data found for selected projects:", requestedPayload.project_ids);
             setError("No data found for selected projects");
@@ -206,7 +255,7 @@ export default function Insights() {
     };
   
     fetchWeightsDataDetails();
-  }, [selectedProjects]);
+  }, [selectedProjects, projectId]);
 
   useEffect(() => {
     const fetchBrandsReportDetails = async () => {
@@ -218,10 +267,22 @@ export default function Insights() {
             project_ids: selectedProjects.map((prj) => prj.value),
           };
   
-          console.log("requestedPayload", requestedPayload);
+          console.log("fetchBrandsReportDetails", requestedPayload);
           // payload format{"project_ids":["273","266"]}
           const selectedProjectsBrandsReport = await getNormBrandValueInsight(requestedPayload);
   
+          if (selectedProjectsBrandsReport) {
+            setSelectedProjectsBrandsData(selectedProjectsBrandsReport?.data);
+            console.log("selectedProjectsBrandsReport:", selectedProjectsBrandsData);
+          } else {
+            console.error("No matching data found for selected projects:", requestedPayload.project_ids);
+            setError("No data found for selected projects");
+          }
+        } else if(projectId) {
+          const requestedPayload = { project_ids: [projectId] };
+ 
+          const selectedProjectsBrandsReport = await getNormBrandValueInsight(requestedPayload);
+          console.log("selectedProjectsBrandsReport:::", selectedProjectsBrandsReport)
           if (selectedProjectsBrandsReport) {
             setSelectedProjectsBrandsData(selectedProjectsBrandsReport?.data);
             console.log("selectedProjectsBrandsReport:", selectedProjectsBrandsData);
@@ -240,7 +301,7 @@ export default function Insights() {
     };
   
     fetchBrandsReportDetails();
-  }, [selectedProjects]);
+  }, [selectedProjects, projectId]);
   
   
   
@@ -331,6 +392,7 @@ export default function Insights() {
         const requestedPayload = {
           project_ids: [projectId],
         };
+        console.log("projectIdrequestedPayload", requestedPayload)
 
         const insightsDQScoreData = await getDQScoreMultipleProjects(requestedPayload);
         if (insightsDQScoreData?.data?.length > 0) {
@@ -394,9 +456,9 @@ export default function Insights() {
       header: "Digital quotient for brand (DC)",
       accessor: "Digital quotient for brand (DQ)",
     },
-    { header: "Ecom DC Score", accessor: "Ecom DQ Score" },
-    { header: "Social DC Score", accessor: "Social DQ Score" },
-    { header: "Paid Marketing DC Score", accessor: "Paid Marketing DQ Score" },
+    { header: "Ecom DC Score", accessor: "Ecom DC Score" },
+    { header: "Social DC Score", accessor: "Social DC Score" },
+    { header: "Paid Marketing DC Score", accessor: "Paid Marketing DC Score" },
     { header: "Organic DC", accessor: "Organic DQ" },
   ];
 
@@ -408,7 +470,7 @@ export default function Insights() {
     },
     { header: "Organic Performance", accessor: "Organic Performance" },
     { header: "Socialwatch", accessor: "Socialwatch" },
-    { header: "DQ Score", accessor: "Overall_Final_Score" },
+    { header: "DC Score", accessor: "Overall_Final_Score" },
   ];
 
 
@@ -462,7 +524,7 @@ export default function Insights() {
             <div className="col-12">
               <div className="project-filter">
                 <div className="range-filter">
-                  <span>DQ score Range:</span>
+                  <span>DC score Range:</span>
                   <Form.Range />
                 </div>
                 <MultiSelectDropdown
@@ -613,7 +675,8 @@ export default function Insights() {
             selectedProjectsList={selectedProjectsList} 
             selectedProjectsData={selectedProjectsData} 
             selectedProjectsWeightsData={selectedProjectsWeightsData} 
-            selectedProjectsBrandsData={selectedProjectsBrandsData} 
+            selectedProjectsBrandsData={selectedProjectsBrandsData}
+            
             />
         </>
       ),
