@@ -326,7 +326,7 @@ export const getDQScoreMultipleProjects = async (data) => {
 export const getBrandData = async (data) => {
   try {
     const response = await axios.post(
-      `ew: https://m594bmgj-8001.inc1.devtunnels.ms/brand/get_brand_data`,
+      `https://m594bmgj-8001.inc1.devtunnels.ms/brand/get_brand_data`,
       data
     );
 

@@ -260,6 +260,8 @@ const handleEditProjectName = (id) => {
       if(project){
         alert("Project Deleted Successfully.")
         dispatch(getProjectInfoRequest(userInfo?.user?.id));
+        dispatch(getRecentProjectRequest(userInfo?.user?.id));
+
       }
     } catch (error) {
       
