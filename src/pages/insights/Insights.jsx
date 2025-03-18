@@ -9,8 +9,6 @@ import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import SuperThemes from "../../components/SuperThemes/SuperThemes";
 import PaginationComponent from "../../common/Pagination/PaginationComponent";
 import LineChart from "../../common/LineChart/LineChart";
-import { getData } from "../../services/q3";
-import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
 import {
   getAllBrands,
   getAllCategories,
@@ -27,10 +25,8 @@ import BrandView from "./BrandView";
 import * as XLSX from "xlsx";
 
 export default function Insights() {
-  const data = getData();
   const { projectId, projectName } = useParams();
 
-  const normalizedData = getNormalizedData();
   const [categories, setCategories] = useState([]);
   const [frequencies, setFrequencies] = useState([]);
   const [projects, setProjects] = useState([]);

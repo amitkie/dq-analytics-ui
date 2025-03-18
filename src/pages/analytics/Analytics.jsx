@@ -7,11 +7,6 @@ import GraphicalView from "../../components/GraphicalView/GraphicalView";
 import ScoreCard from "../../components/ScoreCard/ScoreCard";
 import ButtonComponent from "../../common/button/button";
 import SuperThemes from "../../components/SuperThemes/SuperThemes";
-import { getData } from "../../services/q3";
-import { getAMData } from "../../services/Quarter-actual-metric-data";
-import { getMetricListData } from "../../services/metricList";
-import { getNormalizedData } from "../../services/quarter-metrics-normalised-data";
-import { getSection } from "../../services/section-platform-metrics";
 import {
   getProjectDetailsByProjectId,
   getBenchmarkValues,
@@ -45,10 +40,6 @@ export default function Analytics() {
   const [projectDetails, setProjectDetails] = useState({});
   const [metrics, setMetrics] = useState([]);
   const [kpiData, setKpiData] = useState([]);
-  const data = getData();
-  const AMData = getAMData();
-  const metricData = getMetricListData();
-  const normalizedData = getNormalizedData();
   const { projectId } = useParams();
 
   const [sectionsList, setSectionsList] = useState([]);
@@ -149,11 +140,6 @@ export default function Analytics() {
 
   const recentProjectId = useSelector((state) => state.user.recentlyUsedProjectId);
    
-
-  const columnsMetrics = Object.keys(AMData[0] || []).map((key) => ({
-    Header: key,
-    accessor: key,
-  }));
   const keys = Array.from(new Set(normalizedValue.flatMap(Object.keys)));
   const keysToDisplay = keys?.slice(2);
 
@@ -185,20 +171,6 @@ export default function Analytics() {
     }
   };
  
-  const section = getSection();
-  let colorCode;
-  if (section === "Ecom") {
-    colorCode = "blue-color";
-  } else if (section === "Paid") {
-    colorCode = "purple-color";
-  } else if (section === "Brand Perf") {
-    colorCode = "orange-color";
-  } else if (section === "Social") {
-    colorCode = "green-color";
-  } else {
-    colorCode = "";
-  }
-
   const handleCheckboxChange = async (event, metric, type) => {
     const isChecked = event.target.checked;
     setMetrics((prev) =>

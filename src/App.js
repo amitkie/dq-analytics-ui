@@ -16,8 +16,6 @@ import "./App.scss";
 // import MessageAlert from "./components/Alerts/MessageAlert";
 
 function App() {
-  // return <RouterProvider router={router} />;
-
   return (
     <Provider store={store}>
       {/* <MessageAlert /> */}
