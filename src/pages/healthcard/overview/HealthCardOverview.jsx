@@ -51,7 +51,7 @@ const [currentProjectDetails, setCurrentProjectDetails] = useState([]);
 const [years, setYears] = useState([]);
 const [selectedYear, setSelectedYear] = useState("");
   
-
+  console.log("projectId", projectId)
   const handleFrequencyChange = (frequency) => {
     setSelectedFrequency(frequency);
     setSelectedValue(""); 

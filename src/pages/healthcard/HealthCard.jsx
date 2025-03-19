@@ -21,7 +21,7 @@ export default function HealthCard() {
   const [tableBrandData, setTableBrandData] = useState();
   const [tableCategories, setTableCategories] = useState();
 
-  console.log('projectId', projectId);
+  console.log('projectId', projectId, brand);
   useEffect(() => {
     fetchAllBrands();
     fetchAllCategories();

@@ -249,7 +249,7 @@ export const getWeightsOfMetricGroup = async (data) => {
 export const getHealthCardDetails = async (data) => {
   try {
     const response = await axios.post(
-      `https://q74dx7f7-8028.inc1.devtunnels.ms/health_card/`,
+      `https://m594bmgj-8004.inc1.devtunnels.ms/health_card/`,
       data
     );
 

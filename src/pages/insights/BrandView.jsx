@@ -88,12 +88,12 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
     const handleToggleShow = () => {
         setShowTable(!showTable);
     }
-    const handleBrandChange = (options) => {
-        console.log(options, 'options');
-        setShowSelectedBrands(options);
+    const handleBrandChange = (selectedOptions) => {
+        console.log(selectedOptions, 'selectedOptions');
+        setShowSelectedBrands(selectedOptions);
 
-        const selectedBrandNames = options?.map((option) => option.label); 
-
+        const selectedBrandNames = selectedOptions?.map((option) => option.label); 
+ 
         const filteredData = Object.values(selectedProjectsData)
             .flat()
             .filter((project) => selectedBrandNames.includes(project.Brand_Name));
@@ -120,7 +120,7 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
     //     }));
     // }
     function getUniqueBrands(response) {
-        // Validate that response and response.data exist and are arrays
+
         if (!response || !Array.isArray(response?.data)) {
             console.error("Invalid response format", response);
             return [];
@@ -137,14 +137,16 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
             label: brand,
         }));
     }
-
+    console.log("selectedProjectsData brand view", selectedProjectsData)
+    
     useEffect(() => {
-        const allBrands = getUniqueBrands(selectedProjectsData);
-        console.log(allBrands, ';;;;;;;;;;;');
-        if (allBrands.length > 0) {
+        if (selectedProjectsData && selectedProjectsData.length > 0) {
+            const allBrands = getUniqueBrands(selectedProjectsData);
+            
+            console.log("allBrands", allBrands);
             setShowBrands(allBrands);
         }
-    }, [selectedProjectsData]);
+    }, [selectedProjectsData])
 
     const tabsScoreLevel = [
         {
@@ -729,7 +731,9 @@ export default function BrandView({ selectedProjectsList, selectedProjectsData, 
                         <div className="col-12">
                             <div className="select-container mb-3">
                                 <MultiSelectDropdown
-                                    options={showBrands}
+                                    options={showBrands.map((item) => {
+                                        return {name: item.Brand_Name}
+                                    })}
                                     selectedValues={showSelectedBrands}
                                     onChange={handleBrandChange}
                                     placeholder="Select Brands"
