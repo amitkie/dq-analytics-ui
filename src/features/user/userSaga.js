@@ -11,7 +11,7 @@ function* handleLogin(action) {
     const response = yield call(() => login({email, password}));
   
     yield put(loginSuccess(response));
-    navigate("/home")
+    navigate("/")
     // yield put(setAlert({ type: 'success', message: 'Login successful!' }));
   } catch (error) {
     yield put(loginFailure(error.message));

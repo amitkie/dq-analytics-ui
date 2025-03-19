@@ -11,6 +11,19 @@ export default function Header() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showHamburger, setShowHamburger] = useState()
 
+  const toggleHamburger = () => {
+    setShowHamburger(!showHamburger);
+    dispatch(getHamburgerRequest(!showHamburger))
+  }
+ 
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    dispatch(logout());
+    window.location.href = '/';
+  };
+  
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -24,21 +37,8 @@ export default function Header() {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [isMobile])
+  }, [isMobile, dispatch])
 
-  const toggleHamburger = () => {
-    setShowHamburger(!showHamburger);
-    dispatch(getHamburgerRequest(!showHamburger))
-  }
- 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const handleLogout = () => {
-    sessionStorage.clear();
-    localStorage.clear();
-    dispatch(logout());
-    navigate("/");
-  };
   return (
     <div className="header-container">
       <div className="row">

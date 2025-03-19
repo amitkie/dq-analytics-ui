@@ -111,10 +111,10 @@ export default function SideBar() {
           className={`side-nav ${activeMenu === "home" ? "active" : ""}`}
           onClick={() => handleMenuActive("home")}
           >
-          <Link to={"/home"} title="Home" id="m-1">
+          <Link to={"/"} title="Home" id="m-1">
             <IoHomeOutline className={`sidenav-icon ${activeMenu === 'home' ? 'active' : ''}`} />
           </Link>
-          <Link to={"/home"} >
+          <Link to={"/"} >
             <span className="mob-menu">Home</span>
           </Link>
         </li>

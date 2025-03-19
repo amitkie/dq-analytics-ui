@@ -1,9 +1,9 @@
-import axios from "axios";
+import { apiFastApiClient, apiNodeJSClient } from "./api";
 
 export const createProject = async (data) => {
   try {
-    const response = await axios.post(
-      "https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/create-project",
+    const response = await apiNodeJSClient.post(
+      "/api/v1/project/create-project",
       data
     );
 
@@ -21,8 +21,8 @@ export const createProject = async (data) => {
 };
 export const updateProject = async (id, data) => {
   try {
-    const response = await axios.put(
-      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/projects/${id}`,
+    const response = await apiNodeJSClient.put(
+      `/api/v1/project/projects/${id}`,
       data
     );
 
@@ -40,8 +40,8 @@ export const updateProject = async (id, data) => {
 };
 export const deleteProject = async (id) => {
   try {
-    const response = await axios.delete(
-      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/projects/${id}`);
+    const response = await apiNodeJSClient.delete(
+      `/api/v1/project/projects/${id}`);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -57,8 +57,8 @@ export const deleteProject = async (id) => {
 };
 export const getProjecName = async (data) => {
   try {
-    const response = await axios.get(
-      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/check-project-name/?project_name=${data}`,
+    const response = await apiNodeJSClient.get(
+      `/api/v1/project/check-project-name/?project_name=${data}`,
       data
     );
 
@@ -76,8 +76,8 @@ export const getProjecName = async (data) => {
 };
 export const saveMetricsOfProject = async (data) => {
   try {
-    const response = await axios.post(
-      "https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/save-metrics",
+    const response = await apiNodeJSClient.post(
+      "/api/v1/project/save-metrics",
       data
     );
 
@@ -96,8 +96,8 @@ export const saveMetricsOfProject = async (data) => {
 
 export const getProjectDetailsByProjectId = async (projectId) => {
   try {
-    const response = await axios.get(
-      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/get-project/?project_id=${projectId}`
+    const response = await apiNodeJSClient.get(
+      `/api/v1/project/get-project/?project_id=${projectId}`
     );
 
     if (response.status !== 200) {
@@ -114,8 +114,8 @@ export const getProjectDetailsByProjectId = async (projectId) => {
 };
 export const getProjectDetailsByUserId = async (userId) => {
   try {
-    const response = await axios.get(
-      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/get-project-by-user/?user_id=${userId}`
+    const response = await apiNodeJSClient.get(
+      `/api/v1/project/get-project-by-user/?user_id=${userId}`
     );
 
     if (response.status !== 200) {
@@ -133,7 +133,7 @@ export const getProjectDetailsByUserId = async (userId) => {
 
 export const getProjectListsByFilter = async (frequencyId, categoryIds) => {
   try {
-    let url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/projects-by-id?frequency_id=${frequencyId}`;
+    let url = `/api/v1/project/projects-by-id?frequency_id=${frequencyId}`;
 
     if (categoryIds?.length > 0) {
 
@@ -141,7 +141,7 @@ export const getProjectListsByFilter = async (frequencyId, categoryIds) => {
         url += `&category_id[${index}]=${categoryId}`;
       });
 
-      const response = await axios.get(url);
+      const response = await apiNodeJSClient.get(url);
 
       if (response.status !== 200) {
         throw new Error("Network response was not ok");
@@ -160,8 +160,8 @@ export const getProjectListsByFilter = async (frequencyId, categoryIds) => {
 export const getBenchmarkValues = async (data) => {
 
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8027.inc1.devtunnels.ms/process_metric/`, data
+    const response = await apiFastApiClient.post(
+      `/process_metric/`, data
     );
 
     if (response.status !== 200) {
@@ -179,8 +179,8 @@ export const getBenchmarkValues = async (data) => {
 
 export const getKPIScoreValues = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8025.inc1.devtunnels.ms/analytics_metric/`, data
+    const response = await apiFastApiClient.post(
+      `/analytics_metric/`, data
     );
   
     if (response.status !== 200) {
@@ -196,8 +196,8 @@ export const getKPIScoreValues = async (data) => {
 };
 export const getWeightsOfSuperTheme = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8002.inc1.devtunnels.ms/weight_sum`, data
+    const response = await apiFastApiClient.post(
+      `/weight_sum`, data
     );
   
     if (response.status !== 200) {
@@ -213,8 +213,8 @@ export const getWeightsOfSuperTheme = async (data) => {
 };
 export const getWeightsOfGroupNormalised = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8002.inc1.devtunnels.ms/theme_normalised`, data
+    const response = await apiFastApiClient.post(
+      `/theme_normalised`, data
     );
   
     if (response.status !== 200) {
@@ -230,8 +230,8 @@ export const getWeightsOfGroupNormalised = async (data) => {
 };
 export const getWeightsOfMetricGroup = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8002.inc1.devtunnels.ms/group_normalised`, data
+    const response = await apiFastApiClient.post(
+      `/group_normalised`, data
     );
   
     if (response.status !== 200) {
@@ -248,8 +248,8 @@ export const getWeightsOfMetricGroup = async (data) => {
 
 export const getHealthCardDetails = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8004.inc1.devtunnels.ms/health_card/`,
+    const response = await apiFastApiClient.post(
+      `/health_card/`,
       data
     );
 
@@ -268,8 +268,8 @@ export const getHealthCardDetails = async (data) => {
 
 export const getNormalizedValues = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8001.inc1.devtunnels.ms/normalized/normalized_value`,
+    const response = await apiFastApiClient.post(
+      `/normalized/normalized_value`,
       data
     );
 
@@ -287,8 +287,8 @@ export const getNormalizedValues = async (data) => {
 };
 export const getDQScore = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8001.inc1.devtunnels.ms/metrics/get_data`,
+    const response = await apiFastApiClient.post(
+      `/metrics/get_data`,
       data
     );
 
@@ -306,8 +306,8 @@ export const getDQScore = async (data) => {
 };
 export const getDQScoreMultipleProjects = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8004.inc1.devtunnels.ms/get_multi_data`,
+    const response = await apiFastApiClient.post(
+      `/get_multi_data`,
       data
     );
 
@@ -325,8 +325,8 @@ export const getDQScoreMultipleProjects = async (data) => {
 };
 export const getBrandData = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8001.inc1.devtunnels.ms/brand/get_brand_data`,
+    const response = await apiFastApiClient.post(
+      `/brand/get_brand_data`,
       data
     );
 
@@ -344,8 +344,8 @@ export const getBrandData = async (data) => {
 export const getBrandImages = async (data) => {
   try {
 
-    let url = `https://m594bmgj-8018.inc1.devtunnels.ms/brand-images/${data}`;
-    const response = await axios.get(url, { responseType: 'blob' });
+    let url = `/brand-images/${data}`;
+    const response = await apiFastApiClient.get(url, { responseType: 'blob' });
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
@@ -359,8 +359,8 @@ export const getBrandImages = async (data) => {
 };
 export const getBrandDetailsData = async (brandName, projectId) => {
   try {
-    const url = `https://m594bmgj-8018.inc1.devtunnels.ms/brands/${brandName}/project_id/${projectId}`;
-    const response = await axios.get(url);
+    const url = `/brands/${brandName}/project_id/${projectId}`;
+    const response = await apiFastApiClient.get(url);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -374,8 +374,8 @@ export const getBrandDetailsData = async (brandName, projectId) => {
 };
 export const removeMetricFromProject = async (projectId, metricId) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/remove-metric/${projectId}/metrics/${metricId}`;
-    const response = await axios.delete(url);
+    const url = `/api/v1/project/remove-metric/${projectId}/metrics/${metricId}`;
+    const response = await apiNodeJSClient.delete(url);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -389,8 +389,8 @@ export const removeMetricFromProject = async (projectId, metricId) => {
 };
 export const createUserProjectDQScore = async (data) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/create-user-project-dq-score`;
-    const response = await axios.post(url, data);
+    const url = `/api/v1/project/create-user-project-dq-score`;
+    const response = await apiNodeJSClient.post(url, data);
 
     if (response.status !== 201) {
       throw new Error("Network response was not ok");
@@ -405,8 +405,8 @@ export const createUserProjectDQScore = async (data) => {
 
 export const saveMetricGroup = async (data) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-groups`;
-    const response = await axios.post(url, data);
+    const url = `/api/v1/project/metric-groups`;
+    const response = await apiNodeJSClient.post(url, data);
 
     if (response.status !== 201) {
       throw new Error("Network response was not ok");
@@ -421,8 +421,8 @@ export const saveMetricGroup = async (data) => {
 
 export const getWeights = async (projectId) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/get-weights-by-project/${projectId}`;
-    const response = await axios.get(url);
+    const url = `/api/v1/project/get-weights-by-project/${projectId}`;
+    const response = await apiNodeJSClient.get(url);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -438,8 +438,8 @@ export const getWeights = async (projectId) => {
 
 export const getMetricGroupNames = async (projectId) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-groups/${projectId}`;
-    const response = await axios.get(url);
+    const url = `/api/v1/project/metric-groups/${projectId}`;
+    const response = await apiNodeJSClient.get(url);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -454,8 +454,8 @@ export const getMetricGroupNames = async (projectId) => {
 
 export const saveMetricsThemeGroup = async (data) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-theme-groups`;
-    const response = await axios.post(url, data);
+    const url = `/api/v1/project/metric-theme-groups`;
+    const response = await apiNodeJSClient.post(url, data);
 
     if (response.status !== 201) {
       throw new Error("Network response was not ok");
@@ -470,8 +470,8 @@ export const saveMetricsThemeGroup = async (data) => {
 
 export const getMetricThemeGroupNames = async (projectId) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${projectId}`;
-    const response = await axios.get(url);
+    const url = `/api/v1/project/metric-theme-groups/${projectId}`;
+    const response = await apiNodeJSClient.get(url);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -485,8 +485,8 @@ export const getMetricThemeGroupNames = async (projectId) => {
 };
 export const deleteSuperTheme = async (superThemeId, projectId) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/metric-theme-groups/${superThemeId}?project_id=${projectId}`;
-    const response = await axios.delete(url);
+    const url = `/api/v1/project/metric-theme-groups/${superThemeId}?project_id=${projectId}`;
+    const response = await apiNodeJSClient.delete(url);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -501,8 +501,8 @@ export const deleteSuperTheme = async (superThemeId, projectId) => {
 
 export const getProjectsByDateRangeForUser = async (data) => {
   try {
-    const url = `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/get-project-by-date-range-for-user`;
-    const response = await axios.post(url, data);
+    const url = `/api/v1/project/get-project-by-date-range-for-user`;
+    const response = await apiNodeJSClient.post(url, data);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
@@ -517,8 +517,8 @@ export const getProjectsByDateRangeForUser = async (data) => {
 
 export const getTop5Data = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8018.inc1.devtunnels.ms/top_5/`,
+    const response = await apiFastApiClient.post(
+      `/top_5/`,
       data
     );
 
@@ -535,8 +535,8 @@ export const getTop5Data = async (data) => {
 };
 export const getCompetitorsData = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8018.inc1.devtunnels.ms/brands/competitors`,
+    const response = await apiFastApiClient.post(
+      `/brands/competitors`,
       data
     );
 
@@ -554,8 +554,8 @@ export const getCompetitorsData = async (data) => {
 };
 export const getCompetitorsReport = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8018.inc1.devtunnels.ms/dq_filter_data`,
+    const response = await apiFastApiClient.post(
+      `/dq_filter_data`,
       data
     );
 
@@ -573,8 +573,8 @@ export const getCompetitorsReport = async (data) => {
 };
 export const getSectionalReport = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8003.inc1.devtunnels.ms/sectional_report`,
+    const response = await apiFastApiClient.post(
+      `/sectional_report`,
       data
     );
 
@@ -592,8 +592,8 @@ export const getSectionalReport = async (data) => {
 };
 export const getPlatformHealthReport = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8003.inc1.devtunnels.ms/platform_report`,
+    const response = await apiFastApiClient.post(
+      `/platform_report`,
       data
     );
 
@@ -611,8 +611,8 @@ export const getPlatformHealthReport = async (data) => {
 };
 export const getMetricHealthReport = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8003.inc1.devtunnels.ms/metric_report`,
+    const response = await apiFastApiClient.post(
+      `/metric_report`,
       data
     );
 
@@ -630,8 +630,8 @@ export const getMetricHealthReport = async (data) => {
 };
 export const getMultipleBrandReport = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8036.inc1.devtunnels.ms/get_project_brand_data`,
+    const response = await apiFastApiClient.post(
+      `/get_project_brand_data`,
       data
     );
 
@@ -649,8 +649,8 @@ export const getMultipleBrandReport = async (data) => {
 };
 // export const getMultipleBrandReport = async (data) => {
 //   try {
-//     const response = await axios.post(
-//       `https://m594bmgj-8003.inc1.devtunnels.ms/multiple_get_brand_data`,
+//     const response = await apiFastApiClient.post(
+//       `/multiple_get_brand_data`,
 //       data
 //     );
 
@@ -669,8 +669,8 @@ export const getMultipleBrandReport = async (data) => {
 
 export const toggleFavoriteProject = async (projectId,data) => {
   try {
-    const response = await axios.put(
-      `https://m594bmgj-7000.inc1.devtunnels.ms/api/v1/project/projects/${projectId}/favorite`,
+    const response = await apiNodeJSClient.put(
+      `/api/v1/project/projects/${projectId}/favorite`,
       data
     );
 
@@ -689,8 +689,8 @@ export const toggleFavoriteProject = async (projectId,data) => {
 
 export const getNormWeightValueInsight = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8003.inc1.devtunnels.ms/norm_weight_value`,
+    const response = await apiFastApiClient.post(
+      `/norm_weight_value`,
       data
     );
 
@@ -709,8 +709,8 @@ export const getNormWeightValueInsight = async (data) => {
 
 export const getNormBrandValueInsight = async (data) => {
   try {
-    const response = await axios.post(
-      `https://m594bmgj-8003.inc1.devtunnels.ms/norm_brand_value`,
+    const response = await apiFastApiClient.post(
+      `/norm_brand_value`,
       data
     );
 
@@ -729,8 +729,8 @@ export const getNormBrandValueInsight = async (data) => {
 
 export const getDateRanges = async () => {
   try {
-    const dateRange = `https://hzz4tlcw-8005.inc1.devtunnels.ms/date_ranges`;
-    const response = await axios.get(dateRange);
+    const dateRange = `/date_ranges`;
+    const response = await apiFastApiClient.get(dateRange);
 
     if (response.status !== 200) {
       throw new Error("Network response was not ok");

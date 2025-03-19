@@ -1,7 +1,7 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import Login from "../pages/login";
+import CheckToken from "../pages/CheckToken";
 import Home from "../pages/home/home";
 import Layout from "../layout/Layout";
 import WorkSpace from "../pages/workSpace/workSpace";
@@ -15,106 +15,71 @@ import SuperThemes from "../components/SuperThemes/SuperThemes";
 import Help from "../components/Help/Help";
 import HealthCardReport from "../pages/healthcard/HealthCardReport";
 
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/token" replace />;
+};
+
 const router = createBrowserRouter([
   {
+    path: "/token",
+    element: <CheckToken />,
+  },
+  {
     path: "/",
-    element: <Login />,
-  },
-  {
-    path: "/home",
     element: (
-      <Layout>
-        <Home />
-      </Layout>
+      <ProtectedRoute><Layout /></ProtectedRoute>
     ),
-  },
-  {
-    path: "/workspace",
-    element: (
-      <Layout>
-        <WorkSpace />
-      </Layout>
-    ),
-  },
-  {
-    path: "/analytics/:projectId",
-    element: (
-      <Layout>
-        <Analytics />
-      </Layout>
-    ),
-  },
-  {
-    path: "/superthemes",
-    element: (
-      <Layout>
-        <SuperThemes />
-      </Layout>
-    ),
-  },
-  {
-    path: "/insights/:projectId/:projectName",
-    element: (
-      <Layout>
-        <Insights />
-      </Layout>
-    ),
-  },
-  {
-    path: "/insights",
-    element: (
-      <Layout>
-        <Insights />
-      </Layout>
-    ),
-  },
-  {
-    path: "/healthcard",
-    element: (
-      <Layout>
-        <HealthCard />
-      </Layout>
-    ),
-  },
-  {
-    path: "/healthcardoverview/:brand/:projectId",
-    element: (
-      <Layout>
-        <HealthCardOverview />
-      </Layout>
-    ),
-  },
-  {
-    path: "/healthcardreport/:brand/:projectId",
-    element: (
-      <Layout>
-        <HealthCardReport />
-      </Layout>
-    ),
-  },
-  {
-    path: "/settings",
-    element: (
-      <Layout>
-        <Settings />
-      </Layout>
-    ),
-  },
-  {
-    path: "/about",
-    element: (
-      <Layout>
-        <About />
-      </Layout>
-    ),
-  },
-  {
-    path: "/help",
-    element: (
-      <Layout>
-        <Help />
-      </Layout>
-    ),
+    children: [
+      {
+        path: "/",
+        element: <Home />
+      },
+      {
+        path: "/workspace",
+        element: <WorkSpace />,
+      },
+      {
+        path: "/analytics/:projectId",
+        element: <Analytics />
+      },
+      {
+        path: "/superthemes",
+        element: <SuperThemes />,
+      },
+      {
+        path: "/insights/:projectId/:projectName",
+        element: <Insights />,
+      },
+      {
+        path: "/insights",
+        element: <Insights />,
+      },
+      {
+        path: "/healthcard",
+        element: <HealthCard />,
+      },
+      {
+        path: "/healthcardoverview/:brand/:projectId",
+        element: <HealthCardOverview />,
+      },
+      {
+        path: "/healthcardreport/:brand/:projectId",
+        element: <HealthCardReport />,
+      },
+      {
+        path: "/settings",
+        element: <Settings />,
+      },
+      {
+        path: "/about",
+        element: <About />,
+      },
+      {
+        path: "/help",
+        element: <Help />,
+      },
+    ]
   },
 ]);
 
