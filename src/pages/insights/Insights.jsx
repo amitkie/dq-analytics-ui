@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import TableComponent from "../../components/tableComponent/TableComponent";
 import Form from "react-bootstrap/Form";
+import { Dropdown } from "react-bootstrap";
 import ButtonComponent from "../../common/button/button";
 import TabComponent from "../../components/tabs/TabComponent";
 import GraphicalView from "../../components/GraphicalView/GraphicalView";
@@ -701,12 +702,27 @@ export default function Insights() {
                   Select files from saved Projects
                 </span>
                 <div className="insights-project-filter">
-                <Form.Select
+                  
+                  <Dropdown>
+                    <Dropdown.Toggle variant="primary">
+                      {selectedYear || "Select a Year"}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu style={{ maxHeight: "300px", overflowY: "auto" }}>
+                      {years.map((year) => (
+                        <Dropdown.Item key={year} onClick={() => setSelectedYear(year)}>
+                          {year}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                {/* <select
                 name="Select Year"
-                className="filter-input"
+                className="form-control"
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(e.target.value)}
-              >
+                size={10}
+                >
                 <option value="">Select a Year</option>
 
                 {years.map((year) => (
@@ -714,12 +730,8 @@ export default function Insights() {
                     {year}
                   </option>
                 ))}
-                {/* {filterProject.map((project, index) => (
-                  <option key={index} value={project.value}>
-                    {project.year}
-                  </option>
-                ))} */}
-              </Form.Select>
+                
+              </select> */}
                   <select
                     className="form-control-select"
                     onChange={handleFrequenciesChange}

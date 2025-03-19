@@ -249,7 +249,7 @@ export const getWeightsOfMetricGroup = async (data) => {
 export const getHealthCardDetails = async (data) => {
   try {
     const response = await axios.post(
-      `https://q74dx7f7-8028.inc1.devtunnels.ms/health_card/`,
+      `https://m594bmgj-8004.inc1.devtunnels.ms/health_card/`,
       data
     );
 
@@ -326,7 +326,7 @@ export const getDQScoreMultipleProjects = async (data) => {
 export const getBrandData = async (data) => {
   try {
     const response = await axios.post(
-      `ew: https://m594bmgj-8001.inc1.devtunnels.ms/brand/get_brand_data`,
+      `https://m594bmgj-8001.inc1.devtunnels.ms/brand/get_brand_data`,
       data
     );
 
