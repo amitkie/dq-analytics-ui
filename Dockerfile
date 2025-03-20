@@ -35,7 +35,7 @@ COPY --from=build /app /app
 RUN npm install pm2 -g
 
 # Step 13: Expose the port your app will run on
-EXPOSE 3000
+EXPOSE 3001
 
 # Step 14: Use PM2 to serve the static files from the 'build' folder
-CMD ["pm2-runtime", "npm", "--", "run", "serve"]
+CMD ["pm2-runtime", "npm", "--", "run", "serve", "--", "--port", "3001"]
