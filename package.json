@@ -31,7 +31,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "serve": "serve -s build"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +53,7 @@
     ]
   },
   "devDependencies": {
-    "sass": "^1.79.5"
+    "sass": "^1.79.5",
+    "serve": "^14.2.4"
   }
 }
