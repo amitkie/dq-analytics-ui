@@ -1,0 +1,10 @@
+node_modules/
+build/
+coverage/
+dist/
+.git
+.gitignore
+README.md
+package-lock.json
+yarn.lock
+yarn-error.log
