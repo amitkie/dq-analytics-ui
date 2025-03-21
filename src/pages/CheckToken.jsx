@@ -12,7 +12,7 @@ const CheckToken = () => {
     useEffect(() => {
         if (token) {
             localStorage.setItem("token", token);
-            dispatch(checkUserLoggedInRequest({ navigate }));
+            dispatch(checkUserLoggedInRequest({ navigate, dispatch }));
         } else {
             const urlObject = new URL(window.location.href);
             // Extract the token URL (protocol + hostname + port)

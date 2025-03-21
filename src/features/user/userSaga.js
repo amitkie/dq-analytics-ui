@@ -7,9 +7,11 @@ import { getProjectDetailsByUserId } from '../../services/projectService';
 
 function* handleCheckUserLoggedIn(action) {
   try {
-    const { navigate } = action?.payload;
+    const { navigate, dispatch } = action?.payload;
     const response = yield call(() => checkIsLoggedIn());
     yield put(checkUserLoggedInSuccess(response));
+    dispatch(getUserInfoRequest(response.userId));
+    dispatch(getProjectInfoRequest(response.userId));
     navigate('/');
     // yield put(setAlert({ type: 'success', message: 'Login successful!' }));
   } catch (error) {
