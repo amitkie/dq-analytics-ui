@@ -55,14 +55,21 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    logout(state) {
+    logoutRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    logoutSuccess(state) {
       state.userId = null;
       state.userInfo = {};
       state.userData = {};
       state.projectInfo = {};
       state.loading = false;
       state.error = null;
-
+    },
+    logoutFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
     },
     getUserInfoRequest(state) {
       state.loading = true;
@@ -108,6 +115,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { checkUserLoggedInRequest, checkUserLoggedInSuccess, checkUserLoggedInFailure, loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoRequest, getProjectInfoSuccess, getProjectInfoFailure, getHamburgerRequest, getMobileRequest, getRecentProjectRequest, setActiveMenu } =
+export const { checkUserLoggedInRequest, checkUserLoggedInSuccess, checkUserLoggedInFailure, loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoRequest, getProjectInfoSuccess, getProjectInfoFailure, getHamburgerRequest, getMobileRequest, getRecentProjectRequest, setActiveMenu, logoutRequest, logoutSuccess, logoutFailure } =
   userSlice.actions;
 export default userSlice.reducer;

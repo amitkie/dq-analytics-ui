@@ -1,7 +1,7 @@
 // src/features/user/userSaga.js
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { checkIsLoggedIn, getUserAndPaymentInfo, login } from '../../services/userService'; // Ensure this path is correct
-import { loginRequest, loginSuccess, loginFailure, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoSuccess, getProjectInfoFailure, getProjectInfoRequest, checkUserLoggedInRequest, checkUserLoggedInSuccess, checkUserLoggedInFailure } from './userSlice';
+import { checkIsLoggedIn, getUserAndPaymentInfo, login, logout } from '../../services/userService'; // Ensure this path is correct
+import { loginRequest, loginSuccess, loginFailure, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoSuccess, getProjectInfoFailure, getProjectInfoRequest, checkUserLoggedInRequest, checkUserLoggedInSuccess, checkUserLoggedInFailure, logoutRequest, logoutSuccess, logoutFailure } from './userSlice';
 import { getProjectDetailsByUserId } from '../../services/projectService';
 // import { setAlert } from '../alert/alertSlice';
 
@@ -51,9 +51,22 @@ function* getProjectInfo(action) {
   }
 }
 
+function* handleLogout(action) {
+  try {
+    const response = yield call(() => logout());
+    yield put(logoutSuccess(response));
+    window.location.href = '/'
+    // yield put(setAlert({ type: 'success', message: 'Login successful!' }));
+  } catch (error) {
+    yield put(logoutFailure(error.message));
+    // yield put(setAlert({ type: 'error', message: 'Login failed!' }));
+  }
+}
+
 export function* watchUserSaga() {
   yield takeLatest(checkUserLoggedInRequest.type, handleCheckUserLoggedIn);
   yield takeLatest(loginRequest.type, handleLogin);
   yield takeLatest(getUserInfoRequest.type, getUserInfo);
   yield takeLatest(getProjectInfoRequest.type, getProjectInfo);
+  yield takeLatest(logoutRequest.type, handleLogout);
 }

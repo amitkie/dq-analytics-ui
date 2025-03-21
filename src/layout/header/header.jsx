@@ -3,8 +3,7 @@ import HeaderLogo from "../../assets/images/kiesquare-logo-transparent.png";
 import { FaRegCircleUser, FaPowerOff } from "react-icons/fa6";
 import "./header.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { getHamburgerRequest, getMobileRequest, logout } from "../../features/user/userSlice";
+import { getHamburgerRequest, getMobileRequest, logoutRequest } from "../../features/user/userSlice";
 
 export default function Header() {
   const { userInfo } = useSelector((state) => state.user);
@@ -18,10 +17,7 @@ export default function Header() {
  
   const dispatch = useDispatch();
   const handleLogout = () => {
-    sessionStorage.clear();
-    localStorage.clear();
-    dispatch(logout());
-    window.location.href = '/';
+    dispatch(logoutRequest());
   };
   
   useEffect(() => {
