@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 import CheckToken from "../pages/CheckToken";
 import Home from "../pages/home/home";
@@ -14,11 +14,7 @@ import About from "../pages/About/About";
 import SuperThemes from "../components/SuperThemes/SuperThemes";
 import Help from "../components/Help/Help";
 import HealthCardReport from "../pages/healthcard/HealthCardReport";
-
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/token" replace />;
-};
+import ProtectedRoute from "../pages/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
