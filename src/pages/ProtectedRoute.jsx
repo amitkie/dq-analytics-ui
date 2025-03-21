@@ -32,7 +32,16 @@ const ProtectedRoute = ({ children }) => {
     return <div></div>; // Show loading state while checking authentication
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    const urlObject = new URL(window.location.href);
+    // Extract the token URL (protocol + hostname + port)
+    const tokenUrl = `${urlObject.protocol}//${urlObject.host}/token`;
+
+    window.location.href = `${process.env.REACT_APP_ONBOARDING_PORTAL_FRONTEND_URL}/login?redirect=${tokenUrl}`;
+    return <></>;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;
