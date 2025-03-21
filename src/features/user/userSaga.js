@@ -1,10 +1,22 @@
 // src/features/user/userSaga.js
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { getUserAndPaymentInfo, login } from '../../services/userService'; // Ensure this path is correct
-import { loginRequest, loginSuccess, loginFailure, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoSuccess, getProjectInfoFailure, getProjectInfoRequest } from './userSlice';
+import { checkIsLoggedIn, getUserAndPaymentInfo, login } from '../../services/userService'; // Ensure this path is correct
+import { loginRequest, loginSuccess, loginFailure, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoSuccess, getProjectInfoFailure, getProjectInfoRequest, checkUserLoggedInRequest, checkUserLoggedInSuccess, checkUserLoggedInFailure } from './userSlice';
 import { getProjectDetailsByUserId } from '../../services/projectService';
 // import { setAlert } from '../alert/alertSlice';
 
+function* handleCheckUserLoggedIn(action) {
+  try {
+    const { navigate } = action?.payload;
+    const response = yield call(() => checkIsLoggedIn());
+    yield put(checkUserLoggedInSuccess(response));
+    navigate('/');
+    // yield put(setAlert({ type: 'success', message: 'Login successful!' }));
+  } catch (error) {
+    yield put(checkUserLoggedInFailure(error.message));
+    // yield put(setAlert({ type: 'error', message: 'Login failed!' }));
+  }
+}
 function* handleLogin(action) {
   try {
     const { email, password, navigate } = action?.payload;
@@ -40,6 +52,7 @@ function* getProjectInfo(action) {
 }
 
 export function* watchUserSaga() {
+  yield takeLatest(checkUserLoggedInRequest.type, handleCheckUserLoggedIn);
   yield takeLatest(loginRequest.type, handleLogin);
   yield takeLatest(getUserInfoRequest.type, getUserInfo);
   yield takeLatest(getProjectInfoRequest.type, getProjectInfo);

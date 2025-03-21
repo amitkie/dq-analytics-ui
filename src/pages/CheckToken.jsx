@@ -1,14 +1,18 @@
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { checkUserLoggedInRequest } from "../features/user/userSlice";
+import { useDispatch } from "react-redux";
+
 const CheckToken = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
     const token = searchParams.get("authToken");
 
     useEffect(() => {
         if (token) {
             localStorage.setItem("token", token);
-            navigate("/");
+            dispatch(checkUserLoggedInRequest({ navigate }));
         } else {
             const urlObject = new URL(window.location.href);
             // Extract the token URL (protocol + hostname + port)
@@ -16,7 +20,7 @@ const CheckToken = () => {
 
             window.location.href = `${process.env.REACT_APP_ONBOARDING_PORTAL_FRONTEND_URL}/login?redirect=${tokenUrl}`;
         }
-    }, [token, navigate]);
+    }, [token, navigate, dispatch]);
 
     return <div />;
 };

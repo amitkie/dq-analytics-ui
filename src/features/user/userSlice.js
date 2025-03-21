@@ -2,20 +2,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialActiveMenu = localStorage.getItem('activeMenu') || '';
 
-const userInfo = localStorage.getItem('userInfo');
-let token = null;
+const userData = localStorage.getItem('userData');
+let userId = null;
 
-if (userInfo && userInfo !== "undefined") {
+if (userData && userData !== "undefined") {
   try {
-    token = JSON.parse(userInfo);
+    userId = JSON.parse(userData)?.userId;
   } catch (error) {
-    console.error("Invalid JSON in userInfo:", error);
-    token = null;
+    console.error("Invalid JSON in userData:", error);
+    userId = null;
   }
 }
 
 const initialState = {
-  token: token,
+  userId: userId,
+  userData: {},
   userInfo: {},
   projectInfo: {},
   loading: false,
@@ -30,21 +31,34 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    checkUserLoggedInRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    checkUserLoggedInSuccess(state, action) {
+      state.loading = false;
+      state.userData = action.payload;
+    },
+    checkUserLoggedInFailure(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
     loginRequest(state) {
       state.loading = true;
       state.error = null;
     },
     loginSuccess(state, action) {
       state.loading = false;
-      state.token = action.payload;
+      state.userId = action.payload;
     },
     loginFailure(state, action) {
       state.loading = false;
       state.error = action.payload;
     },
     logout(state) {
-      state.token = null;
+      state.userId = null;
       state.userInfo = {};
+      state.userData = {};
       state.projectInfo = {};
       state.loading = false;
       state.error = null;
@@ -94,6 +108,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoRequest, getProjectInfoSuccess, getProjectInfoFailure, getHamburgerRequest, getMobileRequest, getRecentProjectRequest, setActiveMenu } =
+export const { checkUserLoggedInRequest, checkUserLoggedInSuccess, checkUserLoggedInFailure, loginRequest, loginSuccess, loginFailure, logout, getUserInfoRequest, getUserInfoSuccess, getUserInfoFailure, getProjectInfoRequest, getProjectInfoSuccess, getProjectInfoFailure, getHamburgerRequest, getMobileRequest, getRecentProjectRequest, setActiveMenu } =
   userSlice.actions;
 export default userSlice.reducer;

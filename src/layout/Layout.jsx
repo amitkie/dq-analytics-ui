@@ -7,16 +7,16 @@ import { getUserAndPaymentInfo } from "../services/userService";
 import { getProjectInfoRequest, getUserInfoRequest, getHamburgerStatus } from "../features/user/userSlice";
 
 const AppLayout = () => {
-  const { token } = useSelector((state) => state.user);
+  const { userId } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect( () => {
-    if(token){
-      dispatch(getUserInfoRequest(token));
-      dispatch(getProjectInfoRequest(token));
+    if(userId){
+      dispatch(getUserInfoRequest(userId));
+      dispatch(getProjectInfoRequest(userId));
     }
   //  dispatch(user)
-  }, [token]);
+  }, [userId, dispatch]);
 
 
 

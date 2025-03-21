@@ -1,5 +1,24 @@
 import { apiFastApiClient, apiNodeJSClient } from "./api";
 
+export const checkIsLoggedIn = async () => {
+  try {
+    const response = await apiNodeJSClient.get(
+      "/api/v1/isLoggedIn"
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Network response was not ok");
+    }
+
+    localStorage.setItem("userData", JSON.stringify(response?.data?.data));
+
+    return response?.data?.data;
+  } catch (error) {
+    console.error("Error in login:", error);
+    throw error;
+  }
+};
+
 export const login = async (data) => {
   try {
     const response = await apiNodeJSClient.post(
